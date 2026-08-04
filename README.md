@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # 猫传腹因果推理 Web 应用
 
 基于 Streamlit 与 Neo4j 的猫传染性腹膜炎（FIP，猫传腹）因果推理可视化应用。用户可输入起始节点与目标节点，查询并展示两者之间的因果路径。
@@ -70,3 +71,6 @@ git commit -m "描述修改内容"
 
 - **节点**：Factor（危险因素）、Symptom（症状）、Disease（疾病）、Outcome（结局）
 - **关系**：CAUSES（导致）、RISK_FACTOR_FOR（危险因素）、PRESENTS_AS（表现为）、LEADS_TO（发展为）
+=======
+# FIP_demo
+>>>>>>> origin/main
