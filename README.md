@@ -1,29 +1,42 @@
-<<<<<<< HEAD
-# 猫传腹因果推理 Web 应用
+---
+title: FIP 知识推理系统
+emoji: 🐱
+colorFrom: warmGray
+colorTo: amber
+sdk: gradio
+sdk_version: 5.0.0
+app_file: app.py
+pinned: false
+---
 
-基于 Streamlit 与 Neo4j 的猫传染性腹膜炎（FIP，猫传腹）因果推理可视化应用。用户可输入起始节点与目标节点，查询并展示两者之间的因果路径。
+# 猫传染性腹膜炎（FIP）知识推理系统
+
+基于 **Gradio + Neo4j** 的猫传染性腹膜炎（FIP，猫传腹）知识推理前端。
+当前版本为前端骨架：展示三栏布局（左侧导航 / 中间对话 / 右侧隐藏技术面板），
+后端自然语言理解、实体链接、Cypher 查询生成等逻辑将在后续迭代中补全。
 
 ## 功能
 
-- 连接本地或远程 Neo4j 图数据库
-- 根据用户选择的起点 / 终点查询因果路径
-- 支持设置最大路径长度（跳数）
-- 以交互式网络图和表格形式展示结果
-- 内置示例数据（Cypher 脚本），方便快速体验
+- 左侧功能导航：切换「对话 / 图谱数据 / 产品设计理念 / 补充说明」四个页面
+- 中间对话区：Chatbot 交互展示区 + 示例问题按钮 + 问题输入框
+- 右侧技术面板：默认隐藏，后续将展示推理链、Cypher 语句、实体/意图匹配日志
+- 响应式布局：适配桌面与移动端浏览器访问
 
 ## 项目结构
 
 ```
 fip-causal-reasoning/
-├── app.py              # Streamlit 主程序
-├── neo4j_client.py     # Neo4j 连接与查询封装
+├── app.py              # Gradio 前端主程序（Hugging Face Spaces 入口）
+├── utils.py            # 后端接口存根（意图识别 / 实体解析 / Cypher 查询）
+├── neo4j_client.py     # Neo4j 连接与因果路径查询封装（可复用）
 ├── seed_data.cypher    # 示例因果图数据
+├── .env.example        # 环境变量示例
 ├── requirements.txt
 ├── README.md
 └── .gitignore
 ```
 
-## 快速开始
+## 本地运行
 
 ### 1. 安装依赖
 
@@ -31,19 +44,13 @@ fip-causal-reasoning/
 pip install -r requirements.txt
 ```
 
-### 2. 准备 Neo4j
+### 2. 配置 Neo4j（可选，当前后端逻辑未接入）
 
-启动 Neo4j 数据库，然后使用浏览器或 `cypher-shell` 执行 `seed_data.cypher` 导入示例数据：
+复制环境变量示例并填写凭据：
 
 ```bash
-cypher-shell -u neo4j -p <密码> -f seed_data.cypher
+cp .env.example .env
 ```
-
-或在 Neo4j Browser 中直接复制粘贴脚本内容执行。
-
-### 3. 配置连接
-
-创建 `.env` 文件（或在 Streamlit 侧边栏中填写）：
 
 ```env
 NEO4J_URI=bolt://localhost:7687
@@ -51,26 +58,34 @@ NEO4J_USERNAME=neo4j
 NEO4J_PASSWORD=your_password
 ```
 
-### 4. 运行应用
+### 3. 启动
 
 ```bash
-streamlit run app.py
+python app.py
 ```
 
-## Git 版本管理
+打开浏览器访问 `http://127.0.0.1:7860`。
 
-项目已初始化为 Git 仓库。常用命令：
+## 部署到 Hugging Face Spaces
 
-```bash
-git status
-git add .
-git commit -m "描述修改内容"
-```
+1. 在 [Hugging Face](https://huggingface.co/spaces) 新建 Space，选择 **Gradio SDK**。
+2. 选择 **关联 GitHub 仓库**：`aeropan/FIP_demo`。
+3. Spaces 会自动读取仓库根目录的 `app.py`（已在 README YAML 元数据中通过 `app_file: app.py` 指定）。
+4. 推送代码到 GitHub 后，Spaces 将自动构建并发布。
+5. 构建完成后，通过 `https://huggingface.co/spaces/<你的用户名>/<space名>` 访问。
 
-## 因果图模型
+### 前后端一体说明
 
-- **节点**：Factor（危险因素）、Symptom（症状）、Disease（疾病）、Outcome（结局）
-- **关系**：CAUSES（导致）、RISK_FACTOR_FOR（危险因素）、PRESENTS_AS（表现为）、LEADS_TO（发展为）
-=======
-# FIP_demo
->>>>>>> origin/main
+- Gradio 应用即前端 UI，同时 `utils.py` / `neo4j_client.py` 作为后端逻辑运行在同一个容器内。
+- 如需查询真实 Neo4j 图谱，数据库需要可被 Hugging Face 容器访问（推荐 [Neo4j Aura](https://neo4j.com/cloud/aura/) 等云实例，或具有公网地址的 Neo4j 服务）。
+- 当前 `utils.py` 中 `run_query()` 为占位实现，未真正连接数据库；补全后将通过环境变量读取 `NEO4J_URI` / `NEO4J_USERNAME` / `NEO4J_PASSWORD`。
+
+## 移动设备与展示效果
+
+- Gradio 生成的页面在移动端浏览器中会自动缩放适配，基础布局（三栏）在小屏幕下会变为纵向堆叠。
+- 页面动效/图表类复杂特效需要额外引入 CSS/JS 或第三方库（如 D3、ECharts）实现，Gradio 原生组件以表单和静态展示为主。
+
+## 免责声明
+
+本系统输出内容仅供学习参考，**不能替代执业兽医的诊断与治疗建议**。
+如猫咪出现疑似 FIP 症状，请及时就医。

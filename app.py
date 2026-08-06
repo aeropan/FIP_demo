@@ -1,211 +1,225 @@
-"""猫传腹因果推理 Streamlit 主程序。"""
+"""
+猫传染性腹膜炎（FIP）知识推理系统 —— Gradio 前端（Hugging Face Spaces 入口）。
 
-import os
+当前仅完成三栏布局与基础组件展示：
+- 左侧：功能导航（Radio 切换 4 个页面）
+- 中间：对话区（Chatbot + 示例按钮 + 输入框）
+- 右侧：默认隐藏的技术推理面板（Markdown 占位）
 
-import streamlit as st
-import streamlit.components.v1 as components
-from neo4j_client import ConnectionConfig, FIPCausalClient, nodes_to_networkx
-from pyvis.network import Network
+后端交互（实体解析、意图识别、Cypher 查询、按钮事件）暂缓实现。
+本地运行命令：python app.py
+Hugging Face Spaces 默认入口：本文件 app.py
+"""
 
-# ---------------- 页面配置 ----------------
-st.set_page_config(
-    page_title="猫传腹因果推理",
-    page_icon="🐱",
-    layout="wide",
+from __future__ import annotations
+
+import gradio as gr
+
+# ---------------------------------------------------------------------------
+# 占位函数：从 utils.py 导入的接口目前只返回空结果
+# ---------------------------------------------------------------------------
+from utils import (
+    DIAGNOSIS_QUERY,
+    GENERAL_QUERY,
+    SIDE_EFFECT_QUERY,
+    TREATMENT_QUERY,
+    detect_intent,
+    resolve_entities,
+    run_query,
 )
 
-# ---------------- 主题样式 ----------------
-st.markdown(
-    """
-    <style>
-    .main-title { font-size: 2.2rem; font-weight: 700; margin-bottom: 0.2rem; }
-    .subtitle { color: #666; font-size: 1rem; margin-bottom: 1.5rem; }
-    .metric-card { background: #f8f9fa; padding: 1rem; border-radius: 0.5rem; }
-    </style>
-    """,
-    unsafe_allow_html=True,
-)
+# ---------------------------------------------------------------------------
+# 页面常量
+# ---------------------------------------------------------------------------
+APP_TITLE = "🐱 猫传染性腹膜炎（FIP）知识推理系统"
+NAV_OPTIONS = ["对话", "图谱数据", "产品设计理念", "补充说明"]
+NAV_DEFAULT = "对话"
 
-LABEL_COLORS = {
-    "Factor": "#4A90D9",
-    "Symptom": "#F5A623",
-    "Disease": "#D0021B",
-    "Outcome": "#7ED321",
-}
-
-# ---------------- 状态管理 ----------------
-@st.cache_resource(show_spinner="连接 Neo4j...")
-def get_client(uri: str, username: str, password: str) -> FIPCausalClient:
-    return FIPCausalClient(ConnectionConfig(uri=uri, username=username, password=password))
+EXAMPLE_QUERIES = [
+    "猫传腹如何诊断",
+    "湿性FIP怎么治",
+    "GS-441524有副作用吗",
+    "猫发热怎么办",
+]
 
 
-@st.cache_data(ttl=30, show_spinner="加载节点列表...")
-def load_node_options(_client: FIPCausalClient) -> list[dict]:
-    return _client.get_all_nodes()
+# ---------------------------------------------------------------------------
+# 左侧导航栏（宽度 scale=1）
+# ---------------------------------------------------------------------------
+def build_nav_column() -> gr.Column:
+    """构建左侧导航栏。"""
+    with gr.Column(scale=1, min_width=160) as col:
+        gr.Markdown("## 功能导航")
+        nav_radio = gr.Radio(
+            choices=NAV_OPTIONS,
+            value=NAV_DEFAULT,
+            label="选择页面",
+            interactive=True,
+        )
+        # 当前阶段： Radio 切换后由主内容区动态渲染，不绑定具体回调
+        gr.Markdown("_提示：目前仅展示页面骨架，交互逻辑待后续补全。_")
+    return col, nav_radio
 
 
-# ---------------- 侧边栏：连接配置 ----------------
-with st.sidebar:
-    st.header("🔗 Neo4j 连接")
-    neo4j_uri = st.text_input(
-        "URI",
-        value=os.getenv("NEO4J_URI", "bolt://localhost:7687"),
-        help="例如：bolt://localhost:7687 或 neo4j+s://xxx.databases.neo4j.io",
+# ---------------------------------------------------------------------------
+# 中间对话栏（宽度 scale=4）
+# ---------------------------------------------------------------------------
+def build_chat_column() -> tuple[gr.Column, gr.Chatbot, gr.Textbox]:
+    """构建中间对话主区域。"""
+    with gr.Column(scale=4) as col:
+        gr.Markdown(f"# {APP_TITLE}")
+
+        chatbot = gr.Chatbot(
+            label="对话历史",
+            height=500,
+        )
+
+        # 示例问题按钮：当前只静态展示，后续绑定点击事件
+        with gr.Row():
+            for text in EXAMPLE_QUERIES:
+                gr.Button(text, size="sm")
+
+        # 用户输入框：当前只作为展示组件
+        input_box = gr.Textbox(
+            placeholder="请输入关于猫传腹的问题…",
+            label="问题输入",
+            show_label=False,
+            lines=2,
+            max_lines=4,
+        )
+
+        # 发送按钮（占位）
+        send_btn = gr.Button("发送", variant="primary")
+        _ = (send_btn, input_box, chatbot)  # 后续绑定事件用
+
+    return col, chatbot, input_box
+
+
+# ---------------------------------------------------------------------------
+# 右侧技术推理面板（宽度 scale=2，默认隐藏）
+# ---------------------------------------------------------------------------
+def build_reasoning_column() -> tuple[gr.Column, gr.Markdown]:
+    """构建右侧默认隐藏的技术推理面板。"""
+    with gr.Column(scale=2, visible=False, elem_id="reasoning-panel") as col:
+        gr.Markdown("## 技术推理详情")
+        reasoning_md = gr.Markdown(
+            value="_右侧面板将展示推理链、Cypher 语句及实体/意图匹配日志。_"
+        )
+    return col, reasoning_md
+
+
+# ---------------------------------------------------------------------------
+# 主内容区：根据左侧导航切换显示不同页面
+# ---------------------------------------------------------------------------
+def build_main_content() -> tuple[gr.Column, gr.Column, gr.Column, gr.Column]:
+    """构建四个导航页面对应的内容容器。"""
+    with gr.Column() as page_chat:
+        chat_col, chatbot, input_box = build_chat_column()
+
+    with gr.Column(visible=False) as page_graph:
+        gr.Markdown("# 图谱数据")
+        gr.Markdown("_此处将展示 Neo4j 图数据库统计信息、实体列表与关系概览。_")
+        gr.Dataframe(
+            headers=["实体名", "类型", "描述"],
+            value=[],  # 前期占位
+            label="实体列表",
+            interactive=False,
+        )
+
+    with gr.Column(visible=False) as page_design:
+        gr.Markdown("# 产品设计理念")
+        gr.Markdown(
+            """
+            本项目基于**知识图谱**技术，将猫传染性腹膜炎（FIP）相关的病因、症状、
+            诊断、治疗及预后知识组织为可推理的图结构，帮助用户通过自然语言问答
+            获得结构化的医学知识提示。
+
+            当前版本为前端骨架，后续将逐步接入：
+            - 意图识别
+            - 实体链接
+            - Cypher 查询生成
+            - 推理链可视化
+            """
+        )
+
+    with gr.Column(visible=False) as page_notes:
+        gr.Markdown("# 补充说明")
+        gr.Markdown(
+            """
+            1. 本系统输出仅供学习参考，**不能替代执业兽医的诊断与治疗建议**。
+            2. 知识库数据来源于公开文献与指南，持续更新中。
+            3. 如猫咪出现疑似 FIP 症状，请及时就医。
+            """
+        )
+
+    return page_chat, page_graph, page_design, page_notes, chat_col, chatbot, input_box
+
+
+# ---------------------------------------------------------------------------
+# 页面切换回调（占位）
+# ---------------------------------------------------------------------------
+def switch_page(selected: str) -> tuple:
+    """根据左侧 Radio 选项切换主内容区可见性。"""
+    return (
+        gr.update(visible=(selected == "对话")),
+        gr.update(visible=(selected == "图谱数据")),
+        gr.update(visible=(selected == "产品设计理念")),
+        gr.update(visible=(selected == "补充说明")),
     )
-    neo4j_user = st.text_input(
-        "用户名",
-        value=os.getenv("NEO4J_USERNAME", "neo4j"),
-    )
-    neo4j_pass = st.text_input(
-        "密码",
-        type="password",
-        value=os.getenv("NEO4J_PASSWORD", ""),
-    )
-
-    client = get_client(neo4j_uri, neo4j_user, neo4j_pass)
-
-    conn_status = client.test_connection()
-    if conn_status["ok"]:
-        st.success("连接成功")
-    else:
-        st.error(f"连接失败：{conn_status['error']}")
-
-    st.divider()
-    st.info(
-        "请先运行 `seed_data.cypher` 导入示例数据，\n"
-        "或在 .env 中配置 NEO4J_URI / NEO4J_USERNAME / NEO4J_PASSWORD。"
-    )
-
-# ---------------- 主体 ----------------
-st.markdown('<div class="main-title">🐱 猫传腹因果推理</div>', unsafe_allow_html=True)
-st.markdown(
-    '<div class="subtitle">基于 Neo4j 图数据库的 FIP 因果路径可视化探索</div>',
-    unsafe_allow_html=True,
-)
-
-if not client.is_ready():
-    st.warning("请在左侧填写完整的 Neo4j 连接信息。")
-    st.stop()
-
-node_options = load_node_options(client)
-if not node_options:
-    st.warning("数据库中未找到任何节点，请先导入 seed_data.cypher。")
-    st.stop()
-
-names = [n["name"] for n in node_options]
-name_to_meta = {n["name"]: n for n in node_options}
-
-col1, col2, col3 = st.columns([2, 2, 1])
-with col1:
-    start_node = st.selectbox("起始节点", options=names, index=0)
-with col2:
-    end_node = st.selectbox(
-        "目标节点",
-        options=names,
-        index=names.index("猫传腹") if "猫传腹" in names else min(1, len(names) - 1),
-    )
-with col3:
-    max_hops = st.slider("最大跳数", min_value=1, max_value=6, value=3)
-
-mode = st.radio(
-    "查询模式",
-    ["双向路径：起点 → 终点", "单向影响：从起点出发的所有下游路径"],
-    horizontal=True,
-)
-
-run_query = st.button("🔍 查询因果路径", type="primary", use_container_width=True)
 
 
-def build_pyvis_html(nodes: set, edges: set, height: int = 500) -> str:
-    """使用 PyVis 生成可在 Streamlit 中嵌入的 HTML。"""
-    net = Network(
-        height=f"{height}px",
-        width="100%",
-        directed=True,
-        bgcolor="#ffffff",
-        font_color="#333333",
-        notebook=False,
-    )
-    net.toggle_physics(True)
-    net.barnes_hut(gravity=-8000, central_gravity=0.3, spring_length=120)
+# ---------------------------------------------------------------------------
+# 应用入口：将 demo 暴露在模块级别，便于 Hugging Face Spaces 导入
+# ---------------------------------------------------------------------------
+def create_demo() -> gr.Blocks:
+    """构建 Gradio 应用实例。"""
+    with gr.Blocks(
+        title="FIP 知识推理系统",
+    ) as demo:
+        with gr.Row(equal_height=False):
+            # 左侧导航
+            nav_col, nav_radio = build_nav_column()
 
-    for node_id, label, name, description in nodes:
-        color = LABEL_COLORS.get(label, "#979797")
-        title = f"类别：{label}\n名称：{name}\n描述：{description or '无'}"
-        net.add_node(node_id, label=name, title=title, color=color, size=28 if label == "Disease" else 22)
+            # 中间主内容区（包含 4 个可切换页面）
+            (
+                page_chat,
+                page_graph,
+                page_design,
+                page_notes,
+                chat_col,
+                chatbot,
+                input_box,
+            ) = build_main_content()
 
-    for source, target, rel_type, description in edges:
-        title = f"关系：{rel_type}\n描述：{description or '无'}"
-        net.add_edge(source, target, title=title, arrows="to", color="#888888")
+            # 右侧技术推理面板
+            reasoning_col, reasoning_md = build_reasoning_column()
 
-    return net.generate_html()
+        # 页面切换事件绑定
+        nav_radio.change(
+            fn=switch_page,
+            inputs=nav_radio,
+            outputs=[page_chat, page_graph, page_design, page_notes],
+        )
 
+        # TODO: 后续将绑定示例按钮、发送按钮与右侧推理面板显示逻辑
+        _ = (chatbot, input_box, reasoning_col, reasoning_md)
 
-def render_paths(paths: list[dict]):
-    if not paths:
-        st.info("未找到符合条件的因果路径。")
-        return
-
-    st.markdown(f"**共找到 {len(paths)} 条因果路径**")
-    nodes, edges = nodes_to_networkx(paths)
-
-    tab_graph, tab_list = st.tabs(["🕸 交互网络图", "📋 路径列表"])
-
-    with tab_graph:
-        html = build_pyvis_html(nodes, edges, height=550)
-        components.html(html, height=560, scrolling=False)
-
-    with tab_list:
-        for i, path in enumerate(paths, 1):
-            steps = path["nodes"]
-            rels = path.get("rels", [])
-            with st.expander(f"路径 {i}（{path['hops']} 跳）", expanded=i == 1):
-                step_texts = []
-                for idx, node in enumerate(steps):
-                    step_texts.append(f"**{node['name']}** ({node['label']})")
-                    if idx < len(rels):
-                        rel = rels[idx]
-                        step_texts.append(
-                            f"➡️ *{rel['type']}*" + (f"：{rel['description']}" if rel.get("description") else "")
-                        )
-                st.markdown(" → ".join(step_texts))
-
-                # 表格形式
-                rows = []
-                for idx, node in enumerate(steps):
-                    rows.append(
-                        {
-                            "顺序": idx + 1,
-                            "节点": node["name"],
-                            "类别": node["label"],
-                            "描述": node.get("description", ""),
-                        }
-                    )
-                st.dataframe(rows, use_container_width=True, hide_index=True)
+    return demo
 
 
-if run_query:
-    if start_node == end_node and mode.startswith("双向"):
-        st.warning("起始节点与目标节点不能相同。")
-    else:
-        with st.spinner("查询中..."):
-            if mode.startswith("双向"):
-                paths = client.find_causal_paths(start_node, end_node, max_hops=max_hops)
-            else:
-                paths = client.find_outward_paths(start_node, max_hops=max_hops)
-        render_paths(paths)
+demo = create_demo()
 
-st.divider()
-with st.expander("ℹ️ 图例与说明"):
-    legend_html = ""
-    for label, color in LABEL_COLORS.items():
-        legend_html += f'<span style="display:inline-block;width:12px;height:12px;background:{color};margin-right:6px;border-radius:50%;"></span>{label} '
-    st.markdown(legend_html, unsafe_allow_html=True)
-    st.markdown(
-        """
-        - **Factor（危险因素）**：诱发疾病的因素或上游原因
-        - **Symptom（症状）**：疾病表现出来的临床征象
-        - **Disease（疾病）**：猫传腹（FIP）本体
-        - **Outcome（结局）**：疾病导致的结果
-        """
+
+if __name__ == "__main__":
+    demo.launch(
+        # 0.0.0.0 便于容器化部署；Hugging Face Spaces 会暴露 7860 端口
+        server_name="0.0.0.0",
+        server_port=7860,
+        show_error=True,
+        inbrowser=False,
+        quiet=False,
+        css="""
+        #reasoning-panel { border-left: 2px solid #e0e0e0; padding-left: 1rem; }
+        .example-btn { font-size: 0.85rem; }
+        """,
     )
