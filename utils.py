@@ -1,8 +1,8 @@
 """
-FIP 知识推理后端工具模块（前期存根版）。
+FIP 知识推理后端工具模块。
 
-当前只提供空壳函数和 Cypher 查询模板，确保前端 app_gradio.py 可以正常导入。
-意图识别、实体解析、Neo4j 查询等逻辑将在后续迭代中补全。
+已接入真实 Neo4j 连接（配置来自 .env），并保留意图识别 / 实体解析的占位实现。
+前端 app.py 可直接通过本模块查询因果路径。
 """
 
 from __future__ import annotations
@@ -105,26 +105,74 @@ def detect_intent(user_input: str) -> str:
 
 
 # ---------------------------------------------------------------------------
-# 查询执行（前期存根）
+# 连接测试
+# ---------------------------------------------------------------------------
+def test_connection() -> dict[str, Any]:
+    """测试 Neo4j 连接是否可用。"""
+    driver = _get_driver()
+    if not driver:
+        return {"ok": False, "error": "未配置 NEO4J_PASSWORD"}
+    try:
+        with driver.session() as session:
+            result = session.run("RETURN 1 AS ok")
+            result.single()
+        return {"ok": True, "error": None}
+    except Exception as exc:  # noqa: BLE001
+        return {"ok": False, "error": str(exc)}
+
+
+# ---------------------------------------------------------------------------
+# 查询执行
 # ---------------------------------------------------------------------------
 def run_query(query_template: str, entities: list[str]) -> list[dict[str, Any]]:
     """
-    执行 Cypher 查询并返回结构化路径数据（当前为占位实现）。
+    执行 Cypher 查询并返回结构化路径数据。
 
     Args:
         query_template: Cypher 模板字符串，可包含 $entities 参数。
         entities: 解析出的标准实体名列表。
 
     Returns:
-        每条路径字典包含 source, rel, target, polarity, confidence, evidence。
-        当前实现直接返回空列表，不触发真实查询。
+        每个关系一步，字典包含 source, rel, target, polarity, confidence, evidence。
     """
-    _ = (query_template, entities)
-    return []
+    driver = _get_driver()
+    if not driver:
+        return []
+
+    try:
+        with driver.session() as session:
+            result = session.run(query_template, entities=entities)
+            steps: list[dict[str, Any]] = []
+            for record in result:
+                path = record.get("path")
+                if not path:
+                    continue
+                nodes = list(path.nodes)
+                rels = list(path.relationships)
+                for idx, rel in enumerate(rels):
+                    if idx + 1 >= len(nodes):
+                        break
+                    source = nodes[idx].get("name", "?")
+                    target = nodes[idx + 1].get("name", "?")
+                    steps.append(
+                        {
+                            "source": source,
+                            "rel": rel.type,
+                            "target": target,
+                            "polarity": rel.get("polarity", "positive"),
+                            "confidence": rel.get("confidence", 0.5),
+                            "evidence": rel.get("evidence", ""),
+                        }
+                    )
+            return steps
+    except Exception as exc:  # noqa: BLE001
+        # 前期先容错返回空结果；后续可改为向上抛异常并在前端展示错误
+        print(f"Neo4j query failed: {exc}")
+        return []
 
 
 # ---------------------------------------------------------------------------
-# 渲染辅助函数（前期存根）
+# 渲染辅助函数
 # ---------------------------------------------------------------------------
 def polarity_color(polarity: str) -> str:
     """返回极性对应的 Bootstrap 颜色类（占位）。"""
