@@ -37,37 +37,51 @@ def _get_driver() -> GraphDatabase.driver | None:
 
 
 # ---------------------------------------------------------------------------
-# Cypher 查询模板（占位）
+# Cypher 查询模板（匹配真实数据模型）
+#
+# 真实模型：节点 (n:Entity {name})，关系 (a)-[r:RELATES]->(b)，r 属性：
+#   r.关系     中文语义，取值：导致 / 影响 / 表现为 / 诊断于 / 治疗于
+#   r.极性     Positive / Negative / Neutral
+#   r.置信度   High / Medium / Low
+#   r.支撑依据 文献依据文本
 # ---------------------------------------------------------------------------
 DIAGNOSIS_QUERY = """
-// TODO: 根据实体查询诊断相关因果路径
-MATCH path = (start)-[:CAUSES|RISK_FACTOR_FOR|PRESENTS_AS*1..3]->( Disease {name: '猫传腹' })
+// 诊断：从输入实体出发，经 表现为/诊断于 关系定位疾病
+MATCH path = (start:Entity)-[r:RELATES]->(disease:Entity)
 WHERE start.name IN $entities
+  AND r.关系 IN ['表现为', '诊断于']
 RETURN path
-LIMIT 10
+ORDER BY r.置信度
+LIMIT 20
 """.strip()
 
 TREATMENT_QUERY = """
-// TODO: 根据实体查询治疗/用药相关路径
-MATCH path = (d:Disease {name: '猫传腹'})-[:LEADS_TO|CAUSES*1..3]->(outcome)
+// 治疗：药物/疗法（治疗于）与疾病的双向匹配
+MATCH path = (drug:Entity)-[r:RELATES]->(disease:Entity)
+WHERE (drug.name IN $entities OR disease.name IN $entities)
+  AND r.关系 = '治疗于'
 RETURN path
-LIMIT 10
+ORDER BY r.置信度
+LIMIT 20
 """.strip()
 
 SIDE_EFFECT_QUERY = """
-// TODO: 根据实体查询副作用相关路径
-MATCH path = (drug)-[:CAUSES|LEADS_TO*1..2]->(symptom)
-WHERE drug.name IN $entities OR symptom.name IN $entities
+// 影响/副作用：经 影响/导致 关系，正向或反向匹配输入实体
+MATCH path = (a:Entity)-[r:RELATES]->(b:Entity)
+WHERE (a.name IN $entities OR b.name IN $entities)
+  AND r.关系 IN ['影响', '导致']
 RETURN path
-LIMIT 10
+ORDER BY r.置信度
+LIMIT 20
 """.strip()
 
 GENERAL_QUERY = """
-// TODO: 通用查询模板
-MATCH path = (a)-[:CAUSES|RISK_FACTOR_FOR|PRESENTS_AS|LEADS_TO*1..3]->(b)
+// 通用：任意 RELATES 关系，双向匹配输入实体
+MATCH path = (a:Entity)-[r:RELATES]->(b:Entity)
 WHERE a.name IN $entities OR b.name IN $entities
 RETURN path
-LIMIT 10
+ORDER BY r.置信度
+LIMIT 20
 """.strip()
 
 
@@ -134,6 +148,8 @@ def run_query(query_template: str, entities: list[str]) -> list[dict[str, Any]]:
 
     Returns:
         每个关系一步，字典包含 source, rel, target, polarity, confidence, evidence。
+        其中 rel 为中文语义（导致/影响/...），polarity 取 Positive/Negative/Neutral，
+        confidence 取 High/Medium/Low，evidence 为支撑依据文本。
     """
     driver = _get_driver()
     if not driver:
@@ -157,11 +173,11 @@ def run_query(query_template: str, entities: list[str]) -> list[dict[str, Any]]:
                     steps.append(
                         {
                             "source": source,
-                            "rel": rel.type,
+                            "rel": rel.get("关系", rel.type),
                             "target": target,
-                            "polarity": rel.get("polarity", "positive"),
-                            "confidence": rel.get("confidence", 0.5),
-                            "evidence": rel.get("evidence", ""),
+                            "polarity": rel.get("极性", "Neutral"),
+                            "confidence": rel.get("置信度", "Medium"),
+                            "evidence": rel.get("支撑依据", ""),
                         }
                     )
             return steps
@@ -175,27 +191,34 @@ def run_query(query_template: str, entities: list[str]) -> list[dict[str, Any]]:
 # 渲染辅助函数
 # ---------------------------------------------------------------------------
 def polarity_color(polarity: str) -> str:
-    """返回极性对应的 Bootstrap 颜色类（占位）。"""
+    """返回极性对应的 Bootstrap 颜色类。
+
+    真实数据极性取值为 Positive / Negative / Neutral。
+    """
     mapping = {
-        "positive": "success",
-        "negative": "danger",
-        "neutral": "secondary",
+        "Positive": "success",
+        "Negative": "danger",
+        "Neutral": "secondary",
     }
     return mapping.get(polarity, "secondary")
 
 
-def confidence_badge(confidence: float) -> str:
-    """返回置信度对应的 Bootstrap 颜色类（占位）。"""
-    if confidence >= 0.8:
-        return "success"
-    if confidence >= 0.5:
-        return "warning"
-    return "danger"
+def confidence_badge(confidence: str) -> str:
+    """返回置信度对应的 Bootstrap 颜色类。
+
+    真实数据置信度取值为 High / Medium / Low。
+    """
+    mapping = {
+        "High": "success",
+        "Medium": "warning",
+        "Low": "danger",
+    }
+    return mapping.get(confidence, "secondary")
 
 
 def format_reasoning_chain(chain: list[dict[str, Any]]) -> str:
     """
-    将推理链渲染为 HTML/Markdown 字符串（占位）。
+    将推理链渲染为 HTML/Markdown 字符串。
 
     Args:
         chain: run_query 返回的路径列表。
@@ -210,5 +233,13 @@ def format_reasoning_chain(chain: list[dict[str, Any]]) -> str:
         source = step.get("source", "?")
         rel = step.get("rel", "?")
         target = step.get("target", "?")
-        lines.append(f"- **{source}** → *{rel}* → **{target}**")
+        polarity = step.get("polarity", "Neutral")
+        confidence = step.get("confidence", "Medium")
+        evidence = step.get("evidence", "")
+        lines.append(
+            f"- **{source}** —{rel}→ **{target}**"
+            f"（{confidence} · {polarity}）"
+        )
+        if evidence:
+            lines.append(f"  - 依据：{evidence}")
     return "\n".join(lines)
