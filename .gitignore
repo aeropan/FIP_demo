@@ -23,5 +23,4 @@ Thumbs.db
 logs/
 data/*.csv
 !data/.gitkeep
-source/
-literature/
+# literature/  # 注释掉：source/literature/ 需要进 Git，且仓库根目录没有独立的 literature/ 目录
