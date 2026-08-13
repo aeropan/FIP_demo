@@ -1417,11 +1417,11 @@ div:has(> .app-shell) { padding: 0 !important; margin: 0 !important; background:
 }
 
 /* ============================================================
-   右侧边栏（默认隐藏，宽 385）
+   右侧边栏（默认隐藏，宽 380）
    ============================================================ */
 .right-sidebar {
   flex: 0 0 auto;
-  width: 385px;
+  width: 380px;
   min-width: 0;
   background: #FDFCFA;
   border-left: 1px solid #F8F1EB;
@@ -1438,7 +1438,10 @@ div:has(> .app-shell) { padding: 0 !important; margin: 0 !important; background:
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 14px 10px;
+  /* padding-top 21px 使收起按钮与左侧收起按钮处于同一高度
+     （左侧：sidebar padding-top 16 + 40px header 内 30px 按钮居中 → 中心 y=36；
+       右侧：padding-top 21 + 30px 按钮居中 → 中心 y=36） */
+  padding: 21px 14px 10px;
   border-bottom: 1px solid #F8F1EB;
 }
 .right-title { display: flex; align-items: center; gap: 7px; font-size: 16px; font-weight: 600; color: #6B5045; line-height: 1.4; }
