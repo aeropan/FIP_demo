@@ -768,8 +768,9 @@ div:has(> .app-shell) { padding: 0 !important; margin: 0 !important; background:
   transition: opacity 180ms var(--ease);
 }
 
-/* 顶部 Header */
-.left-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+/* 顶部 Header：flex-start 让折叠按钮顶部与 logo 顶部对齐（都=16px，即 sidebar padding-top）；
+   此前 align-items:center 使 30px 按钮在 40px header 内居中，顶部落在 21px，比右侧图标低 5px */
+.left-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 14px; }
 .brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
 .brand-logo { width: 40px; height: 40px; border-radius: 999px; object-fit: cover; box-shadow: 0 1px 4px rgba(107, 80, 69, 0.15); }
 /* 文本块固定 40px 高并垂直居中，使 .brand 总高 = logo 高(40px)，
