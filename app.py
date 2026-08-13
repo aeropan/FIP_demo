@@ -986,7 +986,8 @@ div:has(> .app-shell) { padding: 0 !important; margin: 0 !important; background:
 
 .open-right-btn {
   position: absolute;
-  top: 12px;
+  /* top:16px 与左侧 logo 顶端对齐（左 logo 顶端 = sidebar-content padding-top 16） */
+  top: 16px;
   right: 30px;
   z-index: 20;
   /* 右栏默认收起时显示的「打开右栏」图标：去掉白色背景 / 边框 / 阴影，
