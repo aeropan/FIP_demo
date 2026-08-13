@@ -32,3 +32,6 @@ data/*.csv
 *.bak
 launch_test*.py
 uvicorn_test.py
+
+# Chrome headless 测试 profile（CDP 验证用）
+.workbuddy-chrome/

@@ -64,6 +64,12 @@ HOMEPAGE_HTML = """
           </span>
           <span>文献库</span>
         </a>
+        <a class="nav-item" href="#">
+          <span class="nav-icon">
+<svg viewBox="0 0 1024 1024" width="18" height="18" aria-hidden="true"><path d="M191.4 765.1c0 22.6 18.3 41 41 41h158.1c22.6 0 41-18.3 41-41 0-22.6-18.3-41-41-41H232.3c-22.6 0-40.9 18.3-40.9 41zM889.3 855.1h-40.9 16.2c13.8-0.8 24.7-12.2 24.7-26.2v26.2zM141.3 855.2h40.9H166c-13.8-0.8-24.7-12.2-24.7-26.2v26.2zM889.3 549.6h-40.9 16.2c13.8 0.8 24.7 12.2 24.7 26.2v-26.2zM809.6 346.9h-40.9 16.2c13.8 0.8 24.7 12.2 24.7 26.2v-26.2zM141.6 244h40.9-16.2c-13.8 0.8-24.7 12.2-24.7 26.2V244z" fill="#3E3836"/><path d="M906.1 468.1H232.3c-22.6 0-41 18.3-41 41 0 22.6 18.3 41 41 41h657v305.1h-748V244.1h287.3l52.7 81.4a40.98 40.98 0 0 0 36.1 21.5h291.9v63.4c0 22.6 18.3 41 41 41s41-18.3 41-41v-83.2c-3.2-34.7-32.3-61.8-67.8-61.8H769v-0.2H539.9L486 181.9l-0.6-0.9c-7.3-11.3-20-18.9-34.5-18.9H182.3v0.1h-54.5c-37.6 0-68.1 30.5-68.1 68.1v0.5h-0.1v643.6c2.4 32.8 28 59.1 60.5 62.6h787c33.1-1.5 60-26.6 64.3-58.9V529.7c-3.3-33.7-31.1-60.3-65.3-61.6z" fill="#3E3836"/></svg>
+          </span>
+          <span>产品设计说明</span>
+        </a>
       </nav>
 
       <!-- 最近对话 -->
@@ -87,28 +93,6 @@ HOMEPAGE_HTML = """
             <span class="chat-ico"><svg viewBox="0 0 1024 1024" width="16" height="16" aria-hidden="true"><path d="M388.266667 552.533333c0-10.666667 8.533333-19.2 19.2-19.2s19.2 8.533333 19.2 19.2c0 19.2 14.933333 36.266667 34.133333 36.266667 19.2 0 34.133333-14.933333 34.133333-36.266667v-4.266666c-4.266667-2.133333-6.4-4.266667-10.666666-6.4l-19.2-19.2c-10.666667-19.2 2.133333-44.8 25.6-44.8h34.133333c23.466667 0 38.4 25.6 27.733333 44.8l-19.2 19.2c-2.133333 2.133333-4.266667 4.266667-6.4 4.266666 0 2.133333 2.133333 4.266667 2.133334 6.4 0 19.2 14.933333 36.266667 34.133333 36.266667s34.133333-14.933333 34.133333-36.266667c0-10.666667 8.533333-19.2 19.2-19.2s19.2 8.533333 19.2 19.2c0 40.533333-32 72.533333-72.533333 72.533334-21.333333 0-40.533333-8.533333-53.333333-23.466667-12.8 14.933333-32 23.466667-53.333334 23.466667-36.266667 0-68.266667-34.133333-68.266666-72.533334z m588.8 104.533334c-8.533333 6.4-12.8 10.666667-21.333334 10.666666-4.266667 0-8.533333-2.133333-10.666666-4.266666 0 0-2.133333 0-4.266667-2.133334-23.466667-12.8-44.8-23.466667-64-29.866666C840.533333 768 708.266667 853.333333 518.4 853.333333 324.266667 853.333333 185.6 765.866667 149.333333 629.333333c-21.333333 8.533333-40.533333 19.2-64 32-2.133333 2.133333-4.266667 2.133333-4.266666 2.133334h-2.133334c-2.133333 2.133333-6.4 2.133333-8.533333 2.133333-8.533333 0-14.933333-4.266667-19.2-10.666667-4.266667-6.4-4.266667-12.8-4.266667-19.2 2.133333-6.4 6.4-10.666667 10.666667-12.8 0 0 36.266667-23.466667 83.2-40.533333 0-8.533333-2.133333-17.066667-2.133333-25.6v-21.333333c-29.866667 2.133333-57.6 6.4-72.533334 8.533333h-4.266666-2.133334c-4.266667 0-10.666667-2.133333-14.933333-4.266667-4.266667-4.266667-8.533333-8.533333-8.533333-14.933333 0-6.4 0-12.8 4.266666-19.2 4.266667-4.266667 8.533333-8.533333 14.933334-8.533333 4.266667-2.133333 42.666667-8.533333 89.6-10.666667 12.8-55.466667 38.4-110.933333 74.666666-157.866667 0-2.133333-2.133333-4.266667-2.133333-6.4 0-34.133333 4.266667-145.066667 49.066667-174.933333 61.866667-38.4 157.866667 12.8 192 34.133333 19.2-2.133333 36.266667-4.266667 55.466666-4.266666 17.066667 0 32 2.133333 49.066667 4.266666 36.266667-21.333333 130.133333-68.266667 189.866667-32 46.933333 29.866667 49.066667 149.333333 49.066666 174.933334 0 2.133333 0 4.266667-2.133333 6.4 36.266667 46.933333 59.733333 104.533333 72.533333 160 49.066667 2.133333 87.466667 8.533333 89.6 10.666666 12.8 2.133333 21.333333 14.933333 19.2 27.733334-2.133333 12.8-12.8 19.2-23.466666 19.2h-4.266667-2.133333c-27.733333-4.266667-53.333333-6.4-72.533334-8.533334v19.2c0 8.533333 0 17.066667-2.133333 25.6 49.066667 17.066667 85.333333 40.533333 85.333333 40.533334 17.066667 6.4 21.333333 19.2 14.933334 32zM194.133333 616.533333c34.133333 130.133333 179.2 189.866667 324.266667 189.866667 168.533333 0 285.866667-72.533333 313.6-189.866667-23.466667-4.266667-46.933333-4.266667-64 0-6.4 2.133333-12.8 2.133333-17.066667-2.133333-6.4-4.266667-8.533333-8.533333-10.666666-14.933333-2.133333-4.266667 0-12.8 2.133333-17.066667 4.266667-6.4 8.533333-8.533333 14.933333-10.666667 25.6-6.4 55.466667-6.4 81.066667-2.133333v-12.8c0-6.4 0-14.933333-2.133333-21.333333-25.6 2.133333-57.6 4.266667-70.4 6.4h-6.4c-10.666667 0-19.2-8.533333-21.333334-19.2-2.133333-6.4 0-12.8 2.133334-17.066667 4.266667-6.4 8.533333-8.533333 14.933333-10.666667 23.466667-6.4 49.066667-8.533333 74.666667-10.666666-29.866667-119.466667-128-232.533333-256-258.133334h-8.533334c-2.133333 0-6.4-2.133333-8.533333-4.266666-12.8-2.133333-25.6-2.133333-38.4-2.133334-17.066667 0-34.133333 2.133333-49.066667 4.266667-2.133333 0-4.266667 2.133333-6.4 2.133333h-2.133333c-51.2 10.666667-98.133333 34.133333-140.8 68.266667-59.733333 49.066667-104.533333 117.333333-121.6 187.733333 25.6 2.133333 51.2 4.266667 72.533333 10.666667 12.8 4.266667 19.2 17.066667 14.933334 27.733333-2.133333 10.666667-10.666667 19.2-21.333334 19.2h-6.4c-21.333333-6.4-44.8-8.533333-70.4-8.533333 0 8.533333-2.133333 17.066667-2.133333 23.466667v12.8c27.733333-4.266667 55.466667-6.4 81.066667 2.133333 12.8 4.266667 19.2 17.066667 14.933333 27.733333-2.133333 6.4-6.4 10.666667-12.8 14.933334-4.266667 2.133333-10.666667 2.133333-14.933333 2.133333-14.933333-2.133333-36.266667-2.133333-59.733334 2.133333zM270.933333 277.333333c6.4-4.266667 12.8-10.666667 17.066667-14.933333 34.133333-27.733333 70.4-46.933333 108.8-61.866667-34.133333-17.066667-76.8-27.733333-100.266667-12.8-10.666667 6.4-21.333333 44.8-25.6 89.6z m486.4-2.133333c-4.266667-42.666667-14.933333-78.933333-25.6-85.333333-23.466667-14.933333-61.866667-4.266667-96 10.666666 42.666667 12.8 85.333333 40.533333 121.6 74.666667z" fill="#3E3836"/></svg></span>
             <span class="chat-title">猫咪皮肤红肿掉毛怎么处理</span>
             <span class="chat-time">昨天</span>
-          </li>
-        </ul>
-      </div>
-
-      <!-- 产品设计说明 -->
-      <div class="section">
-        <div class="section-header">
-          <span class="section-title">产品设计说明</span>
-          <span class="section-count">(3)</span>
-        </div>
-        <ul class="doc-list">
-          <li class="doc-item">
-            <span class="doc-icon"><svg viewBox="0 0 1024 1024" width="16" height="16" aria-hidden="true"><path d="M191.4 765.1c0 22.6 18.3 41 41 41h158.1c22.6 0 41-18.3 41-41 0-22.6-18.3-41-41-41H232.3c-22.6 0-40.9 18.3-40.9 41zM889.3 855.1h-40.9 16.2c13.8-0.8 24.7-12.2 24.7-26.2v26.2zM141.3 855.2h40.9H166c-13.8-0.8-24.7-12.2-24.7-26.2v26.2zM889.3 549.6h-40.9 16.2c13.8 0.8 24.7 12.2 24.7 26.2v-26.2zM809.6 346.9h-40.9 16.2c13.8 0.8 24.7 12.2 24.7 26.2v-26.2zM141.6 244h40.9-16.2c-13.8 0.8-24.7 12.2-24.7 26.2V244z" fill="#3E3836"/><path d="M906.1 468.1H232.3c-22.6 0-41 18.3-41 41 0 22.6 18.3 41 41 41h657v305.1h-748V244.1h287.3l52.7 81.4a40.98 40.98 0 0 0 36.1 21.5h291.9v63.4c0 22.6 18.3 41 41 41s41-18.3 41-41v-83.2c-3.2-34.7-32.3-61.8-67.8-61.8H769v-0.2H539.9L486 181.9l-0.6-0.9c-7.3-11.3-20-18.9-34.5-18.9H182.3v0.1h-54.5c-37.6 0-68.1 30.5-68.1 68.1v0.5h-0.1v643.6c2.4 32.8 28 59.1 60.5 62.6h787c33.1-1.5 60-26.6 64.3-58.9V529.7c-3.3-33.7-31.1-60.3-65.3-61.6z" fill="#3E3836"/></svg></span>
-            <span class="doc-title">产品框架图</span>
-          </li>
-          <li class="doc-item">
-            <span class="doc-icon"><svg viewBox="0 0 1024 1024" width="16" height="16" aria-hidden="true"><path d="M191.4 765.1c0 22.6 18.3 41 41 41h158.1c22.6 0 41-18.3 41-41 0-22.6-18.3-41-41-41H232.3c-22.6 0-40.9 18.3-40.9 41zM889.3 855.1h-40.9 16.2c13.8-0.8 24.7-12.2 24.7-26.2v26.2zM141.3 855.2h40.9H166c-13.8-0.8-24.7-12.2-24.7-26.2v26.2zM889.3 549.6h-40.9 16.2c13.8 0.8 24.7 12.2 24.7 26.2v-26.2zM809.6 346.9h-40.9 16.2c13.8 0.8 24.7 12.2 24.7 26.2v-26.2zM141.6 244h40.9-16.2c-13.8 0.8-24.7 12.2-24.7 26.2V244z" fill="#3E3836"/><path d="M906.1 468.1H232.3c-22.6 0-41 18.3-41 41 0 22.6 18.3 41 41 41h657v305.1h-748V244.1h287.3l52.7 81.4a40.98 40.98 0 0 0 36.1 21.5h291.9v63.4c0 22.6 18.3 41 41 41s41-18.3 41-41v-83.2c-3.2-34.7-32.3-61.8-67.8-61.8H769v-0.2H539.9L486 181.9l-0.6-0.9c-7.3-11.3-20-18.9-34.5-18.9H182.3v0.1h-54.5c-37.6 0-68.1 30.5-68.1 68.1v0.5h-0.1v643.6c2.4 32.8 28 59.1 60.5 62.6h787c33.1-1.5 60-26.6 64.3-58.9V529.7c-3.3-33.7-31.1-60.3-65.3-61.6z" fill="#3E3836"/></svg></span>
-            <span class="doc-title">设计流程</span>
-          </li>
-          <li class="doc-item">
-            <span class="doc-icon"><svg viewBox="0 0 1024 1024" width="16" height="16" aria-hidden="true"><path d="M191.4 765.1c0 22.6 18.3 41 41 41h158.1c22.6 0 41-18.3 41-41 0-22.6-18.3-41-41-41H232.3c-22.6 0-40.9 18.3-40.9 41zM889.3 855.1h-40.9 16.2c13.8-0.8 24.7-12.2 24.7-26.2v26.2zM141.3 855.2h40.9H166c-13.8-0.8-24.7-12.2-24.7-26.2v26.2zM889.3 549.6h-40.9 16.2c13.8 0.8 24.7 12.2 24.7 26.2v-26.2zM809.6 346.9h-40.9 16.2c13.8 0.8 24.7 12.2 24.7 26.2v-26.2zM141.6 244h40.9-16.2c-13.8 0.8-24.7 12.2-24.7 26.2V244z" fill="#3E3836"/><path d="M906.1 468.1H232.3c-22.6 0-41 18.3-41 41 0 22.6 18.3 41 41 41h657v305.1h-748V244.1h287.3l52.7 81.4a40.98 40.98 0 0 0 36.1 21.5h291.9v63.4c0 22.6 18.3 41 41 41s41-18.3 41-41v-83.2c-3.2-34.7-32.3-61.8-67.8-61.8H769v-0.2H539.9L486 181.9l-0.6-0.9c-7.3-11.3-20-18.9-34.5-18.9H182.3v0.1h-54.5c-37.6 0-68.1 30.5-68.1 68.1v0.5h-0.1v643.6c2.4 32.8 28 59.1 60.5 62.6h787c33.1-1.5 60-26.6 64.3-58.9V529.7c-3.3-33.7-31.1-60.3-65.3-61.6z" fill="#3E3836"/></svg></span>
-            <span class="doc-title">技术选型/工具</span>
           </li>
         </ul>
       </div>
@@ -154,8 +138,6 @@ HOMEPAGE_HTML = """
 
     <div class="main-scroll">
       <div class="main-inner">
-      <!-- 聊天交互区域（空态隐藏，发送后显示） -->
-      <section class="chat-area" id="chatArea"></section>
 
       <!-- Hero -->
       <section class="hero">
@@ -170,6 +152,9 @@ HOMEPAGE_HTML = """
           <img src="file=asset/middle.jpg" alt="宠医助手" />
         </div>
       </section>
+
+      <!-- 聊天交互区域（空态隐藏，发送后显示；置于 hero 之后：其长高只会把下方的输入区/卡片往下推，hero 保持顶部，向上移出） -->
+      <section class="chat-area" id="chatArea"></section>
 
       <!-- 输入区 -->
       <div class="input-area">
@@ -234,6 +219,11 @@ HOMEPAGE_HTML = """
 
       </section>
       </div>
+
+      <!-- 聊天态底部遮罩：置于 main-scroll 内部、main-inner 之后。
+           sticky bottom:0 相对滚动容器可视区固定 → 不随内容滚动；
+           滚动条属于 main-scroll、绘制在其内容之上 → 遮罩永远不会盖住滚动条 -->
+      <div class="chat-mask" id="chatMask"></div>
     </div>
 
     <!-- 免责声明：始终固定在屏幕底部 -->
@@ -374,10 +364,113 @@ JS_CODE = """
     const chatArea = document.getElementById('chatArea');
     const textarea = document.querySelector('.input-textarea');
     const sendBtn = document.querySelector('.send-btn');
+    const chatList = document.querySelector('.chat-list');
+    const sectionCount = document.querySelector('.section-count');
+    const chatMask = document.getElementById('chatMask');
     if (!inner || !chatArea || !textarea || !sendBtn) return;
 
+    /* 底部遮罩高度与输入区同步：遮罩需覆盖输入区（bottom:44px）及其下方。
+       chat-area 沉底后其底部 = main-inner 底部 = 遮罩顶部（遮罩紧跟 main-inner 之后），
+       故 chat-area 底部留白固定 20px，最后一条消息停在输入区上方约 20px。 */
+    function syncChatMask() {
+      if (!chatMask) return;
+      const ia = document.querySelector('.input-area');
+      if (!ia) return;
+      const h = 44 + ia.offsetHeight;
+      chatMask.style.height = h + 'px';
+      chatArea.style.paddingBottom = '20px';
+    }
+    if (window.ResizeObserver) {
+      const ia = document.querySelector('.input-area');
+      if (ia) new ResizeObserver(syncChatMask).observe(ia);
+    }
+    if (textarea) textarea.addEventListener('input', syncChatMask);
+
+    /* 会话数据（纯内存：刷新即清空） */
+    let conversations = [];
+    let currentConvoId = null;
+
+    function nowTime() {
+      const d = new Date();
+      return (
+        d.getHours().toString().padStart(2, '0') +
+        ':' +
+        d.getMinutes().toString().padStart(2, '0')
+      );
+    }
+
+    function updateConvoCount() {
+      if (sectionCount && chatList) {
+        sectionCount.textContent = '(' + chatList.children.length + ')';
+      }
+    }
+
+    /* 新建会话：标题 = 首条消息，置顶插入「最近对话」，历史条目顺次下推 */
+    function addConversation(title) {
+      const convo = {
+        id: 'c' + Date.now(),
+        title: title,
+        time: nowTime(),
+        msgs: []
+      };
+      conversations.unshift(convo);
+      currentConvoId = convo.id;
+      const iconHTML = chatList
+        ? (chatList.querySelector('.chat-item .chat-ico') || {}).innerHTML || ''
+        : '';
+      const li = document.createElement('li');
+      li.className = 'chat-item chat-item-new';
+      li.dataset.cid = convo.id;
+      li.innerHTML =
+        '<span class="chat-ico">' + iconHTML + '</span>' +
+        '<span class="chat-title"></span>' +
+        '<span class="chat-time"></span>';
+      li.querySelector('.chat-title').textContent = convo.title;
+      li.querySelector('.chat-time').textContent = convo.time;
+      chatList.insertBefore(li, chatList.firstChild);
+      updateConvoCount();
+      return convo;
+    }
+
+    function getCurrentConvo() {
+      for (var i = 0; i < conversations.length; i++) {
+        if (conversations[i].id === currentConvoId) return conversations[i];
+      }
+      return null;
+    }
+
+    /* 新建任务：结束当前会话，回到空态首页。之后的首次发送会新建会话条目，
+       这样同一页面内可积累多个会话（「最近对话」条目变多后支持内部滚动） */
+    function resetChat() {
+      currentConvoId = null;
+      chatArea.innerHTML = '';
+      chatArea.classList.remove('msg-in');
+      inner.classList.remove('chat-mode');
+      inner.style.transition = '';
+      inner.style.justifyContent = '';
+      inner.style.paddingTop = '';
+      if (textarea) textarea.innerText = '';
+      /* 复位遮罩/留白为 CSS 默认值（chat-mode 移除后遮罩自动隐藏） */
+      if (chatMask) {
+        chatMask.style.height = '';
+        chatMask.classList.remove('show');
+      }
+      chatArea.style.paddingBottom = '';
+      /* 输入区移回 main-inner（hero 与 quick-start 之间），恢复空态文档流布局 */
+      const ia = document.querySelector('.input-area');
+      if (ia && ia.parentElement !== inner) {
+        ia.classList.remove('chat-fixed');
+        const qs = inner.querySelector('.quick-start');
+        if (qs) inner.insertBefore(ia, qs);
+        else inner.appendChild(ia);
+      }
+      const sc = document.querySelector('.main-scroll');
+      if (sc) sc.scrollTop = 0;
+    }
+
     function scrollChatBottom() {
-      chatArea.scrollTop = chatArea.scrollHeight;
+      const sc = document.querySelector('.main-scroll');
+      if (sc) sc.scrollTop = sc.scrollHeight;
     }
 
     function addUserMsg(text) {
@@ -388,6 +481,12 @@ JS_CODE = """
         '<div class="avatar avatar-user">宠</div>';
       row.querySelector('.bubble-body').textContent = text;
       chatArea.appendChild(row);
+      /* 入场动画期间允许溢出（气泡从画面中部浮入，chat-area 尚在长高） */
+      chatArea.classList.add('msg-in');
+      clearTimeout(chatArea._msgInTimer);
+      chatArea._msgInTimer = setTimeout(function () {
+        chatArea.classList.remove('msg-in');
+      }, 520);
       scrollChatBottom();
     }
 
@@ -453,12 +552,44 @@ JS_CODE = """
       textarea.innerText = '';
       if (!inner.classList.contains('chat-mode')) {
         inner.classList.add('chat-mode');
+        /* 先量取布局偏移（此刻 input-area 仍在 inner 文档流中，布局为空态） */
+        const ir = inner.getBoundingClientRect();
+        const hr = inner.querySelector('.hero').getBoundingClientRect();
+        /* 再移动输入区：absolute 元素位于滚动容器（main-scroll）内部时，
+           会随滚动内容一起移动（实测 iaTop = 651 - scrollTop）。
+           把 input-area 移到 main-area（position:relative）下、main-scroll 之外，
+           containing block 变为 main-area，彻底脱离滚动流，固定在中间区域底部 */
+        const ma = document.querySelector('.main-area');
+        const ia = document.querySelector('.input-area');
+        if (ma && ia) {
+          ma.appendChild(ia);
+          ia.classList.add('chat-fixed');
+        }
+        if (chatMask) chatMask.classList.add('show');
+        /* 布局切换：center → flex-start。为消除瞬间跳变，
+           先量出 hero 当前相对 main-inner 的偏移，用 padding-top 补偿使其原位落位，
+           再让 padding-top 过渡到默认值 —— hero 被确定性地向上移出；
+           chat-area 与输入区由 flex 布局自然推到底部 */
+        inner.style.transition = 'none'; /* 临时禁用过渡，补偿落位瞬间不产生动画 */
+        inner.style.justifyContent = 'flex-start';
+        inner.style.paddingTop = (hr.top - ir.top) + 'px';
+        chatArea.offsetHeight; /* 强制重排：补偿后的布局落位 */
+        inner.style.transition = ''; /* 恢复 CSS 过渡 */
+        requestAnimationFrame(function () {
+          inner.style.paddingTop = ''; /* 清空内联补偿，过渡回 CSS 默认 padding-top */
+        });
       }
+      /* 会话记录：首次发送新建条目（标题 = 首条消息）置顶插入最近对话 */
+      let convo = getCurrentConvo();
+      if (!convo) convo = addConversation(text);
+      convo.msgs.push({ role: 'user', text: text });
       addUserMsg(text);
       const thinking = addThinkingMsg();
       setTimeout(function () {
         thinking.remove();
-        typeText(addBotMsg(), getBotReply(text));
+        const botText = getBotReply(text);
+        convo.msgs.push({ role: 'bot', text: botText });
+        typeText(addBotMsg(), botText);
       }, 1000);
     }
 
@@ -468,6 +599,10 @@ JS_CODE = """
         e.preventDefault();
         send();
       }
+    });
+    /* 新建任务按钮（左侧 + 折叠栏）：开启新会话，回到空态 */
+    document.querySelectorAll('.new-task-btn, .collapsed-tool').forEach(function (b) {
+      b.addEventListener('click', resetChat);
     });
   }
 
@@ -662,17 +797,46 @@ div:has(> .app-shell) { padding: 0 !important; margin: 0 !important; background:
   text-decoration: none !important;
   transition: background 150ms var(--ease);
 }
-.nav-item:hover { background: rgba(255, 255, 255, 0.8); color: #6B5045; }
+.nav-item:hover { background: #FAF3EC; color: #6B5045; }
 .nav-item.active { color: #6B5045; background: transparent; box-shadow: none; }
+/* active 项也响应 hover：.nav-item.active:hover 特异性更高，覆盖上面 transparent */
+.nav-item.active:hover { background: #FAF3EC; color: #6B5045; }
 .nav-icon { width: 18px; height: 18px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
 
-/* 分栏 */
-.section { margin-bottom: 12px; }
-.section-header { display: flex; align-items: center; justify-content: flex-start; gap: 6px; margin-bottom: 6px; padding: 0; }
+/* 分栏：固定总高度，条目过多时内部滚动，不顶走底部装饰图 */
+.section {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+  margin-bottom: 0;
+}
+.section-header { display: flex; align-items: center; justify-content: flex-start; gap: 6px; margin-bottom: 6px; padding: 0; flex-shrink: 0; }
 .section-title { font-size: 12px; font-weight: 500; color: #A89F93 !important; line-height: 1.4; }
 .section-count { font-size: 12px; font-weight: 500; color: #A89F93 !important; line-height: 1.4; }
 
-.chat-list, .doc-list { list-style: none; margin: 0; padding: 0 !important; }
+.chat-list {
+  list-style: none;
+  margin: 0;
+  padding: 0 !important;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  /* Firefox：默认 20% 不透明，悬停侧边栏时提升为 50%（与中间区域一致） */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(111, 103, 99, 0.2) transparent;
+  transition: scrollbar-color 150ms var(--ease);
+}
+/* Chrome/Edge WebKit 滚动条（与中间区域配色一致） */
+.chat-list::-webkit-scrollbar { width: 8px; }
+.chat-list::-webkit-scrollbar-track { background: transparent; }
+.chat-list::-webkit-scrollbar-thumb {
+  background: rgba(111, 103, 99, 0.2);
+  border-radius: 4px;
+}
+.chat-list::-webkit-scrollbar-thumb:hover { background: #6F6763; }
+.left-sidebar:hover .chat-list::-webkit-scrollbar-thumb { background: rgba(111, 103, 99, 0.5); }
+.left-sidebar:hover .chat-list { scrollbar-color: rgba(111, 103, 99, 0.5) transparent; }
 .chat-item {
   display: flex;
   align-items: center;
@@ -682,7 +846,13 @@ div:has(> .app-shell) { padding: 0 !important; margin: 0 !important; background:
   cursor: pointer;
   transition: background 150ms var(--ease);
 }
-.chat-item:hover { background: rgba(255, 255, 255, 0.8); }
+.chat-item:hover { background: #FAF3EC; }
+/* 新会话条目淡入 */
+.chat-item-new { animation: chatItemIn 240ms var(--ease); }
+@keyframes chatItemIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
 .chat-ico { width: 16px; height: 16px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
 .chat-title {
   flex: 1;
@@ -695,16 +865,11 @@ div:has(> .app-shell) { padding: 0 !important; margin: 0 !important; background:
 }
 .chat-time { color: #A89F93 !important; font-size: 10px; font-weight: 500; line-height: 1.4; flex-shrink: 0; }
 
-.doc-item { display: flex; align-items: center; gap: 8px; padding: 3px 8px; border-radius: 8px; cursor: pointer; transition: background 150ms var(--ease); }
-.doc-item:hover { background: rgba(255, 255, 255, 0.8); }
-.doc-icon { width: 15px; height: 15px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
-.doc-title { font-size: 13px; line-height: 1.3; color: #3E3836; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-
 /* 底部装饰图：完整显示 */
 .left-footer {
-  margin-top: auto;
   padding: 12px 4px 14px;
   text-align: left;
+  flex-shrink: 0;
 }
 .left-footer img {
   width: 100%;
@@ -837,10 +1002,14 @@ div:has(> .app-shell) { padding: 0 !important; margin: 0 !important; background:
   flex-direction: column;
   justify-content: center;
   padding: 40px 22px 52px;
+  transition: padding-top 480ms var(--ease);
 }
 
 /* Hero */
-.hero { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-bottom: 30px; max-height: 320px; transition: max-height 480ms var(--ease), opacity 480ms var(--ease), transform 480ms var(--ease); }
+.hero { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-bottom: 30px; max-height: 240px; flex-shrink: 0; transition: max-height 480ms var(--ease), opacity 480ms var(--ease), transform 480ms var(--ease), margin-bottom 480ms var(--ease); }
+/* hero 子元素（slogan/插图）同步上移：避免容器高度塌缩时 align-items:center
+   造成的居中对称裁剪（视觉上内容向下沉），改为内容向上穿出容器顶部 */
+.hero-text, .hero-image { transition: transform 480ms var(--ease); }
 .hero-title {
   font-size: 28px;
   font-weight: 700;
@@ -861,7 +1030,7 @@ div:has(> .app-shell) { padding: 0 !important; margin: 0 !important; background:
 }
 
 /* 快速开始 */
-.quick-start { margin: 0; max-height: 500px; transition: max-height 480ms var(--ease), opacity 480ms var(--ease), transform 480ms var(--ease); }
+.quick-start { margin: 0; max-height: 200px; flex-shrink: 0; transition: max-height 480ms var(--ease), opacity 480ms var(--ease), transform 480ms var(--ease); }
 .quick-title {
   text-align: left;
   font-size: 14px;
@@ -948,13 +1117,26 @@ div:has(> .app-shell) { padding: 0 !important; margin: 0 !important; background:
 
 /* 聊天记录 */
 .chat-history { padding: 2px 0 4px; }
-.message { display: flex; gap: 10px; margin-bottom: 12px; align-items: flex-start; }
+.message {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 12px;
+  align-items: flex-start;
+  min-width: 0;
+}
 .message-user { flex-direction: row; justify-content: flex-end; }
 .avatar { width: 36px; height: 36px; border-radius: 999px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; }
 .avatar-bot { background: #F9F1E9; overflow: hidden; }
 .avatar-bot img { width: 100%; height: 100%; object-fit: cover; }
 .avatar-user { background: #C7A18E; color: #FFFFFF; }
-.bubble { max-width: 72%; border-radius: 2px 18px 18px 18px; padding: 8px 12px; font-size: 14px; line-height: 1.5; }
+.bubble {
+  max-width: 72%;
+  border-radius: 2px 18px 18px 18px;
+  padding: 8px 12px;
+  font-size: 14px;
+  line-height: 1.5;
+  overflow: hidden;
+}
 .bubble-bot { background: #FFFFFF; border: 1.5px solid #F8F1EB; }
 .bubble-user {
   background: #FAF3EC !important;
@@ -964,9 +1146,9 @@ div:has(> .app-shell) { padding: 0 !important; margin: 0 !important; background:
 .bubble-header { display: flex; align-items: center; gap: 4px; margin-bottom: 3px; }
 .bubble-name { font-size: 13px; font-weight: 400; color: #6B5045; line-height: 1.3; }
 .bubble-paw { font-size: 12px; }
-.bubble-body { white-space: normal; word-break: break-word; }
+.bubble-body { white-space: normal; word-break: break-word; min-width: 0; }
 .bubble-time { font-size: 10px; font-weight: 500; color: #A89F93 !important; line-height: 1.4; margin-top: 4px; }
-.bubble-thinking { background: #FFF9F5 !important; border: 1px dashed #E8D9C8; }
+/* 思考中气泡：不设独立样式，完全复用 .bubble-bot（白底 + 实线边框），仅以「思考中」文案与跳动点区分状态 */
 .thinking-dots { display: inline-flex; gap: 3px; margin-left: 5px; vertical-align: middle; }
 .thinking-dots span {
   width: 5px; height: 5px;
@@ -988,27 +1170,69 @@ div:has(> .app-shell) { padding: 0 !important; margin: 0 !important; background:
   display: none;
   flex-direction: column;
   gap: 14px;
-  flex: 1;
-  min-height: 0;
-  overflow-y: auto;
+  width: 100%;
   padding: 4px 0 16px;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(111, 103, 99, 0.2) transparent;
 }
-.chat-area::-webkit-scrollbar { width: 8px; }
-.chat-area::-webkit-scrollbar-track { background: transparent; }
-.chat-area::-webkit-scrollbar-thumb { background: rgba(111, 103, 99, 0.2); border-radius: 4px; }
-.chat-area::-webkit-scrollbar-thumb:hover { background: #6F6763; }
-.main-area:hover .chat-area::-webkit-scrollbar-thumb { background: rgba(111, 103, 99, 0.5); }
-.main-area:hover .chat-area { scrollbar-color: rgba(111, 103, 99, 0.5) transparent; }
 
 .main-inner.chat-mode {
-  height: 100%;
-  justify-content: flex-start;
-  padding-bottom: 44px;
+  /* 聊天态：内容可多可少；少时由 margin-top:auto 把 chat-area 沉到底部，
+     多时自然撑开让外层 main-scroll 滚动，滚动条在中间区域最右侧 */
+  min-height: 100%;
+  /* 底部占位交给 .chat-mask（main-inner 之后的 sticky 元素），
+     这里不再需要额外 padding-bottom */
+  padding-bottom: 0;
 }
-.main-inner.chat-mode .chat-area { display: flex; }
-.main-inner.chat-mode .input-area { margin-bottom: 0; }
+.main-inner.chat-mode .chat-area {
+  display: flex;
+  /* margin-top:auto 让 chat-area 沉到 main-inner 底部：
+     消息少时不依赖 scrollTop 也停在输入区上方；
+     消息多时 chat-area 自然撑开，main-scroll 滚动到底。
+     底部留白由 syncChatMask 动态设为「遮罩高度 + 20px」，
+     确保最后一条消息停在输入区（遮罩）上方约 20px。 */
+  margin-top: auto;
+  padding-bottom: 20px;
+}
+.input-area.chat-fixed {
+  margin-bottom: 0;
+  /* 聊天态由 JS 将 input-area 移动到 main-area 下（main-scroll 之外），
+     containing block = main-area（position:relative），彻底脱离滚动流，
+     固定在中间区域底部，不受 hero/chat-area 动画与滚动影响 */
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 44px; /* 距 main-area 底部 44px，disclaimer 在其下约 15px 处 */
+  max-width: 768px;
+  margin-left: auto;
+  margin-right: auto;
+  /* 与 .main-inner 的横向 padding 一致，输入框与内容区左右对齐 */
+  padding: 0 22px;
+  /* 背景透明：输入区不再覆盖右侧滚动条；输入区背后及下方漏出的内容
+     统一由 main-area 下的 .chat-mask 遮挡（滚动条绘制在遮罩之上） */
+  background: transparent;
+  z-index: 10;
+  /* 聊天态出现时淡入上浮，掩盖从文档流切换为 absolute 的瞬间 */
+  animation: inputAreaIn 480ms var(--ease) both;
+}
+
+/* 聊天态底部遮罩：置于 main-scroll 内部（main-inner 之后）。
+   sticky bottom:0 相对滚动容器可视区固定 → 不随内容滚动，始终覆盖
+   输入区（bottom:44px + 输入框高度）及其下方的漏出区；
+   滚动条属于 main-scroll 且绘制在其内容之上 → 遮罩永远盖不住滚动条。
+   高度默认 220px，JS 按输入区实际高度动态同步 */
+.chat-mask {
+  display: none;
+  position: sticky;
+  bottom: 0;
+  height: 220px;
+  background: #FDFCFA;
+  pointer-events: none;
+  flex-shrink: 0;
+}
+.chat-mask.show { display: block; }
+@keyframes inputAreaIn {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
 /* 空态区块移出动画：高度塌缩 + 位移 + 淡出 */
 .main-inner.chat-mode .hero {
   max-height: 0;
@@ -1017,12 +1241,33 @@ div:has(> .app-shell) { padding: 0 !important; margin: 0 !important; background:
   overflow: hidden;
   margin-bottom: 0;
 }
+.main-inner.chat-mode .hero-text,
+.main-inner.chat-mode .hero-image {
+  transform: translateY(-60px);
+}
 .main-inner.chat-mode .quick-start {
   max-height: 0;
   transform: translateY(60px);
   opacity: 0;
   overflow: hidden;
 }
+
+/* 消息入场动画：
+   用户气泡从画面中部快速渐入，随后上移至顶部位置；
+   bot 气泡（含思考中）淡入上浮 */
+@keyframes userBubbleIn {
+  0%   { opacity: 0; transform: translateY(45vh) scale(0.97); }
+  55%  { opacity: 1; }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+.message-user { animation: userBubbleIn 420ms cubic-bezier(0.22, 0.61, 0.36, 1) both; }
+@keyframes botBubbleIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.message-bot { animation: botBubbleIn 300ms ease-out both; }
+/* 气泡入场动画期间允许溢出 chat-area（其尚在长高动画中，避免顶部裁剪） */
+.chat-area.msg-in { overflow: visible; }
 
 /* 流式输出光标 */
 .type-cursor {
@@ -1036,11 +1281,19 @@ div:has(> .app-shell) { padding: 0 !important; margin: 0 !important; background:
 }
 @keyframes cursorBlink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
 
-/* 输入区：文档流排列在 Hero 与快速开始之间（空态首页布局） */
+/* 输入区：文档流排列在 Hero 与快速开始之间（空态首页布局）
+   聊天态时 sticky 在 main-scroll 底部，保持对话框可见 */
 .input-area {
   width: 100%;
   margin: 0 0 30px;
   padding: 0;
+  flex-shrink: 0;
+  transition: margin-bottom 480ms var(--ease);
+  /* 为 sticky 定位做准备（空态不触发，聊天态 content 超出时生效） */
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+  background: #FDFCFA;
 }
 .input-box {
   display: flex;
@@ -1122,7 +1375,7 @@ div:has(> .app-shell) { padding: 0 !important; margin: 0 !important; background:
   left: 0;
   right: 0;
   bottom: 12px;
-  z-index: 10;
+  z-index: 20; /* 高于输入区及其底部遮罩（z-index:10），确保不被遮罩盖住 */
   text-align: center;
   font-size: 12px;
   font-weight: 500;
