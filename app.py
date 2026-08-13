@@ -231,8 +231,8 @@ HOMEPAGE_HTML = """
 
   </main>
 
-  <!-- 右侧边栏（默认展开） -->
-  <aside class="right-sidebar" id="rightSidebar">
+  <!-- 右侧边栏（默认隐藏；点击开始对话后自动打开） -->
+  <aside class="right-sidebar hidden" id="rightSidebar">
     <div class="right-inner">
       <div class="right-header">
         <div class="right-title">
@@ -367,6 +367,8 @@ JS_CODE = """
     const chatList = document.querySelector('.chat-list');
     const sectionCount = document.querySelector('.section-count');
     const chatMask = document.getElementById('chatMask');
+    const rightPanel = document.getElementById('rightSidebar');
+    const openRightBtn = document.getElementById('openRightBtn');
     if (!inner || !chatArea || !textarea || !sendBtn) return;
 
     /* 底部遮罩高度与输入区同步：遮罩需覆盖输入区（bottom:44px）及其下方。
@@ -385,6 +387,13 @@ JS_CODE = """
       if (ia) new ResizeObserver(syncChatMask).observe(ia);
     }
     if (textarea) textarea.addEventListener('input', syncChatMask);
+
+    /* 发送按钮状态：无文字输入时禁用（浅色 #FAF3EC），有文字后恢复 */
+    function updateSendState() {
+      sendBtn.disabled = !((textarea.innerText || '').trim().length > 0);
+    }
+    textarea.addEventListener('input', updateSendState);
+    updateSendState();
 
     /* 会话数据（纯内存：刷新即清空） */
     let conversations = [];
@@ -450,6 +459,7 @@ JS_CODE = """
       inner.style.justifyContent = '';
       inner.style.paddingTop = '';
       if (textarea) textarea.innerText = '';
+      updateSendState();
       /* 复位遮罩/留白为 CSS 默认值（chat-mode 移除后遮罩自动隐藏） */
       if (chatMask) {
         chatMask.style.height = '';
@@ -558,6 +568,7 @@ JS_CODE = """
       const text = (textarea.innerText || '').trim();
       if (!text) return;
       textarea.innerText = '';
+      updateSendState();
       if (!inner.classList.contains('chat-mode')) {
         inner.classList.add('chat-mode');
         /* 先量取布局偏移（此刻 input-area 仍在 inner 文档流中，布局为空态） */
@@ -574,6 +585,11 @@ JS_CODE = """
           ia.classList.add('chat-fixed');
         }
         if (chatMask) chatMask.classList.add('show');
+        /* 开始对话：自动打开右侧边栏（与手动打开行为一致） */
+        if (rightPanel) {
+          rightPanel.classList.remove('hidden');
+          if (openRightBtn) openRightBtn.style.display = 'none';
+        }
         /* 布局切换：center → flex-start。为消除瞬间跳变，
            先量出 hero 当前相对 main-inner 的偏移，用 padding-top 补偿使其原位落位，
            再让 padding-top 过渡到默认值 —— hero 被确定性地向上移出；
@@ -976,7 +992,7 @@ div:has(> .app-shell) { padding: 0 !important; margin: 0 !important; background:
   background: #FFFFFF !important;
   border: 1px solid #F8F1EB;
   box-shadow: 0 1px 6px rgba(62, 56, 54, 0.08);
-  display: none;
+  display: flex;
 }
 
 .main-scroll {
@@ -1376,6 +1392,15 @@ div:has(> .app-shell) { padding: 0 !important; margin: 0 !important; background:
 }
 .send-btn:hover { background: #9E5F4E !important; }
 .send-btn:active { transform: scale(0.93); }
+/* 无文字输入时：不可点击，浅色占位态（#FAF3EC）；有文字后恢复正常（#B37560） */
+.send-btn:disabled {
+  background: #FAF3EC !important;
+  color: #C7A18E !important;
+  cursor: not-allowed;
+}
+.send-btn:disabled svg { stroke: #C7A18E; }
+.send-btn:disabled:hover { background: #FAF3EC !important; }
+.send-btn:disabled:active { transform: none; }
 /* 免责声明：始终固定在中间区域屏幕底部，不随内容滚动 */
 .disclaimer {
   position: absolute;
@@ -1392,11 +1417,11 @@ div:has(> .app-shell) { padding: 0 !important; margin: 0 !important; background:
 }
 
 /* ============================================================
-   右侧边栏（默认展开，宽 300）
+   右侧边栏（默认隐藏，宽 385）
    ============================================================ */
 .right-sidebar {
   flex: 0 0 auto;
-  width: 400px;
+  width: 385px;
   min-width: 0;
   background: #FDFCFA;
   border-left: 1px solid #F8F1EB;
