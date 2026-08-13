@@ -989,9 +989,11 @@ div:has(> .app-shell) { padding: 0 !important; margin: 0 !important; background:
   top: 12px;
   right: 30px;
   z-index: 20;
-  background: #FFFFFF !important;
-  border: 1px solid #F8F1EB;
-  box-shadow: 0 1px 6px rgba(62, 56, 54, 0.08);
+  /* 右栏默认收起时显示的「打开右栏」图标：去掉白色背景 / 边框 / 阴影，
+     与其他 icon-btn 风格一致（透明，仅 SVG 描边） */
+  background: transparent !important;
+  border: none;
+  box-shadow: none;
   display: flex;
 }
 
@@ -1438,10 +1440,8 @@ div:has(> .app-shell) { padding: 0 !important; margin: 0 !important; background:
   display: flex;
   align-items: center;
   justify-content: space-between;
-  /* padding-top 21px 使收起按钮与左侧收起按钮处于同一高度
-     （左侧：sidebar padding-top 16 + 40px header 内 30px 按钮居中 → 中心 y=36；
-       右侧：padding-top 21 + 30px 按钮居中 → 中心 y=36） */
-  padding: 21px 14px 10px;
+  /* padding-top 16px 使收起按钮顶端与左侧 logo 顶端对齐（sidebar padding-top 16，左侧 logo 顶端 y=16） */
+  padding: 16px 14px 10px;
   border-bottom: 1px solid #F8F1EB;
 }
 .right-title { display: flex; align-items: center; gap: 7px; font-size: 16px; font-weight: 600; color: #6B5045; line-height: 1.4; }
