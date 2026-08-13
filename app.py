@@ -470,7 +470,15 @@ JS_CODE = """
 
     function scrollChatBottom() {
       const sc = document.querySelector('.main-scroll');
-      if (sc) sc.scrollTop = sc.scrollHeight;
+      if (!sc) return;
+      /* 智能滚动：只有当消息内容真正溢出可视区时才滚到底。
+         main-scroll 的可滚动量 = scrollHeight - clientHeight。
+         内容未溢出时，该值恰好等于遮罩高度（main-inner min-height 100%
+         撑满 + 遮罩 151px），此时应保持 scrollTop=0，让第一句停在顶部；
+         内容溢出时该值大于遮罩高度，才滚动到底显示最新消息。 */
+      const maskH = chatMask ? chatMask.offsetHeight : 0;
+      const overflow = sc.scrollHeight - sc.clientHeight;
+      sc.scrollTop = overflow > maskH ? sc.scrollHeight : 0;
     }
 
     function addUserMsg(text) {
@@ -1175,8 +1183,9 @@ div:has(> .app-shell) { padding: 0 !important; margin: 0 !important; background:
 }
 
 .main-inner.chat-mode {
-  /* 聊天态：内容可多可少；少时由 margin-top:auto 把 chat-area 沉到底部，
-     多时自然撑开让外层 main-scroll 滚动，滚动条在中间区域最右侧 */
+  /* 聊天态：内容可多可少；hero 向上移出后，chat-area 从顶部开始排列，
+     第一句对话停在画面顶部（main-inner 的 padding-top 提供留白）；
+     消息多时 chat-area 自然撑开让外层 main-scroll 滚动，滚动条在最右侧 */
   min-height: 100%;
   /* 底部占位交给 .chat-mask（main-inner 之后的 sticky 元素），
      这里不再需要额外 padding-bottom */
@@ -1184,12 +1193,8 @@ div:has(> .app-shell) { padding: 0 !important; margin: 0 !important; background:
 }
 .main-inner.chat-mode .chat-area {
   display: flex;
-  /* margin-top:auto 让 chat-area 沉到 main-inner 底部：
-     消息少时不依赖 scrollTop 也停在输入区上方；
-     消息多时 chat-area 自然撑开，main-scroll 滚动到底。
-     底部留白由 syncChatMask 动态设为「遮罩高度 + 20px」，
-     确保最后一条消息停在输入区（遮罩）上方约 20px。 */
-  margin-top: auto;
+  /* 从顶部排列：第一句对话停在顶部（留白来自 main-inner 的 padding-top）。
+     底部留白固定 20px，滚动到底时最后一条消息停在输入区上方约 20px。 */
   padding-bottom: 20px;
 }
 .input-area.chat-fixed {
