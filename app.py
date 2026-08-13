@@ -1000,10 +1000,12 @@ div:has(> .app-shell) { padding: 0 !important; margin: 0 !important; background:
 .main-area:hover .main-scroll::-webkit-scrollbar-thumb { background: rgba(111, 103, 99, 0.5); }
 .main-area:hover .main-scroll { scrollbar-color: rgba(111, 103, 99, 0.5) transparent; }
 
-/* 内容层：max-width 768px 居中；空态内容整体垂直居中（免责声明除外，固定屏幕底部） */
+/* 内容层：动态宽度 clamp(768px, 57vw, 1000px) 居中；
+   屏幕变宽时内容按比例增长（57vw），封顶 1000px（暂定，后续按效果调整）；
+   空态内容整体垂直居中（免责声明除外，固定屏幕底部） */
 .main-inner {
   width: 100%;
-  max-width: 768px;
+  max-width: clamp(768px, 57vw, 1000px);
   margin: 0 auto;
   min-height: 100%;
   display: flex;
@@ -1206,7 +1208,7 @@ div:has(> .app-shell) { padding: 0 !important; margin: 0 !important; background:
   left: 0;
   right: 0;
   bottom: 44px; /* 距 main-area 底部 44px，disclaimer 在其下约 15px 处 */
-  max-width: 768px;
+  max-width: clamp(768px, 57vw, 1000px);
   margin-left: auto;
   margin-right: auto;
   /* 与 .main-inner 的横向 padding 一致，输入框与内容区左右对齐 */
