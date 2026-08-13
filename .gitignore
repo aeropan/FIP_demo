@@ -24,3 +24,11 @@ logs/
 data/*.csv
 !data/.gitkeep
 # literature/  # 注释掉：source/literature/ 需要进 Git，且仓库根目录没有独立的 literature/ 目录
+
+# Gradio 运行时缓存
+.gradio/
+
+# 本地备份 / 临时调试脚本
+*.bak
+launch_test*.py
+uvicorn_test.py
