@@ -1078,7 +1078,7 @@ div:has(> .app-shell) { padding: 0 !important; margin: 0 !important; background:
 }
 .feature-text { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
 /* 卡片标题：Body-sm 风格（常规字重 400，非粗体），14px */
-.feature-name { font-size: 14px; font-weight: 400; color: #3E3836 !important; line-height: 1.5; }
+.feature-name { font-size: 13px; font-weight: 400; color: #3E3836 !important; line-height: 1.5; }
 
 /* 示例问题（用户色：底 #FDF8F4 框 #F8F1EB 图标 #B47B68） */
 .example-section { margin-bottom: 18px; }
@@ -1141,7 +1141,7 @@ div:has(> .app-shell) { padding: 0 !important; margin: 0 !important; background:
   max-width: 72%;
   border-radius: 2px 18px 18px 18px;
   padding: 8px 12px;
-  font-size: 14px;
+  font-size: 15px;
   line-height: 1.5;
   overflow: hidden;
 }
