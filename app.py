@@ -154,6 +154,9 @@ HOMEPAGE_HTML = """
 
     <div class="main-scroll">
       <div class="main-inner">
+      <!-- 聊天交互区域（空态隐藏，发送后显示） -->
+      <section class="chat-area" id="chatArea"></section>
+
       <!-- Hero -->
       <section class="hero">
         <div class="hero-text">
@@ -161,132 +164,81 @@ HOMEPAGE_HTML = """
             你好，我是宠医助手
             <span class="paw-emoji">🐾</span>
           </h1>
-          <p class="hero-subtitle">专注宠物健康知识问答，为爱宠提供科学、可信赖的医疗建议</p>
+          <p class="hero-subtitle">专注于猫传腹（FIP）的 AI 咨询与知识问答</p>
         </div>
         <div class="hero-image">
           <img src="file=asset/middle.jpg" alt="宠医助手" />
         </div>
       </section>
 
+      <!-- 输入区 -->
+      <div class="input-area">
+        <div class="input-box">
+          <div class="input-text-wrap">
+            <div class="input-textarea" contenteditable="true" aria-label="输入问题"></div>
+          </div>
+          <div class="input-toolbar">
+            <button class="input-tool plus-btn" title="添加附件"><svg viewBox="0 0 1024 1024" width="14" height="14" aria-hidden="true"><path d="M426.666667 426.666667H85.546667A85.418667 85.418667 0 0 0 0 512c0 47.445333 38.314667 85.333333 85.546667 85.333333H426.666667v341.12c0 47.274667 38.186667 85.546667 85.333333 85.546667 47.445333 0 85.333333-38.314667 85.333333-85.546667V597.333333h341.12A85.418667 85.418667 0 0 0 1024 512c0-47.445333-38.314667-85.333333-85.546667-85.333333H597.333333V85.546667A85.418667 85.418667 0 0 0 512 0c-47.445333 0-85.333333 38.314667-85.333333 85.546667V426.666667z" fill="#8C6B5D"/></svg></button>
+            <button class="input-tool template-btn">
+              <span class="template-paw"><svg viewBox="0 0 1304 1024" width="14" height="14" aria-hidden="true"><path d="M82.59529938 450.3801144a150.60833431 128.0248712 90 1 0 256.0497433 4e-8 150.60833431 128.0248712 90 1 0-256.0497433-4e-8Z" fill="#B47B68"/><path d="M1074.58733465 734.21008403a123.50817892 150.6083343 12.07 1 0 62.98638385-294.55762892 123.50817892 150.6083343 12.07 1 0-62.98638385 294.55762892Z" fill="#B47B68"/><path d="M393.39047088 225.47997485a168.1299859 131.60707559 90 1 0 263.21415207 2e-8 168.1299859 131.60707559 90 1 0-263.21415207-2e-8Z" fill="#B47B68"/><path d="M864.14609382 436.84087636a131.60707559 168.1299859 6.71 1 0 39.28998639-333.95668374 131.60707559 168.1299859 6.71 1 0-39.28998639 333.95668373Z" fill="#B47B68"/><path d="M929.47515147 749.26056245c-9.42275492 142.66518562-147.18187788 219.21533615-310.17217958 208.39084944s-289.53556667-104.6626682-280.34643328-247.40572826 152.55518447-233.23265776 312.19690332-238.91746033c165.09289985 33.1743283 287.74446448 135.18927998 278.32170954 277.93233915z" fill="#B47B68"/></svg></span>
+              <span>症状模板</span>
+              <svg class="caret" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#A99A90" stroke-width="2"><polyline points="6 9 12 15 18 9" /></svg>
+            </button>
+            <div class="toolbar-spacer"></div>
+            <button class="input-tool model-btn" title="选择模型">
+              <span class="model-paw"><svg viewBox="0 0 1304 1024" width="14" height="14" aria-hidden="true"><path d="M82.59529938 450.3801144a150.60833431 128.0248712 90 1 0 256.0497433 4e-8 150.60833431 128.0248712 90 1 0-256.0497433-4e-8Z" fill="#B47B68"/><path d="M1074.58733465 734.21008403a123.50817892 150.6083343 12.07 1 0 62.98638385-294.55762892 123.50817892 150.6083343 12.07 1 0-62.98638385 294.55762892Z" fill="#B47B68"/><path d="M393.39047088 225.47997485a168.1299859 131.60707559 90 1 0 263.21415207 2e-8 168.1299859 131.60707559 90 1 0-263.21415207-2e-8Z" fill="#B47B68"/><path d="M864.14609382 436.84087636a131.60707559 168.1299859 6.71 1 0 39.28998639-333.95668374 131.60707559 168.1299859 6.71 1 0-39.28998639 333.95668373Z" fill="#B47B68"/><path d="M929.47515147 749.26056245c-9.42275492 142.66518562-147.18187788 219.21533615-310.17217958 208.39084944s-289.53556667-104.6626682-280.34643328-247.40572826 152.55518447-233.23265776 312.19690332-238.91746033c165.09289985 33.1743283 287.74446448 135.18927998 278.32170954 277.93233915z" fill="#B47B68"/></svg></span>
+              <span>宠医助手 · Pro</span>
+              <svg class="caret" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#A99A90" stroke-width="2"><polyline points="6 9 12 15 18 9" /></svg>
+            </button>
+            <button class="input-tool mic-btn" title="语音输入">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#6B5045" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" /><path d="M19 10v2a7 7 0 0 1-14 0v-2" /><line x1="12" y1="19" x2="12" y2="23" /><line x1="8" y1="23" x2="16" y2="23" /></svg>
+            </button>
+            <button class="send-btn" title="发送">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#FFFFFF" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13" /><polygon points="22 2 15 22 11 13 2 9 22 2" /></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 快速开始 -->
+      <section class="quick-start">
+        <div class="quick-title">你可以从这里开始</div>
+
       <!-- 功能卡片 -->
       <section class="feature-grid">
         <div class="feature-card">
-          <div class="feature-icon feature-icon-1">
-<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M12 3.5l-2.9 3.1H7.1A4.9 4.9 0 0 0 2.2 11.5v1.9a6.3 6.3 0 0 0 6.3 6.3h7a6.3 6.3 0 0 0 6.3-6.3v-1.9a4.9 4.9 0 0 0-4.9-4.9h-2L12 3.5z" fill="#FFFFFF"/><path d="M8.4 12.4a1.25 1.25 0 1 1 0 2.5 1.25 1.25 0 0 1 0-2.5zm7.2 0a1.25 1.25 0 1 1 0 2.5 1.25 1.25 0 0 1 0-2.5z" fill="#8C5A44"/><path d="M12 14.7c1 0 1.9.5 2.4 1.2l-1.5 1c-.25-.3-.55-.45-.9-.45s-.65.15-.9.45l-1.5-1c.5-.7 1.4-1.2 2.4-1.2z" fill="#8C5A44"/><path d="M6.4 10.9l-2.5.7M17.6 10.9l2.5.7" stroke="#8C5A44" stroke-width="1.2" stroke-linecap="round"/></svg>
+          <div class="feature-icon">
+<svg viewBox="0 0 1024 1024" width="22" height="22" aria-hidden="true"><path d="M298.709333 298.666667c0-23.594667 19.072-42.666667 42.666667-42.666667h298.666667a42.666667 42.666667 0 0 1 0 85.333333H341.333333a42.666667 42.666667 0 0 1-42.666666-42.666666z m42.666667 128a42.666667 42.666667 0 1 0 0 85.333333h128a42.666667 42.666667 0 1 0 0-85.333333H341.333333z" fill="#8C6B5D" p-id="14580"></path><path d="M706.730667 57.728c-41.941333-4.394667-94.464-4.394667-160.298667-4.394667h-37.290667c-80.768 0-145.408 0-196.096 6.4-52.224 6.741333-96 20.821333-130.858666 53.76-35.328 33.408-50.773333 75.690667-57.941334 126.208-6.912 48.384-6.912 109.824-6.912 185.728v262.4c0 34.048 0 61.696 1.450667 84.309334 1.578667 23.210667 4.821333 43.861333 12.629333 63.701333a213.546667 213.546667 0 0 0 128.64 122.026667c36.608 12.842667 99.413333 12.842667 165.76 12.8 121.173333 0 193.066667 0.042667 252.117334-20.736 94.72-33.365333 170.325333-104.32 206.293333-195.456 12.032-30.378667 17.365333-63.018667 19.925333-102.101334 2.56-38.4 2.56-85.930667 2.56-146.432V395.733333c0-61.824 0-111.872-4.736-151.808-4.864-41.6-15.232-77.312-39.552-107.946666a213.589333 213.589333 0 0 0-44.16-41.728c-31.744-22.485333-68.48-32-111.530666-36.522667zM239.061333 174.208c16.768-15.786667 40.533333-26.112 84.48-31.658667 44.8-5.76 104.106667-5.76 188.501334-5.76h32.128c68.565333 0 116.864 0 153.984 3.84 36.394667 3.84 57.088 11.008 72.32 21.76 10.282667 7.296 19.370667 15.872 26.922666 25.472 10.88 13.781333 18.176 32.213333 22.058667 65.792 4.053333 34.56 4.096 79.658667 4.096 144.64v123.776c0 11.392 0 38.570667-11.946667 58.752-7.338667 12.416-16.810667 22.784-26.496 28.117334a109.781333 109.781333 0 0 1-52.693333 13.312l-44.330667-1.578667a191.829333 191.829333 0 0 0-53.418666 5.12 102.869333 102.869333 0 0 0-72.917334 72.874667c-4.181333 17.493333-5.930667 35.413333-5.12 53.418666l1.621334 44.416c0 19.882667-5.333333 37.333333-14.592 53.461334-5.418667 9.386667-14.805333 18.005333-27.818667 25.6-19.754667 11.52-43.306667 11.52-57.770667 11.648l-42.368 0.128c-78.293333 0-106.666667-0.64-128.213333-8.192A130.346667 130.346667 0 0 1 208.64 805.12c-3.285333-8.362667-5.674667-19.456-6.869333-38.485333-1.28-19.541333-1.28-44.373333-1.28-80.213334v-257.792c0-79.872 0.042667-135.296 5.973333-177.066666 5.76-40.362667 16.213333-61.781333 32.64-77.269334l-0.042667-0.085333z" fill="#8C6B5D" p-id="14581"></path></svg>
           </div>
           <div class="feature-text">
-            <div class="feature-name">智能问诊</div>
-            <div class="feature-desc">描述症状获取初步健康建议</div>
+            <div class="feature-name">什么是猫传腹？</div>
           </div>
         </div>
         <div class="feature-card">
-          <div class="feature-icon feature-icon-2">
-<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M12 7C10.4 5.4 8 4.5 5 4.5v13c3 0 5.4.9 7 2.5 1.6-1.6 4-2.5 7-2.5v-13c-3 0-5.4.9-7 2.5z" fill="#8C6B5D"/><path d="M12 7v13" stroke="#FFFFFF" stroke-width="1.4"/><path d="M7.6 7.8c.8-.25 1.6-.35 2.5-.35M7.6 10.5c.8-.25 1.6-.35 2.5-.35" stroke="#FFFFFF" stroke-width="1.1" stroke-linecap="round"/></svg>
+          <div class="feature-icon">
+<svg viewBox="0 0 1024 1024" width="22" height="22" aria-hidden="true"><path d="M386.304 217.728C457.002667 95.274667 613.546667 53.333333 736 124.010667c122.453333 70.698667 164.394667 227.264 93.696 349.717333l-192 332.544C567.04 928.725333 410.453333 970.666667 288 899.989333c-122.453333-70.698667-164.394667-227.264-93.696-349.717333l192-332.544zM693.333333 197.930667a170.666667 170.666667 0 0 0-233.130666 62.464l-192 332.544a170.666667 170.666667 0 0 0 295.594666 170.666666l192-332.544A170.666667 170.666667 0 0 0 693.333333 197.930667z" fill="#8C6B5D" p-id="15695"></path><path d="M693.909333 666.282667l-406.464-234.666667 42.666667-73.898667 406.464 234.666667-42.666667 73.898667zM653.525333 224.213333l18.474667 10.666667a128 128 0 0 1 46.869333 174.848l-32 55.424-73.92-42.666667 32-55.424a42.666667 42.666667 0 0 0-15.616-58.282666l-18.474666-10.666667 42.666666-73.898667z" fill="#8C6B5D" p-id="15696"></path></svg>
           </div>
           <div class="feature-text">
-            <div class="feature-name">疾病百科</div>
-            <div class="feature-desc">查找猫咪常见疾病信息与护理方法</div>
+            <div class="feature-name">常见的治疗方法</div>
           </div>
         </div>
         <div class="feature-card">
-          <div class="feature-icon feature-icon-3">
-<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M12 2.8l7 2.9v5.4c0 4.5-3 8-7 10-4-2-7-5.5-7-10V5.7l7-2.9z" fill="#FFFFFF"/><path d="M12 7.4v6.2M8.9 10.5h6.2" stroke="#5F7F63" stroke-width="1.7" stroke-linecap="round"/></svg>
+          <div class="feature-icon">
+<svg viewBox="0 0 1024 1024" width="22" height="22" aria-hidden="true"><path d="M704 128C833.621333 128 938.666667 234.666667 938.666667 384c0 298.666667-320 469.333333-426.666667 533.333333-84.352-50.602667-302.208-167.978667-389.589333-362.624L42.666667 554.666667v-85.333334h51.626666A407.552 407.552 0 0 1 85.333333 384c0-149.333333 106.666667-256 234.666667-256C399.36 128 469.333333 170.666667 512 213.333333c42.666667-42.666667 112.64-85.333333 192-85.333333z m0 85.333333c-45.909333 0-95.573333 24.32-131.669333 60.330667L512 333.994667l-60.330667-60.330667C415.573333 237.653333 365.909333 213.333333 320 213.333333 237.226667 213.333333 170.666667 283.989333 170.666667 384c0 29.226667 3.84 57.685333 11.392 85.333333h92.458666L362.666667 322.389333l128 213.333334L530.517333 469.333333H725.333333v85.333334h-146.517333L490.666667 701.610667l-128-213.333334L322.816 554.666667H217.941333c33.706667 58.624 84.693333 113.834667 150.912 166.528 31.786667 25.301333 65.706667 48.896 103.296 72.533333 12.757333 8.064 25.386667 15.786667 39.850667 24.405333 14.464-8.618667 27.093333-16.341333 39.850667-24.362666a1141.418667 1141.418667 0 0 0 103.253333-72.576C782.293333 620.074667 853.333333 509.568 853.333333 384c0-100.693333-65.578667-170.666667-149.333333-170.666667z" fill="#8C6B5D" p-id="23497"></path></svg>
           </div>
           <div class="feature-text">
-            <div class="feature-name">用药查询</div>
-            <div class="feature-desc">查询药品安全性与用药注意事项</div>
+            <div class="feature-name">治疗预期与风险</div>
           </div>
         </div>
       </section>
 
-      <!-- 示例问题 -->
-      <section class="example-section">
-        <div class="example-title">
-          您可以这样问我
-          <button class="refresh-btn" title="换一批">
-            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#8C6B5D" stroke-width="2">
-              <polyline points="23 4 23 10 17 10" />
-              <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
-            </svg>
-          </button>
-        </div>
-        <div class="example-pills">
-          <button class="example-pill">
-            <span class="pill-paw"><svg viewBox="0 0 1304 1024" width="14" height="14" aria-hidden="true"><path d="M82.59529938 450.3801144a150.60833431 128.0248712 90 1 0 256.0497433 4e-8 150.60833431 128.0248712 90 1 0-256.0497433-4e-8Z" fill="#B47B68"/><path d="M1074.58733465 734.21008403a123.50817892 150.6083343 12.07 1 0 62.98638385-294.55762892 123.50817892 150.6083343 12.07 1 0-62.98638385 294.55762892Z" fill="#B47B68"/><path d="M393.39047088 225.47997485a168.1299859 131.60707559 90 1 0 263.21415207 2e-8 168.1299859 131.60707559 90 1 0-263.21415207-2e-8Z" fill="#B47B68"/><path d="M864.14609382 436.84087636a131.60707559 168.1299859 6.71 1 0 39.28998639-333.95668374 131.60707559 168.1299859 6.71 1 0-39.28998639 333.95668373Z" fill="#B47B68"/><path d="M929.47515147 749.26056245c-9.42275492 142.66518562-147.18187788 219.21533615-310.17217958 208.39084944s-289.53556667-104.6626682-280.34643328-247.40572826 152.55518447-233.23265776 312.19690332-238.91746033c165.09289985 33.1743283 287.74446448 135.18927998 278.32170954 277.93233915z" fill="#B47B68"/></svg></span>
-            <span>猫咪突然呕吐，精神正常需要去医院吗？</span>
-          </button>
-          <button class="example-pill">
-            <span class="pill-paw"><svg viewBox="0 0 1304 1024" width="14" height="14" aria-hidden="true"><path d="M82.59529938 450.3801144a150.60833431 128.0248712 90 1 0 256.0497433 4e-8 150.60833431 128.0248712 90 1 0-256.0497433-4e-8Z" fill="#B47B68"/><path d="M1074.58733465 734.21008403a123.50817892 150.6083343 12.07 1 0 62.98638385-294.55762892 123.50817892 150.6083343 12.07 1 0-62.98638385 294.55762892Z" fill="#B47B68"/><path d="M393.39047088 225.47997485a168.1299859 131.60707559 90 1 0 263.21415207 2e-8 168.1299859 131.60707559 90 1 0-263.21415207-2e-8Z" fill="#B47B68"/><path d="M864.14609382 436.84087636a131.60707559 168.1299859 6.71 1 0 39.28998639-333.95668374 131.60707559 168.1299859 6.71 1 0-39.28998639 333.95668373Z" fill="#B47B68"/><path d="M929.47515147 749.26056245c-9.42275492 142.66518562-147.18187788 219.21533615-310.17217958 208.39084944s-289.53556667-104.6626682-280.34643328-247.40572826 152.55518447-233.23265776 312.19690332-238.91746033c165.09289985 33.1743283 287.74446448 135.18927998 278.32170954 277.93233915z" fill="#B47B68"/></svg></span>
-            <span>猫咪眼睛流泪有分泌物，是什么原因？</span>
-          </button>
-          <button class="example-pill">
-            <span class="pill-paw"><svg viewBox="0 0 1304 1024" width="14" height="14" aria-hidden="true"><path d="M82.59529938 450.3801144a150.60833431 128.0248712 90 1 0 256.0497433 4e-8 150.60833431 128.0248712 90 1 0-256.0497433-4e-8Z" fill="#B47B68"/><path d="M1074.58733465 734.21008403a123.50817892 150.6083343 12.07 1 0 62.98638385-294.55762892 123.50817892 150.6083343 12.07 1 0-62.98638385 294.55762892Z" fill="#B47B68"/><path d="M393.39047088 225.47997485a168.1299859 131.60707559 90 1 0 263.21415207 2e-8 168.1299859 131.60707559 90 1 0-263.21415207-2e-8Z" fill="#B47B68"/><path d="M864.14609382 436.84087636a131.60707559 168.1299859 6.71 1 0 39.28998639-333.95668374 131.60707559 168.1299859 6.71 1 0-39.28998639 333.95668373Z" fill="#B47B68"/><path d="M929.47515147 749.26056245c-9.42275492 142.66518562-147.18187788 219.21533615-310.17217958 208.39084944s-289.53556667-104.6626682-280.34643328-247.40572826 152.55518447-233.23265776 312.19690332-238.91746033c165.09289985 33.1743283 287.74446448 135.18927998 278.32170954 277.93233915z" fill="#B47B68"/></svg></span>
-            <span>幼猫软便拉稀，能自愈吗？</span>
-          </button>
-        </div>
-      </section>
-
-      <!-- 聊天记录 -->
-      <section class="chat-history">
-        <div class="message message-bot">
-          <div class="avatar avatar-bot">
-            <img src="file=asset/bot_avatar.jpg" alt="宠医助手" />
-          </div>
-          <div class="bubble bubble-bot">
-            <div class="bubble-body">请告诉我猫咪的症状、年龄、饮食、疫苗情况等信息，我会尽力为您提供参考建议。如有严重情况，请及时就医哦！</div>
-            <div class="bubble-time">10:20</div>
-          </div>
-        </div>
-
-        <div class="message message-user">
-          <div class="bubble bubble-user">
-            <div class="bubble-body">我家猫咪昨天开始打喷嚏，偶尔流鼻涕，精神还可以，吃饭正常，需要担心吗？</div>
-            <div class="bubble-time">10:22</div>
-          </div>
-          <div class="avatar avatar-user">我</div>
-        </div>
-
-        <div class="message message-bot">
-          <div class="avatar avatar-bot">
-            <img src="file=asset/bot_avatar.jpg" alt="宠医助手" />
-          </div>
-          <div class="bubble bubble-bot bubble-thinking">
-            <div class="bubble-body">正在思考中<span class="thinking-dots"><span></span><span></span><span></span></span></div>
-          </div>
-        </div>
       </section>
       </div>
     </div>
 
-    <!-- 输入区：上排文字输入（auto-grow）+ 下排按钮条（独立分层） -->
-    <div class="input-area">
-      <div class="input-box">
-        <div class="input-text-wrap">
-          <div class="input-textarea" contenteditable="true" aria-label="输入问题"></div>
-        </div>
-        <div class="input-toolbar">
-          <button class="input-tool plus-btn" title="添加附件"><svg viewBox="0 0 1024 1024" width="14" height="14" aria-hidden="true"><path d="M426.666667 426.666667H85.546667A85.418667 85.418667 0 0 0 0 512c0 47.445333 38.314667 85.333333 85.546667 85.333333H426.666667v341.12c0 47.274667 38.186667 85.546667 85.333333 85.546667 47.445333 0 85.333333-38.314667 85.333333-85.546667V597.333333h341.12A85.418667 85.418667 0 0 0 1024 512c0-47.445333-38.314667-85.333333-85.546667-85.333333H597.333333V85.546667A85.418667 85.418667 0 0 0 512 0c-47.445333 0-85.333333 38.314667-85.333333 85.546667V426.666667z" fill="#8C6B5D"/></svg></button>
-          <button class="input-tool template-btn">
-            <span class="template-paw"><svg viewBox="0 0 1304 1024" width="14" height="14" aria-hidden="true"><path d="M82.59529938 450.3801144a150.60833431 128.0248712 90 1 0 256.0497433 4e-8 150.60833431 128.0248712 90 1 0-256.0497433-4e-8Z" fill="#B47B68"/><path d="M1074.58733465 734.21008403a123.50817892 150.6083343 12.07 1 0 62.98638385-294.55762892 123.50817892 150.6083343 12.07 1 0-62.98638385 294.55762892Z" fill="#B47B68"/><path d="M393.39047088 225.47997485a168.1299859 131.60707559 90 1 0 263.21415207 2e-8 168.1299859 131.60707559 90 1 0-263.21415207-2e-8Z" fill="#B47B68"/><path d="M864.14609382 436.84087636a131.60707559 168.1299859 6.71 1 0 39.28998639-333.95668374 131.60707559 168.1299859 6.71 1 0-39.28998639 333.95668373Z" fill="#B47B68"/><path d="M929.47515147 749.26056245c-9.42275492 142.66518562-147.18187788 219.21533615-310.17217958 208.39084944s-289.53556667-104.6626682-280.34643328-247.40572826 152.55518447-233.23265776 312.19690332-238.91746033c165.09289985 33.1743283 287.74446448 135.18927998 278.32170954 277.93233915z" fill="#B47B68"/></svg></span>
-            <span>症状模板</span>
-            <svg class="caret" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#A99A90" stroke-width="2"><polyline points="6 9 12 15 18 9" /></svg>
-          </button>
-          <div class="toolbar-spacer"></div>
-          <button class="input-tool model-btn" title="选择模型">
-            <span class="model-paw"><svg viewBox="0 0 1304 1024" width="14" height="14" aria-hidden="true"><path d="M82.59529938 450.3801144a150.60833431 128.0248712 90 1 0 256.0497433 4e-8 150.60833431 128.0248712 90 1 0-256.0497433-4e-8Z" fill="#B47B68"/><path d="M1074.58733465 734.21008403a123.50817892 150.6083343 12.07 1 0 62.98638385-294.55762892 123.50817892 150.6083343 12.07 1 0-62.98638385 294.55762892Z" fill="#B47B68"/><path d="M393.39047088 225.47997485a168.1299859 131.60707559 90 1 0 263.21415207 2e-8 168.1299859 131.60707559 90 1 0-263.21415207-2e-8Z" fill="#B47B68"/><path d="M864.14609382 436.84087636a131.60707559 168.1299859 6.71 1 0 39.28998639-333.95668374 131.60707559 168.1299859 6.71 1 0-39.28998639 333.95668373Z" fill="#B47B68"/><path d="M929.47515147 749.26056245c-9.42275492 142.66518562-147.18187788 219.21533615-310.17217958 208.39084944s-289.53556667-104.6626682-280.34643328-247.40572826 152.55518447-233.23265776 312.19690332-238.91746033c165.09289985 33.1743283 287.74446448 135.18927998 278.32170954 277.93233915z" fill="#B47B68"/></svg></span>
-            <span>宠医助手 · Pro</span>
-            <svg class="caret" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#A99A90" stroke-width="2"><polyline points="6 9 12 15 18 9" /></svg>
-          </button>
-          <button class="input-tool mic-btn" title="语音输入">
-            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#6B5045" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" /><path d="M19 10v2a7 7 0 0 1-14 0v-2" /><line x1="12" y1="19" x2="12" y2="23" /><line x1="8" y1="23" x2="16" y2="23" /></svg>
-          </button>
-          <button class="send-btn" title="发送">
-            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#FFFFFF" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13" /><polygon points="22 2 15 22 11 13 2 9 22 2" /></svg>
-          </button>
-        </div>
-      </div>
-      <div class="input-hint">内容由 AI 生成，仅供参考，不能代替兽医诊断</div>
-    </div>
+    <!-- 免责声明：始终固定在屏幕底部 -->
+    <div class="disclaimer">内容由 AI 生成，仅供参考，不能代替兽医诊断</div>
+
   </main>
 
   <!-- 右侧边栏（默认展开） -->
@@ -411,6 +363,110 @@ JS_CODE = """
       if (window.innerWidth > 1100) return;
       if (!left.contains(e.target)) {
         left.classList.add('collapsed');
+      }
+    });
+
+    bindChat();
+  }
+
+  function bindChat() {
+    const inner = document.querySelector('.main-inner');
+    const chatArea = document.getElementById('chatArea');
+    const textarea = document.querySelector('.input-textarea');
+    const sendBtn = document.querySelector('.send-btn');
+    if (!inner || !chatArea || !textarea || !sendBtn) return;
+
+    function scrollChatBottom() {
+      chatArea.scrollTop = chatArea.scrollHeight;
+    }
+
+    function addUserMsg(text) {
+      const row = document.createElement('div');
+      row.className = 'message message-user';
+      row.innerHTML =
+        '<div class="bubble bubble-user"><div class="bubble-body"></div></div>' +
+        '<div class="avatar avatar-user">宠</div>';
+      row.querySelector('.bubble-body').textContent = text;
+      chatArea.appendChild(row);
+      scrollChatBottom();
+    }
+
+    function addThinkingMsg() {
+      const row = document.createElement('div');
+      row.className = 'message message-bot';
+      row.innerHTML =
+        '<div class="avatar avatar-bot"><img src="file=asset/bot_avatar.jpg" alt="bot" /></div>' +
+        '<div class="bubble bubble-bot bubble-thinking">' +
+        '<div class="bubble-header"><span class="bubble-name">宠医助手</span><span class="bubble-paw">🐾</span></div>' +
+        '<div class="bubble-body">思考中<span class="thinking-dots"><span></span><span></span><span></span></span></div>' +
+        '</div>';
+      chatArea.appendChild(row);
+      scrollChatBottom();
+      return row;
+    }
+
+    function addBotMsg() {
+      const row = document.createElement('div');
+      row.className = 'message message-bot';
+      row.innerHTML =
+        '<div class="avatar avatar-bot"><img src="file=asset/bot_avatar.jpg" alt="bot" /></div>' +
+        '<div class="bubble bubble-bot">' +
+        '<div class="bubble-header"><span class="bubble-name">宠医助手</span><span class="bubble-paw">🐾</span></div>' +
+        '<div class="bubble-body"></div>' +
+        '</div>';
+      chatArea.appendChild(row);
+      return row;
+    }
+
+    function typeText(row, text) {
+      const body = row.querySelector('.bubble-body');
+      const cursor = document.createElement('span');
+      cursor.className = 'type-cursor';
+      body.appendChild(cursor);
+      let i = 0;
+      const timer = setInterval(function () {
+        i += 2;
+        body.textContent = text.slice(0, i);
+        body.appendChild(cursor);
+        scrollChatBottom();
+        if (i >= text.length) {
+          clearInterval(timer);
+          cursor.remove();
+          scrollChatBottom();
+        }
+      }, 28);
+    }
+
+    function getBotReply(q) {
+      if (q.indexOf('什么是') !== -1 && q.indexOf('传腹') !== -1) {
+        return '猫传染性腹膜炎（FIP）是由猫冠状病毒（FCoV）突变引起的一种进行性、致死性传染病，多发生于 6 个月至 2 岁的年轻猫。\\n\\n主要分为两种类型：湿性（渗出型）以腹腔、胸腔积液为主，腹部膨大、呼吸困难；干性（非渗出型）以肉芽肿病变为主，常累及眼睛、肾脏与神经系统。\\n\\n目前以 GS-441524 为代表的抗病毒药物已能有效治疗，早期确诊并规范用药的治愈率显著提升。若猫咪出现持续发热、食欲减退等症状，建议尽快就医排查。';
+      }
+      if (q.indexOf('治疗') !== -1) {
+        return 'FIP 的治疗目前以抗病毒药物为核心，主流方案包括：\\n\\n1. GS-441524（核苷类似物）——当前证据最充分的一线药物，按体重给药，疗程通常 8~12 周；\\n2. 瑞德西韦（GS-5734）——机制相近，部分方案用于住院期强化治疗；\\n3. 辅助支持治疗——营养支持、保肝、控制继发感染等。\\n\\n治疗期间需定期复查血液指标，评估停药标准。具体方案务必以接诊兽医的处方为准。';
+      }
+      return '收到你的问题啦 🐾 我正在结合知识图谱梳理猫传腹（FIP）相关的病因、症状、诊断与治疗信息，稍后为你整理更完整的回答。你也可以补充猫咪的年龄、体重、病程与已有检查结果，帮助我给出更有针对性的建议。';
+    }
+
+    function send() {
+      const text = (textarea.innerText || '').trim();
+      if (!text) return;
+      textarea.innerText = '';
+      if (!inner.classList.contains('chat-mode')) {
+        inner.classList.add('chat-mode');
+      }
+      addUserMsg(text);
+      const thinking = addThinkingMsg();
+      setTimeout(function () {
+        thinking.remove();
+        typeText(addBotMsg(), getBotReply(text));
+      }, 1000);
+    }
+
+    sendBtn.addEventListener('click', send);
+    textarea.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        send();
       }
     });
   }
@@ -557,6 +613,9 @@ div:has(> .app-shell) { padding: 0 !important; margin: 0 !important; background:
 .left-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
 .brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
 .brand-logo { width: 40px; height: 40px; border-radius: 999px; object-fit: cover; box-shadow: 0 1px 4px rgba(107, 80, 69, 0.15); }
+/* 文本块固定 40px 高并垂直居中，使 .brand 总高 = logo 高(40px)，
+   logo 在 align-items:center 下精确位于 padding-top 16px 处，与收起态一致 */
+.brand-text { display: flex; flex-direction: column; justify-content: center; flex-shrink: 0; height: 40px; min-width: 0; }
 .brand-title { font-size: 16px; font-weight: 600; color: #6B5045; line-height: 1.4; white-space: nowrap; }
 .brand-subtitle { font-size: 12px; font-weight: 500; color: #6F6763; line-height: 1.4; margin-top: 2px; white-space: nowrap; }
 
@@ -664,7 +723,7 @@ div:has(> .app-shell) { padding: 0 !important; margin: 0 !important; background:
   flex-direction: column;
   align-items: center;
   gap: 14px;
-  padding-top: 18px;
+  padding-top: 16px; /* 与展开态 sidebar-content padding-top 对齐，避免 logo 纵向跳动 */
   opacity: 0;
   pointer-events: none;
   transition: opacity 180ms var(--ease);
@@ -678,6 +737,9 @@ div:has(> .app-shell) { padding: 0 !important; margin: 0 !important; background:
   height: 40px;
   border-radius: 999px;
   cursor: pointer;
+  /* 与展开态 sidebar-content padding-left(14px) 对齐，避免 logo 横向跳动 */
+  align-self: flex-start;
+  margin-left: 14px;
 }
 .collapsed-logo {
   width: 40px;
@@ -765,16 +827,20 @@ div:has(> .app-shell) { padding: 0 !important; margin: 0 !important; background:
 .main-area:hover .main-scroll::-webkit-scrollbar-thumb { background: rgba(111, 103, 99, 0.5); }
 .main-area:hover .main-scroll { scrollbar-color: rgba(111, 103, 99, 0.5) transparent; }
 
-/* 内容层：max-width 768px 居中，滚动条在外层右侧、不占用内容宽度；底部预留悬浮输入区空间 */
+/* 内容层：max-width 768px 居中；空态内容整体垂直居中（免责声明除外，固定屏幕底部） */
 .main-inner {
   width: 100%;
   max-width: 768px;
   margin: 0 auto;
-  padding: 18px 22px 170px;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 40px 22px 52px;
 }
 
 /* Hero */
-.hero { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-bottom: 14px; }
+.hero { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-bottom: 30px; max-height: 320px; transition: max-height 480ms var(--ease), opacity 480ms var(--ease), transform 480ms var(--ease); }
 .hero-title {
   font-size: 28px;
   font-weight: 700;
@@ -794,43 +860,48 @@ div:has(> .app-shell) { padding: 0 !important; margin: 0 !important; background:
   box-shadow: none;
 }
 
-/* 功能卡片：紧凑 1x4，用户色 #FCFBF9/#F8F1EB */
+/* 快速开始 */
+.quick-start { margin: 0; max-height: 500px; transition: max-height 480ms var(--ease), opacity 480ms var(--ease), transform 480ms var(--ease); }
+.quick-title {
+  text-align: left;
+  font-size: 14px;
+  font-weight: 400;
+  color: #6F6763 !important;
+  line-height: 1.4;
+  margin: 0 0 14px;
+}
+
+/* 功能卡片：用户色 #FCFBF9/#F8F1EB */
 .feature-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 12px;
-  margin-bottom: 14px;
+  margin-bottom: 0;
 }
 .feature-card {
   background: #FCFBF9 !important;
   border: 1.5px solid #F8F1EB !important;
   border-radius: 12px;
-  padding: 12px 10px;
+  height: 48px;
+  padding: 0 16px;
+  cursor: pointer;
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   text-align: left;
   transition: box-shadow 180ms var(--ease), transform 180ms var(--ease);
 }
 .feature-card:hover { box-shadow: 0 4px 14px rgba(62, 56, 54, 0.08); transform: translateY(-1px); }
 .feature-icon {
-  width: 42px;
-  height: 42px;
-  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 0;
   flex-shrink: 0;
 }
-.feature-icon-1 { background: #E4915D; }
-.feature-icon-2 { background: #FBE2CE; }
-.feature-icon-3 { background: #ABBDA7; }
-.feature-icon-4 { background: #EBCDB3; }
 .feature-text { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
-.feature-name { font-size: 14px; font-weight: 600; color: #3E3836 !important; line-height: 1.4; }
-.feature-desc { font-size: 13px; color: #6F6763; line-height: 1.5; max-width: 100%; }
+/* 卡片标题：Body-sm 风格（常规字重 400，非粗体），14px */
+.feature-name { font-size: 14px; font-weight: 400; color: #3E3836 !important; line-height: 1.5; }
 
 /* 示例问题（用户色：底 #FDF8F4 框 #F8F1EB 图标 #B47B68） */
 .example-section { margin-bottom: 18px; }
@@ -908,18 +979,68 @@ div:has(> .app-shell) { padding: 0 !important; margin: 0 !important; background:
 .thinking-dots span:nth-child(3) { animation-delay: 0.4s; }
 @keyframes thinkingBlink { 0%, 80%, 100% { opacity: 0.3; transform: translateY(0); } 40% { opacity: 1; transform: translateY(-2px); } }
 
-/* 输入区：白卡片浮底（用户色 #FEFEFE/#F8F1EB），悬浮覆盖在滚动区之上，滚动条可贯穿全屏 */
+/* ============================================================
+   聊天态（chat-mode）：空态首页 → 对话布局
+   发送后 hero 向上 / quick-start 向下平滑塌缩移出，
+   chat-area 占满中间（内部滚动），输入区贴底。
+   ============================================================ */
+.chat-area {
+  display: none;
+  flex-direction: column;
+  gap: 14px;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 4px 0 16px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(111, 103, 99, 0.2) transparent;
+}
+.chat-area::-webkit-scrollbar { width: 8px; }
+.chat-area::-webkit-scrollbar-track { background: transparent; }
+.chat-area::-webkit-scrollbar-thumb { background: rgba(111, 103, 99, 0.2); border-radius: 4px; }
+.chat-area::-webkit-scrollbar-thumb:hover { background: #6F6763; }
+.main-area:hover .chat-area::-webkit-scrollbar-thumb { background: rgba(111, 103, 99, 0.5); }
+.main-area:hover .chat-area { scrollbar-color: rgba(111, 103, 99, 0.5) transparent; }
+
+.main-inner.chat-mode {
+  height: 100%;
+  justify-content: flex-start;
+  padding-bottom: 44px;
+}
+.main-inner.chat-mode .chat-area { display: flex; }
+.main-inner.chat-mode .input-area { margin-bottom: 0; }
+/* 空态区块移出动画：高度塌缩 + 位移 + 淡出 */
+.main-inner.chat-mode .hero {
+  max-height: 0;
+  transform: translateY(-60px);
+  opacity: 0;
+  overflow: hidden;
+  margin-bottom: 0;
+}
+.main-inner.chat-mode .quick-start {
+  max-height: 0;
+  transform: translateY(60px);
+  opacity: 0;
+  overflow: hidden;
+}
+
+/* 流式输出光标 */
+.type-cursor {
+  display: inline-block;
+  width: 2px;
+  height: 1em;
+  background: #6B5045;
+  margin-left: 2px;
+  vertical-align: -2px;
+  animation: cursorBlink 0.8s infinite ease-in-out;
+}
+@keyframes cursorBlink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+/* 输入区：文档流排列在 Hero 与快速开始之间（空态首页布局） */
 .input-area {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  max-width: 768px;
-  margin: 0 auto;
-  padding: 8px 22px 14px;
-  z-index: 5;
-  /* 底部实色保证输入框可读，向上渐变透明，滚动条底部不被完全遮挡 */
-  background: linear-gradient(to top, #FDFCFA 68%, rgba(253, 252, 250, 0.72) 86%, rgba(253, 252, 250, 0) 100%);
+  width: 100%;
+  margin: 0 0 30px;
+  padding: 0;
 }
 .input-box {
   display: flex;
@@ -948,7 +1069,7 @@ div:has(> .app-shell) { padding: 0 !important; margin: 0 !important; background:
   padding: 6px 2px;
   word-break: break-word;
 }
-.input-textarea:empty::before { content: "描述您家爱宠的症状，我会为您分析解答…"; color: rgba(168, 159, 147, 0.85); }
+.input-textarea:empty::before { content: "描述你的问题，或直接开始提问…"; color: rgba(168, 159, 147, 0.85); }
 .input-toolbar {
   display: flex;
   align-items: center;
@@ -995,7 +1116,20 @@ div:has(> .app-shell) { padding: 0 !important; margin: 0 !important; background:
 }
 .send-btn:hover { background: #9E5F4E !important; }
 .send-btn:active { transform: scale(0.93); }
-.input-hint { text-align: center; font-size: 12px; font-weight: 500; color: rgba(168, 159, 147, 0.85); line-height: 1.4; margin-top: 8px; }
+/* 免责声明：始终固定在中间区域屏幕底部，不随内容滚动 */
+.disclaimer {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 12px;
+  z-index: 10;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 500;
+  color: rgba(168, 159, 147, 0.85);
+  line-height: 1.4;
+  pointer-events: none;
+}
 
 /* ============================================================
    右侧边栏（默认展开，宽 300）
@@ -1095,8 +1229,7 @@ details[open] .chevron { transform: rotate(180deg); }
 @media (max-width: 920px) {
   .right-sidebar { flex: 0 0 0; width: 0; min-width: 0; max-width: 0; opacity: 0; border-left: none; }
   .right-sidebar .right-inner { display: none; }
-  .main-inner { padding: 14px 16px 150px; }
-  .input-area { padding: 6px 16px 12px; }
+  .main-inner { padding: 28px 16px 44px; }
   .feature-grid { grid-template-columns: repeat(2, 1fr); }
   .hero-image { display: none; }
 }
@@ -1126,6 +1259,11 @@ _HOME_HTML = HOMEPAGE_HTML
 for _k, _v in _IMG_REPLACEMENTS.items():
     _HOME_HTML = _HOME_HTML.replace(_k, _v)
 
+# JS 动态创建的 bot 气泡头像同样需要内嵌 data URI（绕过 file= 404）
+_JS_EXEC = JS_CODE
+for _k, _v in _IMG_REPLACEMENTS.items():
+    _JS_EXEC = _JS_EXEC.replace(_k, _v)
+
 
 _STYLE_HTML = (
     "<style>\n"
@@ -1143,7 +1281,7 @@ def create_demo() -> gr.Blocks:
         # 静态首页：所有内容通过 HTML 注入，便于完全控制布局与动效
         # 样式经 head 注入；交互 JS 经 js_on_load 注入（Gradio 官方保证执行，
         # head 中的内联 <script> 可能被前端以 innerHTML 方式插入而不执行）
-        gr.HTML(_HOME_HTML, head=_STYLE_HTML, js_on_load=JS_CODE)
+        gr.HTML(_HOME_HTML, head=_STYLE_HTML, js_on_load=_JS_EXEC)
     return demo
 
 
