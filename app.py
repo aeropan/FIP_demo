@@ -14,9 +14,12 @@ Hugging Face Spaces 默认入口：本文件 app.py
 from __future__ import annotations
 
 import base64
+import os
 from pathlib import Path
 
 import gradio as gr
+
+from core.pipeline import Pipeline
 
 
 # ---------------------------------------------------------------------------
@@ -233,85 +236,78 @@ HOMEPAGE_HTML = """
 
   <!-- 右侧边栏（默认隐藏；点击开始对话后自动打开） -->
   <aside class="right-sidebar hidden" id="rightSidebar">
-    <div class="right-inner">
+    <div class="right-inner" data-sidebar-version="v2-timeline">
+      <!-- 顶部 Header：标题 + 状态 + 输入摘要 -->
       <div class="right-header">
-        <div class="right-title">
-          <svg class="file-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#8C6B5D" stroke-width="2">
-            <line x1="17" y1="10" x2="7" y2="10" />
-            <line x1="17" y1="14" x2="7" y2="14" />
-            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
-          </svg>
-          <span>app_gradio.py</span>
+        <div class="right-header-row">
+          <div class="right-title">
+            <span class="title-star" aria-hidden="true">✦</span>
+            <span>AI 分析过程</span>
+          </div>
+          <div class="right-actions">
+            <button class="icon-btn fullscreen-btn" id="fullscreenRightBtn" title="全屏">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#6F6763" stroke-width="2">
+                <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3" />
+              </svg>
+            </button>
+            <button class="icon-btn close-right-btn" id="closeRightBtn" title="收起">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#6F6763" stroke-width="2">
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+            </button>
+          </div>
         </div>
-        <div class="right-actions">
-          <button class="icon-btn fullscreen-btn" id="fullscreenRightBtn" title="全屏">
-            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#6F6763" stroke-width="2">
-              <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3" />
-            </svg>
-          </button>
-          <button class="icon-btn close-right-btn" id="closeRightBtn" title="收起">
-            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#6F6763" stroke-width="2">
-              <line x1="18" y1="6" x2="6" y2="18" />
-              <line x1="6" y1="6" x2="18" y2="18" />
-            </svg>
-          </button>
-        </div>
+        <div class="analysis-status" id="analysisStatus"></div>
+        <div class="analysis-input" id="analysisInput"></div>
       </div>
 
-      <div class="right-body">
-        <details class="right-group" open>
-          <summary class="right-group-title">
-            <span>概览</span>
-            <svg class="chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#A99A90" stroke-width="2">
-              <polyline points="6 9 12 15 18 9" />
-            </svg>
-          </summary>
-          <div class="right-group-content">
-            <div class="empty-hint">暂无概览数据</div>
-          </div>
-        </details>
+      <!-- Timeline：固定步骤纵向列表 -->
+      <div class="right-timeline" id="traceTimeline">
+        <div class="trace-empty">发送问题后，这里会展示 AI 分析 Timeline</div>
+      </div>
 
-        <details class="right-group" open>
-          <summary class="right-group-title">
-            <span>产物</span>
-            <svg class="chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#A99A90" stroke-width="2">
-              <polyline points="6 9 12 15 18 9" />
-            </svg>
-          </summary>
-          <div class="right-group-content file-tree">
-            <div class="file-node file-file">
-              <span class="file-dot dot-py"></span>
-              <span>app_gradio.py</span>
-            </div>
-            <div class="file-node file-file">
-              <span class="file-dot dot-env"></span>
-              <span>.env.example</span>
-            </div>
-            <div class="file-node file-file">
-              <span class="file-dot dot-py"></span>
-              <span>utils.py</span>
-            </div>
-            <div class="file-node file-file">
-              <span class="file-dot dot-txt"></span>
-              <span>requirements.txt</span>
-            </div>
-            <div class="file-node file-file">
-              <span class="file-dot dot-py"></span>
-              <span>app.py</span>
-            </div>
-          </div>
-        </details>
-
-        <button class="right-more">展开更多 (3)</button>
+      <!-- Detail Panel：当前选中步骤详情（独立滚动） -->
+      <div class="right-detail" id="traceDetail">
+        <div class="detail-body" id="traceDetailBody">
+          <div class="detail-empty">点击步骤查看详细内容</div>
+        </div>
       </div>
     </div>
   </aside>
+  <!-- 图数据库页面（iframe 隔离，懒加载） -->
+  <iframe id="pageGraph" class="page-graph" hidden title="图数据库"></iframe>
 </div>
 """
 
 # Gradio 的 gr.HTML 中插入的 <script> 不会被执行，因此交互逻辑通过 Blocks 的 js 参数注入。
 JS_CODE = """
+window.__GRAPH_HTML__=__GRAPH_HTML_JSON__;
 (() => {
+  /* ====== 导航路由：图数据库页面切换 ====== */
+  (function(){
+    var appShell=document.getElementById('appShell');
+    var pageGraph=document.getElementById('pageGraph');
+    if(!appShell||!pageGraph)return;
+    var navItems=document.querySelectorAll('.nav-menu .nav-item');
+    navItems.forEach(function(item){
+      item.addEventListener('click',function(e){
+        e.preventDefault();
+        var isGraph=item.textContent.indexOf('图数据库')>=0;
+        navItems.forEach(function(n){n.classList.remove('active');});
+        item.classList.add('active');
+        if(isGraph){
+          appShell.classList.add('mode-graph');
+          if(!pageGraph.dataset.loaded){
+            pageGraph.srcdoc=window.__GRAPH_HTML__;
+            pageGraph.dataset.loaded='1';
+          }
+        }else{
+          appShell.classList.remove('mode-graph');
+        }
+      });
+    });
+  })();
   function bindShell() {
     const left = document.getElementById('leftSidebar');
     const right = document.getElementById('rightSidebar');
@@ -359,6 +355,33 @@ JS_CODE = """
     bindChat();
   }
 
+  /* 详情区向上展开 / 向下收起：展开时隐藏 Timeline，让详情填满 Header 以下区域 */
+  function setDetailExpanded(expanded) {
+    const sidebar = document.getElementById('rightSidebar');
+    if (!sidebar) return;
+    sidebar.classList.toggle('detail-expanded', expanded);
+    document.querySelectorAll('.detail-expand-btn').forEach(function (b) {
+      b.title = expanded ? '向下收起' : '向上展开';
+    });
+  }
+
+  /* 展开/收起按钮（纯 SVG，图标由 CSS 按 sidebar 状态切换） */
+  function buildExpandBtn() {
+    const btn = document.createElement('button');
+    btn.className = 'detail-expand-btn';
+    btn.type = 'button';
+    btn.title = '向上展开';
+    btn.innerHTML =
+      '<svg class="icon-up" viewBox="0 0 1024 1024" width="18" height="18"><path d="M838.116 732.779 877.7 693.195 511.979 327.549 146.3 693.195 185.883 732.779 512.003 406.652Z" fill="#4a3a2d"/></svg>' +
+      '<svg class="icon-down" viewBox="0 0 1024 1024" width="18" height="18"><path d="M185.884 327.55 146.3 367.133 512.021 732.779 877.7 367.133 838.117 327.55 511.997 653.676Z" fill="#4a3a2d"/></svg>';
+    btn.addEventListener('click', function () {
+      const sidebar = document.getElementById('rightSidebar');
+      if (!sidebar) return;
+      setDetailExpanded(!sidebar.classList.contains('detail-expanded'));
+    });
+    return btn;
+  }
+
   function bindChat() {
     const inner = document.querySelector('.main-inner');
     const chatArea = document.getElementById('chatArea');
@@ -395,9 +418,130 @@ JS_CODE = """
     textarea.addEventListener('input', updateSendState);
     updateSendState();
 
-    /* 会话数据（纯内存：刷新即清空） */
+    /* 会话数据（内存态；聊天历史经 saveHistory 持久化到 localStorage） */
     let conversations = [];
     let currentConvoId = null;
+
+    /* ===== 聊天历史持久化（浏览器 localStorage，刷新后仍保留） ===== */
+    const STORAGE_KEY = 'fip_chat_history';
+
+    /* 保存全部会话到 localStorage（会话列表 + 当前会话 id） */
+    function saveHistory() {
+      try {
+        if (conversations.length) {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify({ conversations: conversations, currentConvoId: currentConvoId }));
+        }
+      } catch (e) { /* 隐私模式 / 存储不可用时静默失败 */ }
+    }
+
+    /* 进入聊天态：切换布局（hero 上移、输入区固定底部、自动开右侧栏），
+       供「首次发送」与「恢复历史」两处复用 */
+    function enterChatMode() {
+      if (inner.classList.contains('chat-mode')) return;
+      inner.classList.add('chat-mode');
+      /* 先量取布局偏移（此刻 input-area 仍在 inner 文档流中，布局为空态） */
+      const ir = inner.getBoundingClientRect();
+      const hr = inner.querySelector('.hero').getBoundingClientRect();
+      /* 再移动输入区：把 input-area 移到 main-area（position:relative）下，
+         containing block 变为 main-area，彻底脱离滚动流，固定在中间区域底部 */
+      const ma = document.querySelector('.main-area');
+      const ia = document.querySelector('.input-area');
+      if (ma && ia) {
+        ma.appendChild(ia);
+        ia.classList.add('chat-fixed');
+      }
+      if (chatMask) chatMask.classList.add('show');
+      /* 自动打开右侧边栏（与手动打开行为一致） */
+      if (rightPanel) {
+        rightPanel.classList.remove('hidden');
+        if (openRightBtn) openRightBtn.style.display = 'none';
+      }
+      /* 布局切换：center → flex-start，用 padding-top 补偿消除跳变 */
+      inner.style.transition = 'none';
+      inner.style.justifyContent = 'flex-start';
+      inner.style.paddingTop = (hr.top - ir.top) + 'px';
+      chatArea.offsetHeight;
+      inner.style.transition = '';
+      requestAnimationFrame(function () {
+        inner.style.paddingTop = '';
+      });
+    }
+
+    /* 渲染某个会话的全部消息到聊天区（user 直接气泡，bot 填文本不打字机） */
+    function renderConvo(convo) {
+      chatArea.innerHTML = '';
+      (convo.msgs || []).forEach(function (m) {
+        if (m.role === 'user') {
+          addUserMsg(m.text);
+        } else if (m.role === 'bot' && m.text) {
+          const row = addBotMsg();
+          row.querySelector('.bubble-body').textContent = m.text;
+        }
+      });
+      scrollChatBottom();
+    }
+
+    /* 切换当前会话：清空聊天区并渲染目标会话，更新高亮。
+       点击当前会话也重渲染（作为「跳转」反馈），不做防抖早退。 */
+    function switchConvo(cid) {
+      let target = null;
+      for (var i = 0; i < conversations.length; i++) {
+        if (conversations[i].id === cid) { target = conversations[i]; break; }
+      }
+      if (!target) return;
+      currentConvoId = cid;
+      enterChatMode();
+      renderConvo(target);
+      updateActiveConvo();
+      /* 右侧栏回显该会话最后一次回答的分析过程；无轨迹则空态 */
+      if (target.lastTrace) {
+        renderTrace(target.lastTrace, true);
+      } else {
+        resetTracePanel();
+      }
+    }
+
+    /* 高亮「最近对话」列表中当前会话条目 */
+    function updateActiveConvo() {
+      if (!chatList) return;
+      chatList.querySelectorAll('.chat-item').forEach(function (li) {
+        if (li.dataset.cid === currentConvoId) {
+          li.classList.add('active');
+        } else {
+          li.classList.remove('active');
+        }
+      });
+    }
+
+    /* 页面加载时恢复历史：读 localStorage，重建会话列表 + 渲染当前会话 */
+    function loadHistory() {
+      let saved = null;
+      try {
+        saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+      } catch (e) { saved = null; }
+      if (!saved || !Array.isArray(saved.conversations) || !saved.conversations.length) return;
+
+      conversations = saved.conversations;
+      currentConvoId = saved.currentConvoId || conversations[0].id;
+
+      /* 重建「最近对话」列表（倒序插入，保持最新在前） */
+      for (var i = conversations.length - 1; i >= 0; i--) {
+        addConversationItem(conversations[i]);
+      }
+      updateConvoCount();
+
+      const cur = getCurrentConvo();
+      if (cur) {
+        enterChatMode();
+        renderConvo(cur);
+        updateActiveConvo();
+        if (cur.lastTrace) {
+          renderTrace(cur.lastTrace, true);
+        } else {
+          resetTracePanel();
+        }
+      }
+    }
 
     function nowTime() {
       const d = new Date();
@@ -414,16 +558,8 @@ JS_CODE = """
       }
     }
 
-    /* 新建会话：标题 = 首条消息，置顶插入「最近对话」，历史条目顺次下推 */
-    function addConversation(title) {
-      const convo = {
-        id: 'c' + Date.now(),
-        title: title,
-        time: nowTime(),
-        msgs: []
-      };
-      conversations.unshift(convo);
-      currentConvoId = convo.id;
+    /* 创建「最近对话」列表条目（含点击切换绑定），插入列表最前 */
+    function addConversationItem(convo) {
       const iconHTML = chatList
         ? (chatList.querySelector('.chat-item .chat-ico') || {}).innerHTML || ''
         : '';
@@ -436,8 +572,27 @@ JS_CODE = """
         '<span class="chat-time"></span>';
       li.querySelector('.chat-title').textContent = convo.title;
       li.querySelector('.chat-time').textContent = convo.time;
+      li.addEventListener('click', function () {
+        switchConvo(convo.id);
+      });
       chatList.insertBefore(li, chatList.firstChild);
+      return li;
+    }
+
+    /* 新建会话：标题 = 首条消息，置顶插入「最近对话」，历史条目顺次下推 */
+    function addConversation(title) {
+      const convo = {
+        id: 'c' + Date.now(),
+        title: title,
+        time: nowTime(),
+        msgs: [],
+        contextEntities: []
+      };
+      conversations.unshift(convo);
+      currentConvoId = convo.id;
+      addConversationItem(convo);
       updateConvoCount();
+      updateActiveConvo();
       return convo;
     }
 
@@ -452,6 +607,7 @@ JS_CODE = """
        这样同一页面内可积累多个会话（「最近对话」条目变多后支持内部滚动） */
     function resetChat() {
       currentConvoId = null;
+      updateActiveConvo();
       chatArea.innerHTML = '';
       chatArea.classList.remove('msg-in');
       inner.classList.remove('chat-mode');
@@ -476,6 +632,8 @@ JS_CODE = """
       }
       const sc = document.querySelector('.main-scroll');
       if (sc) sc.scrollTop = 0;
+      /* 右侧栏回到初始空态 */
+      resetTracePanel();
     }
 
     function scrollChatBottom() {
@@ -554,14 +712,527 @@ JS_CODE = """
       }, 28);
     }
 
-    function getBotReply(q) {
-      if (q.indexOf('什么是') !== -1 && q.indexOf('传腹') !== -1) {
-        return '猫传染性腹膜炎（FIP）是由猫冠状病毒（FCoV）突变引起的一种进行性、致死性传染病，多发生于 6 个月至 2 岁的年轻猫。\\n\\n主要分为两种类型：湿性（渗出型）以腹腔、胸腔积液为主，腹部膨大、呼吸困难；干性（非渗出型）以肉芽肿病变为主，常累及眼睛、肾脏与神经系统。\\n\\n目前以 GS-441524 为代表的抗病毒药物已能有效治疗，早期确诊并规范用药的治愈率显著提升。若猫咪出现持续发热、食欲减退等症状，建议尽快就医排查。';
+    /* ===== 后端推理调用与结果渲染 ===== */
+
+    function runQuery(text) {
+      /* 锁定发起时的会话 id：避免回复返回前用户切换会话，导致回复错配到新会话 */
+      const convoId = currentConvoId;
+      /* 读取发起时会话的上下文实体（上一轮成功解析的实体，供连续对话继承） */
+      let convo = null;
+      for (var i = 0; i < conversations.length; i++) {
+        if (conversations[i].id === convoId) { convo = conversations[i]; break; }
       }
-      if (q.indexOf('治疗') !== -1) {
-        return 'FIP 的治疗目前以抗病毒药物为核心，主流方案包括：\\n\\n1. GS-441524（核苷类似物）——当前证据最充分的一线药物，按体重给药，疗程通常 8~12 周；\\n2. 瑞德西韦（GS-5734）——机制相近，部分方案用于住院期强化治疗；\\n3. 辅助支持治疗——营养支持、保肝、控制继发感染等。\\n\\n治疗期间需定期复查血液指标，评估停药标准。具体方案务必以接诊兽医的处方为准。';
+      const contextEntities = convo ? (convo.contextEntities || []) : [];
+      const thinking = addThinkingMsg();
+      server.respond(text, contextEntities).then(function (result) {
+        thinking.remove();
+        /* 回填到发起时的会话（而非「当前」会话） */
+        if (convo) convo.msgs.push({ role: 'bot', text: result.summary || result.boundary_hint || '' });
+        /* 保存本次推理轨迹：供切换/恢复会话时回显最后一步分析过程 */
+        if (convo) convo.lastTrace = result.trace;
+        /* 更新上下文实体：本轮成功解析到实体则缓存，供下一轮继承 */
+        if (convo && result.entities && result.entities.length) {
+          convo.contextEntities = result.entities;
+        }
+        saveHistory();
+        /* 仅当仍停留在发起时的会话，才把回复渲染到当前画面 */
+        if (currentConvoId === convoId) {
+          renderResult(result);
+        }
+      }).catch(function () {
+        thinking.remove();
+        if (currentConvoId === convoId) {
+          typeText(addBotMsg(), '抱歉，服务暂时不可用，请稍后再试。');
+        }
+      });
+    }
+
+    function renderResult(result) {
+      if (result.status === 'ok') {
+        typeText(addBotMsg(), result.summary);
+      } else if (result.status === 'clarify') {
+        addClarifyMsg(result.clarify_options);
+      } else if (result.status === 'boundary') {
+        typeText(addBotMsg(), result.boundary_hint || '当前知识库暂无该路径，建议咨询兽医。');
+      } else if (result.status === 'error') {
+        typeText(addBotMsg(), '抱歉，查询时出现异常：' + (result.error_message || '未知错误'));
       }
-      return '收到你的问题啦 🐾 我正在结合知识图谱梳理猫传腹（FIP）相关的病因、症状、诊断与治疗信息，稍后为你整理更完整的回答。你也可以补充猫咪的年龄、体重、病程与已有检查结果，帮助我给出更有针对性的建议。';
+      renderTrace(result.trace);
+    }
+
+    function addClarifyMsg(options) {
+      const row = addBotMsg();
+      const body = row.querySelector('.bubble-body');
+      const box = document.createElement('div');
+      box.className = 'clarify-box';
+      const tip = document.createElement('div');
+      tip.className = 'clarify-tip';
+      tip.textContent = '这个问题可能涉及多个方面，你想了解哪一方面？';
+      box.appendChild(tip);
+      const btns = document.createElement('div');
+      btns.className = 'clarify-btns';
+      (options || []).forEach(function (o) {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'clarify-btn';
+        b.textContent = o.label;
+        b.addEventListener('click', function () {
+          runQuery(o.value);
+        });
+        btns.appendChild(b);
+      });
+      box.appendChild(btns);
+      body.appendChild(box);
+      scrollChatBottom();
+    }
+
+    /* ===== 右侧栏 AI 分析过程（三段式：Header + Timeline + Detail）===== */
+    const STEP_STATUS_MAP = { success: 'completed', failed: 'error', skipped: 'skipped' };
+    const KEY_LABELS = {
+      entities: '实体', inherited: '上下文继承', scores: '得分', candidates: '候选意图',
+      intent: '意图', template: '查询模板', steps: '关系', groups: '分组', risks: '风险',
+      summary: '摘要', cards: '结果项', reason: '原因', error: '错误',
+      source: '来源', rel: '关系', target: '目标', polarity: '极性', confidence: '置信度', evidence: '支撑依据',
+      kind: '类型', group_key: '分组', step_index: '位置', note: '说明',
+      label: '名称', count: '数量', key: '键', flagged: '风险标记'
+    };
+    const POLARITY_LABELS = { Positive: '正面', Negative: '负面', Neutral: '中性' };
+    const CONFIDENCE_LABELS = { High: '高', Medium: '中', Low: '低' };
+    const KIND_LABELS = { low_confidence: '低置信度' };
+    const TRACE_STEP_INTERVAL = 400;  // 每步点亮间隔（毫秒）
+
+    const analysisState = {
+      steps: [],             // 后端步骤映射后的数组
+      selectedStepId: null,  // 当前选中（查看）的步骤 id
+      isUserSelected: false, // 用户是否主动点击过（锁定跟随）
+      playToken: 0           // 播放令牌（新消息/切会话自增，中断旧播放）
+    };
+
+    /* 清空右侧栏为初始空态（新建任务 / 切换到无轨迹会话时调用） */
+    function resetTracePanel() {
+      analysisState.playToken++;
+      analysisState.steps = [];
+      analysisState.selectedStepId = null;
+      analysisState.isUserSelected = false;
+      setDetailExpanded(false);
+      const status = document.getElementById('analysisStatus');
+      if (status) status.innerHTML = '';
+      const input = document.getElementById('analysisInput');
+      if (input) input.innerHTML = '';
+      const timeline = document.getElementById('traceTimeline');
+      if (timeline) timeline.innerHTML = '<div class="trace-empty">发送问题后，这里会展示 AI 分析 Timeline</div>';
+      const detail = document.getElementById('traceDetailBody');
+      if (detail) detail.innerHTML = '<div class="detail-empty">点击步骤查看详细内容</div>';
+    }
+
+    function renderTrace(trace, instant) {
+      const timeline = document.getElementById('traceTimeline');
+      const detail = document.getElementById('traceDetail');
+      if (!timeline || !detail || !trace) return;
+
+      const token = ++analysisState.playToken;
+      analysisState.selectedStepId = null;
+      analysisState.isUserSelected = false;
+      setDetailExpanded(false);
+
+      /* 映射后端步骤 -> 前端状态：finalStatus 为落定态，status 为播放中的当前态 */
+      analysisState.steps = (trace.steps || []).map(function (s) {
+        return {
+          id: s.step_id,
+          title: s.step_name,
+          summary: s.output_summary || '',
+          finalStatus: STEP_STATUS_MAP[s.status] || 'pending',
+          status: 'pending',
+          detail: s.detail,
+          skip_reason: s.skip_reason || '',
+          output_summary: s.output_summary || ''
+        };
+      });
+
+      renderHeaderInput(trace);
+      renderTimeline();
+      renderDetailEmpty();
+      if (instant) {
+        /* 回显历史：不播放动画，直接落定全部步骤并选中最后一步 */
+        analysisState.steps.forEach(function (s) {
+          s.status = s.finalStatus;
+          setStepStatus(s.id, s.finalStatus);
+        });
+        updateHeaderStatus();
+        const last = analysisState.steps[analysisState.steps.length - 1];
+        if (last) selectStep(last.id, false);
+      } else {
+        playSteps(token);
+      }
+    }
+
+    /* Header 输入摘要（类型标签 + 用户输入，最多两行） */
+    function renderHeaderInput(trace) {
+      const inputEl = document.getElementById('analysisInput');
+      if (!inputEl) return;
+      inputEl.innerHTML = '';
+      const tag = document.createElement('span');
+      const isComposite = trace.input_type === '复合澄清输入';
+      tag.className = 'input-type-tag ' + (isComposite ? 'type-composite' : 'type-normal');
+      tag.textContent = trace.input_type || '普通文本';
+      inputEl.appendChild(tag);
+      inputEl.appendChild(document.createTextNode(trace.user_input || ''));
+    }
+
+    /* Header 状态：正在分析 X / N 或 已完成 X / N */
+    function updateHeaderStatus() {
+      const el = document.getElementById('analysisStatus');
+      if (!el) return;
+      const steps = analysisState.steps;
+      const total = steps.length;
+      const settled = steps.filter(function (s) {
+        return s.status === 'completed' || s.status === 'error' || s.status === 'skipped';
+      }).length;
+      const failed = steps.filter(function (s) { return s.status === 'error'; }).length;
+      const running = steps.some(function (s) { return s.status === 'running'; });
+
+      let cls, text;
+      if (running) { cls = 'is-running'; text = '正在分析 · ' + settled + ' / ' + total; }
+      else if (failed > 0) { cls = 'is-error'; text = '执行异常 · 已完成 ' + settled + ' / ' + total; }
+      else { cls = 'is-completed'; text = '已完成 ' + settled + ' / ' + total + ' 个分析步骤'; }
+
+      el.className = 'analysis-status ' + cls;
+      el.innerHTML = '';
+      const dot = document.createElement('span');
+      dot.className = 'status-dot';
+      el.appendChild(dot);
+      el.appendChild(document.createTextNode(text));
+    }
+
+    /* Timeline：渲染全部步骤为 pending 态 */
+    function renderTimeline() {
+      const timeline = document.getElementById('traceTimeline');
+      if (!timeline) return;
+      timeline.innerHTML = '';
+      analysisState.steps.forEach(function (s) {
+        timeline.appendChild(buildStepNode(s));
+      });
+    }
+
+    function buildStepNode(s) {
+      const el = document.createElement('div');
+      el.className = 'analysis-step';
+      el.dataset.stepId = s.id;
+
+      const rail = document.createElement('div');
+      rail.className = 'step-rail';
+      const node = document.createElement('div');
+      node.className = 'step-node node-pending';
+      rail.appendChild(node);
+
+      const info = document.createElement('div');
+      info.className = 'step-info';
+      const title = document.createElement('div');
+      title.className = 'step-title';
+      title.textContent = s.title;
+      info.appendChild(title);
+      if (s.summary) {
+        const summary = document.createElement('div');
+        summary.className = 'step-summary';
+        summary.textContent = s.summary;
+        info.appendChild(summary);
+      }
+
+      el.appendChild(rail);
+      el.appendChild(info);
+      el.addEventListener('click', function () { selectStep(s.id, true); });
+      return el;
+    }
+
+    /* 更新某一步的节点状态（含节点文案 ✓ / ✕） */
+    function setStepStatus(stepId, status) {
+      const el = document.querySelector('.analysis-step[data-step-id="' + stepId + '"]');
+      if (!el) return;
+      const node = el.querySelector('.step-node');
+      if (node) {
+        node.className = 'step-node node-' + status;
+        if (status === 'completed') node.textContent = '✓';
+        else if (status === 'error') node.textContent = '✕';
+        else node.textContent = '';
+      }
+      el.classList.toggle('is-skipped', status === 'skipped');
+    }
+
+    /* 选中步骤：更新选中态 + 刷新 Detail（点击锁定跟随） */
+    function selectStep(stepId, isUser) {
+      if (isUser) analysisState.isUserSelected = true;
+      const changed = analysisState.selectedStepId !== stepId;
+      analysisState.selectedStepId = stepId;
+      document.querySelectorAll('.analysis-step').forEach(function (el) {
+        el.classList.toggle('is-selected', String(el.dataset.stepId) === String(stepId));
+      });
+      if (changed) renderDetail(stepId);
+    }
+
+    /* Timeline 自动滚动到指定步骤（使当前 running 步骤保持可见） */
+    function scrollTimelineToStep(stepId) {
+      const timeline = document.getElementById('traceTimeline');
+      const el = timeline && timeline.querySelector('.analysis-step[data-step-id="' + stepId + '"]');
+      if (!el) return;
+      const tRect = timeline.getBoundingClientRect();
+      const eRect = el.getBoundingClientRect();
+      timeline.scrollTop += (eRect.top - tRect.top) - 8;
+    }
+
+    /* 播放：success/failed 先 running 再落定；skipped 立即灰态 */
+    function playSteps(token) {
+      const steps = analysisState.steps;
+      let i = 0;
+      function next() {
+        if (token !== analysisState.playToken) return;
+        if (i >= steps.length) { updateHeaderStatus(); return; }
+        const s = steps[i++];
+        if (s.finalStatus === 'skipped') {
+          s.status = 'skipped';
+          setStepStatus(s.id, 'skipped');
+          if (!analysisState.isUserSelected) selectStep(s.id, false);
+          updateHeaderStatus();
+          next();
+          return;
+        }
+        s.status = 'running';
+        setStepStatus(s.id, 'running');
+        scrollTimelineToStep(s.id);
+        if (!analysisState.isUserSelected) selectStep(s.id, false);
+        updateHeaderStatus();
+        setTimeout(function () {
+          if (token !== analysisState.playToken) return;
+          s.status = s.finalStatus;
+          setStepStatus(s.id, s.finalStatus);
+          if (!analysisState.isUserSelected) selectStep(s.id, false);
+          /* 落定后若当前查看的就是本步骤，刷新 Detail 反映最终态（副标题「正在执行…」→「已完成」） */
+          if (String(analysisState.selectedStepId) === String(s.id)) renderDetail(s.id);
+          updateHeaderStatus();
+          next();
+        }, TRACE_STEP_INTERVAL);
+      }
+      next();
+    }
+
+    /* Detail 空态 */
+    function renderDetailEmpty() {
+      const panel = document.getElementById('traceDetailBody');
+      if (!panel) return;
+      panel.innerHTML = '';
+      const empty = document.createElement('div');
+      empty.className = 'detail-empty';
+      empty.textContent = '点击步骤查看详细内容';
+      panel.appendChild(empty);
+    }
+
+    /* Detail 渲染 */
+    function renderDetail(stepId) {
+      const panel = document.getElementById('traceDetailBody');
+      if (!panel) return;
+      const s = analysisState.steps.find(function (x) { return String(x.id) === String(stepId); });
+      panel.innerHTML = '';
+      if (!s) { renderDetailEmpty(); return; }
+
+      const head = document.createElement('div');
+      head.className = 'detail-head';
+      const headText = document.createElement('div');
+      headText.className = 'detail-head-text';
+      const title = document.createElement('div');
+      title.className = 'detail-head-title';
+      title.textContent = s.title;
+      headText.appendChild(title);
+      const subtitle = document.createElement('div');
+      subtitle.className = 'detail-head-subtitle';
+      subtitle.textContent = detailSubtitle(s);
+      headText.appendChild(subtitle);
+      head.appendChild(headText);
+      head.appendChild(buildExpandBtn());
+      panel.appendChild(head);
+
+      const content = document.createElement('div');
+      content.className = 'detail-content';
+      renderDetailContent(content, s);
+      panel.appendChild(content);
+    }
+
+    function detailSubtitle(s) {
+      if (s.status === 'skipped') return '该步骤已跳过';
+      if (s.status === 'running') return '正在执行…';
+      if (s.status === 'error') return '执行失败';
+      return '已完成';
+    }
+
+    function renderDetailContent(container, s) {
+      if (s.status === 'skipped') {
+        addDetailText(container, s.skip_reason || '该步骤未执行');
+        return;
+      }
+      if (s.status === 'error') {
+        addDetailText(container, s.output_summary || '执行异常');
+        return;
+      }
+      renderField(container, s.detail, s.output_summary);
+    }
+
+    /* 有限字段渲染：已知字段针对性处理，未知字段走通用 kv */
+    function renderField(container, value, fallback) {
+      if (value == null) {
+        if (fallback) addDetailText(container, fallback);
+        return;
+      }
+      if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
+        addDetailText(container, String(value));
+        return;
+      }
+      if (Array.isArray(value)) {
+        if (value.length === 0) { addDetailText(container, '无'); return; }
+        value.forEach(function (item) {
+          if (item != null && typeof item === 'object' && (item.source != null || item.rel != null)) {
+            container.appendChild(buildRelationRow(item));
+          } else if (item != null && typeof item === 'object') {
+            addDetailItem(container, item);
+          } else {
+            addDetailText(container, String(item));
+          }
+        });
+        return;
+      }
+      if (typeof value === 'object') {
+        Object.keys(value).forEach(function (k) {
+          const v = value[k];
+          const label = KEY_LABELS[k] || k;
+          if (k === 'cards') {
+            renderCards(container, v);
+          } else if (k === 'summary') {
+            addDetailText(container, formatScalar(k, v));
+          } else if (k === 'scores') {
+            addDetailSection(container, label, v, 'scores');
+          } else if (Array.isArray(v)) {
+            addDetailSection(container, label, v);
+          } else if (v != null && typeof v === 'object') {
+            addDetailSection(container, label, v);
+          } else {
+            addDetailKV(container, label, formatScalar(k, v));
+          }
+        });
+      }
+    }
+
+    function renderCards(container, cards) {
+      (cards || []).forEach(function (card) {
+        if (card == null) return;
+        const sec = document.createElement('div');
+        sec.className = 'detail-section';
+        const lab = document.createElement('div');
+        lab.className = 'detail-label';
+        lab.textContent = card.label || card.key || '分组';
+        sec.appendChild(lab);
+        (card.steps || []).forEach(function (st) {
+          sec.appendChild(buildRelationRow(st));
+        });
+        container.appendChild(sec);
+      });
+    }
+
+    function buildRelationRow(st) {
+      const row = document.createElement('div');
+      row.className = 'detail-relation';
+      const main = document.createElement('div');
+      main.className = 'rel-main';
+      main.textContent = (st.source || '') + ' → ' + (st.target || '') + '（' + (st.rel || '') + '）';
+      row.appendChild(main);
+      const meta = document.createElement('div');
+      meta.className = 'rel-meta';
+      meta.textContent = '极性：' + (POLARITY_LABELS[st.polarity] || st.polarity || '—') +
+        ' · 置信度：' + (CONFIDENCE_LABELS[st.confidence] || st.confidence || '—') +
+        (st.flagged ? ' · ⚠ 低置信度风险' : '');
+      row.appendChild(meta);
+      if (st.evidence) {
+        const ev = document.createElement('div');
+        ev.className = 'rel-evidence';
+        ev.textContent = '依据：' + st.evidence;
+        row.appendChild(ev);
+      }
+      return row;
+    }
+
+    /* 带标题的子区块：内部值按类型渲染 */
+    function addDetailSection(container, label, value, mode) {
+      const sec = document.createElement('div');
+      sec.className = 'detail-section';
+      const lab = document.createElement('div');
+      lab.className = 'detail-label';
+      lab.textContent = label;
+      sec.appendChild(lab);
+
+      if (mode === 'scores') {
+        Object.keys(value || {}).forEach(function (k) {
+          addDetailKV(sec, k, String(value[k]));
+        });
+      } else if (Array.isArray(value)) {
+        if (value.length === 0) { addDetailText(sec, '无'); }
+        value.forEach(function (item) {
+          if (item != null && typeof item === 'object') {
+            if (item.source != null || item.rel != null) {
+              sec.appendChild(buildRelationRow(item));
+            } else if (item.kind != null) {
+              addDetailKV(sec, KIND_LABELS[item.kind] || item.kind, item.note || '');
+            } else if (item.label != null) {
+              addDetailKV(sec, item.label, (item.count != null ? item.count + ' 条' : ''));
+            } else {
+              addDetailItem(sec, item);
+            }
+          } else {
+            addDetailText(sec, String(item));
+          }
+        });
+      } else if (value != null && typeof value === 'object') {
+        Object.keys(value).forEach(function (k) {
+          addDetailKV(sec, KEY_LABELS[k] || k, formatScalar(k, value[k]));
+        });
+      } else {
+        addDetailText(sec, formatScalar(null, value));
+      }
+      container.appendChild(sec);
+    }
+
+    /* 把对象扁平化为若干键值行 */
+    function addDetailItem(container, obj) {
+      Object.keys(obj).forEach(function (k) {
+        addDetailKV(container, KEY_LABELS[k] || k, formatScalar(k, obj[k]));
+      });
+    }
+
+    function addDetailText(container, text) {
+      const p = document.createElement('div');
+      p.className = 'detail-text';
+      p.textContent = text;
+      container.appendChild(p);
+    }
+
+    function addDetailKV(container, label, text) {
+      const row = document.createElement('div');
+      row.className = 'detail-kv';
+      const kl = document.createElement('span');
+      kl.className = 'dk-label';
+      kl.textContent = label;
+      row.appendChild(kl);
+      const kv = document.createElement('span');
+      kv.className = 'dk-value';
+      kv.textContent = text;
+      row.appendChild(kv);
+      container.appendChild(row);
+    }
+
+    function formatScalar(key, v) {
+      if (v == null) return '—';
+      if (typeof v === 'boolean') return v ? '是' : '否';
+      if (Array.isArray(v)) return v.join('、');
+      if (typeof v === 'object') { try { return JSON.stringify(v); } catch (e) { return String(v); } }
+      if (key === 'polarity') return POLARITY_LABELS[v] || v;
+      if (key === 'confidence') return CONFIDENCE_LABELS[v] || v;
+      if (key === 'kind') return KIND_LABELS[v] || v;
+      return String(v);
     }
 
     function send() {
@@ -569,52 +1240,14 @@ JS_CODE = """
       if (!text) return;
       textarea.innerText = '';
       updateSendState();
-      if (!inner.classList.contains('chat-mode')) {
-        inner.classList.add('chat-mode');
-        /* 先量取布局偏移（此刻 input-area 仍在 inner 文档流中，布局为空态） */
-        const ir = inner.getBoundingClientRect();
-        const hr = inner.querySelector('.hero').getBoundingClientRect();
-        /* 再移动输入区：absolute 元素位于滚动容器（main-scroll）内部时，
-           会随滚动内容一起移动（实测 iaTop = 651 - scrollTop）。
-           把 input-area 移到 main-area（position:relative）下、main-scroll 之外，
-           containing block 变为 main-area，彻底脱离滚动流，固定在中间区域底部 */
-        const ma = document.querySelector('.main-area');
-        const ia = document.querySelector('.input-area');
-        if (ma && ia) {
-          ma.appendChild(ia);
-          ia.classList.add('chat-fixed');
-        }
-        if (chatMask) chatMask.classList.add('show');
-        /* 开始对话：自动打开右侧边栏（与手动打开行为一致） */
-        if (rightPanel) {
-          rightPanel.classList.remove('hidden');
-          if (openRightBtn) openRightBtn.style.display = 'none';
-        }
-        /* 布局切换：center → flex-start。为消除瞬间跳变，
-           先量出 hero 当前相对 main-inner 的偏移，用 padding-top 补偿使其原位落位，
-           再让 padding-top 过渡到默认值 —— hero 被确定性地向上移出；
-           chat-area 与输入区由 flex 布局自然推到底部 */
-        inner.style.transition = 'none'; /* 临时禁用过渡，补偿落位瞬间不产生动画 */
-        inner.style.justifyContent = 'flex-start';
-        inner.style.paddingTop = (hr.top - ir.top) + 'px';
-        chatArea.offsetHeight; /* 强制重排：补偿后的布局落位 */
-        inner.style.transition = ''; /* 恢复 CSS 过渡 */
-        requestAnimationFrame(function () {
-          inner.style.paddingTop = ''; /* 清空内联补偿，过渡回 CSS 默认 padding-top */
-        });
-      }
+      enterChatMode();
       /* 会话记录：首次发送新建条目（标题 = 首条消息）置顶插入最近对话 */
       let convo = getCurrentConvo();
       if (!convo) convo = addConversation(text);
       convo.msgs.push({ role: 'user', text: text });
       addUserMsg(text);
-      const thinking = addThinkingMsg();
-      setTimeout(function () {
-        thinking.remove();
-        const botText = getBotReply(text);
-        convo.msgs.push({ role: 'bot', text: botText });
-        typeText(addBotMsg(), botText);
-      }, 1000);
+      saveHistory();
+      runQuery(text);
     }
 
     sendBtn.addEventListener('click', send);
@@ -628,6 +1261,9 @@ JS_CODE = """
     document.querySelectorAll('.new-task-btn, .collapsed-tool').forEach(function (b) {
       b.addEventListener('click', resetChat);
     });
+
+    /* 页面加载：从 localStorage 恢复历史记录 */
+    loadHistory();
   }
 
   if (document.readyState === 'loading') {
@@ -872,6 +1508,8 @@ div:has(> .app-shell) { padding: 0 !important; margin: 0 !important; background:
   transition: background 150ms var(--ease);
 }
 .chat-item:hover { background: #FAF3EC; }
+.chat-item.active { background: #FAF3EC; }
+.chat-item.active .chat-title { color: #6B5045; }
 /* 新会话条目淡入 */
 .chat-item-new { animation: chatItemIn 240ms var(--ease); }
 @keyframes chatItemIn {
@@ -1279,15 +1917,12 @@ div:has(> .app-shell) { padding: 0 !important; margin: 0 !important; background:
   overflow: hidden;
 }
 
-/* 消息入场动画：
-   用户气泡从画面中部快速渐入，随后上移至顶部位置；
-   bot 气泡（含思考中）淡入上浮 */
+/* 消息入场动画：用户与 bot 气泡统一淡入上浮（10px） */
 @keyframes userBubbleIn {
-  0%   { opacity: 0; transform: translateY(45vh) scale(0.97); }
-  55%  { opacity: 1; }
-  100% { opacity: 1; transform: translateY(0) scale(1); }
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
-.message-user { animation: userBubbleIn 420ms cubic-bezier(0.22, 0.61, 0.36, 1) both; }
+.message-user { animation: userBubbleIn 300ms ease-out both; }
 @keyframes botBubbleIn {
   from { opacity: 0; transform: translateY(10px); }
   to   { opacity: 1; transform: translateY(0); }
@@ -1427,8 +2062,8 @@ div:has(> .app-shell) { padding: 0 !important; margin: 0 !important; background:
   flex: 0 0 auto;
   width: 380px;
   min-width: 0;
-  background: #FDFCFA;
-  border-left: 1px solid #F8F1EB;
+  background: #FFFFFF;
+  border-left: 1px solid #EDE5DD;
   display: flex;
   flex-direction: column;
   transition: width 300ms var(--ease), opacity 200ms var(--ease);
@@ -1436,21 +2071,29 @@ div:has(> .app-shell) { padding: 0 !important; margin: 0 !important; background:
 }
 .right-sidebar.hidden { flex: 0 0 0; width: 0; min-width: 0; max-width: 0; opacity: 0; border-left: none; }
 .right-sidebar.fullscreen { position: fixed; top: 0; right: 0; bottom: 0; width: 100vw; flex: 0 0 auto; min-width: 0; max-width: none; z-index: 50; }
-.right-inner { width: 100%; min-width: 0; height: 100%; display: flex; flex-direction: column; }
+.right-inner { position: relative; width: 100%; min-width: 0; height: 100%; display: flex; flex-direction: column; }
 
 .right-header {
+  flex: 0 0 auto;
+  /* padding-top 16px 使收起按钮顶端与左侧 logo 顶端对齐（sidebar padding-top 16，左侧 logo 顶端 y=16） */
+  padding: 16px 16px 12px;
+  border-bottom: 1px solid #EDE5DD;
+}
+.right-header-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  /* padding-top 16px 使收起按钮顶端与左侧 logo 顶端对齐（sidebar padding-top 16，左侧 logo 顶端 y=16） */
-  padding: 16px 14px 10px;
-  border-bottom: 1px solid #F8F1EB;
 }
-.right-title { display: flex; align-items: center; gap: 7px; font-size: 16px; font-weight: 600; color: #6B5045; line-height: 1.4; }
-.file-icon { color: #8C6B5D; }
+.right-title { display: flex; align-items: center; gap: 7px; font-size: 16px; font-weight: 600; color: #3E3836; line-height: 1.4; }
+.title-star { color: #C7A18E; font-size: 14px; line-height: 1; }
 .right-actions { display: flex; gap: 2px; }
 
-.right-body { flex: 1; overflow-y: auto; padding: 8px 12px 12px; scrollbar-width: thin; }
+.right-timeline { flex: 1 1 0; min-height: 0; overflow-y: auto; padding: 12px 12px 4px; scrollbar-width: thin; }
+.right-detail { flex: 1 1 0; min-height: 0; display: flex; flex-direction: column; border-top: 1px solid #EDE5DD; }
+.detail-body { flex: 1 1 auto; min-height: 0; overflow-y: auto; padding: 12px 16px 16px; scrollbar-width: thin; }
+/* 展开：隐藏 Timeline，详情填满 Header 以下区域 */
+.right-sidebar.detail-expanded .right-timeline { display: none; }
+.right-sidebar.detail-expanded .right-detail { border-top: none; }
 .right-group { margin-bottom: 6px; }
 .right-group-title {
   display: flex;
@@ -1507,6 +2150,183 @@ details[open] .chevron { transform: rotate(180deg); }
 .right-more:hover { background: transparent !important; color: #6B5045; }
 
 /* ============================================================
+   右侧栏 AI 分析过程（三段式：Header + Timeline + Detail）
+   配色遵循 design-system-spec.md 方案 B
+   ============================================================ */
+.trace-empty { font-size: 13px; color: #6F6763; line-height: 1.6; padding: 16px 8px; text-align: center; }
+
+/* Header 状态行 + 输入摘要 */
+.analysis-status {
+  margin-top: 8px;
+  font-size: 12px;
+  color: #6F6763;
+  line-height: 1.4;
+}
+.analysis-status .status-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  margin-right: 6px;
+  vertical-align: 1px;
+  background: #CFC7C2;
+}
+.analysis-status.is-running .status-dot { background: #907063; animation: nodePulse 1.8s ease-in-out infinite; }
+.analysis-status.is-completed .status-dot { background: #6F8A6A; }
+.analysis-status.is-error .status-dot { background: #B86B5B; }
+
+.analysis-input {
+  margin-top: 6px;
+  font-size: 12px;
+  color: #A99A90;
+  line-height: 1.5;
+  word-break: break-all;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.input-type-tag {
+  display: inline-block;
+  margin-right: 6px;
+  padding: 0 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  line-height: 1.7;
+  vertical-align: 1px;
+}
+.input-type-tag.type-normal { background: #FDFBF7; border: 1px solid #EDE5DD; color: #6F6763; }
+.input-type-tag.type-composite { background: #FAF3EC; border: 1px solid #E7D8CC; color: #6B5045; }
+
+/* Timeline 步骤 */
+.analysis-step {
+  display: flex;
+  gap: 10px;
+  padding: 6px 8px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: background 150ms var(--ease);
+}
+.analysis-step:hover { background: #FAF3EC; }
+.analysis-step.is-selected {
+  background: #FAF3EC;
+  border-color: #C7A18E;
+}
+.step-rail {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 16px;
+  flex-shrink: 0;
+}
+.step-node {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  color: #FFFFFF;
+  line-height: 1;
+}
+.step-rail::after {
+  content: '';
+  position: absolute;
+  top: 18px;
+  bottom: -12px;
+  width: 1px;
+  background: #EDE5DD;
+}
+.analysis-step:last-child .step-rail::after { display: none; }
+
+/* 节点五态 */
+.step-node.node-pending { border: 1.5px solid #CFC7C2; background: transparent; }
+.step-node.node-running { background: #907063; animation: nodePulse 1.8s ease-in-out infinite; }
+.step-node.node-completed { background: #FFFFFF; border: 1.5px solid #6F8A6A; color: #6F8A6A; }
+.step-node.node-error { background: #B86B5B; }
+.step-node.node-skipped { border: 1.5px dashed #CFC7C2; background: transparent; }
+
+.step-info { flex: 1; min-width: 0; padding-bottom: 2px; }
+.step-title { font-size: 14px; font-weight: 600; color: #3E3836; line-height: 1.4; }
+.step-summary { margin-top: 2px; font-size: 12px; color: #6F6763; line-height: 1.5; word-break: break-all; }
+.analysis-step.is-skipped .step-title { color: #6F6763; font-weight: 400; text-decoration: line-through; }
+.analysis-step.is-skipped .step-summary { color: #A99A90; }
+
+@keyframes nodePulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
+
+/* Detail Panel */
+.detail-empty { font-size: 13px; color: #A99A90; line-height: 1.6; padding: 16px 8px; text-align: center; }
+.detail-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
+.detail-head-text { flex: 1; min-width: 0; }
+.detail-expand-btn {
+  flex-shrink: 0;
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  padding: 0 !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  border-radius: 6px;
+  color: #4a3a2d;
+  cursor: pointer;
+  transition: background 150ms;
+}
+.detail-expand-btn:hover { background: #FAF3EC; }
+.detail-expand-btn svg { fill: #4a3a2d !important; }
+.detail-expand-btn .icon-down { display: none; }
+.right-sidebar.detail-expanded .detail-expand-btn .icon-up { display: none; }
+.right-sidebar.detail-expanded .detail-expand-btn .icon-down { display: inline-block; }
+.detail-head-title { font-size: 15px; font-weight: 600; color: #3E3836; line-height: 1.4; }
+.detail-head-subtitle { margin-top: 2px; font-size: 12px; color: #6F6763; line-height: 1.5; }
+.detail-content { margin-top: 12px; }
+.detail-section { margin-bottom: 14px; }
+.detail-section:last-child { margin-bottom: 0; }
+.detail-label { font-size: 12px; font-weight: 600; color: #6B5045; margin-bottom: 6px; }
+.detail-text { font-size: 13px; color: #3E3836; line-height: 1.7; word-break: break-all; }
+.detail-kv { display: flex; gap: 6px; font-size: 13px; line-height: 1.6; margin-bottom: 4px; }
+.detail-kv .dk-label { color: #6F6763; flex-shrink: 0; }
+.detail-kv .dk-value { color: #3E3836; word-break: break-all; }
+.detail-relation {
+  padding: 7px 10px;
+  border: 1px solid #EDE5DD;
+  border-radius: 8px;
+  margin-bottom: 6px;
+}
+.detail-relation:last-child { margin-bottom: 0; }
+.detail-relation .rel-main { font-size: 13px; color: #3E3836; line-height: 1.5; word-break: break-all; }
+.detail-relation .rel-meta { margin-top: 3px; font-size: 12px; color: #6F6763; line-height: 1.5; }
+.detail-relation .rel-evidence { margin-top: 3px; font-size: 12px; color: #A99A90; line-height: 1.5; word-break: break-all; }
+
+/* 澄清按钮（中间对话区） */
+.clarify-box { margin-top: 2px; }
+.clarify-tip { font-size: 13px; color: #6F6763; line-height: 1.5; margin-bottom: 8px; }
+.clarify-btns { display: flex; flex-wrap: wrap; gap: 8px; }
+.clarify-btn {
+  padding: 7px 14px;
+  background: #FFFFFF;
+  border: 1px solid #8C6B5D;
+  border-radius: 6px;
+  color: #8C6B5D;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 150ms;
+}
+.clarify-btn:hover { background: #FAF3EC; }
+
+/* ============================================================
    小屏适配：默认左侧缩略；常规 PC 优先完整展示
    ============================================================ */
 @media (max-width: 1100px) {
@@ -1554,24 +2374,87 @@ _JS_EXEC = JS_CODE
 for _k, _v in _IMG_REPLACEMENTS.items():
     _JS_EXEC = _JS_EXEC.replace(_k, _v)
 
+# 注入图数据库页面 HTML（iframe srcdoc 懒加载）
+import json as _json
+_GRAPH_PAGE_HTML = open(os.path.join(os.path.dirname(__file__), 'source/design/graph-demo.html'), encoding='utf-8').read()
+_JS_EXEC = _JS_EXEC.replace('__GRAPH_HTML_JSON__', _json.dumps(_GRAPH_PAGE_HTML).replace('</', '<\\/'))
 
 _STYLE_HTML = (
     "<style>\n"
     + _GRADIO_CSS
-    + "\n</style>"
+    + "\n/* 图数据库页面 */\n"
+    + ".page-graph{border:none;flex:1;background:#FDFBF7;display:none;}\n"
+    + ".app-shell.mode-graph .main-area,"
+    + ".app-shell.mode-graph .right-sidebar{display:none!important;}\n"
+    + ".app-shell.mode-graph .page-graph{display:block;}\n"
+    + "</style>"
 )
 
 
+# ---------------------------------------------------------------------------
+# 后端推理入口：通过 gr.HTML 的 server_functions 暴露给前端 JS
+# ---------------------------------------------------------------------------
+_pipeline = Pipeline()
+
+
+def respond(user_input: str, context_entities: list[str] | None = None) -> dict:
+    """执行一次推理，返回 JSON 友好的结果（含执行轨迹）。
+
+    该函数通过 server_functions=[respond] 暴露给前端，JS 中以
+    `await server.respond(text, contextEntities)` 调用。
+    context_entities 为上一轮成功解析的实体（上下文），供连续对话实体继承。
+
+    注意：Gradio 的 server_functions 在多参数调用时会把参数序列化为数组
+    data=[user_input, context_entities]，但后端 component_server 不展开该数组，
+    导致第一个参数收到整个 list。这里手动拆分以兼容多参数调用。
+    返回值必须是可 JSON 序列化的纯 dict。
+    """
+    if isinstance(user_input, list):
+        user_input, context_entities = (
+            user_input[0],
+            user_input[1] if len(user_input) > 1 else None,
+        )
+    response, trace = _pipeline.run_with_trace(user_input, context_entities)
+    return {
+        "status": response.status.value,
+        "summary": response.summary,
+        "intent": response.intent.value if response.intent else None,
+        "entities": response.entities,
+        "boundary_hint": response.boundary_hint,
+        "error_message": response.error_message,
+        "clarify_options": [
+            {"label": o.label, "value": o.value} for o in response.clarify_options
+        ],
+        "trace": {
+            "user_input": trace.user_input,
+            "input_type": trace.input_type,
+            "steps": [
+                {
+                    "step_id": s.step_id,
+                    "step_name": s.step_name,
+                    "agent": s.agent,
+                    "status": s.status,
+                    "input_summary": s.input_summary,
+                    "output_summary": s.output_summary,
+                    "detail": s.detail,
+                    "skip_reason": s.skip_reason,
+                }
+                for s in trace.steps
+            ],
+        },
+    }
+
 
 def create_demo() -> gr.Blocks:
-    """构建 Gradio 应用实例（当前为静态首页展示）。"""
+    """构建 Gradio 应用实例。"""
     with gr.Blocks(
         title="宠医助手 · FIP 知识推理系统",
     ) as demo:
         # 静态首页：所有内容通过 HTML 注入，便于完全控制布局与动效
         # 样式经 head 注入；交互 JS 经 js_on_load 注入（Gradio 官方保证执行，
         # head 中的内联 <script> 可能被前端以 innerHTML 方式插入而不执行）
-        gr.HTML(_HOME_HTML, head=_STYLE_HTML, js_on_load=_JS_EXEC)
+        # server_functions 把 respond 暴露给 JS：await server.respond(text)
+        gr.HTML(_HOME_HTML, head=_STYLE_HTML, js_on_load=_JS_EXEC, server_functions=[respond])
     return demo
 
 
@@ -1579,9 +2462,12 @@ demo = create_demo()
 
 
 if __name__ == "__main__":
+    # 端口可由环境变量 GRADIO_PORT 覆盖，方便绕过浏览器缓存（浏览器按 URL 缓存 HTML）：
+    #   GRADIO_PORT=7862 python app.py
+    _port = int(os.environ.get("GRADIO_PORT", "7860"))
     demo.launch(
         server_name="0.0.0.0",
-        server_port=7860,
+        server_port=_port,
         show_error=True,
         inbrowser=False,
         quiet=False,
