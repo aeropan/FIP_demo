@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>文献库</title>
+<style>
+:root{
+  --bg-page:#FDFBF7;
+  --bg-card:rgba(255,255,255,0.55);
+  --bg-hover:#FFFFFF;
+  --bg-chip:#FAF3EC;
+  --bg-thumb:#FAF3EC;
+  --text-main:#3E3836;
+  --text-secondary:#6F6763;
+  --text-muted:#9A918B;
+  --primary:#8C6B5D;
+  --primary-hover:#6B5045;
+  --primary-light:#FAF3EC;
+  --border:#EDE5DD;
+  --border-hover:#DDD3C9;
+  --shadow-hover:0 4px 16px rgba(62,56,54,0.06);
+  --radius-md:12px;
+  --radius-sm:8px;
+  --gap:32px;
+  --max-width:1440px;
+}
+
+* { box-sizing: border-box; }
+
+html,body{
+  margin:0;
+  min-height:100%;
+  background:var(--bg-page);
+  font-family:"PingFang SC","Microsoft YaHei","Helvetica Neue",Arial,sans-serif;
+  color:var(--text-main);
+  line-height:1.55;
+}
+
+.library-shell{
+  max-width:var(--max-width);
+  margin:0 auto;
+  padding:40px 48px 64px;
+}
+
+/* Header */
+.library-header{
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:24px;
+  margin-bottom:28px;
+}
+
+.library-title-group{ }
+
+.library-title{
+  font-size:28px;
+  font-weight:600;
+  color:var(--text-main);
+  margin:0 0 6px;
+  letter-spacing:-0.02em;
+}
+
+.library-subtitle{
+  font-size:14px;
+  color:var(--text-secondary);
+  margin:0;
+}
+
+.btn-primary{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:9px 18px;
+  border:none;
+  border-radius:var(--radius-sm);
+  background:var(--primary);
+  color:#fff;
+  font-size:14px;
+  font-weight:500;
+  cursor:pointer;
+  transition:background .2s ease, transform .1s ease;
+}
+
+.btn-primary:hover{ background:var(--primary-hover); }
+.btn-primary:active{ transform:translateY(1px); }
+
+/* Search & filters */
+.library-toolbar{
+  display:flex;
+  flex-direction:column;
+  gap:16px;
+  margin-bottom:36px;
+}
+
+.search-box{
+  position:relative;
+  max-width:560px;
+}
+
+.search-box input{
+  width:100%;
+  padding:11px 14px 11px 38px;
+  border:1px solid var(--border);
+  border-radius:var(--radius-sm);
+  background:#fff;
+  font-size:14px;
+  color:var(--text-main);
+  outline:none;
+  transition:border-color .2s ease, box-shadow .2s ease;
+}
+
+.search-box input::placeholder{ color:var(--text-muted); }
+.search-box input:focus{
+  border-color:var(--primary);
+  box-shadow:0 0 0 3px rgba(140,107,93,0.08);
+}
+
+.search-icon{
+  position:absolute;
+  left:12px;
+  top:50%;
+  transform:translateY(-50%);
+  color:var(--text-muted);
+  font-size:14px;
+}
+
+.category-chips{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+}
+
+.chip{
+  padding:7px 15px;
+  border-radius:999px;
+  border:1px solid transparent;
+  background:var(--bg-chip);
+  color:var(--text-secondary);
+  font-size:13px;
+  cursor:pointer;
+  transition:background .2s ease, color .2s ease, border-color .2s ease;
+  user-select:none;
+}
+
+.chip:hover{ background:#F3E8DE; }
+.chip.active{
+  background:var(--primary);
+  color:#fff;
+  border-color:var(--primary);
+}
+
+/* Results count */
+.results-meta{
+  font-size:13px;
+  color:var(--text-secondary);
+  margin-bottom:18px;
+}
+
+.results-meta strong{
+  color:var(--text-main);
+  font-weight:600;
+}
+
+/* Document grid */
+.doc-grid{
+  display:grid;
+  grid-template-columns:repeat(2, minmax(500px, 1fr));
+  gap:var(--gap);
+}
+
+.doc-item{
+  display:flex;
+  gap:20px;
+  padding:18px;
+  border:1px solid var(--border);
+  border-radius:var(--radius-md);
+  background:var(--bg-card);
+  transition:background .2s ease, border-color .2s ease, box-shadow .2s ease;
+  cursor:pointer;
+}
+
+.doc-item:hover{
+  background:var(--bg-hover);
+  border-color:var(--border-hover);
+  box-shadow:var(--shadow-hover);
+}
+
+.doc-thumb{
+  flex:0 0 auto;
+  width:120px;
+  height:160px;
+  border-radius:var(--radius-sm);
+  border:1px solid var(--border);
+  background:var(--bg-thumb);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  position:relative;
+}
+
+.doc-thumb-cover{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.doc-thumb-fallback{
+  width:100%;
+  height:100%;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  padding:12px;
+  text-align:center;
+}
+
+.thumb-badge{
+  font-size:11px;
+  font-weight:600;
+  color:var(--primary);
+  letter-spacing:0.04em;
+  text-transform:uppercase;
+  margin-bottom:8px;
+}
+
+.thumb-icon{
+  width:36px;
+  height:44px;
+  border:1.5px solid var(--primary);
+  border-radius:3px;
+  position:relative;
+  opacity:0.55;
+}
+.thumb-icon::after{
+  content:"";
+  position:absolute;
+  top:6px;
+  left:6px;
+  right:6px;
+  height:2px;
+  background:var(--primary);
+  box-shadow:0 6px 0 var(--primary), 0 12px 0 var(--primary), 0 18px 0 var(--primary);
+}
+
+.thumb-doi{
+  position:absolute;
+  bottom:8px;
+  left:8px;
+  right:8px;
+  font-size:10px;
+  color:var(--text-muted);
+  text-align:center;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+.doc-content{
+  flex:1 1 auto;
+  min-width:0;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.doc-title{
+  font-size:18px;
+  font-weight:600;
+  color:var(--text-main);
+  line-height:1.35;
+  margin:0;
+  display:-webkit-box;
+  -webkit-line-clamp:2;
+  -webkit-box-orient:vertical;
+  overflow:hidden;
+}
+
+.doc-meta{
+  font-size:13px;
+  color:var(--text-secondary);
+  margin:0;
+}
+
+.doc-meta .divider{
+  margin:0 5px;
+  color:var(--border-hover);
+}
+
+.doc-abstract{
+  font-size:13px;
+  color:var(--text-secondary);
+  line-height:1.6;
+  margin:0;
+  display:-webkit-box;
+  -webkit-line-clamp:3;
+  -webkit-box-orient:vertical;
+  overflow:hidden;
+}
+
+.doc-keywords{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-top:auto;
+  padding-top:4px;
+}
+
+.keyword{
+  display:inline-block;
+  padding:4px 10px;
+  border-radius:999px;
+  background:var(--bg-chip);
+  color:var(--primary);
+  font-size:12px;
+}
+
+.doc-footer{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin-top:2px;
+}
+
+.doc-source{
+  font-size:12px;
+  color:var(--text-muted);
+}
+
+.doc-citations{
+  font-size:12px;
+  color:var(--text-secondary);
+  font-weight:500;
+}
+
+/* Empty state */
+.empty-state{
+  display:none;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  padding:80px 20px;
+  text-align:center;
+  color:var(--text-secondary);
+}
+
+.empty-state.visible{ display:flex; }
+
+.empty-icon{
+  width:56px;
+  height:56px;
+  border-radius:50%;
+  background:var(--bg-chip);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:24px;
+  margin-bottom:16px;
+  color:var(--primary);
+}
+
+.empty-title{
+  font-size:16px;
+  font-weight:600;
+  color:var(--text-main);
+  margin:0 0 6px;
+}
+
+.empty-desc{
+  font-size:14px;
+  margin:0;
+}
+
+/* Responsive */
+@media (max-width:1100px){
+  .doc-grid{
+    grid-template-columns:1fr;
+  }
+}
+
+@media (max-width:720px){
+  .library-shell{
+    padding:24px 20px 48px;
+  }
+  .library-header{
+    flex-direction:column;
+    align-items:flex-start;
+  }
+  .doc-item{
+    flex-direction:column;
+    gap:16px;
+  }
+  .doc-thumb{
+    width:100%;
+    height:180px;
+  }
+}
+</style>
+</head>
+<body>
+<div class="library-shell">
+  <header class="library-header">
+    <div class="library-title-group">
+      <h1 class="library-title">文献库</h1>
+      <p class="library-subtitle">收录并管理用于疾病知识分析与智能问诊的研究文献</p>
+    </div>
+    <button class="btn-primary" id="addDocBtn">
+      <span>+</span>
+      <span>添加文献</span>
+    </button>
+  </header>
+
+  <div class="library-toolbar">
+    <div class="search-box">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="searchInput" placeholder="搜索文献标题、作者、关键词……">
+    </div>
+    <div class="category-chips" id="categoryChips">
+      <span class="chip active" data-category="all">全部文献</span>
+      <span class="chip" data-category="disease">疾病研究</span>
+      <span class="chip" data-category="diagnosis">诊断</span>
+      <span class="chip" data-category="treatment">治疗</span>
+      <span class="chip" data-category="mechanism">机制</span>
+    </div>
+  </div>
+
+  <div class="results-meta" id="resultsMeta">
+    共 <strong id="resultCount">0</strong> 篇文献
+  </div>
+
+  <div class="doc-grid" id="docGrid"></div>
+
+  <div class="empty-state" id="emptyState">
+    <div class="empty-icon">📄</div>
+    <p class="empty-title">未找到相关文献</p>
+    <p class="empty-desc">请尝试更换关键词或筛选条件</p>
+  </div>
+</div>
+
+<script>
+const documents = [
+  {
+    id: 1,
+    title: "Feline Infectious Peritonitis: A Review of Diagnosis and Therapeutic Strategies",
+    authors: "Pedersen NC",
+    year: 2023,
+    source: "Journal of Feline Medicine and Surgery",
+    abstract: "This review summarizes the current understanding of feline infectious peritonitis (FIP) pathogenesis, diagnostic advances, and treatment options, with emphasis on antiviral therapies and clinical management.",
+    keywords: ["猫传腹", "FIP", "诊断", "治疗"],
+    categories: ["disease", "diagnosis", "treatment"],
+    doi: "10.1177/1098612X2311918",
+    citations: 142
+  },
+  {
+    id: 2,
+    title: "Feline Coronavirus Infection in Cats: From Asymptomatic Infection to Fatal FIP",
+    authors: "Addie DD, Toth S, Curran S",
+    year: 2022,
+    source: "Viruses",
+    abstract: "An overview of feline coronavirus biology, mutation events leading to FIP, and factors influencing disease progression in naturally infected cats.",
+    keywords: ["FCoV", "FIP", "机制", "猫传腹"],
+    categories: ["disease", "mechanism"],
+    doi: "10.3390/v14101980",
+    citations: 89
+  },
+  {
+    id: 3,
+    title: "Pathological Features of Feline Infectious Peritonitis in Naturally Infected Cats",
+    authors: "Kipar A, Meli ML",
+    year: 2021,
+    source: "Veterinary Pathology",
+    abstract: "Detailed histopathological characterization of FIP lesions, including vasculitis, pyogranulomatous inflammation, and organ-specific manifestations in clinical cases.",
+    keywords: ["病理", "FIP", "疾病研究"],
+    categories: ["disease", "mechanism"],
+    doi: "10.1177/03009858219923",
+    citations: 76
+  },
+  {
+    id: 4,
+    title: "Diagnosis of Feline Infectious Peritonitis: A Systematic Review of Laboratory Tests",
+    authors: "Tasker S, Rizzi TE",
+    year: 2024,
+    source: "Journal of Veterinary Internal Medicine",
+    abstract: "Systematic evaluation of diagnostic markers including AGP, A:G ratio, RT-PCR, and Rivalta test for differentiation of FIP from other feline diseases.",
+    keywords: ["诊断", "FIP", "实验室检测"],
+    categories: ["diagnosis"],
+    doi: "10.1111/jvim.16812",
+    citations: 54
+  },
+  {
+    id: 5,
+    title: "Efficacy of GS-441524 for Treatment of Feline Infectious Peritonitis in Field Cases",
+    authors: "Ives EJ, Jones KL",
+    year: 2023,
+    source: "Journal of Veterinary Emergency and Critical Care",
+    abstract: "Retrospective analysis of GS-441524 treatment outcomes in client-owned cats with wet and dry forms of FIP, including relapse rates and adverse events.",
+    keywords: ["GS-441524", "FIP", "治疗"],
+    categories: ["treatment"],
+    doi: "10.1111/vec.13245",
+    citations: 203
+  },
+  {
+    id: 6,
+    title: "Immunohistochemical Detection of Feline Coronavirus Antigen in Tissues",
+    authors: "Dickinson PJ, LeCouteur RA",
+    year: 2020,
+    source: "Veterinary Immunology and Immunopathology",
+    abstract: "Validation of immunohistochemistry for detecting feline coronavirus antigen in biopsy and necropsy samples as a confirmatory diagnostic approach.",
+    keywords: ["免疫组化", "FCoV", "诊断"],
+    categories: ["diagnosis", "mechanism"],
+    doi: "10.1016/j.vetimm.2020.11023",
+    citations: 67
+  },
+  {
+    id: 7,
+    title: "Antiviral Therapy for Feline Infectious Peritonitis: GC376 and Beyond",
+    authors: "Legendre AM, Bartges JW",
+    year: 2022,
+    source: "Veterinary Microbiology",
+    abstract: "Comparative review of protease inhibitor GC376 and nucleoside analog GS-441524, discussing mechanisms, clinical protocols, and resistance considerations.",
+    keywords: ["GC376", "抗病毒", "治疗"],
+    categories: ["treatment", "mechanism"],
+    doi: "10.1016/j.vetmic.2022.10945",
+    citations: 118
+  },
+  {
+    id: 8,
+    title: "Feline Infectious Peritonitis: Current Understanding of Viral Entry and Host Immune Evasion",
+    authors: "Felten S, Hartmann K",
+    year: 2024,
+    source: "Frontiers in Veterinary Science",
+    abstract: "Exploration of host-pathogen interactions during FIP development, focusing on viral entry receptors, macrophage tropism, and immune-mediated pathology.",
+    keywords: ["FIP", "免疫逃逸", "机制"],
+    categories: ["mechanism", "disease"],
+    doi: "10.3389/fvets.2024.13456",
+    citations: 45
+  }
+];
+
+const grid = document.getElementById('docGrid');
+const emptyState = document.getElementById('emptyState');
+const resultCount = document.getElementById('resultCount');
+const searchInput = document.getElementById('searchInput');
+const chips = document.querySelectorAll('.chip');
+
+let currentCategory = 'all';
+let currentQuery = '';
+
+function renderThumb(doc){
+  return `
+    <div class="doc-thumb-fallback">
+      <div class="thumb-badge">Article</div>
+      <div class="thumb-icon"></div>
+      <div class="thumb-doi">${doc.doi || 'DOI'}</div>
+    </div>
+  `;
+}
+
+function renderDoc(doc){
+  return `
+    <article class="doc-item" data-id="${doc.id}">
+      <div class="doc-thumb">
+        ${renderThumb(doc)}
+      </div>
+      <div class="doc-content">
+        <h3 class="doc-title">${doc.title}</h3>
+        <p class="doc-meta">
+          ${doc.authors} <span class="divider">·</span> ${doc.year} <span class="divider">·</span> ${doc.source}
+        </p>
+        <p class="doc-abstract">${doc.abstract}</p>
+        <div class="doc-keywords">
+          ${doc.keywords.map(k => `<span class="keyword">${k}</span>`).join('')}
+        </div>
+        <div class="doc-footer">
+          <span class="doc-source">${doc.doi}</span>
+          <span class="doc-citations">${doc.citations} citations</span>
+        </div>
+      </div>
+    </article>
+  `;
+}
+
+function filterDocs(){
+  const q = currentQuery.trim().toLowerCase();
+  return documents.filter(doc => {
+    const matchesCategory = currentCategory === 'all' || doc.categories.includes(currentCategory);
+    const matchesQuery = !q ||
+      doc.title.toLowerCase().includes(q) ||
+      doc.authors.toLowerCase().includes(q) ||
+      doc.source.toLowerCase().includes(q) ||
+      doc.keywords.some(k => k.toLowerCase().includes(q));
+    return matchesCategory && matchesQuery;
+  });
+}
+
+function render(){
+  const filtered = filterDocs();
+  resultCount.textContent = filtered.length;
+
+  if(filtered.length === 0){
+    grid.innerHTML = '';
+    emptyState.classList.add('visible');
+  } else {
+    grid.innerHTML = filtered.map(renderDoc).join('');
+    emptyState.classList.remove('visible');
+  }
+}
+
+chips.forEach(chip => {
+  chip.addEventListener('click', () => {
+    chips.forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    currentCategory = chip.dataset.category;
+    render();
+  });
+});
+
+searchInput.addEventListener('input', e => {
+  currentQuery = e.target.value;
+  render();
+});
+
+document.getElementById('addDocBtn').addEventListener('click', () => {
+  alert('添加文献功能待接入后端');
+});
+
+grid.addEventListener('click', e => {
+  const item = e.target.closest('.doc-item');
+  if(item){
+    const doc = documents.find(d => d.id == item.dataset.id);
+    console.log('打开文献：', doc);
+  }
+});
+
+render();
+</script>
+</body>
+</html>

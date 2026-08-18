@@ -236,6 +236,7 @@ HOMEPAGE_HTML = """
 
   <!-- 右侧边栏（默认隐藏；点击开始对话后自动打开） -->
   <aside class="right-sidebar hidden" id="rightSidebar">
+    <div class="sidebar-resizer" id="sidebarResizer"></div>
     <div class="right-inner" data-sidebar-version="v2-timeline">
       <!-- 顶部 Header：标题 + 状态 + 输入摘要 -->
       <div class="right-header">
@@ -269,6 +270,7 @@ HOMEPAGE_HTML = """
 
       <!-- Detail Panel：当前选中步骤详情（独立滚动） -->
       <div class="right-detail" id="traceDetail">
+        <div class="detail-resizer" id="detailResizer"></div>
         <div class="detail-body" id="traceDetailBody">
           <div class="detail-empty">点击步骤查看详细内容</div>
         </div>
@@ -277,35 +279,62 @@ HOMEPAGE_HTML = """
   </aside>
   <!-- 图数据库页面（iframe 隔离，懒加载） -->
   <iframe id="pageGraph" class="page-graph" hidden title="图数据库"></iframe>
+  <!-- 文献库页面（空页面占位） -->
+  <iframe id="pageDocs" class="page-docs" hidden title="文献库"></iframe>
+  <!-- 产品设计说明页面（空页面占位） -->
+  <iframe id="pageDesign" class="page-design" hidden title="产品设计说明"></iframe>
 </div>
 """
 
 # Gradio 的 gr.HTML 中插入的 <script> 不会被执行，因此交互逻辑通过 Blocks 的 js 参数注入。
 JS_CODE = """
 window.__GRAPH_HTML__=__GRAPH_HTML_JSON__;
+window.__DOCS_HTML__=__DOCS_HTML_JSON__;
+window.__DESIGN_HTML__=__DESIGN_HTML_JSON__;
 (() => {
-  /* ====== 导航路由：图数据库页面切换 ====== */
+  /* ====== 导航路由：页面切换（图数据库 / 文献库 / 产品设计说明） ====== */
   (function(){
     var appShell=document.getElementById('appShell');
     var pageGraph=document.getElementById('pageGraph');
-    if(!appShell||!pageGraph)return;
-    var navItems=document.querySelectorAll('.nav-menu .nav-item');
-    navItems.forEach(function(item){
-      item.addEventListener('click',function(e){
-        e.preventDefault();
-        var isGraph=item.textContent.indexOf('图数据库')>=0;
-        navItems.forEach(function(n){n.classList.remove('active');});
-        item.classList.add('active');
-        if(isGraph){
-          appShell.classList.add('mode-graph');
-          if(!pageGraph.dataset.loaded){
-            pageGraph.srcdoc=window.__GRAPH_HTML__;
-            pageGraph.dataset.loaded='1';
-          }
-        }else{
-          appShell.classList.remove('mode-graph');
+    var pageDocs=document.getElementById('pageDocs');
+    var pageDesign=document.getElementById('pageDesign');
+    if(!appShell)return;
+    /* 事件委托到 document：避免 Gradio 重渲染或 iframe srcdoc 加载导致
+       nav-item 监听丢失（一次性 forEach 绑定的脆弱性） */
+    document.addEventListener('click',function(e){
+      var item=e.target&&e.target.closest&&e.target.closest('.nav-menu .nav-item');
+      if(!item)return;
+      e.preventDefault();
+      var text=item.textContent;
+      /* 每次重新查询 nav-items，防止 DOM 变化导致引用过期 */
+      var navItems=document.querySelectorAll('.nav-menu .nav-item');
+      navItems.forEach(function(n){n.classList.remove('active');});
+      item.classList.add('active');
+      if(text.indexOf('图数据库')>=0){
+        appShell.classList.add('mode-graph');
+        appShell.classList.remove('mode-docs','mode-design');
+        if(!pageGraph.dataset.loaded){
+          pageGraph.srcdoc=window.__GRAPH_HTML__;
+          pageGraph.dataset.loaded='1';
         }
-      });
+      }else if(text.indexOf('文献库')>=0){
+        appShell.classList.add('mode-docs');
+        appShell.classList.remove('mode-graph','mode-design');
+        if(!pageDocs.dataset.loaded){
+          pageDocs.srcdoc=window.__DOCS_HTML__;
+          pageDocs.dataset.loaded='1';
+        }
+      }else if(text.indexOf('产品设计说明')>=0){
+        appShell.classList.add('mode-design');
+        appShell.classList.remove('mode-graph','mode-docs');
+        if(!pageDesign.dataset.loaded){
+          pageDesign.srcdoc=window.__DESIGN_HTML__;
+          pageDesign.dataset.loaded='1';
+        }
+      }else{
+        /* 其他导航项：回到首页 */
+        appShell.classList.remove('mode-graph','mode-docs','mode-design');
+      }
     });
   })();
   function bindShell() {
@@ -358,8 +387,17 @@ window.__GRAPH_HTML__=__GRAPH_HTML_JSON__;
   /* 详情区向上展开 / 向下收起：展开时隐藏 Timeline，让详情填满 Header 以下区域 */
   function setDetailExpanded(expanded) {
     const sidebar = document.getElementById('rightSidebar');
+    const detail = document.getElementById('traceDetail');
     if (!sidebar) return;
     sidebar.classList.toggle('detail-expanded', expanded);
+    if (detail) {
+      if (expanded) {
+        detail.dataset.flexBackup = detail.style.flex || '';
+        detail.style.flex = '';
+      } else if (detail.dataset.flexBackup) {
+        detail.style.flex = detail.dataset.flexBackup;
+      }
+    }
     document.querySelectorAll('.detail-expand-btn').forEach(function (b) {
       b.title = expanded ? '向下收起' : '向上展开';
     });
@@ -380,6 +418,72 @@ window.__GRAPH_HTML__=__GRAPH_HTML_JSON__;
       setDetailExpanded(!sidebar.classList.contains('detail-expanded'));
     });
     return btn;
+  }
+
+  /* 侧边栏水平拖动调整宽度（200~600px） */
+  function initSidebarResizer() {
+    const sidebar = document.getElementById('rightSidebar');
+    const resizer = document.getElementById('sidebarResizer');
+    if (!sidebar || !resizer) return;
+
+    let startX, startWidth, onMove, onUp;
+
+    resizer.addEventListener('mousedown', function (e) {
+      if (sidebar.classList.contains('hidden') || sidebar.classList.contains('fullscreen')) return;
+      startX = e.clientX;
+      startWidth = sidebar.getBoundingClientRect().width;
+      document.body.style.userSelect = 'none';
+      document.addEventListener('mousemove', onMove = function (ev) {
+        const delta = startX - ev.clientX;
+        const w = Math.min(800, Math.max(200, startWidth + delta));
+        sidebar.style.width = w + 'px';
+        sidebar.style.flex = '0 0 ' + w + 'px';
+      });
+      document.addEventListener('mouseup', onUp = function () {
+        document.body.style.userSelect = '';
+        document.removeEventListener('mousemove', onMove);
+        document.removeEventListener('mouseup', onUp);
+      });
+    });
+  }
+
+  /* Detail 区垂直拖动调整高度（侧边栏高度的 1/5 ~ 4/5） */
+  function initDetailResizer() {
+    const sidebar = document.getElementById('rightSidebar');
+    const detail = document.getElementById('traceDetail');
+    const resizer = document.getElementById('detailResizer');
+    if (!sidebar || !detail || !resizer) return;
+
+    let startY, startHeight, sidebarHeight, onMove, onUp;
+
+    resizer.addEventListener('mousedown', function (e) {
+      if (sidebar.classList.contains('detail-expanded')) return;
+      startY = e.clientY;
+      startHeight = detail.getBoundingClientRect().height;
+      sidebarHeight = sidebar.getBoundingClientRect().height;
+      document.body.style.userSelect = 'none';
+      document.addEventListener('mousemove', onMove = function (ev) {
+        const delta = startY - ev.clientY;
+        const minH = sidebarHeight * 0.2;
+        const maxH = sidebarHeight * 0.8;
+        const h = Math.min(maxH, Math.max(minH, startHeight + delta));
+        detail.style.flex = '0 0 ' + h + 'px';
+      });
+      document.addEventListener('mouseup', onUp = function () {
+        document.body.style.userSelect = '';
+        document.removeEventListener('mousemove', onMove);
+        document.removeEventListener('mouseup', onUp);
+      });
+    });
+
+    window.addEventListener('resize', function () {
+      if (sidebar.classList.contains('detail-expanded')) return;
+      if (!detail.style.flex) return;
+      const sh = sidebar.getBoundingClientRect().height;
+      const currentH = detail.getBoundingClientRect().height;
+      const newH = Math.min(sh * 0.8, Math.max(sh * 0.2, currentH));
+      if (Math.abs(newH - currentH) > 1) detail.style.flex = '0 0 ' + newH + 'px';
+    });
   }
 
   function bindChat() {
@@ -519,28 +623,35 @@ window.__GRAPH_HTML__=__GRAPH_HTML_JSON__;
       try {
         saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
       } catch (e) { saved = null; }
-      if (!saved || !Array.isArray(saved.conversations) || !saved.conversations.length) return;
+      if (!saved || !Array.isArray(saved.conversations) || !saved.conversations.length) {
+        /* 无历史数据：把静态占位「最近对话」条目初始化为可跳转的空会话（带 data-cid），
+           否则委托点击无法读取 dataset.cid 导致跳转失效 */
+        const ph = document.querySelectorAll('.chat-list .chat-item');
+        if (ph.length) {
+          conversations = [].slice.call(ph).map(function (li, idx) {
+            return {
+              id: 'c_ph_' + idx,
+              title: ((li.querySelector('.chat-title') || {}).textContent || '').trim() || '历史对话',
+              time: (li.querySelector('.chat-time') || {}).textContent || '',
+              messages: []
+            };
+          });
+          chatList.innerHTML = '';
+          conversations.forEach(function (c) { addConversationItem(c); });
+          updateConvoCount();
+        }
+        return;
+      }
 
       conversations = saved.conversations;
-      currentConvoId = saved.currentConvoId || conversations[0].id;
+      /* 默认进入「新任务对话」空态首页，不自动恢复到最后一次会话 */
+      currentConvoId = null;
 
       /* 重建「最近对话」列表（倒序插入，保持最新在前） */
       for (var i = conversations.length - 1; i >= 0; i--) {
         addConversationItem(conversations[i]);
       }
       updateConvoCount();
-
-      const cur = getCurrentConvo();
-      if (cur) {
-        enterChatMode();
-        renderConvo(cur);
-        updateActiveConvo();
-        if (cur.lastTrace) {
-          renderTrace(cur.lastTrace, true);
-        } else {
-          resetTracePanel();
-        }
-      }
     }
 
     function nowTime() {
@@ -572,9 +683,6 @@ window.__GRAPH_HTML__=__GRAPH_HTML_JSON__;
         '<span class="chat-time"></span>';
       li.querySelector('.chat-title').textContent = convo.title;
       li.querySelector('.chat-time').textContent = convo.time;
-      li.addEventListener('click', function () {
-        switchConvo(convo.id);
-      });
       chatList.insertBefore(li, chatList.firstChild);
       return li;
     }
@@ -632,6 +740,11 @@ window.__GRAPH_HTML__=__GRAPH_HTML_JSON__;
       }
       const sc = document.querySelector('.main-scroll');
       if (sc) sc.scrollTop = 0;
+      /* 收起右侧边栏，回到空态默认隐藏 */
+      if (rightPanel) {
+        rightPanel.classList.add('hidden');
+        if (openRightBtn) openRightBtn.style.display = '';
+      }
       /* 右侧栏回到初始空态 */
       resetTracePanel();
     }
@@ -1257,13 +1370,34 @@ window.__GRAPH_HTML__=__GRAPH_HTML_JSON__;
         send();
       }
     });
-    /* 新建任务按钮（左侧 + 折叠栏）：开启新会话，回到空态 */
-    document.querySelectorAll('.new-task-btn, .collapsed-tool').forEach(function (b) {
-      b.addEventListener('click', resetChat);
+    /* 新建任务按钮 / 最近对话：改用 document 事件委托，
+       避免 Gradio 重渲染导致一次性 forEach 绑定丢失（与 nav-item 委托同理）。
+       页面模式下（图数据库/文献库/产品设计）main-area 被隐藏，必须先退出页面模式
+       回到首页聊天界面，否则功能执行了但看不到反馈 */
+    document.addEventListener('click', function (e) {
+      var t = e.target;
+      if (!t || !t.closest) return;
+      if (t.closest('.new-task-btn') || t.closest('.collapsed-tool')) {
+        var shell = document.getElementById('appShell');
+        if (shell) shell.classList.remove('mode-graph', 'mode-docs', 'mode-design');
+        resetChat();
+        return;
+      }
+      var ci = t.closest('.chat-item');
+      if (ci && ci.dataset.cid) {
+        var shell = document.getElementById('appShell');
+        if (shell) shell.classList.remove('mode-graph', 'mode-docs', 'mode-design');
+        switchConvo(ci.dataset.cid);
+        return;
+      }
     });
 
     /* 页面加载：从 localStorage 恢复历史记录 */
     loadHistory();
+
+    /* 初始化可拖动调整尺寸 */
+    initSidebarResizer();
+    initDetailResizer();
   }
 
   if (document.readyState === 'loading') {
@@ -2068,9 +2202,24 @@ div:has(> .app-shell) { padding: 0 !important; margin: 0 !important; background:
   flex-direction: column;
   transition: width 300ms var(--ease), opacity 200ms var(--ease);
   overflow: hidden;
+  position: relative;
 }
 .right-sidebar.hidden { flex: 0 0 0; width: 0; min-width: 0; max-width: 0; opacity: 0; border-left: none; }
 .right-sidebar.fullscreen { position: fixed; top: 0; right: 0; bottom: 0; width: 100vw; flex: 0 0 auto; min-width: 0; max-width: none; z-index: 50; }
+.sidebar-resizer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 4px;
+  cursor: col-resize;
+  z-index: 10;
+  background: transparent;
+  transition: background 150ms;
+}
+.sidebar-resizer:hover { background: #C7A18E; }
+.right-sidebar.hidden .sidebar-resizer,
+.right-sidebar.fullscreen .sidebar-resizer { display: none; }
 .right-inner { position: relative; width: 100%; min-width: 0; height: 100%; display: flex; flex-direction: column; }
 
 .right-header {
@@ -2090,6 +2239,18 @@ div:has(> .app-shell) { padding: 0 !important; margin: 0 !important; background:
 
 .right-timeline { flex: 1 1 0; min-height: 0; overflow-y: auto; padding: 12px 12px 4px; scrollbar-width: thin; }
 .right-detail { flex: 1 1 0; min-height: 0; display: flex; flex-direction: column; border-top: 1px solid #EDE5DD; }
+.detail-resizer {
+  flex: 0 0 auto;
+  height: 4px;
+  margin: -2px 0;
+  cursor: row-resize;
+  background: transparent;
+  transition: background 150ms;
+  position: relative;
+  z-index: 5;
+}
+.detail-resizer:hover { background: #C7A18E; }
+.right-sidebar.detail-expanded .detail-resizer { display: none; }
 .detail-body { flex: 1 1 auto; min-height: 0; overflow-y: auto; padding: 12px 16px 16px; scrollbar-width: thin; }
 /* 展开：隐藏 Timeline，详情填满 Header 以下区域 */
 .right-sidebar.detail-expanded .right-timeline { display: none; }
@@ -2379,6 +2540,12 @@ import json as _json
 _GRAPH_PAGE_HTML = open(os.path.join(os.path.dirname(__file__), 'source/design/graph-demo.html'), encoding='utf-8').read()
 _JS_EXEC = _JS_EXEC.replace('__GRAPH_HTML_JSON__', _json.dumps(_GRAPH_PAGE_HTML).replace('</', '<\\/'))
 
+# 文献库 / 产品设计说明：独立空页面文件（后续填充内容只改对应文件，无需动 app.py）
+_DOCS_PAGE_HTML = open(os.path.join(os.path.dirname(__file__), 'source/design/docs.html'), encoding='utf-8').read()
+_DESIGN_PAGE_HTML = open(os.path.join(os.path.dirname(__file__), 'source/design/design.html'), encoding='utf-8').read()
+_JS_EXEC = _JS_EXEC.replace('__DOCS_HTML_JSON__', _json.dumps(_DOCS_PAGE_HTML).replace('</', '<\\/'))
+_JS_EXEC = _JS_EXEC.replace('__DESIGN_HTML_JSON__', _json.dumps(_DESIGN_PAGE_HTML).replace('</', '<\\/'))
+
 _STYLE_HTML = (
     "<style>\n"
     + _GRADIO_CSS
@@ -2387,6 +2554,13 @@ _STYLE_HTML = (
     + ".app-shell.mode-graph .main-area,"
     + ".app-shell.mode-graph .right-sidebar{display:none!important;}\n"
     + ".app-shell.mode-graph .page-graph{display:block;}\n"
+    + ".app-shell.mode-graph .left-sidebar{z-index:1000!important;pointer-events:auto!important;}\n"
+    + "\n/* 文献库 / 产品设计说明页面（空页面占位） */\n"
+    + ".page-docs,.page-design{border:none;flex:1;background:#FDFBF7;display:none;}\n"
+    + ".app-shell.mode-docs .main-area,.app-shell.mode-docs .right-sidebar{display:none!important;}\n"
+    + ".app-shell.mode-docs .page-docs{display:block;}\n"
+    + ".app-shell.mode-design .main-area,.app-shell.mode-design .right-sidebar{display:none!important;}\n"
+    + ".app-shell.mode-design .page-design{display:block;}\n"
     + "</style>"
 )
 

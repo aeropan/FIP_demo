@@ -81,16 +81,21 @@ body{
 /* ============ 中间图谱区 ============ */
 .graph-main{flex:1;min-width:0;display:flex;flex-direction:column;background:var(--color-surface);position:relative;}
 .graph-header{
+  position:relative;
   display:flex;align-items:center;justify-content:space-between;
   padding:16px 24px;gap:16px;flex:none;
 }
 .graph-title{font-size:20px;font-weight:600;color:var(--color-text-main);white-space:nowrap;}
-.legend{display:flex;align-items:center;gap:16px;flex-wrap:wrap;}
-.legend-item{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--color-text-secondary);}
+/* 图例：画布横向精确居中 */
+.legend{
+  position:absolute;left:50%;transform:translateX(-50%);
+  display:flex;align-items:center;gap:16px;flex-wrap:wrap;flex:none;
+}
+.legend-item{display:flex;align-items:center;gap:6px;height:20px;font-size:12px;color:var(--color-text-secondary);}
 .legend-dot{width:10px;height:10px;border-radius:50%;flex:none;}
-.header-actions{display:flex;align-items:center;gap:6px;}
+.header-actions{display:flex;align-items:center;gap:6px;margin-left:auto;}
 .ghost-btn{
-  display:flex;align-items:center;gap:6px;padding:8px 12px;border:none;background:transparent;
+  display:flex;align-items:center;gap:6px;height:36px;padding:0 12px;line-height:1;border:none;background:transparent;
   color:var(--color-text-secondary);font-size:13px;border-radius:var(--radius-sm);cursor:pointer;
   transition:background .18s ease,color .18s ease;
 }
@@ -106,6 +111,17 @@ body{
   overflow:hidden;
 }
 #graph-container{width:100%;height:100%;}
+/* 图谱缩略图（G6 Minimap）：左下角 138×92（宽 3/5 · 高 2/5），委托渲染 */
+.g6-minimap{
+  position:absolute!important;left:16px!important;bottom:16px!important;
+  top:auto!important;right:auto!important;width:138px!important;height:92px!important;
+  background:rgba(253,251,247,0.92)!important;border:1px solid #EDE5DD!important;
+  border-radius:8px!important;box-shadow:var(--shadow-sm)!important;
+  overflow:hidden;z-index:5;backdrop-filter:blur(4px);
+}
+.g6-minimap svg{border-radius:7px;display:block;}
+/* 视口窗口框：覆盖 G6 默认蓝色 outline 为暖灰 #6F6763 */
+.g6-minimap-viewport{outline:2px solid #6F6763!important;}
 .path-banner{
   position:absolute;top:14px;left:50%;transform:translateX(-50%);
   display:none;align-items:center;gap:10px;
@@ -125,12 +141,35 @@ body{
 }
 .path-banner button:hover{background:var(--color-primary-500);color:#fff;}
 
-/* ============ 右侧详情面板 ============ */
+/* ============ 右侧详情面板（抽屉样式，覆盖画布不挤压） ============ */
+.app-shell{position:relative;}
 .right-panel{
-  width:380px;min-width:380px;background:var(--color-card);
+  position:absolute;top:0;right:0;bottom:0;width:380px;
+  background:var(--color-card);
   border-left:1px solid var(--color-border);
+  box-shadow:-6px 0 20px rgba(62,56,54,0.10);
+  transform:translateX(100%);
+  transition:transform .25s ease;
+  z-index:20;
   display:flex;flex-direction:column;overflow-y:auto;
 }
+.right-panel.show{transform:translateX(0);}
+.panel-close{
+  position:absolute;top:12px;right:12px;z-index:5;
+  width:28px;height:28px;border:none;border-radius:6px;
+  background:transparent;color:var(--color-text-secondary);
+  font-size:16px;line-height:1;cursor:pointer;
+}
+.panel-close:hover{background:var(--color-primary-100);color:var(--color-primary-900);}
+.panel-back{
+  position:absolute;top:12px;left:12px;z-index:5;
+  width:28px;height:28px;border:none;border-radius:6px;
+  background:transparent;color:var(--color-text-secondary);
+  font-size:15px;line-height:1;cursor:pointer;
+}
+.panel-back:hover{background:var(--color-primary-100);color:var(--color-primary-900);}
+.badge-detail{padding:48px 24px 24px;display:flex;flex-direction:column;gap:16px;}
+.right-panel .node-detail,.right-panel .edge-detail{padding-top:48px;}
 .panel-empty{
   padding:32px 24px;display:flex;flex-direction:column;gap:24px;
 }
@@ -142,7 +181,8 @@ body{
   margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--color-border);
 }
 .legend-row{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--color-text-main);margin-bottom:8px;}
-.legend-swatch{width:14px;height:14px;border-radius:4px;flex:none;}
+.legend-swatch{width:14px;height:14px;flex:none;display:inline-flex;align-items:center;justify-content:center;}
+.legend-swatch svg{display:block;}
 .legend-badge{
   font-size:11px;font-weight:500;padding:1px 8px;border-radius:var(--radius-pill);color:#fff;
 }
@@ -171,14 +211,15 @@ body{
   content:"";position:absolute;left:0;top:10px;bottom:10px;width:3px;
   border-radius:2px;background:var(--rel-color,#8C6B5D);
 }
-.rel-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
-.rel-direction{font-size:13px;color:var(--color-text-main);font-weight:500;}
+.rel-top{display:flex;align-items:center;margin-bottom:6px;}
+.rel-direction{font-size:13px;color:var(--color-text-main);font-weight:500;margin-bottom:4px;}
 .rel-direction .arrow{color:var(--color-text-secondary);margin:0 4px;font-weight:400;}
 .rel-evidence{font-size:12px;color:var(--color-text-secondary);line-height:1.6;}
-.rel-flags{display:flex;align-items:center;gap:6px;flex:none;margin-left:8px;}
-.pol-dot{width:8px;height:8px;border-radius:50%;flex:none;}
+.rel-flags{display:flex;align-items:center;gap:6px;}
+.pol-dot{width:14px;height:14px;flex:none;display:inline-flex;align-items:center;justify-content:center;}
+.pol-dot svg{display:block;}
 .pol-text{font-size:11px;color:var(--color-text-secondary);}
-.conf-badge{font-size:11px;font-weight:500;padding:1px 8px;border-radius:var(--radius-pill);color:#fff;}
+.conf-badge{font-size:11px;font-weight:500;padding:1px 8px;border-radius:var(--radius-pill);color:#fff;cursor:pointer;}
 /* 关系详情 */
 .edge-detail{padding:24px;display:flex;flex-direction:column;gap:18px;}
 .edge-rel-label{font-size:18px;font-weight:600;color:var(--color-text-main);}
@@ -206,18 +247,29 @@ body{
 .graph-3d-toolbar{
   position:absolute;top:0;left:0;right:0;z-index:10;
   display:flex;align-items:center;gap:16px;
-  padding:14px 20px;pointer-events:none;
+  justify-content:space-between;
+  padding:16px 24px;pointer-events:none;   /* 与 2D header padding 一致，标题位置对齐 */
   background:linear-gradient(180deg, rgba(253,251,247,0.95) 60%, rgba(253,251,247,0));
 }
 .graph-3d-toolbar > *{pointer-events:auto;}
-.graph-3d-title{font-size:18px;font-weight:600;color:var(--color-text-main);}
-.graph-3d-legend{display:flex;align-items:center;gap:14px;flex-wrap:wrap;flex:1;justify-content:center;}
-.graph-3d-exit{
-  background:var(--color-primary-700);color:#fff;padding:8px 14px;
-  border-radius:var(--radius-sm);border:none;
+.graph-3d-title{font-size:20px;font-weight:600;color:var(--color-text-main);}
+/* 图例：画布横向精确居中（与 2D 一致） */
+.graph-3d-legend{
+  position:absolute;left:50%;transform:translateX(-50%);
+  display:flex;align-items:center;gap:16px;flex-wrap:wrap;flex:none;   /* gap 与 2D legend 一致 */
 }
-.graph-3d-exit:hover{background:var(--color-primary-900);color:#fff;}
+/* 返回 2D 按钮：与 2D 的 ghost-btn（3D/演示路径）样式一致，无边框透明底 */
+.graph-3d-exit{color:var(--color-text-secondary);}
+.graph-3d-exit:hover{background:var(--color-primary-100);color:var(--color-primary-900);}
 #graph3d-container{flex:1;width:100%;height:100%;}
+/* 只隐藏 three-forcegraph 库的英文操作提示（navInfo 有固定 class scene-nav-info）；
+   不能用容器子元素选择器（会连 renderer 挂载 div 一起隐藏导致图不渲染） */
+#graph3d-container .scene-nav-info{display:none!important;}
+/* 3D 加载提示：纯文字（无外框），画布中央，不拦截交互；位于 overlay 层，不影响 graph3d-container 内部结构 */
+.graph-3d-loading{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:12;
+  font-size:14px;color:var(--color-text-secondary);pointer-events:none;white-space:nowrap;
+}
 .graph-3d-info{
   position:absolute;top:72px;right:20px;z-index:11;width:300px;max-height:calc(100vh - 100px);
   overflow-y:auto;background:var(--color-card);border:1px solid var(--color-border);
@@ -230,7 +282,7 @@ body{
   color:var(--color-text-secondary);cursor:pointer;font-size:16px;
 }
 .graph-3d-hint{
-  position:absolute;bottom:14px;left:50%;transform:translateX(-50%);z-index:10;
+  position:absolute;bottom:14px;right:24px;z-index:10;   /* 靠右，与 toolbar padding 对齐 */
   font-size:12px;color:var(--color-text-secondary);
   background:var(--color-card);border:1px solid var(--color-border);
   border-radius:var(--radius-pill);padding:6px 14px;box-shadow:var(--shadow-xs);
@@ -248,7 +300,6 @@ body{
       <div class="header-actions">
         <button class="ghost-btn" id="demoPathBtn">◈ 演示路径</button>
         <button class="ghost-btn" id="btn3d">◍ 3D</button>
-        <button class="ghost-btn" id="fullscreenBtn">⛶ 全屏</button>
       </div>
     </header>
     <div class="graph-canvas" id="graphCanvas">
@@ -268,11 +319,15 @@ body{
 <!-- 3D 全屏覆盖层 -->
 <div class="graph-3d-overlay" id="graph3dOverlay">
   <div class="graph-3d-toolbar">
-    <div class="graph-3d-title">猫传腹因果图谱 · 3D</div>
+    <div class="graph-3d-title">猫传腹因果图谱</div>
     <div class="graph-3d-legend" id="graph3dLegend"></div>
-    <button class="ghost-btn graph-3d-exit" id="btn3dExit">✕ 返回 2D</button>
+    <button class="ghost-btn graph-3d-exit" id="btn3dExit">
+      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      返回 2D
+    </button>
   </div>
   <div id="graph3d-container"></div>
+  <div class="graph-3d-loading" id="graph3dLoading">正在渲染3D组件，请稍后...</div>
   <div class="graph-3d-info" id="graph3dInfo"></div>
   <div class="graph-3d-hint">拖拽旋转 · 滚轮缩放 · 右键平移 · 点击节点查看详情</div>
 </div>
@@ -280,19 +335,53 @@ body{
 <script>
 const GRAPH_DATA = {"nodes":[{"id":"3c基因","label":"3c基因","type":"病因与病原"},{"id":"42天短疗程","label":"42天短疗程","type":"干预与结局"},{"id":"84天标准疗程","label":"84天标准疗程","type":"干预与结局"},{"id":"GC376","label":"GC376","type":"干预与结局"},{"id":"GS-441524","label":"GS-441524","type":"干预与结局"},{"id":"II型猫冠状病毒","label":"II型猫冠状病毒","type":"病因与病原"},{"id":"I型猫冠状病毒","label":"I型猫冠状病毒","type":"病因与病原"},{"id":"Rivalta试验","label":"Rivalta试验","type":"诊断与检测"},{"id":"Rivalta试验阳性","label":"Rivalta试验阳性","type":"诊断与检测"},{"id":"S基因突变","label":"S基因突变","type":"病因与病原"},{"id":"α-1酸性糖蛋白（AGP）","label":"α-1酸性糖蛋白（AGP）","type":"诊断与检测"},{"id":"伊曲康唑","label":"伊曲康唑","type":"干预与结局"},{"id":"体重增加","label":"体重增加","type":"机制与过程"},{"id":"免疫复合物","label":"免疫复合物","type":"机制与过程"},{"id":"免疫组化（IHC）","label":"免疫组化（IHC）","type":"诊断与检测"},{"id":"免疫细胞化学（ICC）","label":"免疫细胞化学（ICC）","type":"诊断与检测"},{"id":"全身性扩散","label":"全身性扩散","type":"机制与过程"},{"id":"共济失调","label":"共济失调","type":"诊断与检测"},{"id":"内皮损伤","label":"内皮损伤","type":"机制与过程"},{"id":"呼吸困难","label":"呼吸困难","type":"诊断与检测"},{"id":"复发","label":"复发","type":"干预与结局"},{"id":"复发性猫传染性腹膜炎","label":"复发性猫传染性腹膜炎","type":"机制与过程"},{"id":"复发风险","label":"复发风险","type":"干预与结局"},{"id":"多猫环境","label":"多猫环境","type":"病因与病原"},{"id":"大细胞淋巴瘤","label":"大细胞淋巴瘤","type":"干预与结局"},{"id":"对症支持治疗","label":"对症支持治疗","type":"干预与结局"},{"id":"尿结石","label":"尿结石","type":"干预与结局"},{"id":"巨噬细胞","label":"巨噬细胞","type":"机制与过程"},{"id":"干性猫传染性腹膜炎（干性FIP）","label":"干性猫传染性腹膜炎（干性FIP）","type":"机制与过程"},{"id":"应激","label":"应激","type":"病因与病原"},{"id":"康复","label":"康复","type":"干预与结局"},{"id":"慢性炎症","label":"慢性炎症","type":"机制与过程"},{"id":"持续性发热","label":"持续性发热","type":"诊断与检测"},{"id":"排除充血性心力衰竭","label":"排除充血性心力衰竭","type":"诊断与检测"},{"id":"排除淋巴瘤","label":"排除淋巴瘤","type":"诊断与检测"},{"id":"排除细菌性腹膜炎","label":"排除细菌性腹膜炎","type":"诊断与检测"},{"id":"死亡","label":"死亡","type":"干预与结局"},{"id":"淋巴细胞减少","label":"淋巴细胞减少","type":"诊断与检测"},{"id":"渗出液高蛋白（>35g/L）","label":"渗出液高蛋白（>35g/L）","type":"诊断与检测"},{"id":"湿性猫传染性腹膜炎（湿性FIP）","label":"湿性猫传染性腹膜炎（湿性FIP）","type":"机制与过程"},{"id":"猫传染性腹膜炎病毒（FIPV）","label":"猫传染性腹膜炎病毒（FIPV）","type":"病因与病原"},{"id":"猫冠状病毒（FCoV）感染","label":"猫冠状病毒（FCoV）感染","type":"病因与病原"},{"id":"猫肠道冠状病毒（FECV）","label":"猫肠道冠状病毒（FECV）","type":"病因与病原"},{"id":"瑞德西韦","label":"瑞德西韦","type":"干预与结局"},{"id":"疑似干性猫传染性腹膜炎","label":"疑似干性猫传染性腹膜炎","type":"诊断与检测"},{"id":"疑似湿性猫传染性腹膜炎","label":"疑似湿性猫传染性腹膜炎","type":"诊断与检测"},{"id":"疑似猫传染性腹膜炎","label":"疑似猫传染性腹膜炎","type":"诊断与检测"},{"id":"病毒复制","label":"病毒复制","type":"机制与过程"},{"id":"病毒清除不全","label":"病毒清除不全","type":"机制与过程"},{"id":"病毒载量","label":"病毒载量","type":"机制与过程"},{"id":"癫痫发作","label":"癫痫发作","type":"诊断与检测"},{"id":"白球比（A:G比值）","label":"白球比（A:G比值）","type":"诊断与检测"},{"id":"白球比（A:G比值）低于0.6","label":"白球比（A:G比值）低于0.6","type":"诊断与检测"},{"id":"积液中猫冠状病毒RT-PCR阳性","label":"积液中猫冠状病毒RT-PCR阳性","type":"诊断与检测"},{"id":"粘稠草黄色积液","label":"粘稠草黄色积液","type":"诊断与检测"},{"id":"组织病理学（肉芽肿）","label":"组织病理学（肉芽肿）","type":"诊断与检测"},{"id":"耐药性变异","label":"耐药性变异","type":"病因与病原"},{"id":"肉芽肿","label":"肉芽肿","type":"机制与过程"},{"id":"腹围增大","label":"腹围增大","type":"诊断与检测"},{"id":"腹水","label":"腹水","type":"机制与过程"},{"id":"药物渗透","label":"药物渗透","type":"机制与过程"},{"id":"莫努匹拉韦","label":"莫努匹拉韦","type":"干预与结局"},{"id":"葡萄膜炎","label":"葡萄膜炎","type":"诊断与检测"},{"id":"血清淀粉样蛋白A（SAA）","label":"血清淀粉样蛋白A（SAA）","type":"诊断与检测"},{"id":"血清淀粉样蛋白A（SAA）显著升高","label":"血清淀粉样蛋白A（SAA）显著升高","type":"诊断与检测"},{"id":"血管炎","label":"血管炎","type":"机制与过程"},{"id":"血管通透性","label":"血管通透性","type":"机制与过程"},{"id":"血脑屏障","label":"血脑屏障","type":"机制与过程"},{"id":"血药浓度","label":"血药浓度","type":"机制与过程"},{"id":"长期免疫抑制","label":"长期免疫抑制","type":"机制与过程"}],"edges":[{"source":"猫肠道冠状病毒（FECV）","target":"S基因突变","rel":"导致","polarity":"Neutral","confidence":"High","evidence":"共识指出FECV在猫体内发生S基因等关键突变产生FIPV"},{"source":"S基因突变","target":"猫传染性腹膜炎病毒（FIPV）","rel":"导致","polarity":"Neutral","confidence":"High","evidence":"关键位点突变导致病毒生物型从肠道型向致病型转变"},{"source":"3c基因","target":"猫传染性腹膜炎病毒（FIPV）","rel":"影响","polarity":"Neutral","confidence":"High","evidence":"3c基因的功能丧失或缺失与FIPV的致病性切换密切相关"},{"source":"猫传染性腹膜炎病毒（FIPV）","target":"巨噬细胞","rel":"影响","polarity":"Positive","confidence":"High","evidence":"FIPV获得在单核/巨噬细胞中高效复制的能力是致病前提"},{"source":"巨噬细胞","target":"全身性扩散","rel":"导致","polarity":"Positive","confidence":"High","evidence":"感染的巨噬细胞作为病毒载体通过血液向全身组织散播"},{"source":"全身性扩散","target":"免疫复合物","rel":"导致","polarity":"Positive","confidence":"High","evidence":"病毒全身播散诱发强烈的体液免疫并产生抗原-抗体复合物"},{"source":"免疫复合物","target":"血管炎","rel":"导致","polarity":"Positive","confidence":"High","evidence":"沉积在血管壁的免疫复合物激活补体系统导致多发性脉管炎"},{"source":"血管炎","target":"内皮损伤","rel":"导致","polarity":"Positive","confidence":"High","evidence":"免疫介导的血管炎症破坏血管内皮的完整性"},{"source":"内皮损伤","target":"血管通透性","rel":"导致","polarity":"Positive","confidence":"High","evidence":"血管内皮屏障受损导致血浆成分及蛋白向管外大量渗漏"},{"source":"血管通透性","target":"腹水","rel":"导致","polarity":"Positive","confidence":"High","evidence":"液体和蛋白质在腹腔内高度积聚形成特征性渗出液"},{"source":"腹水","target":"湿性猫传染性腹膜炎（湿性FIP）","rel":"表现为","polarity":"Positive","confidence":"High","evidence":"出现胸腹腔积液是渗出型猫传腹的典型临床定义"},{"source":"全身性扩散","target":"慢性炎症","rel":"导致","polarity":"Positive","confidence":"High","evidence":"病毒在缺乏强力细胞免疫的个体中诱导多器官持续性炎症"},{"source":"慢性炎症","target":"肉芽肿","rel":"导致","polarity":"Positive","confidence":"High","evidence":"局部组织的慢性炎症反应导致特征性的脓性肉芽肿结节形成"},{"source":"肉芽肿","target":"干性猫传染性腹膜炎（干性FIP）","rel":"表现为","polarity":"Positive","confidence":"High","evidence":"出现多器官实质性肉芽肿损害定义为非渗出型猫传腹"},{"source":"I型猫冠状病毒","target":"湿性猫传染性腹膜炎（湿性FIP）","rel":"导致","polarity":"Positive","confidence":"High","evidence":"临床数据显示I型猫冠状病毒是导致绝大多数湿性病例的病原"},{"source":"II型猫冠状病毒","target":"湿性猫传染性腹膜炎（湿性FIP）","rel":"导致","polarity":"Positive","confidence":"High","evidence":"II型病毒虽然流行率较低但同样可引发严重的渗出型病变"},{"source":"GS-441524","target":"湿性猫传染性腹膜炎（湿性FIP）","rel":"治疗于","polarity":"Positive","confidence":"High","evidence":"临床研究证实核苷类似物能有效消除积液并治愈湿性传腹"},{"source":"GS-441524","target":"干性猫传染性腹膜炎（干性FIP）","rel":"治疗于","polarity":"Positive","confidence":"High","evidence":"学术界认可抗病毒药物对非渗出型猫传腹同样具有显著疗效"},{"source":"白球比（A:G比值）","target":"湿性猫传染性腹膜炎（湿性FIP）","rel":"诊断于","polarity":"Positive","confidence":"High","evidence":"白球比低于0.4是渗出液分析中诊断湿性传腹的核心指标"},{"source":"免疫组化（IHC）","target":"干性猫传染性腹膜炎（干性FIP）","rel":"诊断于","polarity":"Positive","confidence":"High","evidence":"在受损器官肉芽肿病灶中检出病毒抗原是干性传腹确诊的金标准"},{"source":"Rivalta试验","target":"湿性猫传染性腹膜炎（湿性FIP）","rel":"表现为","polarity":"Positive","confidence":"High","evidence":"李氏试验阳性是湿性传腹胸腹水生化检查的典型特征"},{"source":"血清淀粉样蛋白A（SAA）","target":"湿性猫传染性腹膜炎（湿性FIP）","rel":"表现为","polarity":"Positive","confidence":"High","evidence":"湿性传腹患猫血清和积液中的血清淀粉样蛋白A水平通常极度升高"},{"source":"应激","target":"病毒复制","rel":"影响","polarity":"Positive","confidence":"High","evidence":"环境变化或手术应激通过削弱免疫力促进病毒复制及变异"},{"source":"多猫环境","target":"猫冠状病毒（FCoV）感染","rel":"导致","polarity":"Positive","confidence":"High","evidence":"密集饲养环境显著提高了猫群中冠状病毒的载量和交叉感染率"},{"source":"持续性发热","target":"疑似猫传染性腹膜炎","rel":"表现为","polarity":"Positive","confidence":"High","evidence":"发热是FIP最常见的全身性症状"},{"source":"腹围增大","target":"疑似湿性猫传染性腹膜炎","rel":"表现为","polarity":"Positive","confidence":"High","evidence":"腹围增大是湿性FIP典型体征"},{"source":"呼吸困难","target":"疑似湿性猫传染性腹膜炎","rel":"表现为","polarity":"Positive","confidence":"High","evidence":"胸腔积液可导致呼吸窘迫"},{"source":"葡萄膜炎","target":"疑似干性猫传染性腹膜炎","rel":"表现为","polarity":"Positive","confidence":"High","evidence":"眼部肉芽肿是干性FIP典型表现"},{"source":"共济失调","target":"疑似干性猫传染性腹膜炎","rel":"表现为","polarity":"Positive","confidence":"High","evidence":"神经症状提示中枢神经系统受累"},{"source":"癫痫发作","target":"疑似干性猫传染性腹膜炎","rel":"表现为","polarity":"Positive","confidence":"High","evidence":"颅内肉芽肿可引发癫痫"},{"source":"白球比（A:G比值）低于0.6","target":"疑似猫传染性腹膜炎","rel":"诊断于","polarity":"Positive","confidence":"High","evidence":"低白球比是重要筛查指标"},{"source":"血清淀粉样蛋白A（SAA）显著升高","target":"疑似猫传染性腹膜炎","rel":"诊断于","polarity":"Positive","confidence":"High","evidence":"SAA反映系统性炎症"},{"source":"Rivalta试验阳性","target":"湿性猫传染性腹膜炎（湿性FIP）","rel":"表现为","polarity":"Positive","confidence":"High","evidence":"积液特征性生化反应"},{"source":"积液中猫冠状病毒RT-PCR阳性","target":"湿性猫传染性腹膜炎（湿性FIP）","rel":"诊断于","polarity":"Positive","confidence":"High","evidence":"直接检出病毒核酸"},{"source":"粘稠草黄色积液","target":"湿性猫传染性腹膜炎（湿性FIP）","rel":"表现为","polarity":"Positive","confidence":"High","evidence":"典型渗出液外观"},{"source":"渗出液高蛋白（>35g/L）","target":"湿性猫传染性腹膜炎（湿性FIP）","rel":"表现为","polarity":"Positive","confidence":"High","evidence":"高蛋白是渗出液特征"},{"source":"组织病理学（肉芽肿）","target":"干性猫传染性腹膜炎（干性FIP）","rel":"诊断于","polarity":"Positive","confidence":"High","evidence":"组织学发现特征性病变"},{"source":"免疫细胞化学（ICC）","target":"湿性猫传染性腹膜炎（湿性FIP）","rel":"诊断于","polarity":"Positive","confidence":"High","evidence":"积液中检出感染巨噬细胞"},{"source":"疑似猫传染性腹膜炎","target":"排除淋巴瘤","rel":"影响","polarity":"Positive","confidence":"Medium","evidence":"临床表现重叠需活检区分"},{"source":"疑似猫传染性腹膜炎","target":"排除细菌性腹膜炎","rel":"影响","polarity":"Positive","confidence":"Medium","evidence":"腹水需排除感染性病因"},{"source":"疑似猫传染性腹膜炎","target":"排除充血性心力衰竭","rel":"影响","polarity":"Positive","confidence":"Medium","evidence":"胸腔积液需排除心源性"},{"source":"α-1酸性糖蛋白（AGP）","target":"疑似猫传染性腹膜炎","rel":"诊断于","polarity":"Positive","confidence":"Medium","evidence":"急性期蛋白在FIP中显著升高"},{"source":"淋巴细胞减少","target":"疑似猫传染性腹膜炎","rel":"表现为","polarity":"Positive","confidence":"Medium","evidence":"FIP相关免疫抑制表现"},{"source":"瑞德西韦","target":"湿性猫传染性腹膜炎（湿性FIP）","rel":"治疗于","polarity":"Positive","confidence":"High","evidence":"作为GS-441524的前药在体内转化后具有同等抗病毒效力"},{"source":"瑞德西韦","target":"干性猫传染性腹膜炎（干性FIP）","rel":"治疗于","polarity":"Positive","confidence":"High","evidence":"前药同样适用于治疗非渗出型猫传腹"},{"source":"莫努匹拉韦","target":"复发性猫传染性腹膜炎","rel":"治疗于","polarity":"Positive","confidence":"Medium","evidence":"在GS-441524疗法失败或耐药后作为挽救方案效果良好"},{"source":"GC376","target":"湿性猫传染性腹膜炎（湿性FIP）","rel":"治疗于","polarity":"Positive","confidence":"Medium","evidence":"3C样蛋白酶抑制剂在早期实验及临床中展现出缓解症状的能力"},{"source":"84天标准疗程","target":"康复","rel":"影响","polarity":"Positive","confidence":"High","evidence":"完整疗程是确保病毒彻底清除并防止复发的公认金标准"},{"source":"42天短疗程","target":"康复","rel":"影响","polarity":"Positive","confidence":"High","evidence":"多项前瞻性随机对照研究证实短疗程对渗出型FIP疗效不亚于长疗程"},{"source":"对症支持治疗","target":"康复","rel":"影响","polarity":"Positive","confidence":"High","evidence":"早期补液、营养支持与并发症管理显著提升了危重猫进入药物起效期的概率"},{"source":"湿性猫传染性腹膜炎（湿性FIP）","target":"死亡","rel":"导致","polarity":"Negative","confidence":"High","evidence":"传统文献及临床共识均认为湿性FIP若不治疗致死率接近100%"},{"source":"干性猫传染性腹膜炎（干性FIP）","target":"死亡","rel":"导致","polarity":"Negative","confidence":"High","evidence":"传统文献及临床共识均认为干性FIP若不治疗致死率接近100%"},{"source":"体重增加","target":"血药浓度","rel":"影响","polarity":"Negative","confidence":"High","evidence":"康复期体重快速增长导致血药浓度降至有效阈值以下，需及时调整剂量"},{"source":"血脑屏障","target":"药物渗透","rel":"影响","polarity":"Negative","confidence":"Medium","evidence":"标准剂量可能无法清除神经系统内的病毒残余"},{"source":"病毒清除不全","target":"复发","rel":"导致","polarity":"Negative","confidence":"Medium","evidence":"停药时体内残留的病毒在免疫力波动时可能再次大量复制"},{"source":"耐药性变异","target":"死亡","rel":"导致","polarity":"Negative","confidence":"Low","evidence":"长期低剂量用药可能诱发病毒产生针对蛋白酶抑制剂或核苷类药物的抗性"},{"source":"长期免疫抑制","target":"复发","rel":"影响","polarity":"Positive","confidence":"Medium","evidence":"FIP造成的T细胞耗竭及免疫系统崩溃增加远期复发或继发感染风险"},{"source":"GS-441524","target":"大细胞淋巴瘤","rel":"影响","polarity":"Positive","confidence":"Low","evidence":"个别病例在FIP治愈后出现淋巴瘤，推测与炎症长期刺激或治疗干预有关"},{"source":"GS-441524","target":"尿结石","rel":"影响","polarity":"Positive","confidence":"Low","evidence":"罕见报告显示使用非正规制剂治疗期间猫出现由GS-441524成分组成的结石"},{"source":"伊曲康唑","target":"病毒载量","rel":"影响","polarity":"Negative","confidence":"Medium","evidence":"体外实验证实其与GS-441524具有抗病毒协同作用，可降低给药浓度"},{"source":"湿性猫传染性腹膜炎（湿性FIP）","target":"康复","rel":"影响","polarity":"Positive","confidence":"High","evidence":"经GS-441524治疗后，湿性FIP的康复率可达80-100%"},{"source":"干性猫传染性腹膜炎（干性FIP）","target":"康复","rel":"影响","polarity":"Positive","confidence":"High","evidence":"经GS-441524治疗后，干性FIP同样具有高康复率"},{"source":"康复","target":"复发风险","rel":"导致","polarity":"Negative","confidence":"Low","evidence":"少数康复猫在停药后数月内可能出现病毒复发"},{"source":"复发性猫传染性腹膜炎","target":"死亡","rel":"导致","polarity":"Negative","confidence":"Medium","evidence":"复发性FIP的治疗难度显著增加，预后较差"},{"source":"病毒载量","target":"康复","rel":"影响","polarity":"Negative","confidence":"High","evidence":"高病毒载量与较低的康复率和较高的死亡率显著相关"}]};
 
+const GRAPH_COORDS = {"猫肠道冠状病毒（FECV）": {"x": 1466.1, "y": 348.5}, "S基因突变": {"x": 1437.7, "y": 141.5}, "猫传染性腹膜炎病毒（FIPV）": {"x": 1323.2, "y": -40.5}, "3c基因": {"x": 1375.3, "y": -241.4}, "巨噬细胞": {"x": 1107.5, "y": -7.7}, "全身性扩散": {"x": 896.8, "y": 71.6}, "免疫复合物": {"x": 774.6, "y": -160.8}, "慢性炎症": {"x": 845.0, "y": 344.9}, "血管炎": {"x": 566.2, "y": -314.2}, "内皮损伤": {"x": 310.3, "y": -313.7}, "血管通透性": {"x": 106.9, "y": -138.0}, "腹水": {"x": 7.7, "y": 163.0}, "湿性猫传染性腹膜炎（湿性FIP）": {"x": -21.9, "y": 505.3}, "肉芽肿": {"x": 654.6, "y": 594.0}, "干性猫传染性腹膜炎（干性FIP）": {"x": 386.6, "y": 755.5}, "I型猫冠状病毒": {"x": -210.9, "y": 632.3}, "II型猫冠状病毒": {"x": -310.8, "y": 549.5}, "GS-441524": {"x": 320.5, "y": 493.5}, "大细胞淋巴瘤": {"x": 531.9, "y": 414.1}, "尿结石": {"x": 432.7, "y": 291.9}, "免疫组化（IHC）": {"x": 612.6, "y": 787.3}, "应激": {"x": 1054.4, "y": -657.0}, "病毒复制": {"x": 1254.2, "y": -699.3}, "多猫环境": {"x": 853.6, "y": -906.4}, "猫冠状病毒（FCoV）感染": {"x": 931.0, "y": -1096.1}, "持续性发热": {"x": -742.6, "y": -659.5}, "疑似猫传染性腹膜炎": {"x": -662.6, "y": -860.4}, "腹围增大": {"x": 562.4, "y": -1173.0}, "疑似湿性猫传染性腹膜炎": {"x": 490.0, "y": -979.6}, "呼吸困难": {"x": 349.0, "y": -830.3}, "葡萄膜炎": {"x": 153.7, "y": -1129.3}, "疑似干性猫传染性腹膜炎": {"x": 92.5, "y": -1323.2}, "共济失调": {"x": 104.9, "y": -1525.2}, "癫痫发作": {"x": -103.3, "y": -1259.9}, "Rivalta试验阳性": {"x": 166.1, "y": 394.0}, "积液中猫冠状病毒RT-PCR阳性": {"x": -40.9, "y": 303.6}, "粘稠草黄色积液": {"x": -151.4, "y": 236.8}, "渗出液高蛋白（>35g/L）": {"x": -183.0, "y": 360.7}, "组织病理学（肉芽肿）": {"x": 556.5, "y": 906.6}, "免疫细胞化学（ICC）": {"x": -299.7, "y": 418.8}, "排除淋巴瘤": {"x": -573.1, "y": -663.5}, "排除细菌性腹膜炎": {"x": -563.9, "y": -1052.8}, "排除充血性心力衰竭": {"x": -731.8, "y": -1064.5}, "α-1酸性糖蛋白（AGP）": {"x": -858.6, "y": -949.0}, "淋巴细胞减少": {"x": -862.6, "y": -780.1}, "瑞德西韦": {"x": 170.0, "y": 665.9}, "莫努匹拉韦": {"x": -553.6, "y": 965.3}, "复发性猫传染性腹膜炎": {"x": -320.7, "y": 903.1}, "GC376": {"x": -196.3, "y": 493.2}, "84天标准疗程": {"x": 144.2, "y": 1181.6}, "康复": {"x": 165.7, "y": 939.1}, "42天短疗程": {"x": 267.8, "y": 1139.8}, "对症支持治疗": {"x": 21.6, "y": 1137.0}, "死亡": {"x": -12.9, "y": 802.7}, "体重增加": {"x": -1392.3, "y": -403.1}, "血药浓度": {"x": -1252.6, "y": -550.9}, "血脑屏障": {"x": -1060.3, "y": -85.9}, "药物渗透": {"x": -1265.0, "y": -85.3}, "病毒清除不全": {"x": -1341.4, "y": 224.1}, "耐药性变异": {"x": -191.7, "y": 953.9}, "长期免疫抑制": {"x": -1237.8, "y": 601.4}, "伊曲康唑": {"x": 509.5, "y": 1298.5}, "病毒载量": {"x": 393.4, "y": 1100.1}, "复发风险": {"x": -43.7, "y": 1022.9}, "Rivalta试验": {"x": 180.8, "y": 524.8}, "复发": {"x": -1233.4, "y": 397.4}, "白球比（A:G比值）": {"x": -101, "y": 704}, "白球比（A:G比值）低于0.6": {"x": -462, "y": -782}, "血清淀粉样蛋白A（SAA）": {"x": 88, "y": 289}, "血清淀粉样蛋白A（SAA）显著升高": {"x": -460, "y": -936}};
+
 /* ============ 设计常量 ============ */
 const TYPE_STYLES = {
-  '病因与病原': { main:'#B86B5B', light:'#FCF4F1', border:'#E9CEC5', abbr:'病' },
-  '机制与过程': { main:'#8C6B5D', light:'#FAF3EC', border:'#E2D5CD', abbr:'机' },
-  '诊断与检测': { main:'#6D8795', light:'#F2F6F8', border:'#D7E2E8', abbr:'诊' },
-  '干预与结局': { main:'#6F8A6A', light:'#F4F7F1', border:'#D6E2CF', abbr:'治' },
+  '病因与病原': { main:'#B07A6A', light:'#F7ECE7', border:'#F7ECE7', abbr:'病' },
+  '机制与过程': { main:'#9A7B68', light:'#F7ECE7', border:'#F7ECE7', abbr:'机' },
+  '诊断与检测': { main:'#9B9690', light:'#F7F0E6', border:'#F7F0E6', abbr:'诊' },
+  '干预与结局': { main:'#8D9984', light:'#F7F0E6', border:'#F7F0E6', abbr:'治' },
 };
 const POLARITY_COLORS = { Positive:'#5B8C5A', Negative:'#C25E5E', Neutral:'#8C8C8C' };
+const EDGE_COLOR = '#CFC6BF';
 const POLARITY_TEXT = { Positive:'正向 · 有利', Negative:'负向 · 风险', Neutral:'中性 · 机制' };
+const POLARITY_SVG = {
+  Positive:'<svg viewBox="0 0 1024 1024" width="14" height="14"><path d="M861.417121 738.727375c41.604731 0 65.233383-54.963795 34.928639-85.258218L547.071415 304.191372c-20.029996-20.031716-49.822121-20.031716-69.853837 0L127.955275 653.469157c-31.085714 31.073673-5.136514 85.258218 35.441258 85.258218L861.417121 738.727375 861.417121 738.727375z" fill="#5B8C5A"/></svg>',
+  Negative:'<svg viewBox="0 0 1024 1024" width="14" height="14"><path d="M878.592 250.88q29.696 0 48.128 11.264t24.576 29.696 0 41.472-26.624 45.568q-82.944 92.16-159.744 180.224t-148.48 164.864q-19.456 20.48-45.568 31.744t-53.76 11.776-53.248-8.704-43.008-28.672q-39.936-44.032-82.944-90.112l-88.064-92.16q-43.008-46.08-85.504-90.624t-79.36-86.528q-17.408-19.456-22.528-40.448t1.024-38.4 23.552-28.672 45.056-11.264q35.84 0 98.816-0.512t137.728-0.512l153.6 0 150.528 0 125.952 0 79.872 0z" fill="#C25E5E"/></svg>',
+  Neutral:'<svg viewBox="0 0 1024 1024" width="14" height="14"><circle cx="512" cy="512" r="200" fill="#8C8C8C"/></svg>',
+};
+function polIcon(p){ return POLARITY_SVG[p] || POLARITY_SVG.Neutral; }
 const CONFIDENCE_COLORS = { High:'#5B8C5A', Medium:'#D9A13B', Low:'#C25E5E' };
+const CONFIDENCE_OPACITY = { High:1.0, Medium:0.6, Low:0.3 };
 
 /* ============ 数据准备 ============ */
-const NODES = GRAPH_DATA.nodes.map(n => ({ ...n, nodeType:n.type }));
+/* 向心压缩：以「湿性猫传染性腹膜炎（湿性FIP）」所在簇为锚点，外围簇向中心簇靠拢
+   R0：簇半径阈值（簇内节点不动）；K：压缩系数（越小越紧凑：0=全压到 R0，1=不变） */
+(function(){
+  const hub = '湿性猫传染性腹膜炎（湿性FIP）';
+  const members = [hub];
+  GRAPH_DATA.edges.forEach(e=>{
+    if(e.source===hub) members.push(e.target);
+    if(e.target===hub) members.push(e.source);
+  });
+  const valid = members.filter(id => GRAPH_COORDS[id]);
+  const ax = valid.reduce((s,id)=>s+GRAPH_COORDS[id].x,0) / valid.length;
+  const ay = valid.reduce((s,id)=>s+GRAPH_COORDS[id].y,0) / valid.length;
+  const R0 = 500, K = 0.5;
+  Object.values(GRAPH_COORDS).forEach(p=>{
+    if(typeof p.x !== 'number') return;
+    const dx = p.x - ax, dy = p.y - ay;
+    const d = Math.hypot(dx, dy);
+    if(d > R0){
+      const s = (R0 + (d - R0) * K) / d;
+      p.x = ax + dx * s;
+      p.y = ay + dy * s;
+    }
+  });
+})();
+const NODES = GRAPH_DATA.nodes.map(n => ({ ...n, nodeType:n.type, x:(GRAPH_COORDS[n.id]||{}).x, y:(GRAPH_COORDS[n.id]||{}).y }));
 const EDGES = GRAPH_DATA.edges.map(e => ({
   id: e.source + '||' + e.rel + '||' + e.target,
   source:e.source, target:e.target, rel:e.rel,
@@ -334,10 +423,6 @@ G6.registerNode('fip-node', {
   draw(cfg, group){
     const c = TYPE_STYLES[cfg.nodeType] || TYPE_STYLES['机制与过程'];
     const r = 22;
-    group.addShape('circle', {
-      attrs:{ x:0, y:0, r:r+6, stroke:c.main, lineWidth:1.2, fill:'transparent', opacity:0 },
-      name:'ring',
-    });
     const main = group.addShape('circle', {
       attrs:{ x:0, y:0, r:r, fill:c.light, stroke:c.main, lineWidth:1.8, cursor:'pointer' },
       name:'main', draggable:true,
@@ -358,11 +443,9 @@ G6.registerNode('fip-node', {
   setState(name, value, item){
     const group = item.getContainer();
     const main = group.find(e=>e.get('name')==='main');
-    const ring = group.find(e=>e.get('name')==='ring');
     const c = TYPE_STYLES[item.getModel().nodeType] || TYPE_STYLES['机制与过程'];
     if(name==='selected'){
       main.attr(value ? { r:26, lineWidth:2.2 } : { r:22, lineWidth:1.8 });
-      ring.attr(value ? { r:32, opacity:1 } : { r:28, opacity:0 });
     } else if(name==='hover'){
       main.attr(value ? { r:23, lineWidth:2.2 } : { r:22, lineWidth:1.8 });
     } else if(name==='dim' || name==='dim2'){
@@ -382,40 +465,56 @@ const graph = new G6.Graph({
   modes: { default:['drag-canvas','zoom-canvas','drag-node'] },
   defaultNode: { type:'fip-node', size:44 },
   defaultEdge: {
-    type:'quadratic',
-    style:{ lineWidth:1.2, opacity:0.6, endArrow:true },
+    type:'line',
+    style:{ lineWidth:1.8, opacity:0.6, endArrow:true },
     labelCfg:{
       autoRotate:false, refY:6,
       style:{ fontSize:11, fill:'#6F6763', background:{ fill:'#FFFFFF', padding:[2,6,2,6], radius:4 } },
     },
   },
-  layout: {
-    type:'force', preventOverlap:true, nodeSize:96,
-    linkDistance:150, nodeStrength:-220, edgeStrength:0.35,
-    collideStrength:0.9, alphaDecay:0.018, alphaMin:0.01,
-  },
+  plugins: [
+    new G6.Minimap({
+      size: [138, 92],
+      type: 'delegate',
+      delegateStyle: { fill:'#C7A18E', fillOpacity:0.78, stroke:'#8C6B5D', strokeOpacity:0.45, lineWidth:0.5 },
+      viewportStyle: { fill:'rgba(140,107,93,0.16)', stroke:'#6B5045', lineWidth:1 }
+    })
+  ],
 });
 
-const gNodes = NODES.map(n => ({ id:n.id, label:n.label, nodeType:n.nodeType, size:44 }));
+const gNodes = NODES.map(n => ({ id:n.id, label:n.label, nodeType:n.nodeType, size:44, x:n.x, y:n.y }));
 const gEdges = EDGES.map(e => {
-  const col = POLARITY_COLORS[e.polarity] || '#8C8C8C';
+  const col = EDGE_COLOR;
+  const eOpacity = CONFIDENCE_OPACITY[e.confidence] || 1;
   return {
     id:e.id, source:e.source, target:e.target,
     rel:e.rel, confidence:e.confidence, polarity:e.polarity, evidence:e.evidence,
     label:'',
-    style:{ stroke:col, lineWidth:1.2, opacity:0.6,
-      endArrow:{ path:G6.Arrow.triangle(6,8,0), fill:col, opacity:0.6 } },
+    style:{ stroke:col, lineWidth:1.8, opacity:eOpacity,
+      endArrow:{ path:G6.Arrow.triangle(6,8,0), fill:col, opacity:eOpacity } },
   };
 });
 graph.data({ nodes:gNodes, edges:gEdges });
 graph.render();
-setTimeout(()=>{ graph.fitView(30); }, 120);
+setTimeout(()=>{
+  // G6 v4.8.24 Minimap 未自动响应 viewport 变化（监听事件未触发），
+  // 在 zoom+fitCenter 后手动调用 minimap 内部更新方法
+  graph.zoom(0.7); graph.fitCenter();
+  const mm = graph.get('plugins')[0];
+  if (mm) {
+    try { mm.updateDelegateShapes(); } catch(e) {}
+    try { mm.updateViewport(); } catch(e) {}
+    try { mm.updateCanvas(); } catch(e) {}
+  }
+  window.__g = graph;  // 调试用
+}, 120);
 
 /* ============ 焦点管理 ============ */
 let hoverNodeId = null;
 let selectedNodeId = null;
 let selectedEdgeId = null;
 let pathMode = false;
+let _lastNodeId = null;
 
 function clearNodeStates(){
   ['selected','hover','dim','dim2'].forEach(s=>{
@@ -425,24 +524,27 @@ function clearNodeStates(){
 function resetEdges(){
   gEdges.forEach(e=>{
     const it=graph.findById(e.id); if(!it) return;
-    const col = POLARITY_COLORS[e.polarity]||'#8C8C8C';
+    const col = EDGE_COLOR;
+    const eOpacity = CONFIDENCE_OPACITY[e.confidence] || 1;
     graph.updateItem(it, {
       label:'',
-      style:{ stroke:col, lineWidth:1.2, opacity:0.6,
-        endArrow:{ path:G6.Arrow.triangle(6,8,0), fill:col, opacity:0.6 } },
+      style:{ stroke:col, lineWidth:1.8, opacity:eOpacity,
+        endArrow:{ path:G6.Arrow.triangle(6,8,0), fill:col, opacity:eOpacity } },
     });
   });
 }
 function styleEdge(eid, {opacity, lineWidth, showLabel, color}){
   const it=graph.findById(eid); if(!it) return;
   const e=edgeById[eid];
-  const col = color || POLARITY_COLORS[e.polarity] || '#8C8C8C';
+  const col = color || EDGE_COLOR;
+  // 焦点边（opacity=1）：叠加置信度不透明度；弱化边（opacity<1）：保持弱化值
+  const effOpacity = opacity >= 1 ? (CONFIDENCE_OPACITY[e.confidence] || 1) : opacity;
   const labColor = showLabel ? (CONFIDENCE_COLORS[e.confidence]||'#6F6763') : '#6F6763';
   graph.updateItem(it, {
     label: showLabel ? (e.rel+' · '+e.confidence) : '',
     labelCfg:{ style:{ fill:labColor, fontSize:11, background:{ fill:'#FFFFFF', padding:[2,6,2,6], radius:4 } } },
-    style:{ stroke:col, lineWidth, opacity,
-      endArrow:{ path:G6.Arrow.triangle(6,8,0), fill:col, opacity:opacity>0.5?1:opacity } },
+    style:{ stroke:col, lineWidth, opacity:effOpacity,
+      endArrow:{ path:G6.Arrow.triangle(6,8,0), fill:col, opacity:effOpacity } },
   });
 }
 
@@ -469,11 +571,11 @@ function applyFocus(activeId, isSelected){
   EDGES.forEach(e=>{
     const isDirect = e.source===activeId || e.target===activeId;
     if(isDirect){
-      keepEdges.add(e.id); styleEdge(e.id,{opacity:1,lineWidth:2,showLabel:true});
+      keepEdges.add(e.id); styleEdge(e.id,{opacity:1,lineWidth:3,showLabel:true});
     } else {
       const bothNear = nb1.has(e.source) && nb1.has(e.target);
-      if(isSelected && bothNear){ midEdges.add(e.id); styleEdge(e.id,{opacity:0.35,lineWidth:1.2,showLabel:false}); }
-      else styleEdge(e.id,{opacity:0.15,lineWidth:1,showLabel:false});
+      if(isSelected && bothNear){ midEdges.add(e.id); styleEdge(e.id,{opacity:0.35,lineWidth:1.8,showLabel:false}); }
+      else styleEdge(e.id,{opacity:0.15,lineWidth:1.5,showLabel:false});
     }
   });
 }
@@ -485,16 +587,55 @@ function clearFocus(){
 }
 
 /* ============ 详情面板 ============ */
-function confBadge(conf){ return '<span class="conf-badge" style="background:'+CONFIDENCE_COLORS[conf]+'">'+conf+'</span>'; }
+function confBadge(conf){ return '<span class="conf-badge" data-conf="'+conf+'" style="background:'+CONFIDENCE_COLORS[conf]+'">'+conf+'</span>'; }
+const CONF_DESC = {
+  'High':'多个独立来源的文献证据相互印证，结论可信度高。',
+  'Medium':'有文献支撑，但证据来源单一或样本有限，供参考。',
+  'Low':'证据较弱（个案报道或合理推断），需谨慎对待。'
+};
+function panelBackBtn(){ return '<button class="panel-back" title="返回">←</button>'; }
+function renderBadgeDetail(conf, backFn){
+  const el = document.getElementById('rightPanel');
+  el.innerHTML = panelBackBtn() + panelCloseBtn() +
+    '<div class="badge-detail">'+
+      '<div class="node-title" style="font-size:18px;">置信度说明</div>'+
+      Object.keys(CONFIDENCE_COLORS).map(c=>
+        '<div class="legend-row" style="align-items:flex-start;margin-bottom:10px;'+(c===conf?'':'opacity:.75;')+'">'+
+          '<span class="legend-badge" style="background:'+CONFIDENCE_COLORS[c]+';flex:none;">'+c+'</span>'+
+          '<span style="line-height:1.7;">'+CONF_DESC[c]+'</span>'+
+        '</div>'
+      ).join('')+
+    '</div>';
+  el.querySelector('.panel-back').addEventListener('click', backFn);
+  bindPanelClose(el);
+}
+function bindBadgeLinks(el, backFn){
+  el.querySelectorAll('.conf-badge').forEach(b=>{
+    b.addEventListener('click',ev=>{
+      ev.stopPropagation();
+      renderBadgeDetail(b.dataset.conf, backFn);
+    });
+  });
+}
+function hidePanel(){ document.getElementById('rightPanel').classList.remove('show'); }
+function bindPanelClose(el){
+  const btn=el.querySelector('.panel-close');
+  if(btn) btn.addEventListener('click', ()=>{
+    hidePanel();
+    selectedNodeId=null; selectedEdgeId=null;
+    clearNodeStates(); resetEdges();
+  });
+}
+function panelCloseBtn(){ return '<button class="panel-close" title="收起面板">✕</button>'; }
 function renderEmptyPanel(){
   const el = document.getElementById('rightPanel');
-  el.innerHTML =
+  el.innerHTML = panelCloseBtn() +
     '<div class="panel-empty">'+
       '<div class="panel-empty-hint"><div class="big">节点 / 关系详情</div>点击图谱中的节点或关系查看详情</div>'+
       '<div class="legend-block">'+
         '<div class="legend-block-title">极性（关系方向）</div>'+
         Object.keys(POLARITY_COLORS).map(p=>
-          '<div class="legend-row"><span class="legend-swatch" style="background:'+POLARITY_COLORS[p]+'"></span>'+p+' · '+POLARITY_TEXT[p]+'</div>'
+          '<div class="legend-row"><span class="legend-swatch">'+polIcon(p)+'</span>'+p+' · '+POLARITY_TEXT[p]+'</div>'
         ).join('')+
       '</div>'+
       '<div class="legend-block">'+
@@ -515,11 +656,11 @@ function renderNodeDetail(id){
     return { e, out, other: out?e.target:e.source };
   });
   const el=document.getElementById('rightPanel');
-  el.innerHTML =
+  el.innerHTML = panelCloseBtn() +
     '<div class="node-detail">'+
       '<div class="node-head">'+
-        '<span class="type-tag" style="background:'+c.light+';color:'+c.main+';border:1px solid '+c.border+'">'+n.type+'</span>'+
         '<div class="node-title">'+n.label+'</div>'+
+        '<span class="type-tag" style="background:'+c.light+';color:'+c.main+';border:1px solid '+c.border+'">'+n.type+'</span>'+
       '</div>'+
       '<div class="node-meta">'+
         '<div class="meta-cell"><div class="meta-num">'+d.out+'</div><div class="meta-label">出度</div></div>'+
@@ -533,12 +674,12 @@ function renderNodeDetail(id){
             const oc=TYPE_STYLES[nodeById[other].type];
             return '<div class="rel-item" data-edge="'+e.id+'" style="--rel-color:'+oc.main+'">'+
               '<div class="rel-top">'+
-                '<div class="rel-direction">'+(out ? (n.label+' <span class="arrow">→</span> '+other) : (other+' <span class="arrow">→</span> '+n.label))+ '</div>'+
                 '<div class="rel-flags">'+
-                  '<span class="pol-dot" style="background:'+POLARITY_COLORS[e.polarity]+'" title="'+e.polarity+'"></span>'+
+                  '<span class="pol-dot" title="'+e.polarity+'">'+polIcon(e.polarity)+'</span>'+
                   confBadge(e.confidence)+
                 '</div>'+
               '</div>'+
+              '<div class="rel-direction">'+(out ? (n.label+' <span class="arrow">→</span> '+other) : (other+' <span class="arrow">→</span> '+n.label))+ '</div>'+
               '<div class="rel-evidence">'+e.rel+' · '+e.evidence+'</div>'+
             '</div>';
           }).join('')+
@@ -548,12 +689,15 @@ function renderNodeDetail(id){
   el.querySelectorAll('.rel-item').forEach(item=>{
     item.addEventListener('click',()=>{ selectEdge(item.dataset.edge); });
   });
+  bindBadgeLinks(el, ()=>renderNodeDetail(id));
+  bindPanelClose(el);
+  el.classList.add('show');
 }
 function renderEdgeDetail(id){
   const e=edgeById[id];
   const s=nodeById[e.source], t=nodeById[e.target];
   const el=document.getElementById('rightPanel');
-  el.innerHTML =
+  el.innerHTML = panelBackBtn() + panelCloseBtn() +
     '<div class="edge-detail">'+
       '<div class="edge-rel-label">'+e.rel+'</div>'+
       '<div class="edge-path">'+
@@ -562,16 +706,25 @@ function renderEdgeDetail(id){
         '<span style="color:'+TYPE_STYLES[t.type].main+'">'+e.target+'</span>'+
       '</div>'+
       '<div class="kv-row"><span class="kv-label">极性</span>'+
-        '<span class="pol-dot" style="background:'+POLARITY_COLORS[e.polarity]+'"></span>'+
+        '<span class="pol-dot">'+polIcon(e.polarity)+'</span>'+
         '<span style="margin-left:6px;">'+POLARITY_TEXT[e.polarity]+'</span></div>'+
       '<div class="kv-row"><span class="kv-label">置信度</span>'+confBadge(e.confidence)+'</div>'+
       '<div class="evidence-box"><div class="ev-title">支撑依据</div>'+e.evidence+'</div>'+
     '</div>';
+  bindBadgeLinks(el, ()=>renderEdgeDetail(id));
+  bindPanelClose(el);
+  const backBtn=el.querySelector('.panel-back');
+  if(backBtn) backBtn.addEventListener('click', ()=>{
+    if(_lastNodeId && nodeById[_lastNodeId]) selectNode(_lastNodeId);
+    else { renderEmptyPanel(); clearFocus(); }
+  });
+  el.classList.add('show');
 }
 
 /* ============ 选择逻辑 ============ */
 function selectNode(id){
   selectedNodeId=id; selectedEdgeId=null; hoverNodeId=null;
+  _lastNodeId=id;
   applyFocus(id, true);
   renderNodeDetail(id);
 }
@@ -587,8 +740,8 @@ function selectEdge(id){
     else graph.setItemState(it,'dim',true);
   });
   EDGES.forEach(ee=>{
-    if(ee.id===id) styleEdge(ee.id,{opacity:1,lineWidth:2.5,showLabel:true});
-    else styleEdge(ee.id,{opacity:0.15,lineWidth:1,showLabel:false});
+    if(ee.id===id) styleEdge(ee.id,{opacity:1,lineWidth:3.75,showLabel:true});
+    else styleEdge(ee.id,{opacity:0.15,lineWidth:1.5,showLabel:false});
   });
   renderEdgeDetail(id);
 }
@@ -616,8 +769,8 @@ function applyPathMode(nodes, keep){
     else graph.setItemState(it,'dim',true);
   });
   EDGES.forEach(e=>{
-    if(pathEdgeIds.has(e.id)) styleEdge(e.id,{opacity:1,lineWidth:2.5,showLabel:true});
-    else styleEdge(e.id,{opacity:0.12,lineWidth:1,showLabel:false});
+    if(pathEdgeIds.has(e.id)) styleEdge(e.id,{opacity:1,lineWidth:3.75,showLabel:true});
+    else styleEdge(e.id,{opacity:0.12,lineWidth:1.5,showLabel:false});
   });
   document.getElementById('pathBanner').classList.add('show');
   document.getElementById('pathInfo').textContent = nodes.length+' 个节点 · '+(nodes.length-1)+' 条关系';
@@ -634,15 +787,20 @@ function exitPathMode(){
 }
 
 /* ============ 事件绑定 ============ */
+let nodeHoverTimer = null;
+let edgeHoverTimer = null;
 graph.on('node:mouseenter', e=>{
-  if(pathMode) return;
+  if(pathMode || selectedNodeId) return;
   const id=e.item.getModel().id;
-  hoverNodeId=id;
-  if(selectedNodeId) return;
-  applyFocus(id, false);
+  clearTimeout(nodeHoverTimer);
+  nodeHoverTimer = setTimeout(()=>{
+    hoverNodeId=id;
+    applyFocus(id, false);
+  }, 300);
 });
 graph.on('node:mouseleave', e=>{
   if(pathMode) return;
+  clearTimeout(nodeHoverTimer);
   hoverNodeId=null;
   if(selectedNodeId){ applyFocus(selectedNodeId, true); } else { clearNodeStates(); resetEdges(); }
 });
@@ -650,20 +808,25 @@ graph.on('node:click', e=>{ if(!pathMode) selectNode(e.item.getModel().id); });
 graph.on('edge:mouseenter', e=>{
   if(pathMode || selectedNodeId) return;
   const eid=e.item.getModel().id;
-  styleEdge(eid,{opacity:1,lineWidth:2,showLabel:true});
+  clearTimeout(edgeHoverTimer);
+  edgeHoverTimer = setTimeout(()=>{
+    styleEdge(eid,{opacity:1,lineWidth:3,showLabel:true});
+  }, 300);
 });
 graph.on('edge:mouseleave', e=>{
   if(pathMode || selectedNodeId || selectedEdgeId) return;
+  clearTimeout(edgeHoverTimer);
   const eid=e.item.getModel().id;
-  const col=POLARITY_COLORS[edgeById[eid].polarity]||'#8C8C8C';
-  graph.updateItem(e.item,{label:'',style:{stroke:col,lineWidth:1.2,opacity:0.6,endArrow:{path:G6.Arrow.triangle(6,8,0),fill:col,opacity:0.6}}});
+  const col=EDGE_COLOR;
+  const eOpacity = CONFIDENCE_OPACITY[edgeById[eid].confidence] || 1;
+  graph.updateItem(e.item,{label:'',style:{stroke:col,lineWidth:1.8,opacity:eOpacity,endArrow:{path:G6.Arrow.triangle(6,8,0),fill:col,opacity:eOpacity}}});
 });
 graph.on('edge:click', e=>{ if(!pathMode) selectEdge(e.item.getModel().id); });
 graph.on('canvas:click', ()=>{
   if(pathMode) return;
   selectedNodeId=null; selectedEdgeId=null;
   clearNodeStates(); resetEdges();
-  renderEmptyPanel();
+  hidePanel();
 });
 
 /* ============ 图例 ============ */
@@ -675,13 +838,7 @@ function renderTypeLegend(){
   }).join('');
 }
 
-/* ============ 全屏 / 演示路径 / resize ============ */
-document.getElementById('fullscreenBtn').addEventListener('click',()=>{
-  const el=document.getElementById('graphMain');
-  if(document.fullscreenElement){ document.exitFullscreen(); }
-  else if(el.requestFullscreen){ el.requestFullscreen(); }
-});
-document.addEventListener('fullscreenchange',()=>{ setTimeout(()=>graph.changeSize(container.clientWidth, container.clientHeight), 200); });
+/* ============ 演示路径 / resize ============ */
 window.addEventListener('resize',()=>{
   const c=container;
   graph.changeSize(c.clientWidth, c.clientHeight);
@@ -696,7 +853,7 @@ document.getElementById('demoPathBtn').addEventListener('click',()=>{
   ];
   selectedNodeId=null; selectedEdgeId=null;
   applyPathMode(demoPath, true);
-  renderEmptyPanel();
+  hidePanel();
 });
 document.getElementById('exitPathBtn').addEventListener('click', exitPathMode);
 
@@ -707,7 +864,7 @@ function readUrlPath(){
   if(!p) return;
   const nodes=p.split(',').map(s=>s.trim()).filter(Boolean);
   const valid=nodes.filter(n=>nodeById[n]);
-  if(valid.length>=2){ applyPathMode(valid,true); renderEmptyPanel(); }
+  if(valid.length>=2){ applyPathMode(valid,true); hidePanel(); }
 }
 
 /* ============ 3D 模式（全屏覆盖） ============ */
@@ -728,6 +885,8 @@ function loadScript(src){
 
 async function enter3D(){
   g3dOverlay.classList.add('show');
+  const loadingEl = document.getElementById('graph3dLoading');
+  if (loadingEl) loadingEl.style.display = 'block';
   try{
     if(!window.ForceGraph3D){
       await loadScript('https://unpkg.com/3d-force-graph@1.80.0/dist/3d-force-graph.min.js');
@@ -738,6 +897,7 @@ async function enter3D(){
     init3D();
   }catch(err){
     g3dOverlay.classList.remove('show');
+    if (loadingEl) loadingEl.style.display = 'none';
     alert('3D 组件加载失败：' + err.message);
   }
 }
@@ -781,8 +941,17 @@ function init3D(){
     .onBackgroundClick(() => hide3dInfo());
   g3d.d3Force('charge').strength(-140);
   g3d.d3Force('link').distance(68);
-  g3d.cameraPosition({ x:0, y:0, z:260 });
+  g3d.cameraPosition({ x:0, y:0, z:700 });
   render3dLegend();
+  // 渲染完成（力导向引擎停止）后隐藏加载提示；setTimeout 兜底（onEngineStop 为回调注册，不覆盖渲染循环，安全）
+  const hideLoading = () => {
+    const le = document.getElementById('graph3dLoading');
+    if (le) le.style.display = 'none';
+  };
+  try {
+    if (typeof g3d.onEngineStop === 'function') g3d.onEngineStop(hideLoading);
+  } catch(e) {}
+  setTimeout(hideLoading, 6000);
   // 继承 2D 的路径高亮
   if(pathMode && pathNodes.length >= 2){
     setTimeout(()=>{
@@ -816,8 +985,8 @@ function show3dInfo(kind, obj){
     const rels = edgesOf[obj.id].map(eid => edgeById[eid]);
     el.innerHTML =
       '<button class="close" onclick="hide3dInfo()">✕</button>'+
+      '<div class="node-title" style="font-size:17px;margin:0 0 10px;">'+obj.label+'</div>'+
       '<span class="type-tag" style="background:'+c.light+';color:'+c.main+';border:1px solid '+c.border+'">'+obj.type+'</span>'+
-      '<div class="node-title" style="font-size:17px;margin:10px 0 12px;">'+obj.label+'</div>'+
       '<div class="node-meta">'+
         '<div class="meta-cell"><div class="meta-num">'+d.out+'</div><div class="meta-label">出度</div></div>'+
         '<div class="meta-cell"><div class="meta-num">'+d.in+'</div><div class="meta-label">入度</div></div>'+
@@ -830,7 +999,7 @@ function show3dInfo(kind, obj){
         const other = out ? e.target : e.source;
         return '<div class="rel-item" style="--rel-color:'+(TYPE_STYLES[nodeById[other].type]||TYPE_STYLES['机制与过程']).main+'">'+
           '<div class="rel-top"><div class="rel-direction">'+other+'</div>'+
-          '<div class="rel-flags"><span class="pol-dot" style="background:'+POLARITY_COLORS[e.polarity]+'"></span>'+confBadge(e.confidence)+'</div></div>'+
+          '<div class="rel-flags"><span class="pol-dot">'+polIcon(e.polarity)+'</span>'+confBadge(e.confidence)+'</div></div>'+
           '<div class="rel-evidence">'+e.rel+' · '+e.evidence+'</div></div>';
       }).join('')+'</div>';
   } else {
@@ -846,7 +1015,7 @@ function show3dInfo(kind, obj){
         '<span class="arrow">→</span>'+
         '<span style="color:'+tc.main+'">'+t.label+'</span></div>'+
       '<div class="kv-row" style="margin-top:12px;"><span class="kv-label">极性</span>'+
-        '<span class="pol-dot" style="background:'+POLARITY_COLORS[e.polarity]+'"></span>'+
+        '<span class="pol-dot">'+polIcon(e.polarity)+'</span>'+
         '<span style="margin-left:6px;">'+POLARITY_TEXT[e.polarity]+'</span></div>'+
       '<div class="kv-row" style="margin-top:8px;"><span class="kv-label">置信度</span>'+confBadge(e.confidence)+'</div>'+
       '<div class="evidence-box" style="margin-top:12px;"><div class="ev-title">支撑依据</div>'+e.evidence+'</div>';
@@ -866,7 +1035,6 @@ document.addEventListener('keydown', e => {
 
 /* ============ 初始化 ============ */
 renderTypeLegend();
-renderEmptyPanel();
 readUrlPath();
 </script>
 </body>
