@@ -55,7 +55,7 @@ HOMEPAGE_HTML = """
 
       <!-- 导航 -->
       <nav class="nav-menu">
-        <a class="nav-item active" href="#">
+        <a class="nav-item" href="#">
           <span class="nav-icon nav-icon-db">
 <svg viewBox="0 0 1024 1024" width="18" height="18" aria-hidden="true"><path d="M245.077333 375.466667a34.133333 34.133333 0 0 1-30.72-49.066667 401.066667 401.066667 0 0 1 363.093334-228.181333 34.133333 34.133333 0 0 1 0 68.266666 333.397333 333.397333 0 0 0-301.653334 189.781334 34.133333 34.133333 0 0 1-30.72 19.2zM577.450667 911.189333A401.066667 401.066667 0 0 1 214.442667 682.666667a34.133333 34.133333 0 1 1 61.44-29.866667 333.312 333.312 0 0 0 301.568 190.122667 34.133333 34.133333 0 0 1 0 68.266666zM898.218667 724.224a33.450667 33.450667 0 0 1-17.066667-4.522667 34.133333 34.133333 0 0 1-12.714667-46.592 340.906667 340.906667 0 0 0-10.24-353.536 34.133333 34.133333 0 0 1 57.258667-37.205333 409.088 409.088 0 0 1 12.202667 424.618667 34.133333 34.133333 0 0 1-29.44 17.237333zM765.525333 283.306667a114.517333 114.517333 0 1 1 113.834667-114.517334A114.346667 114.346667 0 0 1 765.525333 283.306667z m0-160.682667a46.250667 46.250667 0 1 0 45.568 46.165333 45.994667 45.994667 0 0 0-45.568-46.165333zM156.501333 619.178667a114.517333 114.517333 0 1 1 113.92-114.517334 114.346667 114.346667 0 0 1-113.92 114.517334z m0-160.682667a46.250667 46.250667 0 1 0 45.653334 46.165333 45.994667 45.994667 0 0 0-45.653334-46.165333zM802.133333 969.642667a114.517333 114.517333 0 1 1 113.92-114.432A114.346667 114.346667 0 0 1 802.133333 969.642667z m0-160.682667a46.250667 46.250667 0 1 0 45.653334 46.250667A45.994667 45.994667 0 0 0 802.133333 808.96zM577.450667 655.701333a151.04 151.04 0 1 1 150.186666-150.954666 150.698667 150.698667 0 0 1-150.186666 150.954666z m0-233.728a82.773333 82.773333 0 1 0 81.92 82.773334 82.346667 82.346667 0 0 0-81.92-82.773334z" fill="#3E3836"/><path d="M649.472 443.733333a33.621333 33.621333 0 0 1-15.701333-3.84 34.133333 34.133333 0 0 1-14.592-45.994666l85.333333-165.290667a34.133333 34.133333 0 0 1 60.586667 31.402667l-85.333334 165.290666A34.133333 34.133333 0 0 1 649.472 443.733333zM273.664 541.952a34.133333 34.133333 0 0 1-1.962667-68.266667l184.832-10.837333a34.133333 34.133333 0 0 1 4.010667 68.266667L275.712 541.866667zM745.472 807.338667a34.133333 34.133333 0 0 1-29.781333-17.066667l-91.648-162.133333a34.133333 34.133333 0 0 1 59.733333-33.621334l91.648 162.133334a34.133333 34.133333 0 0 1-12.970667 46.506666 33.024 33.024 0 0 1-16.981333 4.181334z" fill="#3E3836"/></svg>
           </span>
@@ -166,19 +166,19 @@ HOMEPAGE_HTML = """
             <div class="input-textarea" contenteditable="true" aria-label="输入问题"></div>
           </div>
           <div class="input-toolbar">
-            <button class="input-tool plus-btn" title="添加附件"><svg viewBox="0 0 1024 1024" width="14" height="14" aria-hidden="true"><path d="M426.666667 426.666667H85.546667A85.418667 85.418667 0 0 0 0 512c0 47.445333 38.314667 85.333333 85.546667 85.333333H426.666667v341.12c0 47.274667 38.186667 85.546667 85.333333 85.546667 47.445333 0 85.333333-38.314667 85.333333-85.546667V597.333333h341.12A85.418667 85.418667 0 0 0 1024 512c0-47.445333-38.314667-85.333333-85.546667-85.333333H597.333333V85.546667A85.418667 85.418667 0 0 0 512 0c-47.445333 0-85.333333 38.314667-85.333333 85.546667V426.666667z" fill="#8C6B5D"/></svg></button>
-            <button class="input-tool template-btn">
-              <span class="template-paw"><svg viewBox="0 0 1304 1024" width="14" height="14" aria-hidden="true"><path d="M82.59529938 450.3801144a150.60833431 128.0248712 90 1 0 256.0497433 4e-8 150.60833431 128.0248712 90 1 0-256.0497433-4e-8Z" fill="#B47B68"/><path d="M1074.58733465 734.21008403a123.50817892 150.6083343 12.07 1 0 62.98638385-294.55762892 123.50817892 150.6083343 12.07 1 0-62.98638385 294.55762892Z" fill="#B47B68"/><path d="M393.39047088 225.47997485a168.1299859 131.60707559 90 1 0 263.21415207 2e-8 168.1299859 131.60707559 90 1 0-263.21415207-2e-8Z" fill="#B47B68"/><path d="M864.14609382 436.84087636a131.60707559 168.1299859 6.71 1 0 39.28998639-333.95668374 131.60707559 168.1299859 6.71 1 0-39.28998639 333.95668373Z" fill="#B47B68"/><path d="M929.47515147 749.26056245c-9.42275492 142.66518562-147.18187788 219.21533615-310.17217958 208.39084944s-289.53556667-104.6626682-280.34643328-247.40572826 152.55518447-233.23265776 312.19690332-238.91746033c165.09289985 33.1743283 287.74446448 135.18927998 278.32170954 277.93233915z" fill="#B47B68"/></svg></span>
-              <span>症状模板</span>
-              <svg class="caret" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#A99A90" stroke-width="2"><polyline points="6 9 12 15 18 9" /></svg>
-            </button>
+            <div class="model-select-wrap">
+              <button class="input-tool model-btn" title="选择模型">
+                <span class="model-paw"><svg viewBox="0 0 1304 1024" width="14" height="14" aria-hidden="true"><path d="M82.59529938 450.3801144a150.60833431 128.0248712 90 1 0 256.0497433 4e-8 150.60833431 128.0248712 90 1 0-256.0497433-4e-8Z" fill="#B47B68"/><path d="M1074.58733465 734.21008403a123.50817892 150.6083343 12.07 1 0 62.98638385-294.55762892 123.50817892 150.6083343 12.07 1 0-62.98638385 294.55762892Z" fill="#B47B68"/><path d="M393.39047088 225.47997485a168.1299859 131.60707559 90 1 0 263.21415207 2e-8 168.1299859 131.60707559 90 1 0-263.21415207-2e-8Z" fill="#B47B68"/><path d="M864.14609382 436.84087636a131.60707559 168.1299859 6.71 1 0 39.28998639-333.95668374 131.60707559 168.1299859 6.71 1 0-39.28998639 333.95668373Z" fill="#B47B68"/><path d="M929.47515147 749.26056245c-9.42275492 142.66518562-147.18187788 219.21533615-310.17217958 208.39084944s-289.53556667-104.6626682-280.34643328-247.40572826 152.55518447-233.23265776 312.19690332-238.91746033c165.09289985 33.1743283 287.74446448 135.18927998 278.32170954 277.93233915z" fill="#B47B68"/></svg></span>
+                <span class="model-label">宠医助手 · Pro</span>
+                <svg class="caret" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#A99A90" stroke-width="2"><polyline points="6 9 12 15 18 9" /></svg>
+              </button>
+              <div class="model-popover hidden">
+                <div class="model-option active" data-value="pro">宠医助手 · Pro</div>
+                <div class="model-option disabled" data-value="max">宠医助手 · Max（暂未开发）</div>
+              </div>
+            </div>
             <div class="toolbar-spacer"></div>
-            <button class="input-tool model-btn" title="选择模型">
-              <span class="model-paw"><svg viewBox="0 0 1304 1024" width="14" height="14" aria-hidden="true"><path d="M82.59529938 450.3801144a150.60833431 128.0248712 90 1 0 256.0497433 4e-8 150.60833431 128.0248712 90 1 0-256.0497433-4e-8Z" fill="#B47B68"/><path d="M1074.58733465 734.21008403a123.50817892 150.6083343 12.07 1 0 62.98638385-294.55762892 123.50817892 150.6083343 12.07 1 0-62.98638385 294.55762892Z" fill="#B47B68"/><path d="M393.39047088 225.47997485a168.1299859 131.60707559 90 1 0 263.21415207 2e-8 168.1299859 131.60707559 90 1 0-263.21415207-2e-8Z" fill="#B47B68"/><path d="M864.14609382 436.84087636a131.60707559 168.1299859 6.71 1 0 39.28998639-333.95668374 131.60707559 168.1299859 6.71 1 0-39.28998639 333.95668373Z" fill="#B47B68"/><path d="M929.47515147 749.26056245c-9.42275492 142.66518562-147.18187788 219.21533615-310.17217958 208.39084944s-289.53556667-104.6626682-280.34643328-247.40572826 152.55518447-233.23265776 312.19690332-238.91746033c165.09289985 33.1743283 287.74446448 135.18927998 278.32170954 277.93233915z" fill="#B47B68"/></svg></span>
-              <span>宠医助手 · Pro</span>
-              <svg class="caret" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#A99A90" stroke-width="2"><polyline points="6 9 12 15 18 9" /></svg>
-            </button>
-            <button class="input-tool mic-btn" title="语音输入">
+            <button class="input-tool mic-btn" title="语音输入" hidden>
               <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#6B5045" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" /><path d="M19 10v2a7 7 0 0 1-14 0v-2" /><line x1="12" y1="19" x2="12" y2="23" /><line x1="8" y1="23" x2="16" y2="23" /></svg>
             </button>
             <button class="send-btn" title="发送">
@@ -288,6 +288,15 @@ HOMEPAGE_HTML = """
 
 # Gradio 的 gr.HTML 中插入的 <script> 不会被执行，因此交互逻辑通过 Blocks 的 js 参数注入。
 JS_CODE = """
+/* 设置浏览器标签页标题与 favicon（Gradio 6.x 的 title/favicon_path 参数不可用） */
+document.title = '潘的宠医助手 · FIP知识推理系统';
+(function(){
+  var link = document.createElement('link');
+  link.rel = 'icon';
+  link.type = 'image/svg+xml';
+  link.href = 'gradio_api/file=asset/favicon.svg';
+  document.head.appendChild(link);
+})();
 window.__GRAPH_HTML__=__GRAPH_HTML_JSON__;
 window.__DOCS_HTML__=__DOCS_HTML_JSON__;
 window.__DESIGN_HTML__=__DESIGN_HTML_JSON__;
@@ -310,6 +319,8 @@ window.__DESIGN_HTML__=__DESIGN_HTML_JSON__;
       var navItems=document.querySelectorAll('.nav-menu .nav-item');
       navItems.forEach(function(n){n.classList.remove('active');});
       item.classList.add('active');
+      /* 切换页面导航时，取消左侧最近对话的高亮 */
+      document.querySelectorAll('.chat-item.active').forEach(function(c){c.classList.remove('active');});
       if(text.indexOf('图数据库')>=0){
         appShell.classList.add('mode-graph');
         appShell.classList.remove('mode-docs','mode-design');
@@ -1348,6 +1359,40 @@ window.__DESIGN_HTML__=__DESIGN_HTML_JSON__;
       return String(v);
     }
 
+    /* ===== 模型选择下拉 ===== */
+    const modelBtn = document.querySelector('.model-btn');
+    const modelPopover = document.querySelector('.model-popover');
+    const modelLabel = document.querySelector('.model-label');
+    function toggleModelPopover(show) {
+      if (!modelPopover || !modelBtn) return;
+      if (typeof show === 'undefined') show = modelPopover.classList.contains('hidden');
+      if (show) {
+        modelPopover.classList.remove('hidden');
+        modelBtn.classList.add('open');
+      } else {
+        modelPopover.classList.add('hidden');
+        modelBtn.classList.remove('open');
+      }
+    }
+    if (modelBtn && modelPopover) {
+      modelBtn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        toggleModelPopover();
+      });
+      modelPopover.addEventListener('click', function (e) {
+        const opt = e.target.closest('.model-option');
+        if (!opt || opt.classList.contains('disabled')) return;
+        if (opt.dataset.value === 'pro' && modelLabel) modelLabel.textContent = '宠医助手 · Pro';
+        modelPopover.querySelectorAll('.model-option').forEach(function (o) { o.classList.toggle('active', o === opt); });
+        toggleModelPopover(false);
+      });
+      document.addEventListener('click', function (e) {
+        if (!modelPopover.classList.contains('hidden') && !e.target.closest('.model-select-wrap')) {
+          toggleModelPopover(false);
+        }
+      });
+    }
+
     function send() {
       const text = (textarea.innerText || '').trim();
       if (!text) return;
@@ -1380,6 +1425,8 @@ window.__DESIGN_HTML__=__DESIGN_HTML_JSON__;
       if (t.closest('.new-task-btn') || t.closest('.collapsed-tool')) {
         var shell = document.getElementById('appShell');
         if (shell) shell.classList.remove('mode-graph', 'mode-docs', 'mode-design');
+        /* 回到首页对话时，取消左侧导航页高亮 */
+        document.querySelectorAll('.nav-item.active').forEach(function(n){n.classList.remove('active');});
         resetChat();
         return;
       }
@@ -1387,6 +1434,8 @@ window.__DESIGN_HTML__=__DESIGN_HTML_JSON__;
       if (ci && ci.dataset.cid) {
         var shell = document.getElementById('appShell');
         if (shell) shell.classList.remove('mode-graph', 'mode-docs', 'mode-design');
+        /* 切换到历史对话时，取消左侧导航页高亮 */
+        document.querySelectorAll('.nav-item.active').forEach(function(n){n.classList.remove('active');});
         switchConvo(ci.dataset.cid);
         return;
       }
@@ -1593,9 +1642,8 @@ div:has(> .app-shell) { padding: 0 !important; margin: 0 !important; background:
   transition: background 150ms var(--ease);
 }
 .nav-item:hover { background: #FAF3EC; color: #6B5045; }
-.nav-item.active { color: #6B5045; background: transparent; box-shadow: none; }
-/* active 项也响应 hover：.nav-item.active:hover 特异性更高，覆盖上面 transparent */
-.nav-item.active:hover { background: #FAF3EC; color: #6B5045; }
+.nav-item.active { color: #3E3836; font-weight: 600; background: #FAF3EC; box-shadow: none; }
+/* 选中态与 hover 态完全一致，不再单独加深 */
 .nav-icon { width: 18px; height: 18px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
 
 /* 分栏：固定总高度，条目过多时内部滚动，不顶走底部装饰图 */
@@ -1642,8 +1690,8 @@ div:has(> .app-shell) { padding: 0 !important; margin: 0 !important; background:
   transition: background 150ms var(--ease);
 }
 .chat-item:hover { background: #FAF3EC; }
-.chat-item.active { background: #FAF3EC; }
-.chat-item.active .chat-title { color: #6B5045; }
+.chat-item.active { color: #3E3836; font-weight: 600; background: #FAF3EC; }
+/* 选中态与 hover 一致，字体颜色沿用默认（hover 不改变字体色） */
 /* 新会话条目淡入 */
 .chat-item-new { animation: chatItemIn 240ms var(--ease); }
 @keyframes chatItemIn {
@@ -1825,7 +1873,7 @@ div:has(> .app-shell) { padding: 0 !important; margin: 0 !important; background:
 .hero-image img {
   width: 100%;
   height: 108px;
-  object-fit: cover;
+  object-fit: contain;
   border-radius: 0;
   display: block;
   box-shadow: none;
@@ -2148,8 +2196,40 @@ div:has(> .app-shell) { padding: 0 !important; margin: 0 !important; background:
 .template-btn, .model-btn { border: 1.5px solid #F8F1EB !important; background: #FDF8F4 !important; }
 .template-btn:hover, .model-btn:hover { background: #FAF0E6 !important; }
 .template-paw, .model-paw { display: inline-flex; align-items: center; }
-.caret { color: #A99A90; }
-.mic-btn { color: #6B5045; }
+.caret { color: #A99A90; transition: transform 180ms var(--ease); }
+.model-btn.open .caret { transform: rotate(180deg); }
+.mic-btn { display: none !important; }
+/* 模型选择下拉 */
+.model-select-wrap { position: relative; }
+.model-popover {
+  position: absolute;
+  left: 0;
+  bottom: calc(100% + 6px);
+  min-width: 220px;
+  background: #FFFFFF;
+  border: 1px solid #EDE5DD;
+  border-radius: 10px;
+  padding: 6px;
+  box-shadow: 0 -4px 20px rgba(62, 56, 54, 0.1);
+  z-index: 100;
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 150ms var(--ease), transform 150ms var(--ease);
+}
+.model-popover.hidden { display: none; }
+.model-option {
+  padding: 9px 12px;
+  border-radius: 7px;
+  font-size: 13px;
+  line-height: 1.4;
+  color: #3E3836;
+  cursor: pointer;
+  transition: background 150ms var(--ease);
+  white-space: nowrap;
+}
+.model-option:hover:not(.disabled) { background: #FAF3EC; }
+.model-option.active { background: #FAF3EC; color: #6B5045; font-weight: 500; }
+.model-option.disabled { color: #A99A90; cursor: not-allowed; }
 .send-btn {
   width: 34px;
   height: 34px;
@@ -2237,7 +2317,7 @@ div:has(> .app-shell) { padding: 0 !important; margin: 0 !important; background:
 .title-star { color: #C7A18E; font-size: 14px; line-height: 1; }
 .right-actions { display: flex; gap: 2px; }
 
-.right-timeline { flex: 1 1 0; min-height: 0; overflow-y: auto; padding: 12px 12px 4px; scrollbar-width: thin; }
+.right-timeline { flex: 1 1 0; min-height: 0; overflow-y: auto; padding: 12px 12px 4px; scrollbar-width: thin; scrollbar-color: rgba(111, 103, 99, 0.2) transparent; transition: scrollbar-color 150ms var(--ease); }
 .right-detail { flex: 1 1 0; min-height: 0; display: flex; flex-direction: column; border-top: 1px solid #EDE5DD; }
 .detail-resizer {
   flex: 0 0 auto;
@@ -2251,7 +2331,20 @@ div:has(> .app-shell) { padding: 0 !important; margin: 0 !important; background:
 }
 .detail-resizer:hover { background: #C7A18E; }
 .right-sidebar.detail-expanded .detail-resizer { display: none; }
-.detail-body { flex: 1 1 auto; min-height: 0; overflow-y: auto; padding: 12px 16px 16px; scrollbar-width: thin; }
+.detail-body { flex: 1 1 auto; min-height: 0; overflow-y: auto; padding: 12px 16px 16px; scrollbar-width: thin; scrollbar-color: rgba(111, 103, 99, 0.2) transparent; transition: scrollbar-color 150ms var(--ease); }
+/* 右侧边栏滚动条 WebKit 样式，与中间区域统一 */
+.right-timeline::-webkit-scrollbar,
+.detail-body::-webkit-scrollbar { width: 8px; }
+.right-timeline::-webkit-scrollbar-track,
+.detail-body::-webkit-scrollbar-track { background: transparent; }
+.right-timeline::-webkit-scrollbar-thumb,
+.detail-body::-webkit-scrollbar-thumb { background: rgba(111, 103, 99, 0.2); border-radius: 4px; }
+.right-timeline::-webkit-scrollbar-thumb:hover,
+.detail-body::-webkit-scrollbar-thumb:hover { background: #6F6763; }
+.right-timeline:hover::-webkit-scrollbar-thumb,
+.detail-body:hover::-webkit-scrollbar-thumb { background: rgba(111, 103, 99, 0.5); }
+.right-timeline:hover,
+.detail-body:hover { scrollbar-color: rgba(111, 103, 99, 0.5) transparent; }
 /* 展开：隐藏 Timeline，详情填满 Header 以下区域 */
 .right-sidebar.detail-expanded .right-timeline { display: none; }
 .right-sidebar.detail-expanded .right-detail { border-top: none; }
@@ -2622,7 +2715,7 @@ def respond(user_input: str, context_entities: list[str] | None = None) -> dict:
 def create_demo() -> gr.Blocks:
     """构建 Gradio 应用实例。"""
     with gr.Blocks(
-        title="宠医助手 · FIP 知识推理系统",
+        title="潘的宠医助手 · FIP知识推理系统",
     ) as demo:
         # 静态首页：所有内容通过 HTML 注入，便于完全控制布局与动效
         # 样式经 head 注入；交互 JS 经 js_on_load 注入（Gradio 官方保证执行，
@@ -2645,4 +2738,5 @@ if __name__ == "__main__":
         show_error=True,
         inbrowser=False,
         quiet=False,
+        allowed_paths=["source/literature", "asset"],
     )
