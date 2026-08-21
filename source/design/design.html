@@ -2,11 +2,2570 @@
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8">
-<title>产品设计说明</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>产品设计说明 · Product Journey</title>
 <style>
-html,body{margin:0;height:100%;background:#FDFBF7;font-family:"PingFang SC","Microsoft YaHei",sans-serif;}
+:root{
+  /* ===== Primary (暖杏奶油 V2) ===== */
+  --c-primary-900:#6B5045;
+  --c-primary-700:#8C6B5D;
+  --c-primary-500:#C7A18E;
+  --c-primary-100:#FAF3EC;
+  /* ===== Neutral ===== */
+  --c-text-main:#3E3836;
+  --c-text-secondary:#6F6763;
+  --c-border:#EDE5DD;
+  --c-surface:#FDFBF7;
+  --c-card:#FFFFFF;
+  --c-header:#FFF9F5;
+  /* ===== Semantic (克制使用) ===== */
+  --c-success-bg:#F4F7F1;
+  --c-success-border:#D6E2CF;
+  --c-success-main:#6F8A6A;
+  --c-success-dark:#53664F;
+  --c-warning-bg:#FFF8EC;
+  --c-warning-border:#F2DFC0;
+  --c-warning-main:#C38A35;
+  --c-warning-dark:#9A6825;
+  --c-info-bg:#F2F6F8;
+  --c-info-border:#D7E2E8;
+  --c-info-main:#6D8795;
+  --c-info-dark:#536673;
+  /* ===== Radius ===== */
+  --r-sm:6px; --r-md:12px; --r-lg:16px; --r-pill:999px;
+  /* ===== Shadow (暖灰) ===== */
+  --sh-card:0 1px 2px rgba(62,56,54,0.04);
+  --sh-hover:0 4px 14px rgba(62,56,54,0.08);
+  /* ===== Font ===== */
+  --f-sans:"PingFang SC","Microsoft YaHei","Noto Sans SC",system-ui,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  /* ===== Spacing ===== */
+  --s1:4px;--s2:8px;--s3:12px;--s4:16px;--s5:20px;--s6:24px;--s8:32px;--s10:40px;--s12:48px;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--c-surface);
+  color:var(--c-text-main);
+  font-family:var(--f-sans);
+  font-size:15px;
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+.pj-root{max-width:1280px;margin:0 auto;padding:var(--s10) var(--s8) var(--s12);}
+
+/* ============ 01 · Project Header ============ */
+.pj-header{
+  display:flex;align-items:flex-end;justify-content:space-between;
+  gap:var(--s6);padding:var(--s5) 0 var(--s6);
+}
+.pj-header__title{font-size:28px;line-height:1.3;font-weight:700;color:var(--c-text-main);margin:0 0 var(--s2);letter-spacing:.2px;}
+.pj-header__desc{font-size:15px;color:var(--c-text-secondary);margin:0;max-width:640px;}
+.pj-header__sub{font-size:12px;letter-spacing:1.5px;text-transform:uppercase;color:var(--c-primary-700);font-weight:600;margin:0 0 var(--s2);}
+.pj-header__tags{display:flex;flex-wrap:wrap;gap:var(--s2);justify-content:flex-end;}
+.pj-tag{font-size:12px;color:var(--c-primary-700);background:var(--c-primary-100);border:1px solid var(--c-border);padding:var(--s1) var(--s3);border-radius:var(--r-pill);white-space:nowrap;}
+.pj-tag--status{color:var(--c-success-dark);background:var(--c-success-bg);border-color:var(--c-success-border);}
+
+/* ============ 02 · Journey（V3 线分隔：回归页面色 + 上下细线，无大色块） ============ */
+.pj-journey{position:relative;background:linear-gradient(180deg, rgba(250,243,236,0.35), rgba(253,251,247,0));border-bottom:1px solid var(--c-border);}
+.journey-band{display:flex;align-items:center;justify-content:space-between;gap:var(--s6);padding:var(--s3) 0;}
+.pj-autoplay{display:flex;align-items:center;flex:0 0 auto;}
+.btn-autoplay{
+  font-family:var(--f-sans);font-size:13px;font-weight:600;cursor:pointer;
+  border:none;background:none;border-radius:var(--r-sm);padding:var(--s2) var(--s3);
+  display:inline-flex;align-items:center;gap:6px;transition:all .18s ease;color:var(--c-text-secondary);white-space:nowrap;
+}
+.btn-autoplay.is-playing{background:#EFE3D6;color:var(--c-primary-900);}
+.btn-autoplay:hover{color:var(--c-primary-700);}
+
+.journey-track{position:relative;display:flex;align-items:center;}
+.journey-segment{display:flex;flex-direction:column;}
+.segment-label{display:none;}
+.segment-nodes{display:flex;align-items:center;}
+.journey-divider{width:1px;align-self:stretch;background:var(--c-border);margin:0 var(--s8);}
+.j-node{display:flex;flex-direction:column;align-items:center;gap:var(--s1);cursor:pointer;position:relative;flex:0 0 auto;padding:6px 4px;}
+.j-dot{
+  width:34px;height:34px;border-radius:var(--r-md);display:flex;align-items:center;justify-content:center;
+  font-family:var(--f-mono);font-size:14px;font-weight:600;color:var(--c-text-secondary);
+  background:transparent;border:1px solid var(--c-border);transition:all .18s ease;
+}
+.j-title{font-size:11px;color:var(--c-text-secondary);text-align:center;max-width:72px;line-height:1.3;transition:color .18s ease;}
+.j-link{width:28px;height:2px;background:var(--c-border);margin:0 var(--s2);align-self:flex-start;margin-top:16px;transition:background .3s ease;flex:0 0 auto;}
+/* node states */
+.j-node:hover .j-dot{background:var(--c-primary-100);border-color:var(--c-primary-500);color:var(--c-primary-900);}
+.j-node:hover .j-title{color:var(--c-primary-900);}
+.j-node.is-current .j-dot{background:var(--c-primary-100);border:1px solid var(--c-primary-700);color:var(--c-primary-900);}
+.j-node.is-current .j-title{color:var(--c-primary-900);font-weight:600;}
+.j-node.is-current::after{content:"";position:absolute;bottom:-10px;left:50%;transform:translateX(-50%);width:24px;height:2px;background:var(--c-primary-700);border-radius:2px;}
+/* 非当前模块一律中性，不抢戏（仅当前模块用 Primary 作为锚点） */
+.j-node.is-done .j-dot{border-color:var(--c-border);color:var(--c-text-secondary);}
+.j-node.is-done .j-link,.j-link.is-done{background:var(--c-border);}
+.j-node.is-pending{opacity:.55;cursor:not-allowed;}
+.j-node.is-pending:hover .j-dot{background:transparent;border-color:var(--c-border);color:var(--c-text-secondary);}
+
+/* playhead (chevrons) */
+.playhead{position:absolute;top:22px;left:0;display:flex;gap:0;pointer-events:none;opacity:0;transition:opacity .3s ease;z-index:5;}
+.playhead.is-visible{opacity:1;}
+.playhead span{color:var(--c-border);font-size:12px;line-height:1;font-weight:900;transition:color .25s ease;padding:0 1px;letter-spacing:-0.5px;display:inline-block;}
+.playhead span.is-filled{color:var(--c-primary-500);}
+/* node hint for pending click */
+.node-hint{position:absolute;background:var(--c-text-main);color:#fff;font-size:12px;padding:var(--s1) var(--s3);border-radius:var(--r-sm);white-space:nowrap;opacity:0;transition:opacity .2s ease;pointer-events:none;z-index:10;transform:translate(-50%,-100%);}
+.node-hint.is-visible{opacity:1;}
+
+/* ============ 03 · Module Header ============ */
+.pj-module{transition:opacity .25s ease, transform .25s ease;}
+.pj-module.switching{opacity:0;transform:translateY(-8px);}
+.pj-module.entering{opacity:0;transform:translateY(8px);}
+.module-header{padding:var(--s5) 0 var(--s6);border-bottom:1px solid var(--c-border);display:flex;align-items:flex-start;justify-content:space-between;gap:var(--s6);}
+.module-header__meta{font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--c-primary-700);font-weight:600;margin:0 0 var(--s2);}
+.module-header__title{font-size:24px;font-weight:700;color:var(--c-primary-900);margin:0 0 var(--s2);line-height:1.3;}
+.module-header__thesis{font-size:15px;color:var(--c-text-secondary);margin:0;max-width:760px;}
+.module-header__count{font-family:var(--f-mono);font-size:14px;color:var(--c-text-secondary);white-space:nowrap;padding-top:var(--s2);}
+
+/* ============ 04 · Module Workspace ============ */
+.module-workspace{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(420px,0.9fr);gap:var(--s12);padding:var(--s8) 0;align-items:start;}
+/* left thinking · vertical narrative rail */
+.thinking{position:relative;display:flex;flex-direction:column;}
+/* ===== 左侧：由各 leftType 决定布局节奏，不再统一时间线壳 ===== */
+/* narrative (M01) · 轻量叙事轨道 */
+.nl-section{position:relative;padding:var(--s2) 0 var(--s6) var(--s6);}
+.nl-section::before{content:"";position:absolute;top:8px;bottom:0;left:7px;width:2px;background:linear-gradient(to bottom,var(--c-border),rgba(237,229,221,0));}
+.nl-section .t-block__title{position:relative;}
+.nl-section .t-block__title::before{content:"";position:absolute;left:-21px;top:3px;width:11px;height:11px;border-radius:50%;background:var(--c-primary-700);border:2px solid var(--c-surface);box-sizing:border-box;}
+
+/* evidence (M02) · 假设→信号→变化 三段流 */
+.ev-stage{padding:var(--s4) 0;}
+.ev-arrow{text-align:center;padding:var(--s1) 0;}
+.ev-arrow svg{display:inline-block;vertical-align:middle;}
+
+/* gallery (M04) · 探索方向去卡，三列直接成主体 */
+.gl-block{padding:var(--s3) 0 var(--s5);}
+.gl-block .t-dirs{gap:var(--s4);}
+
+/* architecture (M05) / interface (M06) · 大分区标题 */
+.ar-stage{padding:var(--s3) 0 var(--s5);}
+.if-stage{padding:var(--s3) 0 var(--s5);}
+.ar-stage .t-block__title,.if-stage .t-block__title{border-bottom:1px solid var(--c-border);padding-bottom:var(--s2);}
+
+/* engineering (M07) · 构建原则索引式（横线分隔） */
+.en-item{padding:var(--s4) 0;border-bottom:1px solid var(--c-border);}
+.en-item:last-child{border-bottom:none;}
+.en-item .t-parts__item{border-top:1px solid var(--c-border);padding:var(--s3) 0;}
+.en-item .t-parts__item:first-child{border-top:none;}
+.en-item .t-parts__idx{font-size:16px;color:var(--c-primary-900);}
+
+/* proof (M08) · 验证框架（✓ 指示） */
+.pf-frame{padding:var(--s2) 0;}
+.pf-frame .t-dim{position:relative;padding-left:26px;}
+.pf-frame .t-dim::before{content:"✓";position:absolute;left:0;top:1px;color:var(--c-primary-700);font-weight:700;}
+
+/* delivery (M09) · 交付清单（✓）+ 收束 */
+.dl-item{padding:var(--s3) 0;}
+.dl-item .t-deliv{position:relative;padding-left:26px;}
+.dl-item .t-deliv::before{content:"✓";position:absolute;left:0;top:1px;color:var(--c-primary-700);font-weight:700;}
+.dl-close{margin-top:var(--s5);text-align:center;font-family:var(--f-mono);font-size:12px;letter-spacing:1px;color:var(--c-text-secondary);}
+.dl-close span{display:block;color:var(--c-primary-700);font-size:18px;margin:4px 0;}
+.t-block__title{font-size:12px;letter-spacing:1.5px;text-transform:uppercase;color:var(--c-primary-700);font-weight:600;margin:0 0 var(--s3);}
+.t-block__body{font-size:15px;color:var(--c-text-main);}
+/* Module 01 specific */
+.t-start__idx{font-family:var(--f-mono);font-size:13px;color:var(--c-primary-700);font-weight:600;}
+.t-start__accent{color:var(--c-primary-900);font-size:16px;font-weight:600;margin-top:var(--s2);}
+.t-noticed__points{display:flex;flex-direction:column;gap:var(--s2);margin-top:var(--s3);}
+.t-point{font-size:15px;color:var(--c-text-main);}
+.t-highlight{border-left:3px solid var(--c-primary-700);background:var(--c-primary-100);padding:var(--s4) var(--s5);border-radius:0 var(--r-sm) var(--r-sm) 0;font-size:15px;color:var(--c-text-main);margin-top:var(--s4);}
+.t-decision{display:flex;gap:var(--s3);padding:var(--s3) 0;border-bottom:1px solid var(--c-border);}
+.t-decision:last-child{border-bottom:none;}
+.t-decision__idx{font-family:var(--f-mono);font-size:13px;color:var(--c-primary-700);font-weight:600;flex:0 0 auto;padding-top:2px;}
+.t-decision__tag{font-size:13px;font-weight:600;color:var(--c-primary-900);}
+.t-decision__desc{font-size:14px;color:var(--c-text-secondary);margin-top:2px;}
+.key-decision,.key-insight{
+  background:var(--c-primary-100);
+  border-left:3px solid var(--c-primary-700);
+  border-radius:0 var(--r-md) var(--r-md) 0;
+  padding:var(--s4) var(--s5);font-size:14px;color:var(--c-text-main);
+}
+.key-decision{margin-top:var(--s4);}
+.key-insight{margin-top:var(--s6);}
+.key-decision strong{color:var(--c-primary-900);font-weight:600;}
+/* Module 02 specific */
+.t-assumption{display:flex;gap:var(--s3);padding:var(--s3) 0;border-bottom:1px solid var(--c-border);}
+.t-assumption__idx{font-family:var(--f-mono);font-size:13px;color:var(--c-text-secondary);font-weight:600;flex:0 0 auto;}
+.t-assumption__text{font-size:14px;color:var(--c-text-main);}
+.t-signal{border:1px solid var(--c-border);border-radius:var(--r-sm);padding:var(--s3) var(--s4);margin-top:var(--s3);background:var(--c-card);}
+.t-signal__tag{font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--c-primary-700);font-weight:600;}
+.t-signal__items{display:flex;flex-wrap:wrap;gap:var(--s2);margin-top:var(--s2);}
+.t-signal__chip{font-size:13px;color:var(--c-text-main);background:var(--c-primary-100);padding:2px var(--s3);border-radius:var(--r-pill);}
+.t-note{margin-top:var(--s4);padding:var(--s3) var(--s4);background:var(--c-surface);border:1px dashed var(--c-border);border-radius:var(--r-sm);font-size:14px;color:var(--c-text-main);font-style:italic;}
+.t-note__tag{display:block;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--c-text-secondary);font-style:normal;margin-bottom:4px;}
+.t-pRIORITY__bar{display:flex;align-items:center;gap:var(--s3);margin-top:var(--s3);}
+.t-pRIORITY__label{font-family:var(--f-mono);font-size:12px;color:var(--c-text-secondary);width:140px;flex:0 0 auto;}
+.t-pRIORITY__track{display:flex;gap:3px;}
+.t-pRIORITY__seg{width:18px;height:10px;border-radius:2px;background:var(--c-border);}
+.t-pRIORITY__seg.fill{background:var(--c-primary-700);}
+/* Module 02 v2 · 验证问题 / 发现需求 / 修正假设 */
+.t-block__en{font-size:11px;letter-spacing:1.5px;color:var(--c-text-secondary);margin-bottom:4px;}
+.t-block__subtitle{font-size:18px;font-weight:700;color:var(--c-primary-900);margin:0 0 var(--s3);}
+.t-question-list{margin:var(--s3) 0 0;padding-left:var(--s5);display:flex;flex-direction:column;gap:var(--s2);}
+.t-question-list li{font-size:14px;color:var(--c-text-main);}
+.t-signal-box{border:1px solid var(--c-border);border-radius:var(--r-md);padding:var(--s4);margin-top:var(--s4);background:var(--c-card);}
+.t-signal-box__title{font-size:13px;font-weight:600;color:var(--c-primary-900);margin-bottom:var(--s3);}
+.t-signal-row{display:flex;align-items:center;gap:var(--s3);margin-bottom:var(--s2);}
+.t-signal-row:last-child{margin-bottom:0;}
+.t-signal-row__label{font-size:13px;color:var(--c-text-main);width:110px;flex:0 0 auto;}
+.t-signal-row__track{flex:1;display:flex;gap:3px;align-items:center;}
+.t-signal-seg{flex:1;height:10px;border-radius:3px;background:var(--c-border);transition:background .25s ease;}
+.t-signal-seg.is-filled{background:var(--c-primary-700);}
+.t-signal-row__level{font-size:12px;color:var(--c-text-secondary);width:40px;text-align:right;}
+.t-signal-box__note{font-size:12px;color:var(--c-text-secondary);margin-top:var(--s3);padding-top:var(--s2);border-top:1px solid var(--c-border);}
+.t-flow-chain{display:flex;align-items:center;gap:var(--s2);margin:var(--s3) 0;font-family:var(--f-mono);font-size:12px;color:var(--c-primary-700);}
+.t-flow-chain__item{background:var(--c-primary-100);color:var(--c-primary-900);padding:var(--s1) var(--s3);border-radius:var(--r-sm);font-weight:600;}
+.t-flow-chain__arrow{color:var(--c-primary-500);}
+.t-quote-pairs{display:flex;flex-direction:column;gap:var(--s4);margin-top:var(--s3);}
+.t-quote-pair{border-left:2px solid var(--c-border);padding-left:var(--s4);}
+.t-quote-pair__quote{font-size:14px;color:var(--c-text-secondary);font-style:italic;}
+.t-quote-pair__arrow{text-align:left;color:var(--c-primary-500);font-size:16px;padding:var(--s1) 0;}
+.t-quote-pair__need{font-size:15px;color:var(--c-text-main);}
+.t-cases{display:flex;flex-direction:column;gap:var(--s4);margin-top:var(--s3);}
+.t-case{border-left:2px solid var(--c-primary-700);padding-left:var(--s4);display:flex;flex-direction:column;gap:var(--s2);}
+.t-case__tag{font-size:11px;letter-spacing:1px;color:var(--c-primary-700);font-weight:600;display:block;margin-bottom:2px;}
+.t-case__before,.t-case__after{font-size:14px;color:var(--c-text-main);}
+.t-case__decision{font-size:14px;color:var(--c-primary-900);font-weight:600;}
+.t-case__arrow{color:var(--c-primary-500);font-size:16px;}
+.t-key-insight{margin-top:var(--s5);padding:var(--s4) var(--s5);background:var(--c-primary-100);border-left:3px solid var(--c-primary-700);border-radius:0 var(--r-md) var(--r-md) 0;font-size:15px;color:var(--c-primary-900);font-weight:600;}
+/* Module 03 specific */
+.t-loop{display:flex;gap:var(--s3);margin-top:var(--s3);}
+.t-loop__item{flex:1;border:1px solid var(--c-border);border-radius:var(--r-sm);padding:var(--s3);text-align:center;background:var(--c-card);}
+.t-loop__tag{font-size:13px;font-weight:600;color:var(--c-primary-900);}
+.t-loop__desc{font-size:12px;color:var(--c-text-secondary);margin-top:4px;}
+.t-parts__item{display:flex;gap:var(--s3);padding:var(--s3) 0;}
+.t-parts__idx{font-family:var(--f-mono);font-size:13px;color:var(--c-primary-700);font-weight:600;flex:0 0 auto;}
+.t-parts__tag{font-size:14px;font-weight:600;color:var(--c-primary-900);}
+.t-parts__desc{font-size:13px;color:var(--c-text-secondary);margin-top:2px;}
+.t-note--loop{background:var(--c-primary-100);border-style:solid;border-color:var(--c-border);font-style:normal;}
+.t-decision-q{font-size:14px;font-weight:600;color:var(--c-primary-900);margin-top:var(--s3);}
+.t-decision-a{font-size:14px;color:var(--c-text-secondary);margin-top:2px;}
+
+/* right artifact */
+.artifact{
+  background:var(--c-card);border:1px solid var(--c-border);border-radius:var(--r-md);
+  padding:var(--s6);box-shadow:var(--sh-card);position:relative;
+  display:flex;flex-direction:column;
+}
+.artifact__head{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--s4);margin-bottom:var(--s6);}
+.artifact__name{font-size:12px;letter-spacing:1.5px;text-transform:uppercase;color:var(--c-primary-700);font-weight:600;}
+.artifact__caption{font-size:13px;color:var(--c-text-secondary);margin-top:4px;max-width:420px;}
+.artifact__expand{font-size:13px;color:var(--c-primary-700);background:none;border:1px solid var(--c-border);border-radius:var(--r-sm);padding:var(--s2) var(--s3);cursor:pointer;transition:all .18s ease;white-space:nowrap;}
+.artifact__expand:hover{background:var(--c-primary-100);border-color:var(--c-primary-500);}
+.artifact__body{position:relative;}
+.artifact__footnote{font-size:12px;color:var(--c-text-secondary);margin-top:var(--s6);padding-top:var(--s4);border-top:1px solid var(--c-border);}
+/* Artifact 密度模式：避免右侧都是同尺寸白盒 */
+.artifact--compact{padding:var(--s5);}
+.artifact--compact .artifact__head{margin-bottom:var(--s5);}
+.artifact--fill{padding:var(--s8);}
+.artifact--fill .artifact__head{margin-bottom:var(--s8);}
+.artifact--dense{padding:var(--s5);font-size:13px;}
+.artifact--dense .artifact__head{margin-bottom:var(--s5);}
+
+/* reveal animation */
+.reveal-item{opacity:0;transform:translateY(8px);transition:opacity .4s ease, transform .4s ease;}
+.reveal-item.reveal-in{opacity:1;transform:translateY(0);}
+
+/* ===== Module 01 · Opportunity Funnel ===== */
+.funnel{display:flex;flex-direction:column;align-items:center;gap:0;}
+.funnel__stage{
+  border:1px solid var(--c-border);border-radius:var(--r-md);background:var(--c-card);
+  padding:var(--s4) var(--s5);text-align:center;transition:all .2s ease;position:relative;cursor:default;
+}
+.funnel__stage:hover{transform:translateY(-2px);border-color:var(--c-primary-700);box-shadow:var(--sh-hover);}
+.funnel__key{font-family:var(--f-mono);font-size:14px;font-weight:600;color:var(--c-text-main);letter-spacing:.5px;}
+.funnel__desc{font-size:12px;color:var(--c-text-secondary);margin-top:4px;}
+.funnel__connector{width:2px;height:22px;background:var(--c-border);}
+.funnel__stage--s1{width:88%;}
+.funnel__stage--s2{width:78%;}
+.funnel__stage--s3{width:66%;}
+.funnel__stage--s4{width:54%;}
+.funnel__stage--final{width:46%;background:var(--c-primary-100);border-color:var(--c-primary-700);}
+.funnel__badge{position:absolute;top:-10px;right:-8px;font-size:10px;letter-spacing:1px;text-transform:uppercase;background:var(--c-primary-700);color:#fff;padding:2px var(--s2);border-radius:var(--r-pill);}
+.funnel__note{font-size:12px;color:var(--c-text-secondary);margin-top:var(--s2);max-width:220px;}
+.funnel__final-note{font-size:13px;color:var(--c-primary-900);margin-top:var(--s3);line-height:1.5;}
+
+/* ===== Module 02 · Assumption Shift Matrix ===== */
+.matrix{display:grid;grid-template-columns:1fr 64px 1fr;gap:0;align-items:stretch;}
+.matrix__col-head{font-size:12px;letter-spacing:1px;text-transform:uppercase;color:var(--c-text-secondary);font-weight:600;text-align:center;padding-bottom:var(--s3);}
+.matrix__mid{display:flex;align-items:center;justify-content:center;flex-direction:column;gap:var(--s2);}
+.matrix__mid-line{width:1px;flex:1;background:var(--c-border);}
+.matrix__mid-label{font-size:10px;letter-spacing:1px;color:var(--c-text-secondary);text-align:center;writing-mode:vertical-rl;}
+.matrix__row{display:contents;}
+.matrix__cell{border:1px solid var(--c-border);border-radius:var(--r-sm);padding:var(--s3) var(--s4);margin:var(--s2);background:var(--c-card);transition:all .2s ease;cursor:default;position:relative;}
+.matrix__cell:hover{box-shadow:var(--sh-hover);}
+.matrix__cell--low{background:#F5F2EF;border-color:#E6DED5;}
+.matrix__cell--elevated{background:var(--c-primary-100);border-color:var(--c-primary-500);}
+.matrix__cell-label{font-size:13px;color:var(--c-text-main);font-weight:500;}
+.matrix__cell-grade{font-family:var(--f-mono);font-size:12px;color:var(--c-text-secondary);margin-top:2px;}
+.matrix__priority{display:inline-block;margin-top:var(--s2);font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--c-primary-900);background:var(--c-primary-100);border:1px solid var(--c-primary-500);padding:1px var(--s2);border-radius:var(--r-pill);}
+.matrix__hover-tip{position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:var(--c-text-main);color:#fff;font-size:11px;padding:var(--s1) var(--s3);border-radius:var(--r-sm);white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .18s ease;}
+.matrix__cell:hover .matrix__hover-tip{opacity:1;}
+.key-insight__en{font-size:14px;color:var(--c-primary-900);font-weight:600;font-style:italic;line-height:1.5;}
+.key-insight__zh{font-size:14px;color:var(--c-text-main);margin-top:var(--s2);}
+
+/* ===== Module 02 v3 · Step Switcher Artifact ===== */
+.nti{display:flex;flex-direction:column;}
+.nti__top-line{height:1px;background:var(--c-border);margin-bottom:var(--s3);}
+.nti__switcher{display:flex;align-items:stretch;justify-content:space-between;gap:var(--s2);margin-bottom:var(--s3);}
+.nti__tab{flex:1;background:none;border:none;border-radius:var(--r-sm);padding:var(--s2) var(--s1);cursor:pointer;text-align:center;transition:background .18s ease;position:relative;}
+.nti__tab:hover{background:var(--c-primary-100);}
+.nti__tab.is-active::after{content:"";position:absolute;bottom:0;left:20%;right:20%;height:2px;background:var(--c-primary-700);border-radius:2px;}
+.nti__tab-idx{display:block;font-family:var(--f-mono);font-size:12px;color:var(--c-text-secondary);font-weight:600;}
+.nti__tab.is-active .nti__tab-idx{color:var(--c-primary-700);}
+.nti__tab-en{display:block;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--c-text-secondary);margin-top:2px;}
+.nti__tab.is-active .nti__tab-en{color:var(--c-primary-700);}
+.nti__tab-title{display:block;font-size:13px;color:var(--c-text-secondary);margin-top:2px;}
+.nti__tab.is-active .nti__tab-title{color:var(--c-primary-900);font-weight:600;}
+.nti__switcher{display:none;}
+.nti__canvas{position:relative;display:flex;flex-direction:column;gap:var(--s5);}
+.nti__pane{display:flex;flex-direction:column;gap:var(--s3);}
+.nti__step-header{display:flex;align-items:baseline;gap:var(--s3);padding:var(--s3) 0 var(--s4);margin-bottom:var(--s2);}
+.nti__divider{height:1px;background:var(--c-border);margin:var(--s2) 0;}
+.nti__step-idx{font-family:var(--f-mono);font-size:14px;color:var(--c-primary-700);font-weight:600;}
+.nti__step-en{font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--c-primary-700);font-weight:600;}
+.nti__step-title{font-size:15px;color:var(--c-text-main);font-weight:600;}
+/* modal view */
+.nti--modal .nti__switcher{display:flex;align-items:stretch;justify-content:space-between;gap:var(--s2);margin-bottom:var(--s3);}
+.nti--modal .nti__canvas{display:block;position:relative;min-height:320px;}
+.nti--modal .nti__pane{position:absolute;inset:0;opacity:0;pointer-events:none;transform:translateY(6px);transition:opacity .3s ease, transform .3s ease;}
+.nti--modal .nti__pane.is-active{opacity:1;pointer-events:auto;transform:translateY(0);position:relative;}
+.nti__question{font-size:13px;color:var(--c-text-secondary);margin-bottom:var(--s2);}
+.nti__voices{display:flex;flex-direction:column;gap:var(--s2);position:relative;padding:var(--s2) 0;min-height:180px;}
+.nti__voice{display:flex;align-items:flex-start;gap:var(--s2);position:relative;}
+.nti__voice.is-right{flex-direction:row-reverse;margin-left:auto;}
+.nti__voice-avatar{width:34px;height:34px;border-radius:50%;flex-shrink:0;background:var(--c-primary-100);display:flex;align-items:center;justify-content:center;font-size:16px;}
+.nti__voice-bubble{background:#fff;border:1px solid var(--c-border);border-radius:var(--r-md);padding:var(--s2) var(--s3);box-shadow:var(--sh-card);max-width:260px;}
+.nti__voice-bubble.is-right{background:var(--c-primary-100);border-color:rgba(199,161,142,.4);}
+.nti__voice-role{font-size:11px;color:var(--c-text-secondary);margin-bottom:2px;}
+.nti__voice-text{font-size:13px;color:var(--c-text-main);}
+.nti__takeaways{margin-top:auto;display:flex;flex-direction:column;gap:var(--s2);}
+.nti__takeaway{display:flex;align-items:center;gap:var(--s2);font-size:13px;color:var(--c-text-main);}
+.nti__takeaway-mark{width:18px;height:18px;border-radius:50%;background:var(--c-success-bg);color:var(--c-success-dark);display:flex;align-items:center;justify-content:center;font-size:11px;}
+.nti__fragments{position:relative;min-height:180px;margin-top:var(--s2);}
+.nti__fragment{position:absolute;background:var(--c-card);border:1px solid var(--c-border);border-radius:var(--r-pill);padding:3px var(--s3);white-space:nowrap;transition:all .3s ease;}
+.nti__fragment--normal{background:#fff;color:var(--c-text-secondary);border-color:var(--c-border);}
+.nti__fragment--important{background:var(--c-primary-100);color:var(--c-primary-900);border-color:rgba(199,161,142,.5);}
+.nti__fragment--core{background:transparent;border:none;color:var(--c-primary-900);font-weight:700;padding:0;}
+.nti__listen-insight{margin-top:auto;padding-top:var(--s3);border-top:1px solid var(--c-border);}
+.nti__listen-insight-lead{font-size:13px;color:var(--c-text-secondary);margin-bottom:var(--s2);}
+.nti__listen-insight-item{font-size:15px;color:var(--c-primary-900);font-weight:600;margin-bottom:var(--s1);}
+.nti__shift-board{border:1px solid var(--c-border);border-radius:var(--r-md);padding:var(--s4) var(--s5);background:var(--c-card);margin-top:var(--s2);}
+.nti__shift-title{font-size:12px;letter-spacing:1.5px;text-transform:uppercase;color:var(--c-primary-700);font-weight:600;text-align:center;margin-bottom:var(--s4);}
+.nti__shift-row{display:grid;grid-template-columns:1fr auto 30px auto;align-items:center;gap:var(--s2);padding:var(--s2) 0;border-bottom:1px dashed var(--c-border);}
+.nti__shift-row:last-child{border-bottom:none;}
+.nti__shift-label{font-size:14px;color:var(--c-text-main);}
+.nti__shift-from{font-size:12px;color:var(--c-text-secondary);background:var(--c-surface);padding:2px var(--s2);border-radius:var(--r-sm);}
+.nti__shift-to{font-size:12px;color:var(--c-primary-900);background:var(--c-primary-100);padding:2px var(--s2);border-radius:var(--r-sm);font-weight:600;}
+.nti__shift-arrow{color:var(--c-primary-500);font-size:14px;text-align:center;}
+.nti__update-summary{margin-top:auto;padding:var(--s3) var(--s4);background:var(--c-primary-100);border-left:3px solid var(--c-primary-700);border-radius:0 var(--r-md) var(--r-md) 0;font-size:14px;color:var(--c-primary-900);font-weight:600;}
+
+/* ---------- Module 03 · Decision Tree (§8.2) ---------- */
+.dt-wrap{margin-top:var(--s2);}
+.dt-problem{background:var(--c-primary-100);border-left:3px solid var(--c-primary-700);border-radius:0 var(--r-md) var(--r-md) 0;padding:var(--s4) var(--s5);font-size:14px;color:var(--c-text-main);}
+.dt-problem strong{color:var(--c-primary-900);font-weight:600;}
+.dt-tag{font-size:11px;letter-spacing:.6px;color:var(--c-text-secondary);margin:var(--s4) 0 var(--s2);}
+.dt-options{display:flex;flex-direction:column;gap:var(--s3);}
+.dt-option{display:flex;gap:var(--s3);align-items:flex-start;border:1px solid var(--c-border);border-radius:var(--r-md);padding:var(--s3) var(--s4);background:var(--c-card);}
+.dt-option.is-chosen{background:var(--c-primary-100);border-color:var(--c-primary-500);}
+.dt-verdict{flex:0 0 auto;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;}
+.dt-verdict--x{background:var(--c-warning-bg);color:var(--c-warning-dark);border:1px solid var(--c-warning-border);}
+.dt-verdict--ok{background:var(--c-success-bg);color:var(--c-success-dark);border:1px solid var(--c-success-border);}
+.dt-option__main{flex:1;min-width:0;}
+.dt-option__head{display:flex;align-items:baseline;flex-wrap:wrap;gap:6px;}
+.dt-option__tag{font-size:13px;font-weight:600;color:var(--c-primary-900);}
+.dt-option__name{font-size:14px;color:var(--c-text-main);font-weight:600;}
+.dt-option__reason{font-size:13px;color:var(--c-text-secondary);margin-top:2px;line-height:1.5;}
+.dt-decompose{margin-top:var(--s3);padding-top:var(--s3);border-top:1px dashed var(--c-border);}
+.dt-decompose__title{font-size:11px;letter-spacing:.5px;color:var(--c-text-secondary);margin-bottom:6px;}
+.dt-part{display:flex;gap:8px;align-items:baseline;font-size:13px;margin-bottom:4px;}
+.dt-part__idx{color:var(--c-primary-700);font-weight:600;font-family:var(--f-mono);}
+.dt-part__tag{color:var(--c-text-main);font-weight:600;}
+.dt-part__d{color:var(--c-text-secondary);}
+.dt-decompose__note{font-size:12px;color:var(--c-text-secondary);margin-top:6px;line-height:1.5;}
+
+/* ===== Module 03 · Product Blueprint ===== */
+.blueprint{width:100%;}
+.blueprint svg{width:100%;height:auto;display:block;}
+.bp-node{cursor:default;transition:opacity .25s ease;}
+.bp-node text{font-family:var(--f-sans);}
+.bp-label{font-size:12px;font-weight:600;fill:var(--c-text-main);}
+.bp-sub{font-size:10px;fill:var(--c-text-secondary);}
+.bp-box{fill:var(--c-card);stroke:var(--c-border);stroke-width:1.2;}
+.bp-box--center{fill:var(--c-card);}
+.bp-box--accent{fill:var(--c-primary-100);stroke:var(--c-primary-700);}
+.bp-box--core{fill:var(--c-primary-100);stroke:var(--c-primary-900);stroke-width:1.5;}
+.bp-core-tag{font-size:9px;letter-spacing:1px;fill:var(--c-primary-900);text-transform:uppercase;}
+.bp-link{stroke:var(--c-primary-500);stroke-width:1.4;fill:none;}
+.bp-dim{opacity:.45;}
+.interface-preview{margin-top:var(--s6);border:1px solid var(--c-border);border-radius:var(--r-md);overflow:hidden;background:var(--c-surface);}
+.interface-preview__label{font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--c-text-secondary);padding:var(--s3) var(--s4);border-bottom:1px solid var(--c-border);}
+.ip-grid{display:grid;grid-template-columns:64px 1fr 96px;min-height:120px;}
+.ip-col{padding:var(--s3);font-size:11px;color:var(--c-text-secondary);border-right:1px solid var(--c-border);}
+.ip-col:last-child{border-right:none;}
+.ip-col--nav{background:var(--c-header);}
+.ip-col--mid{background:var(--c-card);}
+.ip-col--trace{background:var(--c-header);}
+.ip-answer{background:var(--c-primary-100);border-radius:var(--r-sm);padding:var(--s2) var(--s3);font-size:11px;color:var(--c-text-main);margin-bottom:var(--s2);}
+.ip-step{font-family:var(--f-mono);font-size:10px;color:var(--c-text-secondary);padding:var(--s1) 0;border-bottom:1px dashed var(--c-border);}
+
+/* ============ Module 04/05/06/08/09 左侧新叙事 kind ============ */
+.art-sub{font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--c-text-secondary);font-weight:600;margin-bottom:var(--s3);}
+.t-dirs{display:grid;grid-template-columns:1fr 1fr 1fr;gap:var(--s3);}
+.t-dir{border:1px solid var(--c-border);border-radius:var(--r-md);padding:var(--s3);background:var(--c-card);transition:all .2s ease;}
+.t-dir--off{opacity:.55;}
+.t-dir--on{background:var(--c-primary-100);border-color:var(--c-primary-500);}
+.t-dir__tag{font-size:10px;letter-spacing:.5px;color:var(--c-primary-700);font-weight:600;}
+.t-dir__name{font-size:14px;font-weight:600;color:var(--c-primary-900);margin-top:2px;}
+.t-dir__desc{font-size:12px;color:var(--c-text-main);margin-top:2px;}
+.t-dir__note{font-size:11px;color:var(--c-text-secondary);margin-top:4px;line-height:1.4;}
+.t-dir__sel{margin-top:var(--s3);font-size:10px;letter-spacing:1px;color:var(--c-primary-900);background:#fff;border:1px solid var(--c-primary-500);border-radius:var(--r-pill);padding:1px 8px;display:inline-block;}
+.t-dir__mark{margin-top:var(--s3);font-size:14px;color:var(--c-text-secondary);text-align:center;}
+.t-choice{border-left:3px solid var(--c-primary-700);background:var(--c-primary-100);border-radius:0 var(--r-md) var(--r-md) 0;padding:var(--s4) var(--s5);}
+.t-choice__name{font-size:16px;font-weight:700;color:var(--c-primary-900);}
+.t-choice__text{font-size:14px;color:var(--c-text-main);margin-top:var(--s2);}
+.t-flow{display:flex;align-items:center;flex-wrap:wrap;gap:var(--s3);}
+.t-flow__seg{font-family:var(--f-mono);font-size:13px;font-weight:600;color:var(--c-text-main);background:var(--c-card);border:1px solid var(--c-border);border-radius:var(--r-sm);padding:var(--s2) var(--s3);}
+.t-flow__arrow{color:var(--c-primary-500);font-weight:700;}
+.t-rule{display:flex;flex-direction:column;gap:2px;padding:var(--s2) 0;border-bottom:1px solid var(--c-border);}
+.t-rule:last-child{border-bottom:none;}
+.t-rule__tag{font-size:13px;font-weight:600;color:var(--c-primary-900);}
+.t-rule__desc{font-size:13px;color:var(--c-text-secondary);}
+.t-stats{display:flex;gap:var(--s6);flex-wrap:wrap;}
+.t-stat__k{font-family:var(--f-mono);font-size:20px;color:var(--c-primary-900);font-weight:600;}
+.t-stat__d{font-size:12px;color:var(--c-text-secondary);margin-top:2px;}
+.t-question{display:flex;gap:var(--s3);align-items:baseline;padding:var(--s2) 0;}
+.t-question__q{font-family:var(--f-mono);font-size:13px;color:var(--c-primary-700);font-weight:700;flex:0 0 auto;}
+.t-question__text{font-size:14px;color:var(--c-text-main);}
+.t-page{font-size:14px;color:var(--c-text-main);padding:var(--s2) 0;border-bottom:1px dashed var(--c-border);}
+.t-page:last-child{border-bottom:none;}
+.t-dim{display:flex;gap:var(--s3);padding:var(--s3) 0;border-bottom:1px solid var(--c-border);}
+.t-dim:last-child{border-bottom:none;}
+.t-dim__idx{font-family:var(--f-mono);font-size:13px;color:var(--c-primary-500);font-weight:600;flex:0 0 auto;padding-top:2px;}
+.t-dim__tag{font-size:14px;font-weight:600;color:var(--c-text-main);}
+.t-dim__desc{font-size:13px;color:var(--c-text-secondary);margin-top:2px;}
+.t-deliv{display:flex;gap:var(--s3);padding:var(--s3) 0;border-bottom:1px solid var(--c-border);}
+.t-deliv:last-child{border-bottom:none;}
+.t-deliv__idx{font-family:var(--f-mono);font-size:13px;color:var(--c-primary-700);font-weight:600;flex:0 0 auto;padding-top:2px;}
+.t-deliv__tag{font-size:14px;font-weight:600;color:var(--c-primary-900);}
+.t-deliv__desc{font-size:13px;color:var(--c-text-secondary);margin-top:2px;}
+
+/* ============ Module 04 · Visual Gallery Artifact ============ */
+.gal{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--s3);}
+.gal__dir{border:1px solid var(--c-border);border-radius:var(--r-md);padding:var(--s4);background:var(--c-card);transition:all .2s ease;}
+.gal__dir--on{background:var(--c-primary-100);border-color:var(--c-primary-500);}
+.gal__dir-name{font-size:13px;font-weight:600;color:var(--c-primary-900);}
+.gal__dir-kw{font-size:12px;color:var(--c-text-secondary);margin-top:2px;}
+.gal__sw{display:flex;gap:4px;margin-top:var(--s3);}
+.gal__swatch{width:22px;height:14px;border-radius:3px;border:1px solid rgba(62,56,54,.08);}
+.gal__sel{margin-top:var(--s3);font-size:10px;letter-spacing:1px;color:var(--c-primary-900);background:#fff;border:1px solid var(--c-primary-500);border-radius:var(--r-pill);padding:1px 8px;display:inline-block;}
+.gal__sys{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--s3);}
+.gal__tok{border:1px solid var(--c-border);border-radius:var(--r-md);padding:var(--s4);background:var(--c-card);}
+.gal__tok-group{font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--c-primary-700);font-weight:600;margin-bottom:var(--s3);}
+.gal__tok-colors{display:flex;flex-direction:column;gap:6px;}
+.gal__tok-color{height:18px;border-radius:4px;border:1px solid rgba(62,56,54,.08);}
+.gal__tok-items{display:flex;flex-direction:column;gap:4px;}
+.gal__tok-item{font-size:13px;color:var(--c-text-main);font-family:var(--f-mono);}
+
+/* ============ Module 05 · Knowledge Architecture Artifact ============ */
+.arch__cats{display:grid;grid-template-columns:1fr 1fr;gap:var(--s3);}
+.arch__cat{border:1px solid var(--c-border);border-left:3px solid var(--c-border);border-radius:var(--r-sm);padding:var(--s3) var(--s4);background:var(--c-card);display:flex;align-items:center;gap:var(--s3);}
+.arch__cat-dot{width:10px;height:10px;border-radius:50%;flex:0 0 auto;}
+.arch__cat-tag{font-size:13px;font-weight:600;color:var(--c-text-main);}
+.arch__meta{display:flex;gap:var(--s3);flex-wrap:wrap;}
+.arch__meta-item{font-size:12px;letter-spacing:.5px;color:var(--c-primary-900);background:var(--c-primary-100);border:1px solid var(--c-border);border-radius:var(--r-pill);padding:2px var(--s3);}
+.arch__graph{border:1px solid var(--c-border);border-radius:var(--r-md);padding:var(--s5);background:var(--c-card);margin-top:var(--s3);}
+.arch__gnode{display:flex;align-items:center;gap:var(--s3);}
+.arch__gnode--root{justify-content:center;margin-bottom:var(--s2);}
+.arch__edge{display:flex;align-items:center;gap:var(--s3);margin:var(--s2) 0;padding-left:40px;}
+.arch__g-rel{font-size:12px;color:var(--c-text-secondary);min-width:96px;}
+.arch__g-arrow{color:var(--c-primary-500);font-weight:700;}
+.arch__gnode--leaf{border:1px solid var(--c-border);border-radius:var(--r-sm);padding:var(--s2) var(--s4);background:var(--c-card);}
+.arch__g-label{font-size:13px;font-weight:600;color:var(--c-text-main);}
+.arch__g-sub{font-size:11px;color:var(--c-text-secondary);}
+
+/* ============ Module 06 · Interface Showcase Artifact ============ */
+.iface__tabs{display:flex;gap:var(--s2);border-bottom:1px solid var(--c-border);margin-bottom:var(--s5);}
+.iface__tab{font-family:var(--f-sans);font-size:13px;font-weight:600;color:var(--c-text-secondary);background:none;border:none;border-bottom:2px solid transparent;padding:var(--s2) var(--s3);cursor:pointer;transition:all .18s ease;}
+.iface__tab.is-active{color:var(--c-primary-900);border-bottom-color:var(--c-primary-700);}
+.iface__panel{display:none;position:relative;}
+.iface__panel.is-active{display:block;}
+.iface__hotspots{position:absolute;inset:0;pointer-events:none;}
+.iface__hotspot{position:absolute;transform:translate(-50%,-50%);width:22px;height:22px;border-radius:50%;border:2px solid var(--c-primary-700);background:rgba(255,255,255,.85);color:var(--c-primary-900);font-size:11px;font-weight:700;cursor:pointer;pointer-events:auto;display:flex;align-items:center;justify-content:center;box-shadow:var(--sh-hover);}
+.iface__tip{font-size:12px;color:var(--c-text-secondary);margin-top:var(--s4);min-height:18px;}
+.if-screen{border:1px solid var(--c-border);border-radius:var(--r-md);overflow:hidden;background:var(--c-surface);}
+.if-mock{padding:var(--s4);}
+.if-nav{font-size:11px;color:var(--c-text-secondary);background:var(--c-header);margin:-16px -16px 12px;padding:var(--s2) var(--s4);border-bottom:1px solid var(--c-border);}
+.if-chat{display:flex;flex-direction:column;gap:var(--s2);}
+.if-bubble{border-radius:var(--r-md);padding:var(--s3) var(--s4);font-size:13px;line-height:1.5;max-width:85%;}
+.if-bubble--user{align-self:flex-end;background:var(--c-primary-100);color:var(--c-text-main);}
+.if-bubble--bot{align-self:flex-start;background:var(--c-card);border:1px solid var(--c-border);}
+.if-tag{display:inline-block;margin-left:6px;font-size:10px;color:var(--c-primary-700);background:var(--c-primary-100);border-radius:var(--r-pill);padding:1px 6px;}
+.if-trace{margin-top:var(--s2);font-family:var(--f-mono);font-size:11px;color:var(--c-text-secondary);background:var(--c-header);border-radius:var(--r-sm);padding:var(--s2) var(--s3);}
+.if-legend{display:flex;gap:var(--s2);margin-bottom:var(--s3);flex-wrap:wrap;}
+.if-lg{font-size:11px;padding:1px var(--s3);border-radius:var(--r-pill);border:1px solid var(--c-border);}
+.if-lg--c{color:#C08A6A;border-color:#E6D2C4;}
+.if-lg--m{color:#C99A3E;border-color:#EAD9B6;}
+.if-lg--d{color:#6D8795;border-color:#CFDCE3;}
+.if-lg--i{color:#6E9277;border-color:#CFE0D4;}
+.if-graphsvg svg{width:100%;height:auto;display:block;}
+.if-detail{font-size:12px;color:var(--c-text-secondary);margin-top:var(--s3);}
+.if-search{font-size:12px;color:var(--c-text-secondary);background:var(--c-header);border-radius:var(--r-sm);padding:var(--s3);margin-bottom:var(--s3);}
+.if-litcards{display:grid;grid-template-columns:1fr 1fr;gap:var(--s3);}
+.if-litcard{border:1px solid var(--c-border);border-radius:var(--r-sm);padding:var(--s3);font-size:12px;color:var(--c-text-main);background:var(--c-card);}
+
+/* ============ Module 07 · System Architecture Artifact ============ */
+.sys__head{display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--s4);}
+.sys__title{font-size:12px;letter-spacing:1.5px;text-transform:uppercase;color:var(--c-primary-700);font-weight:600;}
+.sys__badge{font-size:11px;color:var(--c-success-dark);background:var(--c-success-bg);border:1px solid var(--c-success-border);border-radius:var(--r-pill);padding:2px var(--s3);}
+.sys__stack{display:flex;flex-direction:column;}
+.sys__layer{position:relative;border:1px solid var(--c-border);border-radius:var(--r-md);padding:var(--s4) var(--s5);background:var(--c-card);transition:box-shadow .2s ease, transform .2s ease;}
+.sys__layer--accent{background:var(--c-primary-100);border-color:var(--c-primary-500);}
+.sys__layer--surface{background:var(--c-surface);}
+.sys__layer:hover{box-shadow:var(--sh-hover);transform:translateY(-1px);}
+.sys__layer-name{font-family:var(--f-mono);font-size:14px;font-weight:600;color:var(--c-text-main);}
+.sys__layer-sub{font-size:13px;color:var(--c-text-secondary);margin-top:2px;}
+.sys__layer-files{font-size:11px;color:var(--c-text-secondary);font-family:var(--f-mono);margin-top:4px;}
+.sys__conn{text-align:center;color:var(--c-primary-500);font-size:12px;padding:2px 0;letter-spacing:2px;}
+.sys__io{display:flex;align-items:center;justify-content:center;gap:var(--s4);margin-top:var(--s5);flex-wrap:wrap;}
+.sys__io-col{text-align:center;}
+.sys__io-label{font-size:11px;letter-spacing:1px;color:var(--c-primary-700);font-weight:600;}
+.sys__io-text{font-size:12px;color:var(--c-text-secondary);max-width:200px;margin-top:2px;}
+.sys__io-arrow{font-size:12px;color:var(--c-primary-700);font-weight:600;}
+
+/* ============ Module 08 · Proof Matrix Artifact ============ */
+.proof__summary{display:flex;gap:var(--s8);margin-bottom:var(--s2);}
+.proof__sum-k{font-family:var(--f-mono);font-size:28px;color:var(--c-primary-900);line-height:1;}
+.proof__sum-d{font-size:12px;color:var(--c-text-secondary);margin-top:4px;}
+.proof__list{display:flex;flex-direction:column;gap:var(--s2);}
+.proof__row{display:flex;align-items:center;justify-content:space-between;gap:var(--s4);border:1px solid var(--c-border);border-radius:var(--r-md);padding:var(--s3) var(--s4);background:var(--c-card);transition:box-shadow .18s ease;}
+.proof__row--expandable{cursor:pointer;}
+.proof__row--expandable:hover{box-shadow:var(--sh-hover);}
+.proof__row--open{border-color:var(--c-primary-500);}
+.proof__row-main{min-width:0;}
+.proof__row-s{font-size:14px;font-weight:600;color:var(--c-text-main);}
+.proof__row-input{font-size:12px;color:var(--c-text-secondary);margin-top:2px;}
+.proof__status{font-size:12px;font-weight:600;padding:2px var(--s3);border-radius:var(--r-pill);white-space:nowrap;}
+.proof__status--pass{color:var(--c-success-dark);background:var(--c-success-bg);border:1px solid var(--c-success-border);}
+.proof__status--info{color:var(--c-info-dark);background:var(--c-info-bg);border:1px solid var(--c-info-border);}
+.proof__status--warn{color:var(--c-warning-dark);background:var(--c-warning-bg);border:1px solid var(--c-warning-border);}
+.proof__acc{margin-top:var(--s3);padding-top:var(--s3);border-top:1px dashed var(--c-border);display:flex;flex-direction:column;gap:var(--s2);}
+.proof__acc-row{font-size:12px;color:var(--c-text-main);}
+.proof__acc-row span{display:inline-block;min-width:72px;color:var(--c-text-secondary);font-family:var(--f-mono);font-size:11px;}
+
+/* ============ Module 09 · Deployment Artifact ============ */
+.deploy__live{display:inline-block;font-size:11px;color:var(--c-success-dark);background:var(--c-success-bg);border:1px solid var(--c-success-border);border-radius:var(--r-pill);padding:2px var(--s3);margin-bottom:var(--s4);animation:breathe 3s ease-in-out infinite;}
+@keyframes breathe{0%,100%{opacity:1;}50%{opacity:.55;}}
+.deploy__map{display:flex;flex-direction:column;align-items:center;}
+.deploy__node{border:1px solid var(--c-border);border-radius:var(--r-md);padding:var(--s3) var(--s5);background:var(--c-card);text-align:center;min-width:180px;}
+.deploy__node--infra{border-style:dashed;background:var(--c-surface);}
+.deploy__node-label{font-size:14px;font-weight:600;color:var(--c-text-main);}
+.deploy__node-sub{font-size:12px;color:var(--c-text-secondary);margin-top:2px;}
+.deploy__conn{color:var(--c-primary-500);font-size:16px;line-height:1;padding:2px 0;}
+.deploy__infra{display:flex;flex-direction:column;align-items:center;}
+.deploy__outcome{margin-top:var(--s6);border-top:1px solid var(--c-border);padding-top:var(--s4);}
+.deploy__out-title{font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--c-text-secondary);font-weight:600;margin-bottom:var(--s3);}
+.deploy__out-item{display:flex;align-items:center;gap:var(--s3);font-size:14px;color:var(--c-text-main);padding:var(--s1) 0;}
+.deploy__check{color:var(--c-primary-700);font-weight:700;}
+.deploy__out-item--live .deploy__dot{color:var(--c-success-dark);}
+.deploy__done{font-size:13px;color:var(--c-text-secondary);margin-top:var(--s2);}
+.deploy__fromto{display:flex;align-items:center;justify-content:center;gap:var(--s4);margin-top:var(--s5);flex-wrap:wrap;}
+.deploy__ft-label{font-size:11px;letter-spacing:1px;color:var(--c-primary-700);font-weight:600;}
+.deploy__ft-text{font-size:12px;color:var(--c-text-secondary);max-width:200px;margin-top:2px;text-align:center;}
+.deploy__ft-arrow{color:var(--c-primary-700);font-weight:600;}
+.deploy__end{margin-top:var(--s6);text-align:center;font-size:13px;color:var(--c-primary-900);font-weight:600;}
+
+/* ============ 05 · Navigation ============ */
+.pj-nav{display:flex;align-items:center;justify-content:space-between;padding:var(--s8) 0 var(--s2);border-top:1px solid var(--c-border);margin-top:var(--s4);}
+.nav-btn{display:inline-flex;align-items:center;gap:var(--s2);background:none;border:none;cursor:pointer;font-family:var(--f-sans);font-size:14px;color:var(--c-text-secondary);transition:color .2s ease, transform .2s ease;padding:var(--s2) 0;}
+.nav-btn:hover{color:var(--c-primary-700);}
+.nav-btn--prev:hover{transform:translateX(-4px);}
+.nav-btn--next:hover{transform:translateX(4px);}
+.nav-btn[disabled]{opacity:.35;cursor:not-allowed;transform:none;}
+.nav-btn__label{font-size:12px;color:var(--c-text-secondary);}
+.nav-btn__title{font-size:14px;color:var(--c-text-main);font-weight:600;}
+.nav-btn--next{flex-direction:row-reverse;text-align:right;}
+
+/* ============ Modal ============ */
+.modal-mask{position:fixed;inset:0;background:rgba(62,56,54,.45);display:none;align-items:center;justify-content:center;z-index:100;padding:var(--s6);}
+.modal-mask.is-open{display:flex;}
+.modal-box{position:relative;background:var(--c-card);border-radius:var(--r-lg);max-width:90vw;max-height:90vh;box-shadow:0 20px 60px rgba(62,56,54,.25);display:flex;flex-direction:column;}
+.modal-header{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--s4);padding:var(--s6) var(--s6) var(--s4);}
+.modal-box__title{font-size:16px;font-weight:600;color:var(--c-primary-900);margin:0;flex:1;}
+.modal-close{position:relative;background:none;border:none;font-size:20px;color:var(--c-text-secondary);cursor:pointer;line-height:1;flex-shrink:0;}
+.modal-scroll{overflow:auto;padding:0 var(--s6) var(--s6);}
+
+/* ============ Pending placeholder ============ */
+.pending-note{text-align:center;color:var(--c-text-secondary);font-size:14px;padding:var(--s12) 0;}
+
+@media (prefers-reduced-motion: reduce){
+  *{transition:none !important;animation:none !important;}
+  .reveal-item{opacity:1 !important;transform:none !important;}
+}
+
+/* ============ Responsive ============ */
+@media (max-width:1439px) and (min-width:1024px){
+  .pj-root{padding:var(--s8) var(--s6);}
+  .module-workspace{gap:var(--s8);}
+  .j-title{max-width:72px;font-size:11px;}
+}
+@media (max-width:1023px){
+  .pj-root{padding:var(--s6) var(--s4);}
+  .pj-header{flex-direction:column;align-items:flex-start;gap:var(--s4);}
+  .pj-header__tags{justify-content:flex-start;}
+  .module-workspace{grid-template-columns:1fr;gap:var(--s8);}
+  .journey-band{flex-direction:column;align-items:flex-start;gap:var(--s3);}
+  .journey-track{flex-direction:column;gap:var(--s4);}
+  .journey-segment{flex-direction:row;align-items:center;gap:var(--s4);}
+  .segment-label{width:96px;flex:0 0 auto;margin-bottom:0;font-size:11px;}
+  .segment-nodes{flex-wrap:wrap;}
+  .journey-divider{width:auto;height:1px;align-self:stretch;margin:0;}
+  .j-link{width:24px;margin:0 var(--s1);}
+  .playhead{display:none;}
+  .artifact{min-height:auto;}
+}
 </style>
 </head>
 <body>
+<div class="pj-root">
+  <!-- 01 · Project Header -->
+  <header class="pj-header">
+    <div>
+      <p class="pj-header__sub">Product Journey</p>
+      <h1 class="pj-header__title">可解释知识问答产品 · 设计实践</h1>
+      <p class="pj-header__desc">一个产品从问题识别、需求验证、方案设计，到工程实现、测试与部署的完整实践过程。</p>
+    </div>
+    <div class="pj-header__tags">
+      <span class="pj-tag">Product Design</span>
+      <span class="pj-tag">UX Research</span>
+      <span class="pj-tag">Data</span>
+      <span class="pj-tag">Engineering</span>
+      <span class="pj-tag pj-tag--status">Demo Ready</span>
+    </div>
+  </header>
+
+  <!-- 02 · Journey -->
+  <section class="pj-journey">
+    <div class="journey-band">
+      <div class="journey-track" id="journeyTrack">
+        <div class="playhead" id="playhead"><span>›</span><span>›</span><span>›</span><span>›</span><span>›</span></div>
+        <div class="node-hint" id="nodeHint">模块开发中</div>
+      </div>
+      <div class="pj-autoplay">
+        <button class="btn-autoplay is-paused" id="autoplayBtn" type="button">▷ Auto Play</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 + 04 · Module -->
+  <section class="pj-module" id="pjModule">
+    <div class="module-header">
+      <div>
+        <p class="module-header__meta" id="mMeta">MODULE 01</p>
+        <h2 class="module-header__title" id="mTitle">产品与需求分析</h2>
+        <p class="module-header__thesis" id="mThesis"></p>
+      </div>
+      <div class="module-header__count" id="mCount">01 / 09</div>
+    </div>
+    <div class="module-workspace">
+      <div class="thinking" id="thinkingCol"></div>
+      <div class="artifact" id="artifactCol"></div>
+    </div>
+  </section>
+
+  <!-- 05 · Navigation -->
+  <nav class="pj-nav">
+    <button class="nav-btn nav-btn--prev" id="prevBtn" type="button">
+      <span>←</span>
+      <span><span class="nav-btn__label" id="prevLabel">Previous</span><br><span class="nav-btn__title" id="prevTitle"></span></span>
+    </button>
+    <button class="nav-btn nav-btn--next" id="nextBtn" type="button">
+      <span>→</span>
+      <span><span class="nav-btn__label" id="nextLabel">Next</span><br><span class="nav-btn__title" id="nextTitle"></span></span>
+    </button>
+  </nav>
+</div>
+
+<!-- Modal -->
+<div class="modal-mask" id="modalMask">
+  <div class="modal-box" id="modalBox">
+    <div class="modal-header">
+      <h3 class="modal-box__title" id="modalTitle"></h3>
+      <button class="modal-close" id="modalClose" type="button">×</button>
+    </div>
+    <div class="modal-scroll">
+      <div id="modalBody"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+ * 数据：MODULES（01-03 定稿，04-09 pending 占位）
+ * ============================================================ */
+const MODULES = [
+  {
+    id:1, number:"01", title:"产品与需求分析", short:"产品分析", phase:"product-design",
+    status:"ready", englishLabel:"FROM INTEREST TO OPPORTUNITY",
+    thesis:"基于对本体与因果图谱的兴趣为出发点，不直接寻找技术应用场景，而是先寻找一个真正需要“解释”的场景。",
+    leftType:"narrative",
+    thinking:[
+      { kind:"start", idx:"01", title:"THE STARTING POINT",
+        text:"不直接定义场景，而是问一个更基础的问题 —— 能否用本体与图谱组织复杂知识，让系统不仅给出答案，还能解释答案从何而来。",
+        note:"与传统知识库、关键词检索或直接生成答案相比，更强调知识之间的三元组结构、因果关系以及推理路径。",
+        accent:"本体论 + 因果图谱" },
+      { kind:"noticed", title:"WHAT I NOTICED",
+        text:"在寻找适合落地的领域时，把注意力转向了我熟悉的宠物健康场景。",
+        points:["宠物主人需要快速获得判断，但医疗问题天然存在不确定性。","这恰恰是本体论与因果图谱的天然优势！" ],
+        note:"“给出答案”远远不够。",
+        accent:"宠物医疗问诊是非常契合的场景",
+        highlight:"真正的痛点不是“信息不够”，而是用户不知道答案“是否值得相信”。" },
+      { kind:"whyfip", title:"WHY FIP",
+        decisions:[
+          { idx:"01", tag:"FELINE INFECTIOUS PERITONITIS", t:"什么是FIP", d:"猫传染性腹膜炎，简称猫传腹。是一种高致死率，多发于幼猫的疾病，是新手猫主人最惧怕的疾病之一。非常匹配新手宠物主人对“可解释性问诊”的需求。" },
+		  { idx:"02", tag:"CLEAR BOUNDARY", t:"疾病范围明确", d:"知识边界相对清晰，可以控制 MVP 的数据规模。" },
+          { idx:"03", tag:"CAUSAL STRUCTURE", t:"天然具备因果链", d:"病因、症状、诊断、治疗与风险之间存在明确关联，适合图谱表达。" },
+          { idx:"04", tag:"SMALL BUT COMPLETE", t:"小规模也能跑通完整闭环", d:"无需构建庞大医学知识库，也能验证：知识结构化 → 图谱查询 → 推理解释 → 前端呈现。" }
+        ],
+        keyDecision:"不追求“覆盖所有宠物疾病”，而是选择一个足够聚焦、同时能完整体现产品核心能力的场景。" }
+    ],
+    artifact:{ type:"A", subtype:"funnel", name:"Opportunity Evolution", density:"balanced",
+      caption:"如何将兴趣演变为一个可验证的产品机会。",
+      stages:[
+        { key:"TECH INTEREST", desc:"本体与图谱的技术好奇" },
+        { key:"KNOWLEDGE STRUCTURE", desc:"把知识组织成结构" },
+        { key:"EXPLAINABLE AI", desc:"强调可解释的知识推理" },
+        { key:"PET HEALTH", desc:"转向宠物健康场景", note:"一个信息质量与可解释性直接影响信任的领域" },
+        { key:"FIP MVP", desc:"聚焦可验证的产品机会", final:true, note:"一个用于验证可解释的知识推理的小系统" }
+      ] }
+  },
+  {
+    id:2, number:"02", title:"产品需求验证", short:"需求验证", phase:"product-design",
+    status:"ready", englishLabel:"FROM NOISE TO INSIGHT",
+    thesis:"真正有价值的调研，不是证明原来的判断正确，而是找到哪些判断需要被改变。",
+    leftType:"evidence",
+    thinking:[
+      { kind:"validate-problem", idx:"01", en:"VALIDATE THE PROBLEM", title:"验证需求是否真实存在",
+        text:"首先需要确认的并不是“我的产品是否可行”，而是：宠物主人是否真的存在持续、明确且值得解决的问诊需求？",
+        signals:[
+          { label:"诊断与判断", level:"强" },
+          { label:"治疗方案", level:"强" },
+          { label:"药物安全与风险", level:"明确" },
+          { label:"信息可信度", level:"明确" },
+          { label:"疾病基础知识", level:"中等" }
+        ],
+        signalNote:"根据访谈中出现频率与关注程度进行归纳，不代表严格定量统计。" },
+      { kind:"discover-need", idx:"02", en:"DISCOVER THE REAL NEED", title:"从用户表达中找到真正的痛点",
+        flow:["用户表达","真实需求","产品机会"],
+        pairs:[
+          { quote:"网上的信息太多了，我根本不知道该信谁。", need:"用户缺少判断信息可信度的依据。" },
+          { quote:"AI 告诉我怎么治疗，但我不知道为什么。", need:"用户不仅需要答案，也希望理解答案背后的依据与过程。" },
+          { quote:"如果系统也不确定，它会不会直接给我一个错误答案？", need:"医疗场景需要明确表达不确定性和知识边界。" }
+        ] },
+      { kind:"recalibrate", idx:"03", en:"RECALIBRATE THE HYPOTHESIS", title:"用真实反馈修正判断",
+        text:"调研的价值不仅是验证已有想法，更重要的是重新审视我在 Module 01 中形成的产品假设。部分判断得到了验证，但部分功能的重要程度发生了变化。",
+        cases:[
+          { before:"风险提示属于辅助能力", after:"用户可以接受系统表达“不确定”，甚至更倾向于明确知道系统的知识边界。", decision:"将风险与不确定性表达提升为核心体验。" },
+          { before:"知识边界可能降低问答体验", after:"用户更担心系统给出错误答案，而不是系统明确告诉自己“不知道”。", decision:"将知识边界设计为信任机制的一部分。" }
+        ],
+        insight:"需求验证并不是证明原来的判断正确，而是让真实反馈重新塑造产品。" }
+    ],
+    artifact:{ type:"A", subtype:"noise-to-insight", name:"FROM NOISE TO INSIGHT", density:"fill",
+      caption:"验证需求 → 理解用户 → 调整判断。",
+      steps:[
+        { id:"validate", idx:"01", en:"VALIDATE", title:"验证需求", subtitle:"VALIDATE THE NEED",
+          question:"“猫传腹”相关的咨询需求，是否真的值得做成一个产品场景？",
+          voices:[
+            { role:"猫主人 A", avatar:"🐱", text:"网上的信息太乱了，我不知道该相信谁。", side:"left" },
+            { role:"宠物主人 B", avatar:"👩", text:"AI 可以告诉我答案，但我不知道为什么。", side:"right" },
+            { role:"兽医 C", avatar:"🩺", text:"医疗建议必须说明信息来源和边界。", side:"left" }
+          ],
+          takeaways:[
+            "高频问题真实存在",
+            "用户存在明确的信息获取困难",
+            "仅提供“答案”无法满足信任需求"
+          ] },
+        { id:"listen", idx:"02", en:"LISTEN", title:"用户洞察", subtitle:"LISTEN TO USERS",
+          question:"用户真正关心的是什么？",
+          fragments:[
+            { text:"怎么治疗？", tier:"normal", size:1.1 },
+            { text:"是否确诊？", tier:"normal", size:1 },
+            { text:"药物安全吗？", tier:"important", size:1.2 },
+            { text:"有没有风险？", tier:"important", size:1.35 },
+            { text:"能活多久？", tier:"normal", size:1 },
+            { text:"信息可靠吗？", tier:"core", size:1.5 }
+          ],
+          insight:["能不能相信？","现在该怎么办？","这个结论有没有风险？"] },
+        { id:"update", idx:"03", en:"UPDATE", title:"调整判断", subtitle:"UPDATE THE HYPOTHESIS",
+          question:"研究最终改变了什么产品决策？",
+          shifts:[
+            { label:"知识边界", from:"Secondary", to:"Core" },
+            { label:"风险提示", from:"Secondary", to:"Core" },
+            { label:"诊断 / 治疗", from:"Core", to:"Confirmed" }
+          ],
+          summary:"研究不是为了证明我原来是对的，而是导致了产品决策发生变化。" }
+      ] }
+  },
+  {
+    id:3, number:"03", title:"产品形态与方案设计", short:"形态设计", phase:"product-design",
+    status:"ready", englishLabel:"FROM VALIDATED NEEDS TO PRODUCT SYSTEM",
+    thesis:"需求本身不会自动变成产品。真正的设计工作，是决定哪些能力必须共同出现，才能形成完整体验。",
+    leftType:"decision-tree",
+    keyDecision:"不把能力拆成三个独立页面，而是把它们组织成一个可解释知识闭环：回答 → 解释 → 验证。",
+    thinking:[
+      { kind:"decision-tree",
+        problem:"如何把三个分散的能力——对话、因果图、证据库——组织成完整可用的产品体验？",
+        options:[
+          { tag:"Option A", name:"三个独立页面", verdict:"×", reason:"用户在页面间跳转，能力割裂，无法形成闭环。", rejected:true },
+          { tag:"Option B", name:"纯聊天机器人", verdict:"×", reason:"只给答案不给解释，无法建立可信度，违背“可解释”初衷。", rejected:true },
+          { tag:"Option C", name:"可解释知识闭环", verdict:"✓", reason:"把 Answer → Explain → Verify 串成一条线：对话入口、因果图支撑、证据库兜底。", chosen:true,
+            decompose:[
+              { idx:"01", tag:"CONVERSATION", d:"让用户自然提问" },
+              { idx:"02", tag:"CAUSAL GRAPH", d:"让用户理解答案如何得出" },
+              { idx:"03", tag:"EVIDENCE LIBRARY", d:"让用户追溯知识来源" }
+            ],
+            note:"能力闭环：Answer → Explain → Verify。主动控制演示环境的不确定性（demo 不引入 LLM），把重点放在知识图谱推理本身。" }
+        ] }
+    ],
+    artifact:{ type:"A", subtype:"loop", name:"Explainable Product Blueprint", density:"fill",
+      caption:"Answer, explain and verify — in one connected experience.",
+      preview:true }
+  },
+  /* ===== 04-09 定稿（2026-08-19 用户提供） ===== */
+  {
+    id:4, number:"04", title:"视觉设计", short:"视觉设计", phase:"product-design",
+    status:"ready", englishLabel:"FROM VISUAL DIRECTION TO DESIGN SYSTEM",
+    thesis:"视觉设计不是为页面选择一种“好看的风格”，而是为产品建立一套能够持续指导设计与开发的规则。",
+    leftType:"gallery",
+    keyLabel:"KEY DECISION",
+    keyDecision:"最终没有选择典型的医疗蓝，也没有强化 AI 科技感，而是建立了一套更克制的自然暖色体系——专业感来自信息秩序，而不是冷色与科技符号。",
+    thinking:[
+      { kind:"directions", title:"EXPLORE · 探索方向",
+        dirs:[
+          { tag:"Direction 01", name:"Clinical & Rational", desc:"强调专业、清晰、理性。", note:"容易接近传统医疗产品，情绪距离较远。", state:"rejected" },
+          { tag:"Direction 02", name:"Tech & Intelligent", desc:"强调 AI、图谱与技术感。", note:"视觉表达过强，削弱医疗场景需要的温和与可信。", state:"rejected" },
+          { tag:"Direction 03", name:"Natural & Trustworthy", desc:"暖白、米杏与低饱和自然色。", note:"在专业感之外，降低医疗问答的心理距离。", state:"selected" }
+        ] },
+      { kind:"choice", title:"CHOOSE · 最终选择",
+        choice:"Warm Almond Cream（暖杏奶油）",
+        text:"建立了一套更克制的自然暖色体系，而不是典型的医疗蓝或 AI 科技感。" },
+      { kind:"parts", title:"SYSTEMIZE · 三条原则",
+        items:[
+          { idx:"01", tag:"COLOR AS HIERARCHY", d:"颜色用于建立信息层级、标记状态、表达有限语义，而非装饰。" },
+          { idx:"02", tag:"CONSISTENCY AS CONSTRAINT", d:"色彩、字体、间距、圆角、阴影、组件状态整理成统一规则。" },
+          { idx:"03", tag:"DESIGN AS DEV INPUT", d:"设计规范同时是前端实现的输入约束，连接设计与开发。" }
+        ] }
+    ],
+    artifact:{ type:"C", subtype:"gallery", name:"Visual Direction → System",
+      caption:"From exploring visual personality to defining reusable rules.",
+      directions:[
+        { name:"Clinical", kw:"Rational / Clear", colors:["#E8EEF2","#C9D6DD","#8AA0B0"], state:"off" },
+        { name:"Tech", kw:"Structured / Intelligent", colors:["#E6EAF0","#B9C4D6","#7C8AA8"], state:"off" },
+        { name:"Natural", kw:"Warm / Trustworthy", colors:["#FAF3EC","#8C6B5D","#6B5045"], state:"on" }
+      ],
+      tokens:[
+        { group:"COLOR", items:["#FDFBF7","#FFFFFF","#8C6B5D","#6B5045"] },
+        { group:"TYPE", items:["Display 28","Heading 20","Body 15"] },
+        { group:"SPACING", items:["4","8","16","24","32"] },
+        { group:"COMPONENT", items:["Button","Card","Tag"] }
+      ] }
+  },
+  {
+    id:5, number:"05", title:"数据设计", short:"数据设计", phase:"engineering-design",
+    status:"ready", englishLabel:"FROM MEDICAL KNOWLEDGE TO QUERYABLE STRUCTURE",
+    thesis:"界面可以展示知识，但只有结构化的数据模型，才能让系统真正理解知识之间的关系。",
+    leftType:"architecture",
+    keyLabel:"KEY INSIGHT",
+    keyDecision:"先定义规则，再生产数据——schema 在知识抽取之前确立，结构先于内容。",
+    thinking:[
+      { kind:"flow", title:"THE MODEL · 先建模",
+        steps:["KNOWLEDGE","SCHEMA","EXTRACTION"],
+        note:"先定义系统需要理解什么，再进行知识抽取与数据导入。" },
+      { kind:"rules", title:"THE RULES · 四类节点",
+        cats:[
+          { tag:"CAUSE & PATHOGEN", d:"病因与病原" },
+          { tag:"MECHANISM & PROCESS", d:"机制与过程" },
+          { tag:"DIAGNOSIS & DETECTION", d:"诊断与检测" },
+          { tag:"INTERVENTION & OUTCOME", d:"干预与结局" }
+        ],
+        rel:"关系类型：导致 / 表现为 / 诊断于 / 治疗于 / 影响" },
+      { kind:"result", title:"THE RESULT · 可查询网络",
+        stats:[
+          { k:"67", d:"Causal Triples" },
+          { k:"Neo4j", d:"AuraDB · Cloud Graph" }
+        ],
+        text:"从非结构化医学知识，转化为可查询、可追踪的因果关系网络。" }
+    ],
+    artifact:{ type:"A", subtype:"architecture", name:"Knowledge Architecture", density:"fill",
+      caption:"A schema designed before knowledge extraction.",
+      cats:[
+        { tag:"CAUSE & PATHOGEN", c:"#C08A6A" },
+        { tag:"MECHANISM & PROCESS", c:"#D8A657" },
+        { tag:"DIAGNOSIS & DETECTION", c:"#8AA0B0" },
+        { tag:"INTERVENTION & OUTCOME", c:"#8AA088" }
+      ],
+      meta:["POLARITY","CONFIDENCE","EVIDENCE"],
+      graph:{ root:"FIP", edges:[
+        { to:"Feline Coronavirus", rel:"caused by" },
+        { to:"Fever", rel:"manifests as" },
+        { to:"PCR", rel:"diagnosed by" },
+        { to:"GS-441524", rel:"treated with" }
+      ] } }
+  },
+  {
+    id:6, number:"06", title:"前端页面设计", short:"前端设计", phase:"engineering-design",
+    status:"ready", englishLabel:"FROM PRODUCT LOGIC TO INTERFACE",
+    thesis:"界面不是设计过程的起点，而是产品需求、信息结构与视觉规则共同收敛后的结果。",
+    leftType:"interface",
+    keyLabel:"KEY INSIGHT",
+    keyDecision:"先定义结构，再进入视觉细节——界面是需求、信息架构与视觉规范收敛后的产物。",
+    thinking:[
+      { kind:"questions", title:"DEFINE · 先问清页面目的",
+        qs:["What is the user trying to do?","What information is needed?","What should happen next?"] },
+      { kind:"flow", title:"STRUCTURE · 需求转结构",
+        steps:["REQUIREMENT","INFORMATION ARCHITECTURE","INTERACTION LOGIC"],
+        note:"先定义结构，再进入视觉细节。" },
+      { kind:"pages", title:"MATERIALIZE · 三个页面",
+        pages:["Conversation","Knowledge Graph","Literature Library"] }
+    ],
+    artifact:{ type:"B", subtype:"interface", name:"Interface Evolution",
+      caption:"From page purpose to working interface.",
+      tabs:[
+        { id:"conversation", label:"Conversation", hotspots:[
+          { n:"①", x:10, y:16, label:"Navigation", tip:"左侧导航承载首页 / 图库 / 文献入口。" },
+          { n:"②", x:50, y:34, label:"Conversation", tip:"中间对话区承载问答与执行轨迹解释。" },
+          { n:"③", x:88, y:58, label:"Execution Trace", tip:"右侧执行轨迹展示推理步骤来源。" } ] },
+        { id:"graph", label:"Knowledge Graph", hotspots:[
+          { n:"①", x:12, y:18, label:"Legend", tip:"图例说明四类节点与语义色。" },
+          { n:"②", x:50, y:48, label:"Graph Canvas", tip:"因果图谱主画布，可点击节点查看详情。" },
+          { n:"③", x:86, y:30, label:"Detail Panel", tip:"右侧详情面板展示选中节点的关系与证据。" } ] },
+        { id:"literature", label:"Literature Library", hotspots:[
+          { n:"①", x:14, y:16, label:"Search & Filter", tip:"顶部搜索与筛选快速定位文献。" },
+          { n:"②", x:42, y:46, label:"Collection", tip:"文献集合以卡片形式组织。" },
+          { n:"③", x:84, y:60, label:"Evidence Detail", tip:"点击文献卡片展开证据详情。" } ] }
+      ] }
+  },
+  {
+    id:7, number:"07", title:"开发实现", short:"开发实现", phase:"engineering-design",
+    status:"ready", englishLabel:"FROM DESIGN TO RUNNING SYSTEM",
+    thesis:"开发过程不是一次性生成完整系统，而是将复杂问题拆解为可验证的模块，逐层确认行为正确后再向上构建。",
+    leftType:"engineering",
+    keyLabel:"KEY INSIGHT",
+    keyDecision:"Good implementation is not about generating more code. It’s about reducing uncertainty one layer at a time.",
+    thinking:[
+      { kind:"parts", title:"WHAT I DID · 构建原则",
+        items:[
+          { idx:"01", tag:"LAYERED ARCHITECTURE", d:"先定义系统层级：Data Access / Rule Routing / Agent Layer / Pipeline / Frontend，避免逻辑堆积在单一文件。" },
+          { idx:"02", tag:"MODULE-FIRST DEVELOPMENT", d:"每个模块独立实现再逐步连接；顺序 Data → Routing → Agent → Pipeline → Interface，每层完成即验证。" },
+          { idx:"03", tag:"CONTINUOUS VERIFICATION", d:"不等待全部完成再测试；每模块完成后立即 Run / Check / Fix / Integrate。" }
+        ] }
+    ],
+    artifact:{ type:"A", subtype:"system", name:"System Architecture", density:"compact",
+      caption:"Layered build, module by module, with continuous validation.",
+      layers:[
+        { name:"FRONTEND", sub:"Chat · Graph · Literature", cls:"card", files:"app.py / Gradio" },
+        { name:"PIPELINE", sub:"Semantic → Task → Query", cls:"accent", files:"core/pipeline.py" },
+        { name:"AGENT LAYER", sub:"Intent · Entity · Evidence", cls:"card", files:"core/agents/" },
+        { name:"DATA ACCESS", sub:"Query Templates · Dedup", cls:"surface", files:"core/db.py" },
+        { name:"NEO4J", sub:"Causal Knowledge Graph", cls:"card", files:"Neo4j AuraDB" }
+      ] }
+  },
+  {
+    id:8, number:"08", title:"测试与验证", short:"测试验证", phase:"validation-delivery",
+    status:"ready", englishLabel:"FROM FUNCTION TO RELIABILITY PROOF",
+    thesis:"对于知识型系统而言，真正重要的不只是“能否正确回答”，还包括“是否知道什么时候不应该回答”。",
+    leftType:"proof",
+    keyLabel:"KEY INSIGHT",
+    keyDecision:"The most important tests are often the cases where the system should not answer.",
+    thinking:[
+      { kind:"dimensions", title:"WHAT I TESTED · 验证维度",
+        items:[
+          { idx:"01", tag:"INTENT RECOGNITION", d:"Does the system understand what the user asks?" },
+          { idx:"02", tag:"ENTITY RESOLUTION", d:"Can it identify and reuse the correct context?" },
+          { idx:"03", tag:"CLARIFICATION", d:"Does ambiguity trigger clarification instead of guessing?" },
+          { idx:"04", tag:"KNOWLEDGE BOUNDARY", d:"Can the system refuse unsupported knowledge safely?" },
+          { idx:"05", tag:"RECOVERY", d:"Can the system recover from connection interruptions?" }
+        ] }
+    ],
+    artifact:{ type:"A", subtype:"proof", name:"Scenario Coverage Matrix", density:"dense",
+      caption:"Design principles verified as behavior, not just code.",
+      summary:{ tests:"7", scenarios:"8" },
+      rows:[
+        { s:"Diagnosis", input:"猫传腹如何诊断", status:"pass", result:"Matched expected" },
+        { s:"Knowledge Boundary", input:"猫发热怎么办", status:"info", result:"Boundary Triggered", detail:{ input:"猫发热怎么办？", expected:"Do not reuse previous FIP context", actual:"Knowledge boundary triggered", result:"✓ Matched Expected Behavior" } },
+        { s:"Clarification", input:"441 安全吗？", status:"warn", result:"Clarification", detail:{ input:"441 安全吗？", expected:"Ask for clarification", actual:"Clarification prompt shown", result:"✓ Matched Expected Behavior" } },
+        { s:"Context Inheritance", input:"什么是传腹 → 怎么治疗", status:"pass", result:"Passed" },
+        { s:"Topic Switch", input:"今天天气怎么样", status:"pass", result:"Passed" },
+        { s:"Recovery", input:"Idle DB connection", status:"pass", result:"Passed" }
+      ] }
+  },
+  {
+    id:9, number:"09", title:"部署与收尾", short:"部署收尾", phase:"validation-delivery",
+    status:"ready", englishLabel:"FROM LOCAL PROJECT TO LIVE PRODUCT",
+    thesis:"原型证明想法是否成立，真正可访问的产品才让别人能够验证它。",
+    leftType:"delivery",
+    keyLabel:"KEY INSIGHT",
+    keyDecision:"A project is not complete until others can use it.",
+    thinking:[
+      { kind:"deliverables", title:"WHAT I DELIVERED · 交付清单",
+        items:[
+          { idx:"01", tag:"LIVE APPLICATION", d:"A browser-accessible product demo." },
+          { idx:"02", tag:"CLOUD KNOWLEDGE GRAPH", d:"A continuously available Neo4j instance." },
+          { idx:"03", tag:"AUTOMATED HEARTBEAT", d:"Scheduled checks to maintain availability." },
+          { idx:"04", tag:"PROJECT DOCUMENTATION", d:"A complete walkthrough of the design and implementation." }
+        ] }
+    ],
+    artifact:{ type:"A", subtype:"deployment", name:"Live Deployment Map", density:"balanced",
+      caption:"From local prototype to an experience others can verify.",
+      nodes:[
+        { id:"visitor", label:"Visitor", sub:"用户浏览器" },
+        { id:"app", label:"Web Application", sub:"Gradio" },
+        { id:"core", label:"Python Core", sub:"Pipeline + Agents" },
+        { id:"neo4j", label:"Neo4j AuraDB", sub:"Knowledge Graph" }
+      ],
+      infra:{ id:"gha", label:"GitHub Actions", sub:"Daily Heartbeat" },
+      outcome:["Designed","Structured","Implemented","Tested"] }
+  }
+];
+
+const PHASES = [
+  { label:"产品设计阶段", moduleIds:[1,2,3,4] },
+  { label:"工程设计阶段", moduleIds:[5,6,7] },
+  { label:"验证与部署", moduleIds:[8,9] }
+];
+
+const REDUCED_MOTION = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ============================================================
+ * DOM refs
+ * ============================================================ */
+const track = document.getElementById('journeyTrack');
+const playhead = document.getElementById('playhead');
+const nodeHint = document.getElementById('nodeHint');
+const pjModule = document.getElementById('pjModule');
+const thinkingCol = document.getElementById('thinkingCol');
+const artifactCol = document.getElementById('artifactCol');
+const mMeta = document.getElementById('mMeta');
+const mTitle = document.getElementById('mTitle');
+const mThesis = document.getElementById('mThesis');
+const mCount = document.getElementById('mCount');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+const prevTitle = document.getElementById('prevTitle');
+const nextTitle = document.getElementById('nextTitle');
+const autoplayBtn = document.getElementById('autoplayBtn');
+const modalMask = document.getElementById('modalMask');
+const modalBox = document.getElementById('modalBox');
+const modalClose = document.getElementById('modalClose');
+const modalTitle = document.getElementById('modalTitle');
+const modalBody = document.getElementById('modalBody');
+
+let currentId = 1;
+let nodeEls = {}; // id -> node element
+
+/* ============================================================
+ * Build Journey
+ * ============================================================ */
+function buildJourney(){
+  PHASES.forEach((phase, pIdx)=>{
+    const seg = document.createElement('div');
+    seg.className = 'journey-segment';
+    const label = document.createElement('div');
+    label.className = 'segment-label';
+    label.textContent = phase.label;
+    seg.appendChild(label);
+    const nodesWrap = document.createElement('div');
+    nodesWrap.className = 'segment-nodes';
+    phase.moduleIds.forEach((mid, i)=>{
+      const mod = MODULES.find(m=>m.id===mid);
+      const node = document.createElement('div');
+      node.className = 'j-node' + (mod.status==='pending' ? ' is-pending' : '');
+      node.dataset.id = mid;
+      node.setAttribute('role','button');
+      node.setAttribute('tabindex','0');
+      node.setAttribute('title', mod.status==='pending' ? (mod.title+'（开发中）') : mod.title);
+      const dot = document.createElement('div');
+      dot.className = 'j-dot';
+      dot.textContent = mod.number;
+      const title = document.createElement('div');
+      title.className = 'j-title';
+      title.textContent = mod.short || mod.title;
+      node.appendChild(dot); node.appendChild(title);
+      nodesWrap.appendChild(node);
+      nodeEls[mid] = node;
+      node.addEventListener('click', ()=>onNodeClick(mid));
+      node.addEventListener('keydown', e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); onNodeClick(mid);} });
+      if(i < phase.moduleIds.length-1){
+        const link = document.createElement('div');
+        link.className = 'j-link';
+        link.dataset.from = mid;
+        nodesWrap.appendChild(link);
+      }
+    });
+    seg.appendChild(nodesWrap);
+    track.appendChild(seg);
+    if(pIdx < PHASES.length-1){
+      const div = document.createElement('div');
+      div.className = 'journey-divider';
+      track.appendChild(div);
+    }
+  });
+}
+
+/* ============================================================
+ * Node click
+ * ============================================================ */
+function onNodeClick(id){
+  const mod = MODULES.find(m=>m.id===id);
+  if(mod.status==='pending'){
+    pauseAutoPlay();
+    showNodeHint(id);
+    return;
+  }
+  pauseAutoPlay();
+  goToModule(id);
+}
+
+function showNodeHint(id){
+  const node = nodeEls[id];
+  const trackRect = track.getBoundingClientRect();
+  const r = node.getBoundingClientRect();
+  nodeHint.style.left = (r.left - trackRect.left + r.width/2) + 'px';
+  nodeHint.style.top = (r.top - trackRect.top - 6) + 'px';
+  nodeHint.classList.add('is-visible');
+  clearTimeout(showNodeHint._t);
+  showNodeHint._t = setTimeout(()=>nodeHint.classList.remove('is-visible'), 1600);
+}
+
+/* ============================================================
+ * Module render
+ * ============================================================ */
+function goToModule(id, withAnim=true){
+  const mod = MODULES.find(m=>m.id===id);
+  if(!mod) return;
+  const render = ()=>{
+    currentId = id;
+    updateJourneyStates();
+    renderHeader(mod);
+    renderLeftContent(mod);
+    renderArtifact(mod);
+    renderNav(mod);
+    positionPlayheadAtCurrent();
+  };
+  if(withAnim && !REDUCED_MOTION){
+    pjModule.classList.add('switching');
+    setTimeout(()=>{
+      render();
+      pjModule.classList.remove('switching');
+      pjModule.classList.add('entering');
+      requestAnimationFrame(()=>{ requestAnimationFrame(()=>{ pjModule.classList.remove('entering'); }); });
+    }, 230);
+  } else {
+    render();
+  }
+}
+
+function updateJourneyStates(){
+  MODULES.forEach(m=>{
+    const node = nodeEls[m.id];
+    if(!node) return;
+    node.classList.remove('is-current','is-done');
+    if(m.id===currentId){ node.classList.add('is-current'); }
+    else if(m.status==='ready' && m.id < currentId){ node.classList.add('is-done'); }
+  });
+  // link done state
+  document.querySelectorAll('.j-link').forEach(l=>{
+    const from = parseInt(l.dataset.from,10);
+    l.classList.toggle('is-done', from < currentId && MODULES.find(m=>m.id===from).status==='ready');
+  });
+}
+
+function renderHeader(mod){
+  mMeta.textContent = 'MODULE ' + mod.number + '  ·  ' + mod.englishLabel;
+  mTitle.textContent = mod.title;
+  mThesis.textContent = mod.thesis || '';
+  mCount.textContent = mod.number + ' / 09';
+}
+
+/* ---------- Thinking renderers (V3 · vertical timeline) ---------- */
+function renderLeftContent(mod){
+  thinkingCol.innerHTML = '';
+  if(mod.status==='pending'){
+    thinkingCol.innerHTML = '<div class="pending-note">该模块内容正在完善中。</div>';
+    return;
+  }
+  const renderers = {
+    'narrative': renderNarrative,
+    'evidence': renderEvidence,
+    'decision-tree': renderDecisionTree,
+    'gallery': renderGalleryNarrative,
+    'architecture': renderArchitectureNarrative,
+    'interface': renderInterfaceNarrative,
+    'engineering': renderEngineeringNarrative,
+    'proof': renderProofNarrative,
+    'delivery': renderDeliveryNarrative
+  };
+  (renderers[mod.leftType] || renderNarrative)(mod);
+  if(mod.keyDecision){
+    const kd = document.createElement('div');
+    kd.className = 'key-decision reveal-item';
+    const kLabel = mod.keyLabel || 'KEY DECISION';
+    kd.innerHTML = '<strong>'+kLabel+'</strong><br>'+mod.keyDecision;
+    thinkingCol.appendChild(kd);
+  }
+  revealSequence(thinkingCol.querySelectorAll('.reveal-item'));
+}
+
+/* ---- 左侧 nine layouts by leftType ---- */
+function renderNarrative(mod){
+  mod.thinking.forEach(b=>{
+    const sec = document.createElement('div');
+    sec.className = 'nl-section reveal-item';
+    sec.appendChild(buildBlock(b));
+    thinkingCol.appendChild(sec);
+  });
+}
+function renderEvidence(mod){
+  mod.thinking.forEach((b,i)=>{
+    const stage = document.createElement('div');
+    stage.className = 'ev-stage reveal-item';
+    stage.appendChild(buildBlock(b));
+    thinkingCol.appendChild(stage);
+    if(i < mod.thinking.length-1){
+      const ar = document.createElement('div');
+      ar.className = 'ev-arrow reveal-item';
+      ar.innerHTML = '<svg viewBox="0 0 2047 1024" width="28" height="14" style="display:inline-block;vertical-align:middle;"><path d="M2016.249279 28.675318A114.004953 114.004953 0 0 0 1939.790867 0.003413a114.004953 114.004953 0 0 0-76.458411 28.671905L1017.852607 789.163449 184.660718 39.256616A114.004953 114.004953 0 0 0 108.202306 10.926044a114.004953 114.004953 0 0 0-76.458412 28.330572A92.159693 92.159693 0 0 0 0 108.205719a92.159693 92.159693 0 0 0 31.743894 68.607772l909.650301 818.514605c20.479932 18.431939 47.786507 28.671904 76.458412 28.671904 28.671904 0 56.319812-10.239966 76.458412-28.671904L2016.249279 165.89086a90.453032 90.453032 0 0 0 0-137.215542z" fill="#C7A18E"></path></svg>';
+      thinkingCol.appendChild(ar);
+    }
+  });
+}
+function renderDecisionTree(mod){
+  mod.thinking.forEach(b=>{
+    const wrap = document.createElement('div');
+    wrap.className = 'dt-wrap reveal-item';
+    wrap.appendChild(buildBlock(b));
+    thinkingCol.appendChild(wrap);
+  });
+}
+function renderGalleryNarrative(mod){
+  mod.thinking.forEach(b=>{
+    const blk = document.createElement('div');
+    blk.className = 'gl-block reveal-item';
+    blk.appendChild(buildBlock(b));
+    thinkingCol.appendChild(blk);
+  });
+}
+function renderArchitectureNarrative(mod){
+  mod.thinking.forEach(b=>{
+    const stage = document.createElement('div');
+    stage.className = 'ar-stage reveal-item';
+    stage.appendChild(buildBlock(b));
+    thinkingCol.appendChild(stage);
+  });
+}
+function renderInterfaceNarrative(mod){
+  mod.thinking.forEach(b=>{
+    const stage = document.createElement('div');
+    stage.className = 'if-stage reveal-item';
+    stage.appendChild(buildBlock(b));
+    thinkingCol.appendChild(stage);
+  });
+}
+function renderEngineeringNarrative(mod){
+  mod.thinking.forEach(b=>{
+    const item = document.createElement('div');
+    item.className = 'en-item reveal-item';
+    item.appendChild(buildBlock(b));
+    thinkingCol.appendChild(item);
+  });
+}
+function renderProofNarrative(mod){
+  mod.thinking.forEach(b=>{
+    const frame = document.createElement('div');
+    frame.className = 'pf-frame reveal-item';
+    frame.appendChild(buildBlock(b));
+    thinkingCol.appendChild(frame);
+  });
+}
+function renderDeliveryNarrative(mod){
+  mod.thinking.forEach(b=>{
+    const item = document.createElement('div');
+    item.className = 'dl-item reveal-item';
+    item.appendChild(buildBlock(b));
+    thinkingCol.appendChild(item);
+  });
+  const close = document.createElement('div');
+  close.className = 'dl-close reveal-item';
+  close.innerHTML = 'FROM PROTOTYPE<span>&#8595;</span>TO LIVE PRODUCT';
+  thinkingCol.appendChild(close);
+}
+
+function buildBlock(b){
+  const frag = document.createDocumentFragment();
+  const title = document.createElement('p');
+  title.className = 't-block__title';
+  title.textContent = b.title;
+  frag.appendChild(title);
+
+  if(b.kind==='start'){
+    const idx = document.createElement('div');
+    idx.className = 't-start__idx';
+    idx.textContent = b.idx;
+    const body = document.createElement('div');
+    body.className = 't-block__body';
+    body.textContent = b.text;
+    const note = document.createElement('div');
+    note.className = 't-block__body';
+    note.style.color = 'var(--c-text-secondary)';
+    note.style.fontSize = '13px';
+    note.style.marginTop = 'var(--s2)';
+    note.textContent = b.note;
+    const accent = document.createElement('div');
+    accent.className = 't-start__accent';
+    accent.textContent = b.accent;
+    frag.append(idx, body, note, accent);
+  }
+  else if(b.kind==='noticed'){
+    const body = document.createElement('div');
+    body.className = 't-block__body';
+    body.textContent = b.text;
+    const points = document.createElement('div');
+    points.className = 't-noticed__points';
+    const pointItems = b.points || [];
+    const leadPoints = pointItems.slice(0, -1);
+    const lastPoint = pointItems[pointItems.length - 1];
+    leadPoints.forEach(p=>{
+      const pe = document.createElement('div');
+      pe.className = 't-point';
+      pe.textContent = p;
+      points.appendChild(pe);
+    });
+    const note = document.createElement('div');
+    note.className = 't-block__body';
+    note.style.color = 'var(--c-text-secondary)';
+    note.style.fontSize = '13px';
+    note.style.marginTop = 'var(--s2)';
+    note.style.marginBottom = 'var(--s3)';
+    note.textContent = b.note || '';
+    const lastPointEl = document.createElement('div');
+    lastPointEl.className = 't-point';
+    lastPointEl.textContent = lastPoint || '';
+    const hl = document.createElement('div');
+    hl.className = 't-highlight';
+    hl.textContent = b.highlight;
+    frag.append(body, points);
+    if(b.note) frag.appendChild(note);
+    if(lastPoint) frag.appendChild(lastPointEl);
+    if(b.accent){
+      const accentList = Array.isArray(b.accent) ? b.accent : [b.accent];
+      accentList.forEach(txt=>{
+        const accent = document.createElement('div');
+        accent.className = 't-start__accent';
+        accent.textContent = txt;
+        frag.appendChild(accent);
+      });
+    }
+    frag.appendChild(hl);
+  }
+  else if(b.kind==='whyfip'){
+    b.decisions.forEach(d=>{
+      const row = document.createElement('div');
+      row.className = 't-decision';
+      row.innerHTML = '<div class="t-decision__idx">'+d.idx+'</div>'+
+        '<div><div class="t-decision__tag">'+d.tag+' / '+d.t+'</div>'+
+        '<div class="t-decision__desc">'+d.d+'</div></div>';
+      frag.appendChild(row);
+    });
+    const kd = document.createElement('div');
+    kd.className = 'key-decision';
+    kd.innerHTML = '<strong>KEY DECISION</strong><br>'+b.keyDecision;
+    frag.appendChild(kd);
+  }
+  else if(b.kind==='validate-problem'){
+    const idx = document.createElement('div');
+    idx.className = 't-start__idx';
+    idx.textContent = b.idx;
+    const en = document.createElement('div');
+    en.className = 't-block__en';
+    en.textContent = b.en;
+    const sub = document.createElement('h4');
+    sub.className = 't-block__subtitle';
+    sub.textContent = b.title;
+    const body = document.createElement('div');
+    body.className = 't-block__body';
+    body.textContent = b.text;
+    const qs = document.createElement('ul');
+    qs.className = 't-question-list';
+    (b.questions || []).forEach(q=>{
+      const li = document.createElement('li');
+      li.textContent = q;
+      qs.appendChild(li);
+    });
+    const signalBox = document.createElement('div');
+    signalBox.className = 't-signal-box';
+    const signalTitle = document.createElement('div');
+    signalTitle.className = 't-signal-box__title';
+    signalTitle.textContent = '调研中呈现出的需求信号';
+    signalBox.appendChild(signalTitle);
+    b.signals.forEach(s=>{
+      const row = document.createElement('div');
+      row.className = 't-signal-row';
+      const label = document.createElement('span');
+      label.className = 't-signal-row__label';
+      label.textContent = s.label;
+      const track = document.createElement('div');
+      track.className = 't-signal-row__track';
+      const fillCount = s.level==='强'?10 : s.level==='明确'?7 : 5;
+      for(let i=0;i<10;i++){
+        const seg = document.createElement('div');
+        seg.className = 't-signal-seg' + (i<fillCount?' is-filled':'');
+        track.appendChild(seg);
+      }
+      const level = document.createElement('span');
+      level.className = 't-signal-row__level';
+      level.textContent = s.level;
+      row.append(label, track, level);
+      signalBox.appendChild(row);
+    });
+    const signalNote = document.createElement('div');
+    signalNote.className = 't-signal-box__note';
+    signalNote.textContent = b.signalNote;
+    signalBox.appendChild(signalNote);
+    frag.append(idx, en, sub, body, qs, signalBox);
+  }
+  else if(b.kind==='discover-need'){
+    const idx = document.createElement('div');
+    idx.className = 't-start__idx';
+    idx.textContent = b.idx;
+    const en = document.createElement('div');
+    en.className = 't-block__en';
+    en.textContent = b.en;
+    const sub = document.createElement('h4');
+    sub.className = 't-block__subtitle';
+    sub.textContent = b.title;
+    const body = document.createElement('div');
+    body.className = 't-block__body';
+    body.textContent = b.text || '';
+    const flow = document.createElement('div');
+    flow.className = 't-flow-chain';
+    b.flow.forEach((f,i)=>{
+      const item = document.createElement('span');
+      item.className = 't-flow-chain__item';
+      item.textContent = f;
+      flow.appendChild(item);
+      if(i < b.flow.length-1){
+        const arrow = document.createElement('span');
+        arrow.className = 't-flow-chain__arrow';
+        arrow.textContent = '→';
+        flow.appendChild(arrow);
+      }
+    });
+    const pairs = document.createElement('div');
+    pairs.className = 't-quote-pairs';
+    b.pairs.forEach(p=>{
+      const item = document.createElement('div');
+      item.className = 't-quote-pair';
+      item.innerHTML = '<div class="t-quote-pair__quote">“'+p.quote+'”</div>'+
+        '<div class="t-quote-pair__need">'+p.need+'</div>';
+      pairs.appendChild(item);
+    });
+    frag.append(idx, en, sub, body, flow, pairs);
+  }
+  else if(b.kind==='recalibrate'){
+    const idx = document.createElement('div');
+    idx.className = 't-start__idx';
+    idx.textContent = b.idx;
+    const en = document.createElement('div');
+    en.className = 't-block__en';
+    en.textContent = b.en;
+    const sub = document.createElement('h4');
+    sub.className = 't-block__subtitle';
+    sub.textContent = b.title;
+    const body = document.createElement('div');
+    body.className = 't-block__body';
+    body.textContent = b.text;
+    const cases = document.createElement('div');
+    cases.className = 't-cases';
+    b.cases.forEach(c=>{
+      const item = document.createElement('div');
+      item.className = 't-case';
+      item.innerHTML = '<div class="t-case__before"><span class="t-case__tag">BEFORE</span>'+c.before+'</div>'+
+        '<div class="t-case__after"><span class="t-case__tag">AFTER</span>'+c.after+'</div>'+
+        '<div class="t-case__decision"><span class="t-case__tag">DECISION</span>'+c.decision+'</div>';
+      cases.appendChild(item);
+    });
+    const insight = document.createElement('div');
+    insight.className = 't-key-insight';
+    insight.textContent = b.insight;
+    frag.append(idx, en, sub, body, cases, insight);
+  }
+  else if(b.kind==='principle'){
+    const loop = document.createElement('div');
+    loop.className = 't-loop';
+    b.loop.forEach(l=>{
+      const item = document.createElement('div');
+      item.className = 't-loop__item';
+      item.innerHTML = '<div class="t-loop__tag">'+l.tag+'</div><div class="t-loop__desc">'+l.d+'</div>';
+      loop.appendChild(item);
+    });
+    frag.appendChild(loop);
+    const note = document.createElement('div');
+    note.className = 't-note t-note--loop';
+    note.textContent = '能力闭环：Answer → Explain → Verify';
+    frag.appendChild(note);
+  }
+  else if(b.kind==='parts'){
+    b.items.forEach(it=>{
+      const row = document.createElement('div');
+      row.className = 't-parts__item';
+      row.innerHTML = '<div class="t-parts__idx">'+it.idx+'</div>'+
+        '<div><div class="t-parts__tag">'+it.tag+'</div><div class="t-parts__desc">'+it.d+'</div></div>';
+      frag.appendChild(row);
+    });
+    if(b.note){
+      const note = document.createElement('div');
+      note.className = 't-note t-note--loop';
+      note.textContent = b.note;
+      frag.appendChild(note);
+    }
+  }
+  else if(b.kind==='decisions'){
+    b.items.forEach(it=>{
+      const q = document.createElement('div');
+      q.className = 't-decision-q';
+      q.textContent = it.q;
+      const a = document.createElement('div');
+      a.className = 't-decision-a';
+      a.textContent = it.a;
+      frag.append(q, a);
+    });
+  }
+  else if(b.kind==='decision-tree'){
+    const prob = document.createElement('div');
+    prob.className = 'dt-problem';
+    prob.innerHTML = '<strong>PROBLEM</strong><br>'+b.problem;
+    frag.appendChild(prob);
+    const tag = document.createElement('div');
+    tag.className = 'dt-tag';
+    tag.textContent = 'OPTIONS · 为什么这样决策';
+    frag.appendChild(tag);
+    const opts = document.createElement('div');
+    opts.className = 'dt-options';
+    b.options.forEach(o=>{
+      const op = document.createElement('div');
+      op.className = 'dt-option' + (o.chosen ? ' is-chosen' : '');
+      const v = document.createElement('div');
+      v.className = 'dt-verdict ' + (o.chosen ? 'dt-verdict--ok' : 'dt-verdict--x');
+      v.textContent = o.verdict;
+      const main = document.createElement('div');
+      main.className = 'dt-option__main';
+      let html = '<div class="dt-option__head"><span class="dt-option__tag">'+o.tag+'</span><span class="dt-option__name">'+o.name+'</span></div>'+
+        '<div class="dt-option__reason">'+o.reason+'</div>';
+      if(o.decompose){
+        html += '<div class="dt-decompose"><div class="dt-decompose__title">OPTION C · 拆解为三个部分</div>';
+        o.decompose.forEach(p=>{
+          html += '<div class="dt-part"><span class="dt-part__idx">'+p.idx+'</span><span class="dt-part__tag">'+p.tag+'</span><span class="dt-part__d">'+p.d+'</span></div>';
+        });
+        if(o.note) html += '<div class="dt-decompose__note">'+o.note+'</div>';
+        html += '</div>';
+      }
+      main.innerHTML = html;
+      op.append(v, main);
+      opts.appendChild(op);
+    });
+    frag.appendChild(opts);
+  }
+  else if(b.kind==='directions'){
+    const wrap = document.createElement('div');
+    wrap.className = 't-dirs';
+    b.dirs.forEach(d=>{
+      const el = document.createElement('div');
+      el.className = 't-dir' + (d.state==='selected' ? ' t-dir--on' : ' t-dir--off');
+      el.innerHTML = '<div class="t-dir__tag">'+d.tag+'</div>'+
+        '<div class="t-dir__name">'+d.name+'</div>'+
+        '<div class="t-dir__desc">'+d.desc+'</div>'+
+        '<div class="t-dir__note">'+d.note+'</div>'+
+        (d.state==='selected' ? '<div class="t-dir__sel">✓ SELECTED</div>' : '<div class="t-dir__mark">✕</div>');
+      wrap.appendChild(el);
+    });
+    frag.appendChild(wrap);
+  }
+  else if(b.kind==='choice'){
+    const c = document.createElement('div');
+    c.className = 't-choice';
+    c.innerHTML = '<div class="t-choice__name">'+b.choice+'</div><div class="t-choice__text">'+b.text+'</div>';
+    frag.appendChild(c);
+  }
+  else if(b.kind==='flow'){
+    const fl = document.createElement('div');
+    fl.className = 't-flow';
+    b.steps.forEach((s,i)=>{
+      const seg = document.createElement('span');
+      seg.className = 't-flow__seg';
+      seg.textContent = s;
+      fl.appendChild(seg);
+      if(i < b.steps.length-1){
+        const ar = document.createElement('span');
+        ar.className = 't-flow__arrow';
+        ar.textContent = '→';
+        fl.appendChild(ar);
+      }
+    });
+    frag.appendChild(fl);
+    if(b.note){
+      const note = document.createElement('div');
+      note.className = 't-note t-note--loop';
+      note.textContent = b.note;
+      frag.appendChild(note);
+    }
+  }
+  else if(b.kind==='rules'){
+    b.cats.forEach(c=>{
+      const row = document.createElement('div');
+      row.className = 't-rule';
+      row.innerHTML = '<div class="t-rule__tag">'+c.tag+'</div><div class="t-rule__desc">'+c.d+'</div>';
+      frag.appendChild(row);
+    });
+    if(b.rel){
+      const rel = document.createElement('div');
+      rel.className = 't-note t-note--loop';
+      rel.textContent = b.rel;
+      frag.appendChild(rel);
+    }
+  }
+  else if(b.kind==='result'){
+    const stats = document.createElement('div');
+    stats.className = 't-stats';
+    b.stats.forEach(s=>{
+      const el = document.createElement('div');
+      el.className = 't-stat';
+      el.innerHTML = '<div class="t-stat__k">'+s.k+'</div><div class="t-stat__d">'+s.d+'</div>';
+      stats.appendChild(el);
+    });
+    frag.appendChild(stats);
+    if(b.text){
+      const t = document.createElement('div');
+      t.className = 't-block__body';
+      t.style.marginTop = 'var(--s3)';
+      t.style.color = 'var(--c-text-secondary)';
+      t.style.fontSize = '13px';
+      t.textContent = b.text;
+      frag.appendChild(t);
+    }
+  }
+  else if(b.kind==='questions'){
+    b.qs.forEach(q=>{
+      const el = document.createElement('div');
+      el.className = 't-question';
+      el.innerHTML = '<span class="t-question__q">Q</span><span class="t-question__text">'+q+'</span>';
+      frag.appendChild(el);
+    });
+  }
+  else if(b.kind==='pages'){
+    b.pages.forEach(p=>{
+      const el = document.createElement('div');
+      el.className = 't-page';
+      el.textContent = p;
+      frag.appendChild(el);
+    });
+  }
+  else if(b.kind==='dimensions'){
+    b.items.forEach(it=>{
+      const row = document.createElement('div');
+      row.className = 't-dim';
+      row.innerHTML = '<div class="t-dim__idx">'+it.idx+'</div>'+
+        '<div><div class="t-dim__tag">'+it.tag+'</div><div class="t-dim__desc">'+it.d+'</div></div>';
+      frag.appendChild(row);
+    });
+  }
+  else if(b.kind==='deliverables'){
+    b.items.forEach(it=>{
+      const row = document.createElement('div');
+      row.className = 't-deliv';
+      row.innerHTML = '<div class="t-deliv__idx">'+it.idx+'</div>'+
+        '<div><div class="t-deliv__tag">'+it.tag+'</div><div class="t-deliv__desc">'+it.d+'</div></div>';
+      frag.appendChild(row);
+    });
+  }
+  return frag;
+}
+
+/* ---------- Artifact renderers ---------- */
+function renderArtifact(mod){
+  if(ifaceTimer){ clearInterval(ifaceTimer); ifaceTimer = null; }
+  const a = mod.artifact;
+  artifactCol.className = 'artifact' + (a.density ? ' artifact--'+a.density : '');
+  artifactCol.innerHTML = '';
+  if(mod.status==='pending'){
+    artifactCol.innerHTML = '<div class="pending-note">Artifact 开发中</div>';
+    return;
+  }
+  const head = document.createElement('div');
+  head.className = 'artifact__head';
+  head.innerHTML = '<div><div class="artifact__name">'+a.name+'</div>'+
+    '<div class="artifact__caption">'+a.caption+'</div></div>'+
+    '<button class="artifact__expand" type="button">展开 ↗</button>';
+  artifactCol.appendChild(head);
+  const body = document.createElement('div');
+  body.className = 'artifact__body';
+  artifactCol.appendChild(body);
+
+  if(a.subtype==='funnel') renderFunnel(body, a);
+  else if(a.subtype==='matrix') renderMatrix(body, a);
+  else if(a.subtype==='loop') renderBlueprint(body, a);
+  else if(a.subtype==='gallery') renderGallery(body, a);
+  else if(a.subtype==='architecture') renderArchitecture(body, a);
+  else if(a.subtype==='interface') renderInterface(body, a);
+  else if(a.subtype==='system') renderSystem(body, a);
+  else if(a.subtype==='proof') renderProof(body, a);
+  else if(a.subtype==='deployment') renderDeployment(body, a);
+  else if(a.subtype==='noise-to-insight') renderNoiseToInsight(body, a, head.querySelector('.artifact__expand'));
+
+  // expand modal for all subtypes except noise-to-insight (which handles its own modal)
+  if(a.subtype !== 'noise-to-insight'){
+    head.querySelector('.artifact__expand').addEventListener('click', ()=>{
+      pauseAutoPlay();
+      openModal(a.name, body.cloneNode(true));
+    });
+  }
+}
+
+function renderFunnel(body, a){
+  const funnel = document.createElement('div');
+  funnel.className = 'funnel';
+  a.stages.forEach((s, i)=>{
+    const stage = document.createElement('div');
+    stage.className = 'funnel__stage funnel__stage--s'+(i+1) + (s.final?' funnel__stage--final':'');
+    let inner = '<div class="funnel__key">'+s.key+'</div><div class="funnel__desc">'+s.desc+'</div>';
+    if(s.final){
+      inner += '<div class="funnel__badge">PRODUCT OPPORTUNITY</div>';
+      inner += '<div class="funnel__final-note">'+s.note+'</div>';
+    } else if(s.note){
+      inner += '<div class="funnel__note">'+s.note+'</div>';
+    }
+    stage.innerHTML = inner;
+    stage.classList.add('reveal-item');
+    funnel.appendChild(stage);
+    if(i < a.stages.length-1){
+      const conn = document.createElement('div');
+      conn.className = 'funnel__connector reveal-item';
+      funnel.appendChild(conn);
+    }
+  });
+  body.appendChild(funnel);
+  revealSequence(funnel.querySelectorAll('.reveal-item'), 120, 450);
+}
+
+function renderMatrix(body, a){
+  const matrix = document.createElement('div');
+  matrix.className = 'matrix';
+  matrix.innerHTML = '<div class="matrix__col-head">BEFORE</div><div></div><div class="matrix__col-head">AFTER</div>';
+  const mid = document.createElement('div');
+  mid.className = 'matrix__mid';
+  mid.innerHTML = '<div class="matrix__mid-line"></div><div class="matrix__mid-label">ASSUMPTION → VALIDATION</div><div class="matrix__mid-line"></div>';
+  a.rows.forEach(r=>{
+    const before = document.createElement('div');
+    before.className = 'matrix__cell' + (r.elevated && r.before!=='A' ? ' matrix__cell--low' : '') + ' reveal-item';
+    before.innerHTML = '<div class="matrix__cell-label">'+r.label+'</div><div class="matrix__cell-grade">Priority '+r.before+'</div>';
+    const after = document.createElement('div');
+    after.className = 'matrix__cell' + (r.elevated ? ' matrix__cell--elevated' : '') + ' reveal-item';
+    after.innerHTML = '<div class="matrix__cell-label">'+r.label+'</div><div class="matrix__cell-grade">Priority '+r.after+'</div>'+
+      (r.elevated?'<span class="matrix__priority">PRIORITY ↑</span>':'')+
+      (r.change?'<div class="matrix__hover-tip">'+r.change+'</div>':'');
+    matrix.appendChild(before);
+    matrix.appendChild(mid.cloneNode(true));
+    matrix.appendChild(after);
+  });
+  body.appendChild(matrix);
+  const ki = document.createElement('div');
+  ki.className = 'key-insight reveal-item';
+  ki.innerHTML = '<div class="key-insight__en">'+a.keyInsight.en+'</div><div class="key-insight__zh">'+a.keyInsight.zh+'</div>';
+  body.appendChild(ki);
+  revealSequence(body.querySelectorAll('.reveal-item'), 110, 400);
+}
+
+function renderBlueprint(body, a){
+  const svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
+  svg.setAttribute('viewBox','0 0 520 420');
+  svg.setAttribute('class','blueprint');
+  // node helper
+  const nodes = [
+    { id:'q', x:210, y:14, w:100, h:42, cls:'bp-box--center', label:'USER QUESTION', sub:'自然语言提问' },
+    { id:'c', x:200, y:82, w:120, h:42, cls:'bp-box--accent', label:'CONVERSATION', sub:'Ask naturally' },
+    { id:'k', x:185, y:150, w:150, h:42, cls:'bp-box', label:'KNOWLEDGE QUERY', sub:'Semantic routing' },
+    { id:'g', x:24, y:218, w:150, h:52, cls:'bp-box', label:'CAUSAL GRAPH', sub:'See why' },
+    { id:'e', x:346, y:218, w:150, h:52, cls:'bp-box', label:'EVIDENCE LIBRARY', sub:'Trace the source' },
+    { id:'a', x:175, y:312, w:170, h:54, cls:'bp-box--core', label:'EXPLAINABLE ANSWER', sub:'Trusted answer', core:true }
+  ];
+  const links = [
+    ['q','c'],['c','k'],['k','g'],['k','e'],['g','a'],['e','a']
+  ];
+  // center points
+  function cx(n){ return n.x + n.w/2; }
+  function cy(n){ return n.y + n.h/2; }
+  // draw links
+  links.forEach(([f,t])=>{
+    const fn = nodes.find(n=>n.id===f), tn = nodes.find(n=>n.id===t);
+    const path = document.createElementNS('http://www.w3.org/2000/svg','path');
+    const x1=cx(fn), y1=fn.y+fn.h, x2=cx(tn), y2=tn.y;
+    const my=(y1+y2)/2;
+    path.setAttribute('d','M '+x1+' '+y1+' C '+x1+' '+my+', '+x2+' '+my+', '+x2+' '+y2);
+    path.setAttribute('class','bp-link reveal-item');
+    svg.appendChild(path);
+  });
+  // draw nodes
+  nodes.forEach(n=>{
+    const g = document.createElementNS('http://www.w3.org/2000/svg','g');
+    g.setAttribute('class','bp-node reveal-item');
+    g.dataset.id = n.id;
+    const rect = document.createElementNS('http://www.w3.org/2000/svg','rect');
+    rect.setAttribute('x',n.x); rect.setAttribute('y',n.y);
+    rect.setAttribute('width',n.w); rect.setAttribute('height',n.h);
+    rect.setAttribute('rx',10);
+    rect.setAttribute('class','bp-box '+n.cls);
+    g.appendChild(rect);
+    const label = document.createElementNS('http://www.w3.org/2000/svg','text');
+    label.setAttribute('x',cx(n)); label.setAttribute('y',n.y+n.h/2-2);
+    label.setAttribute('text-anchor','middle');
+    label.setAttribute('class','bp-label');
+    label.textContent = n.label;
+    g.appendChild(label);
+    const sub = document.createElementNS('http://www.w3.org/2000/svg','text');
+    sub.setAttribute('x',cx(n)); sub.setAttribute('y',n.y+n.h/2+13);
+    sub.setAttribute('text-anchor','middle');
+    sub.setAttribute('class','bp-sub');
+    sub.textContent = n.sub;
+    g.appendChild(sub);
+    if(n.core){
+      const tag = document.createElementNS('http://www.w3.org/2000/svg','text');
+      tag.setAttribute('x',cx(n)); tag.setAttribute('y',n.y-6);
+      tag.setAttribute('text-anchor','middle');
+      tag.setAttribute('class','bp-core-tag');
+      tag.textContent = 'PRODUCT CORE';
+      g.appendChild(tag);
+    }
+    // hover dim others
+    g.addEventListener('mouseenter', ()=>{
+      nodes.forEach(m=>{
+        const mg = svg.querySelector('.bp-node[data-id="'+m.id+'"]');
+        if(m.id!==n.id) mg.classList.add('bp-dim');
+      });
+    });
+    g.addEventListener('mouseleave', ()=>{
+      svg.querySelectorAll('.bp-node').forEach(mg=>mg.classList.remove('bp-dim'));
+    });
+    svg.appendChild(g);
+  });
+  body.appendChild(svg);
+  if(a.preview){
+    const ip = document.createElement('div');
+    ip.className = 'interface-preview reveal-item';
+    ip.innerHTML = '<div class="interface-preview__label">HOW IT APPEARS · Blueprint Preview</div>'+
+      '<div class="ip-grid">'+
+      '<div class="ip-col ip-col--nav">Nav<br>· 首页<br>· 图库<br>· 文献</div>'+
+      '<div class="ip-col ip-col--mid"><div class="ip-answer">Answer</div>对话区承载任务与解释</div>'+
+      '<div class="ip-col ip-col--trace"><div class="ip-step">Step 01</div><div class="ip-step">Step 02</div><div class="ip-step">Step 03</div></div>'+
+      '</div>';
+    body.appendChild(ip);
+  }
+  revealSequence(body.querySelectorAll('.reveal-item'), 130, 500);
+}
+
+/* ---------- Module 04 · Visual Gallery ---------- */
+function renderGallery(body, a){
+  const sub = document.createElement('div');
+  sub.className = 'art-sub';
+  sub.textContent = 'VISUAL EXPLORATION';
+  body.appendChild(sub);
+  const explore = document.createElement('div');
+  explore.className = 'gal';
+  a.directions.forEach(d=>{
+    const card = document.createElement('div');
+    card.className = 'gal__dir reveal-item' + (d.state==='on' ? ' gal__dir--on' : '');
+    let sw = '<div class="gal__sw">';
+    d.colors.forEach(c=>{ sw += '<span class="gal__swatch" style="background:'+c+'"></span>'; });
+    sw += '</div>';
+    card.innerHTML = '<div class="gal__dir-name">'+d.name+'</div><div class="gal__dir-kw">'+d.kw+'</div>'+ sw +
+      (d.state==='on' ? '<div class="gal__sel">✓ SELECTED</div>' : '');
+    explore.appendChild(card);
+  });
+  body.appendChild(explore);
+  const sub2 = document.createElement('div');
+  sub2.className = 'art-sub';
+  sub2.style.marginTop = 'var(--s6)';
+  sub2.textContent = 'DESIGN SYSTEM';
+  body.appendChild(sub2);
+  const sys = document.createElement('div');
+  sys.className = 'gal__sys';
+  a.tokens.forEach(t=>{
+    const col = document.createElement('div');
+    col.className = 'gal__tok reveal-item';
+    let inner = '<div class="gal__tok-group">'+t.group+'</div>';
+    if(t.group==='COLOR'){
+      inner += '<div class="gal__tok-colors">';
+      t.items.forEach(c=>{ inner += '<span class="gal__tok-color" style="background:'+c+'" title="'+c+'"></span>'; });
+      inner += '</div>';
+    } else {
+      inner += '<div class="gal__tok-items">';
+      t.items.forEach(it=>{ inner += '<span class="gal__tok-item">'+it+'</span>'; });
+      inner += '</div>';
+    }
+    col.innerHTML = inner;
+    sys.appendChild(col);
+  });
+  body.appendChild(sys);
+  revealSequence(body.querySelectorAll('.reveal-item'), 110, 500);
+}
+
+/* ---------- Module 05 · Knowledge Architecture ---------- */
+function renderArchitecture(body, a){
+  const sub = document.createElement('div');
+  sub.className = 'art-sub';
+  sub.textContent = 'SCHEMA · 四类节点';
+  body.appendChild(sub);
+  const cats = document.createElement('div');
+  cats.className = 'arch__cats';
+  a.cats.forEach(c=>{
+    const el = document.createElement('div');
+    el.className = 'arch__cat reveal-item';
+    el.style.borderLeftColor = c.c;
+    el.innerHTML = '<span class="arch__cat-dot" style="background:'+c.c+'"></span><span class="arch__cat-tag">'+c.tag+'</span>';
+    cats.appendChild(el);
+  });
+  body.appendChild(cats);
+  const sub2 = document.createElement('div');
+  sub2.className = 'art-sub';
+  sub2.style.marginTop = 'var(--s5)';
+  sub2.textContent = 'RELATIONSHIP METADATA';
+  body.appendChild(sub2);
+  const meta = document.createElement('div');
+  meta.className = 'arch__meta';
+  a.meta.forEach(m=>{
+    const el = document.createElement('div');
+    el.className = 'arch__meta-item reveal-item';
+    el.textContent = m;
+    meta.appendChild(el);
+  });
+  body.appendChild(meta);
+  const sub3 = document.createElement('div');
+  sub3.className = 'art-sub';
+  sub3.style.marginTop = 'var(--s5)';
+  sub3.textContent = 'LIVE GRAPH PREVIEW · FIP';
+  body.appendChild(sub3);
+  const g = a.graph;
+  const graph = document.createElement('div');
+  graph.className = 'arch__graph';
+  const root = document.createElement('div');
+  root.className = 'arch__gnode arch__gnode--root reveal-item';
+  root.innerHTML = '<div class="arch__g-label">'+g.root+'</div><div class="arch__g-sub">center entity</div>';
+  graph.appendChild(root);
+  g.edges.forEach(e=>{
+    const row = document.createElement('div');
+    row.className = 'arch__edge reveal-item';
+    row.innerHTML = '<span class="arch__g-rel">'+e.rel+'</span><span class="arch__g-arrow">→</span>'+
+      '<span class="arch__gnode arch__gnode--leaf"><span class="arch__g-label">'+e.to+'</span></span>';
+    graph.appendChild(row);
+  });
+  body.appendChild(graph);
+  revealSequence(body.querySelectorAll('.reveal-item'), 110, 550);
+}
+
+/* ---------- Module 06 · Interface Showcase ---------- */
+function renderInterface(body, a){
+  const tabs = document.createElement('div');
+  tabs.className = 'iface__tabs';
+  const panels = document.createElement('div');
+  panels.className = 'iface__panels';
+  a.tabs.forEach((t,i)=>{
+    const btn = document.createElement('button');
+    btn.className = 'iface__tab' + (i===0?' is-active':'');
+    btn.type = 'button';
+    btn.textContent = t.label;
+    btn.dataset.tab = t.id;
+    tabs.appendChild(btn);
+    const panel = document.createElement('div');
+    panel.className = 'iface__panel' + (i===0?' is-active':'');
+    panel.dataset.panel = t.id;
+    panel.appendChild(buildScreen(t.id));
+    const hwrap = document.createElement('div');
+    hwrap.className = 'iface__hotspots';
+    t.hotspots.forEach(h=>{
+      const dot = document.createElement('button');
+      dot.className = 'iface__hotspot';
+      dot.type = 'button';
+      dot.style.left = h.x+'%';
+      dot.style.top = h.y+'%';
+      dot.textContent = h.n;
+      dot.dataset.tip = h.label+' — '+h.tip;
+      hwrap.appendChild(dot);
+    });
+    panel.appendChild(hwrap);
+    panels.appendChild(panel);
+  });
+  body.appendChild(tabs);
+  body.appendChild(panels);
+  const tip = document.createElement('div');
+  tip.className = 'iface__tip';
+  tip.textContent = 'Hover 标记查看重点区域（①②③）；点击 Tab 切换页面。';
+  body.appendChild(tip);
+  body.querySelectorAll('.iface__tab').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      pauseAutoPlay();
+      body.querySelectorAll('.iface__tab').forEach(b=>b.classList.remove('is-active'));
+      body.querySelectorAll('.iface__panel').forEach(p=>p.classList.remove('is-active'));
+      btn.classList.add('is-active');
+      body.querySelector('.iface__panel[data-panel="'+btn.dataset.tab+'"]').classList.add('is-active');
+    });
+  });
+  body.querySelectorAll('.iface__hotspot').forEach(dot=>{
+    dot.addEventListener('mouseenter', ()=>{ tip.textContent = dot.dataset.tip; });
+    dot.addEventListener('click', ()=>{
+      pauseAutoPlay();
+      const pid = dot.closest('.iface__panel').dataset.panel;
+      openModal('Interface Preview · '+dot.dataset.tip, buildScreen(pid));
+    });
+  });
+  if(speed >= 7000){
+    ifaceTimer = setInterval(()=>{
+      const active = body.querySelector('.iface__tab.is-active');
+      const all = Array.from(body.querySelectorAll('.iface__tab'));
+      const idx = all.indexOf(active);
+      all[(idx+1)%all.length].click();
+    }, 2000);
+  }
+  revealSequence(body.querySelectorAll('.reveal-item'));
+}
+
+function buildScreen(id){
+  const screen = document.createElement('div');
+  screen.className = 'if-screen';
+  if(id==='conversation'){
+    screen.innerHTML = '<div class="if-mock if-mock--conv">'+
+      '<div class="if-nav">首页 · 图库 · 文献</div>'+
+      '<div class="if-chat">'+
+        '<div class="if-bubble if-bubble--user">猫传腹的早期症状有哪些？</div>'+
+        '<div class="if-bubble if-bubble--bot"><b>常见表现</b>：持续发热、食欲下降、腹腔积液。<span class="if-tag">执行轨迹</span></div>'+
+        '<div class="if-trace">Step 01 · 实体识别<br>Step 02 · 因果查询<br>Step 03 · 证据检索</div>'+
+      '</div></div>';
+  } else if(id==='graph'){
+    screen.innerHTML = '<div class="if-mock if-mock--graph">'+
+      '<div class="if-legend"><span class="if-lg if-lg--c">病因</span><span class="if-lg if-lg--m">机制</span><span class="if-lg if-lg--d">诊断</span><span class="if-lg if-lg--i">干预</span></div>'+
+      '<div class="if-graphsvg"><svg viewBox="0 0 200 120" preserveAspectRatio="xMidYMid meet">'+
+        '<line x1="100" y1="22" x2="62" y2="58" stroke="#EDE5DD" stroke-width="1.5"/>'+
+        '<line x1="100" y1="22" x2="138" y2="58" stroke="#EDE5DD" stroke-width="1.5"/>'+
+        '<line x1="62" y1="58" x2="100" y2="100" stroke="#EDE5DD" stroke-width="1.5"/>'+
+        '<line x1="138" y1="58" x2="100" y2="100" stroke="#EDE5DD" stroke-width="1.5"/>'+
+        '<circle cx="100" cy="22" r="11" fill="#FAF3EC" stroke="#8C6B5D" stroke-width="1.4"/>'+
+        '<circle cx="62" cy="58" r="11" fill="#fff" stroke="#C08A6A" stroke-width="1.4"/>'+
+        '<circle cx="138" cy="58" r="11" fill="#fff" stroke="#8AA0B0" stroke-width="1.4"/>'+
+        '<circle cx="100" cy="100" r="11" fill="#fff" stroke="#8AA088" stroke-width="1.4"/>'+
+        '<text x="100" y="26" text-anchor="middle" font-size="8" fill="#6B5045">FIP</text>'+
+        '<text x="62" y="62" text-anchor="middle" font-size="7" fill="#3E3836">FCoV</text>'+
+        '<text x="138" y="62" text-anchor="middle" font-size="7" fill="#3E3836">PCR</text>'+
+        '<text x="100" y="104" text-anchor="middle" font-size="7" fill="#3E3836">GS</text>'+
+      '</svg></div>'+
+      '<div class="if-detail">选中节点：FIP<br>关系：caused by → FCoV</div>'+
+      '</div>';
+  } else {
+    screen.innerHTML = '<div class="if-mock if-mock--lit">'+
+      '<div class="if-search">搜索 / 筛选：FIP GS-441524</div>'+
+      '<div class="if-litcards">'+
+        '<div class="if-litcard"><b>Study A</b><br>GS-441524 efficacy<span class="if-tag">Evidence</span></div>'+
+        '<div class="if-litcard"><b>Study B</b><br>Diagnosis via PCR<span class="if-tag">Evidence</span></div>'+
+      '</div></div>';
+  }
+  return screen;
+}
+
+/* ---------- Module 07 · System Architecture ---------- */
+function renderSystem(body, a){
+  const head = document.createElement('div');
+  head.className = 'sys__head';
+  head.innerHTML = '<span class="sys__title">SYSTEM ARCHITECTURE</span>';
+  const badge = document.createElement('span');
+  badge.className = 'sys__badge';
+  badge.textContent = '● IMPLEMENTED';
+  head.appendChild(badge);
+  body.appendChild(head);
+  const stack = document.createElement('div');
+  stack.className = 'sys__stack';
+  a.layers.forEach((l,i)=>{
+    const layer = document.createElement('div');
+    layer.className = 'sys__layer sys__layer--'+l.cls+' reveal-item';
+    layer.innerHTML = '<div class="sys__layer-name">'+l.name+'</div>'+
+      '<div class="sys__layer-sub">'+l.sub+'</div>'+
+      '<div class="sys__layer-files">'+l.files+'</div>'+
+      (i<a.layers.length-1 ? '<div class="sys__conn">↓ · · · ↓</div>' : '');
+    stack.appendChild(layer);
+  });
+  body.appendChild(stack);
+  const io = document.createElement('div');
+  io.className = 'sys__io';
+  io.innerHTML = '<div class="sys__io-col"><div class="sys__io-label">INPUT</div><div class="sys__io-text">Product Architecture · Design System · Data Schema</div></div>'+
+    '<div class="sys__io-arrow">↓ BUILD</div>'+
+    '<div class="sys__io-col"><div class="sys__io-label">OUTPUT</div><div class="sys__io-text">A Working Knowledge System</div></div>';
+  body.appendChild(io);
+  revealSequence(body.querySelectorAll('.reveal-item'), 130, 600);
+}
+
+/* ---------- Module 08 · Proof Matrix ---------- */
+function renderProof(body, a){
+  const sum = document.createElement('div');
+  sum.className = 'proof__summary reveal-item';
+  sum.innerHTML = '<div class="proof__sum-item"><div class="proof__sum-k">'+a.summary.tests+' / '+a.summary.tests+'</div><div class="proof__sum-d">Core Tests Passed</div></div>'+
+    '<div class="proof__sum-item"><div class="proof__sum-k">+ '+a.summary.scenarios+'</div><div class="proof__sum-d">Critical User Scenarios</div></div>';
+  body.appendChild(sum);
+  const sub = document.createElement('div');
+  sub.className = 'art-sub';
+  sub.style.marginTop = 'var(--s5)';
+  sub.textContent = 'SCENARIO COVERAGE';
+  body.appendChild(sub);
+  const list = document.createElement('div');
+  list.className = 'proof__list';
+  a.rows.forEach(r=>{
+    const row = document.createElement('div');
+    row.className = 'proof__row reveal-item';
+    const sc = r.status==='pass' ? 'proof__status--pass' : r.status==='info' ? 'proof__status--info' : 'proof__status--warn';
+    const st = r.status==='pass' ? '✓ Passed' : r.status==='info' ? 'Boundary Triggered' : 'Clarification';
+    row.innerHTML = '<div class="proof__row-main"><div class="proof__row-s">'+r.s+'</div><div class="proof__row-input">'+r.input+'</div></div>'+
+      '<div class="proof__status '+sc+'">'+st+'</div>';
+    if(r.detail){
+      const acc = document.createElement('div');
+      acc.className = 'proof__acc';
+      acc.innerHTML = '<div class="proof__acc-row"><span>INPUT</span>'+r.detail.input+'</div>'+
+        '<div class="proof__acc-row"><span>EXPECTED</span>'+r.detail.expected+'</div>'+
+        '<div class="proof__acc-row"><span>ACTUAL</span>'+r.detail.actual+'</div>'+
+        '<div class="proof__acc-row"><span>RESULT</span>'+r.detail.result+'</div>';
+      acc.style.display = 'none';
+      row.appendChild(acc);
+      row.classList.add('proof__row--expandable');
+      row.addEventListener('click', ()=>{
+        pauseAutoPlay();
+        acc.style.display = acc.style.display==='none' ? 'block' : 'none';
+        row.classList.toggle('proof__row--open', acc.style.display==='block');
+      });
+    }
+    list.appendChild(row);
+  });
+  body.appendChild(list);
+  revealSequence(body.querySelectorAll('.reveal-item'), 110, 500);
+}
+
+/* ---------- Module 09 · Deployment ---------- */
+function renderDeployment(body, a){
+  const badge = document.createElement('div');
+  badge.className = 'deploy__live';
+  badge.textContent = '● LIVE';
+  body.appendChild(badge);
+  const map = document.createElement('div');
+  map.className = 'deploy__map';
+  a.nodes.forEach((n,i)=>{
+    const node = document.createElement('div');
+    node.className = 'deploy__node reveal-item';
+    node.innerHTML = '<div class="deploy__node-label">'+n.label+'</div><div class="deploy__node-sub">'+n.sub+'</div>';
+    map.appendChild(node);
+    if(i<a.nodes.length-1){
+      const conn = document.createElement('div');
+      conn.className = 'deploy__conn reveal-item';
+      conn.textContent = '↓';
+      map.appendChild(conn);
+    }
+  });
+  const infra = document.createElement('div');
+  infra.className = 'deploy__infra reveal-item';
+  infra.innerHTML = '<div class="deploy__node deploy__node--infra"><div class="deploy__node-label">'+a.infra.label+'</div><div class="deploy__node-sub">'+a.infra.sub+'</div></div>';
+  infra.style.marginTop = 'var(--s4)';
+  map.appendChild(infra);
+  body.appendChild(map);
+  const out = document.createElement('div');
+  out.className = 'deploy__outcome';
+  out.innerHTML = '<div class="deploy__out-title">PROJECT OUTCOME</div>';
+  a.outcome.forEach(o=>{
+    const item = document.createElement('div');
+    item.className = 'deploy__out-item';
+    item.innerHTML = '<span class="deploy__check">✓</span>'+o;
+    out.appendChild(item);
+  });
+  const liveItem = document.createElement('div');
+  liveItem.className = 'deploy__out-item deploy__out-item--live';
+  liveItem.innerHTML = '<span class="deploy__dot">●</span>LIVE · Deployed';
+  out.appendChild(liveItem);
+  const done = document.createElement('div');
+  done.className = 'deploy__done';
+  done.textContent = 'A complete product journey.';
+  out.appendChild(done);
+  body.appendChild(out);
+  const ft = document.createElement('div');
+  ft.className = 'deploy__fromto';
+  ft.innerHTML = '<div><div class="deploy__ft-label">FROM</div><div class="deploy__ft-text">Local Prototype / Personal Environment / Static Demo</div></div>'+
+    '<div class="deploy__ft-arrow">↓</div>'+
+    '<div><div class="deploy__ft-label">TO</div><div class="deploy__ft-text">Live Application / Cloud Infrastructure / Independent Access</div></div>';
+  body.appendChild(ft);
+  const end = document.createElement('div');
+  end.className = 'deploy__end';
+  end.textContent = 'The journey ends here. The product starts here.';
+  body.appendChild(end);
+  revealSequence(body.querySelectorAll('.reveal-item'), 130, 600);
+}
+
+/* ---------- Module 02 · Step Switcher Artifact ---------- */
+function renderNoiseToInsight(body, a, expandBtn){
+  let activeIdx = 0;
+  const wrap = document.createElement('div');
+  wrap.className = 'nti';
+
+  // Step switcher (used only inside modal)
+  const switcher = document.createElement('div');
+  switcher.className = 'nti__switcher';
+  const panes = [];
+  const paneContents = [];
+
+  a.steps.forEach((step, i)=>{
+    const tab = document.createElement('button');
+    tab.className = 'nti__tab' + (i===0?' is-active':'');
+    tab.type = 'button';
+    tab.innerHTML = '<span class="nti__tab-idx">'+step.idx+'</span>'+
+      '<span class="nti__tab-en">'+step.en+'</span>'+
+      '<span class="nti__tab-title">'+step.title+'</span>';
+    switcher.appendChild(tab);
+
+    const pane = document.createElement('div');
+    pane.className = 'nti__pane';
+
+    // Step header: 01 VALIDATE 验证需求
+    const header = document.createElement('div');
+    header.className = 'nti__step-header reveal-item';
+    header.innerHTML = '<span class="nti__step-idx">'+step.idx+'</span>'+
+      '<span class="nti__step-en">'+step.en+'</span>'+
+      '<span class="nti__step-title">'+step.title+'</span>';
+    pane.appendChild(header);
+
+    // Step content (reused for modal, without header)
+    const content = document.createElement('div');
+    content.className = 'nti__pane-content';
+    if(step.id==='validate') renderValidatePane(content, step);
+    else if(step.id==='listen') renderListenPane(content, step);
+    else if(step.id==='update') renderUpdatePane(content, step);
+    pane.appendChild(content);
+
+    panes.push(pane);
+    paneContents.push(content);
+  });
+
+  // Default view: all three steps stacked vertically with dividers
+  const canvas = document.createElement('div');
+  canvas.className = 'nti__canvas';
+  panes.forEach((p, i)=>{
+    canvas.appendChild(p);
+    if(i < panes.length - 1){
+      const divider = document.createElement('div');
+      divider.className = 'nti__divider';
+      canvas.appendChild(divider);
+    }
+  });
+
+  wrap.appendChild(canvas);
+  body.appendChild(wrap);
+
+  // Expand opens modal with switcher + panes
+  if(expandBtn){
+    expandBtn.addEventListener('click', ()=>{
+      pauseAutoPlay();
+      const modalWrap = document.createElement('div');
+      modalWrap.className = 'nti nti--modal';
+      const modalSwitcher = switcher.cloneNode(true);
+      const modalTabs = Array.from(modalSwitcher.querySelectorAll('.nti__tab'));
+      const modalCanvas = document.createElement('div');
+      modalCanvas.className = 'nti__canvas';
+      const modalPanes = paneContents.map((content, idx)=>{
+        const mp = document.createElement('div');
+        mp.className = 'nti__pane' + (idx===activeIdx?' is-active':'');
+        mp.appendChild(content.cloneNode(true));
+        return mp;
+      });
+
+      modalTabs.forEach((t, i)=>{
+        t.classList.toggle('is-active', i===activeIdx);
+        t.addEventListener('click', ()=>{
+          modalTabs.forEach((mt,idx)=> mt.classList.toggle('is-active', idx===i));
+          modalPanes.forEach((mp,idx)=> mp.classList.toggle('is-active', idx===i));
+          if(modalPanes[i]) revealSequence(modalPanes[i].querySelectorAll('.reveal-item'), 90, 900);
+        });
+      });
+      modalPanes.forEach(mp=>modalCanvas.appendChild(mp));
+
+      modalWrap.append(modalSwitcher, modalCanvas);
+      openModal(a.name, modalWrap);
+    });
+  }
+
+  revealSequence(wrap.querySelectorAll('.reveal-item'), 90, 900);
+}
+
+function renderValidatePane(pane, step){
+  pane.innerHTML = '<div class="nti__question">'+step.question+'</div>';
+  const voicesWrap = document.createElement('div');
+  voicesWrap.className = 'nti__voices';
+  const positions = [{ml:8, mt:0, mx:-16},{ml:0, mt:10, mx:-12},{ml:40, mt:6, mx:-14}];
+  step.voices.forEach((v,i)=>{
+    const pos = positions[i] || {ml:0, mt:0, mx:0};
+    const isRight = v.side === 'right';
+    const el = document.createElement('div');
+    el.className = 'nti__voice reveal-item' + (isRight?' is-right':'');
+    el.style.marginLeft = pos.ml + 'px';
+    el.style.marginTop = (i===0?0:-pos.mt) + 'px';
+    if(pos.mx) el.style.transform = 'translateX('+(isRight?-pos.mx:pos.mx)+'px)';
+    el.style.zIndex = i + 1;
+    const bubbleClass = 'nti__voice-bubble' + (isRight?' is-right':'');
+    el.innerHTML = '<div class="nti__voice-avatar">'+v.avatar+'</div>'+
+      '<div class="'+bubbleClass+'"><div class="nti__voice-role">'+v.role+'</div><div class="nti__voice-text">“'+v.text+'”</div></div>';
+    voicesWrap.appendChild(el);
+  });
+  pane.appendChild(voicesWrap);
+
+  const takeaways = document.createElement('div');
+  takeaways.className = 'nti__takeaways reveal-item';
+  step.takeaways.forEach(t=>{
+    const row = document.createElement('div');
+    row.className = 'nti__takeaway';
+    row.innerHTML = '<span class="nti__takeaway-mark">✓</span><span>'+t+'</span>';
+    takeaways.appendChild(row);
+  });
+  pane.appendChild(takeaways);
+}
+
+function renderListenPane(pane, step){
+  pane.innerHTML = '<div class="nti__question">'+step.question+'</div>';
+  const fragWrap = document.createElement('div');
+  fragWrap.className = 'nti__fragments';
+  const positions = [
+    {x:8, y:0},{x:48, y:22},{x:12, y:54},{x:56, y:70},{x:4, y:96},{x:44, y:116}
+  ];
+  step.fragments.forEach((f,i)=>{
+    const pos = positions[i] || {x:0, y:0};
+    const el = document.createElement('div');
+    el.className = 'nti__fragment nti__fragment--'+f.tier + ' reveal-item';
+    el.style.left = pos.x + '%';
+    el.style.top = pos.y + 'px';
+    el.style.fontSize = (14 * (f.size || 1)) + 'px';
+    el.textContent = f.text;
+    fragWrap.appendChild(el);
+  });
+  pane.appendChild(fragWrap);
+
+  const insight = document.createElement('div');
+  insight.className = 'nti__listen-insight reveal-item';
+  insight.innerHTML = '<div class="nti__listen-insight-lead">用户最关注的不是“得到更多信息”，而是：</div>'+
+    step.insight.map(s=>'<div class="nti__listen-insight-item">'+s+'</div>').join('');
+  pane.appendChild(insight);
+}
+
+function renderUpdatePane(pane, step){
+  pane.innerHTML = '<div class="nti__question">'+step.question+'</div>';
+  const board = document.createElement('div');
+  board.className = 'nti__shift-board reveal-item';
+  board.innerHTML = '<div class="nti__shift-title">PRIORITY SHIFT</div>';
+  step.shifts.forEach(s=>{
+    const row = document.createElement('div');
+    row.className = 'nti__shift-row';
+    row.innerHTML = '<div class="nti__shift-label">'+s.label+'</div>'+
+      '<div class="nti__shift-from">'+s.from+'</div>'+
+      '<div class="nti__shift-arrow">→</div>'+
+      '<div class="nti__shift-to">'+s.to+'</div>';
+    board.appendChild(row);
+  });
+  pane.appendChild(board);
+
+  const summary = document.createElement('div');
+  summary.className = 'nti__update-summary reveal-item';
+  summary.textContent = step.summary;
+  pane.appendChild(summary);
+}
+
+/* staggered reveal */
+function revealSequence(items, step=110, maxDelay=900){
+  items = Array.from(items);
+  if(REDUCED_MOTION){ items.forEach(it=>it.classList.add('reveal-in')); return; }
+  items.forEach((it,i)=>{
+    const d = Math.min(i*step, maxDelay);
+    setTimeout(()=>it.classList.add('reveal-in'), d);
+  });
+}
+
+/* ---------- Navigation ---------- */
+function renderNav(mod){
+  const idx = MODULES.findIndex(m=>m.id===mod.id);
+  const prev = MODULES[idx-1];
+  const next = MODULES[idx+1];
+  if(prev){ prevBtn.disabled=false; prevTitle.textContent = prev.number+' '+prev.title; }
+  else { prevBtn.disabled=true; prevTitle.textContent=''; }
+  if(next){ nextBtn.disabled=false; nextTitle.textContent = next.number+' '+next.title; }
+  else { nextBtn.disabled=true; nextTitle.textContent=''; }
+}
+
+prevBtn.addEventListener('click', ()=>{
+  const idx = MODULES.findIndex(m=>m.id===currentId);
+  if(idx>0){ pauseAutoPlay(); goToModule(MODULES[idx-1].id); }
+});
+nextBtn.addEventListener('click', ()=>{
+  const idx = MODULES.findIndex(m=>m.id===currentId);
+  if(idx<MODULES.length-1){
+    const nxt = MODULES[idx+1];
+    if(nxt.status==='pending'){ pauseAutoPlay(); showNodeHint(nxt.id); return; }
+    pauseAutoPlay(); goToModule(nxt.id);
+  }
+});
+
+/* ============================================================
+ * Auto Play
+ * ============================================================ */
+let autoplay = false;
+let playTimer = null;
+let playTick = null;
+let speed = 5000;
+let ifaceTimer = null;
+const AUTOPLAY_CHEVRONS = 5;
+
+function nextReadyId(id){
+  const idx = MODULES.findIndex(m=>m.id===id);
+  for(let i=idx+1;i<MODULES.length;i++){
+    if(MODULES[i].status==='ready') return MODULES[i].id;
+  }
+  return null;
+}
+
+function positionPlayheadAtCurrent(){
+  const node = nodeEls[currentId];
+  if(!node) return;
+  const trackRect = track.getBoundingClientRect();
+  const r = node.getBoundingClientRect();
+  playhead.style.transition = 'none';
+  playhead.style.transform = 'translateX('+(r.left - trackRect.left + r.width/2)+'px)';
+  playhead.classList.remove('is-visible');
+}
+
+function positionPlayheadBetween(fromId, toId){
+  const fromNode = nodeEls[fromId];
+  const toNode = nodeEls[toId];
+  if(!fromNode || !toNode) return;
+  const trackRect = track.getBoundingClientRect();
+  const fr = fromNode.getBoundingClientRect();
+  const tr = toNode.getBoundingClientRect();
+  const fromCx = fr.left - trackRect.left + fr.width/2;
+  const toCx = tr.left - trackRect.left + tr.width/2;
+  const mid = (fromCx + toCx)/2;
+  playhead.style.transition = 'none';
+  playhead.style.transform = 'translateX('+(mid - playhead.offsetWidth/2)+'px)';
+}
+
+function startProgress(toId){
+  playhead.classList.remove('is-visible');
+  // 彻底重建箭头 DOM，根除旧 filled 状态残留
+  playhead.innerHTML = '<span>›</span>'.repeat(AUTOPLAY_CHEVRONS);
+  void playhead.offsetWidth;
+  positionPlayheadBetween(currentId, toId);
+  playhead.classList.add('is-visible');
+  clearInterval(playTick);
+  const start = performance.now();
+  playTick = setInterval(()=>{
+    const spans = playhead.querySelectorAll('span');
+    const elapsed = performance.now() - start;
+    const filled = Math.min(AUTOPLAY_CHEVRONS, Math.floor(elapsed / (speed / AUTOPLAY_CHEVRONS)) + 1);
+    spans.forEach((s,i)=> s.classList.toggle('is-filled', i < filled));
+  }, 40);
+}
+
+function scheduleNext(){
+  clearTimeout(playTimer);
+  clearInterval(playTick);
+  if(!autoplay) return;
+  const nxt = nextReadyId(currentId);
+  if(!nxt){ pauseAutoPlay(); return; }
+  startProgress(nxt);
+  playTimer = setTimeout(()=>{
+    clearInterval(playTick);
+    if(!autoplay) return;
+    playhead.classList.remove('is-visible');
+    playhead.querySelectorAll('span').forEach(s=>s.classList.remove('is-filled'));
+    goToModule(nxt, true);
+    setTimeout(()=>{ scheduleNext(); }, 260);
+  }, speed);
+}
+
+function startAutoPlay(){
+  if(autoplay) return;
+  autoplay = true;
+  autoplayBtn.classList.remove('is-paused');
+  autoplayBtn.classList.add('is-playing');
+  autoplayBtn.textContent = '⏸ Pause';
+  // if at last ready module, restart from first ready
+  if(!nextReadyId(currentId)){
+    const firstReady = MODULES.find(m=>m.status==='ready');
+    if(firstReady && firstReady.id!==currentId){
+      goToModule(firstReady.id, true);
+      setTimeout(()=>{ scheduleNext(); }, 260);
+      return;
+    }
+  }
+  scheduleNext();
+}
+
+function pauseAutoPlay(){
+  if(!autoplay && !playhead.classList.contains('is-visible')) {
+    // still update button if needed
+  }
+  autoplay = false;
+  clearTimeout(playTimer);
+  clearInterval(playTick);
+  playhead.classList.remove('is-visible');
+  autoplayBtn.classList.remove('is-playing');
+  autoplayBtn.classList.add('is-paused');
+  autoplayBtn.textContent = '▷ Auto Play';
+}
+
+autoplayBtn.addEventListener('click', ()=>{
+  if(autoplay) pauseAutoPlay();
+  else startAutoPlay();
+});
+
+/* ============================================================
+ * Modal
+ * ============================================================ */
+let _bodyOverflowBackup = '';
+function openModal(title, contentNode){
+  modalTitle.textContent = title;
+  modalBody.innerHTML = '';
+  modalBody.appendChild(contentNode);
+  // 展开宽度至少不小于原右侧面板宽度，保证内容不会被压缩
+  const colW = artifactCol ? artifactCol.offsetWidth : 0;
+  modalBox.style.width = Math.max(colW, 560) + 'px';
+  modalMask.classList.add('is-open');
+  _bodyOverflowBackup = document.body.style.overflow || '';
+  document.body.style.overflow = 'hidden';
+  if(window.parent !== window){
+    try{ window.parent.postMessage({type:'design-modal', open:true}, '*'); }catch(err){}
+  }
+}
+function closeModal(){
+  modalMask.classList.remove('is-open');
+  modalBox.style.width = '';
+  document.body.style.overflow = _bodyOverflowBackup;
+  if(window.parent !== window){
+    try{ window.parent.postMessage({type:'design-modal', open:false}, '*'); }catch(err){}
+  }
+}
+modalClose.addEventListener('click', closeModal);
+
+/* ============================================================
+ * Init
+ * ============================================================ */
+buildJourney();
+goToModule(1, false);
+positionPlayheadAtCurrent();
+</script>
 </body>
 </html>

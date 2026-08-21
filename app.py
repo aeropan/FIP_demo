@@ -314,6 +314,9 @@ window.__DESIGN_HTML__=__DESIGN_HTML_JSON__;
       var item=e.target&&e.target.closest&&e.target.closest('.nav-menu .nav-item');
       if(!item)return;
       e.preventDefault();
+      var pageDesign=document.getElementById('pageDesign');
+      if(pageDesign){ pageDesign.classList.remove('is-modal'); }
+      document.body.style.overflow = '';
       var text=item.textContent;
       /* 每次重新查询 nav-items，防止 DOM 变化导致引用过期 */
       var navItems=document.querySelectorAll('.nav-menu .nav-item');
@@ -348,6 +351,24 @@ window.__DESIGN_HTML__=__DESIGN_HTML_JSON__;
       }
     });
   })();
+
+  /* ====== 产品设计说明 iframe 内 Expand 模态框跨 iframe 全屏遮罩 ====== */
+  (function(){
+    var pageDesign = document.getElementById('pageDesign');
+    if(!pageDesign) return;
+    window.addEventListener('message', function(e){
+      if(e.source !== pageDesign.contentWindow) return;
+      if(!e.data || e.data.type !== 'design-modal') return;
+      if(e.data.open){
+        pageDesign.classList.add('is-modal');
+        document.body.style.overflow = 'hidden';
+      } else {
+        pageDesign.classList.remove('is-modal');
+        document.body.style.overflow = '';
+      }
+    });
+  })();
+
   function bindShell() {
     const left = document.getElementById('leftSidebar');
     const right = document.getElementById('rightSidebar');
@@ -1434,6 +1455,9 @@ window.__DESIGN_HTML__=__DESIGN_HTML_JSON__;
       if (ci && ci.dataset.cid) {
         var shell = document.getElementById('appShell');
         if (shell) shell.classList.remove('mode-graph', 'mode-docs', 'mode-design');
+        var pageDesign = document.getElementById('pageDesign');
+        if (pageDesign) pageDesign.classList.remove('is-modal');
+        document.body.style.overflow = '';
         /* 切换到历史对话时，取消左侧导航页高亮 */
         document.querySelectorAll('.nav-item.active').forEach(function(n){n.classList.remove('active');});
         switchConvo(ci.dataset.cid);
@@ -2654,6 +2678,7 @@ _STYLE_HTML = (
     + ".app-shell.mode-docs .page-docs{display:block;}\n"
     + ".app-shell.mode-design .main-area,.app-shell.mode-design .right-sidebar{display:none!important;}\n"
     + ".app-shell.mode-design .page-design{display:block;}\n"
+    + ".page-design.is-modal{position:fixed!important;inset:0!important;width:100vw!important;height:100vh!important;z-index:2000!important;display:block!important;background:#FDFBF7;}\n"
     + "</style>"
 )
 
