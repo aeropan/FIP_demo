@@ -119,9 +119,7 @@ body{
 .playhead.is-visible{opacity:1;}
 .playhead span{color:var(--c-border);font-size:10px;line-height:1;font-weight:900;transition:color .25s ease;padding:0 1px;letter-spacing:-0.5px;display:inline-block;}
 .playhead span.is-filled{color:var(--c-primary-500);}
-/* node hint for pending click */
-.node-hint{position:absolute;background:var(--c-text-main);color:#fff;font-size:12px;padding:var(--s1) var(--s3);border-radius:var(--r-sm);white-space:nowrap;opacity:0;transition:opacity .2s ease;pointer-events:none;z-index:10;transform:translate(-50%,-100%);}
-.node-hint.is-visible{opacity:1;}
+/* pending 提示现在复用全局 .pj-tooltip，node-hint DOM 已移除 */
 
 /* ============ 03 · Module Header ============ */
 .pj-module{transition:opacity .25s ease, transform .25s ease;}
@@ -674,7 +672,6 @@ body{
     <div class="journey-band">
       <div class="journey-track" id="journeyTrack">
         <div class="playhead" id="playhead"><span>›</span><span>›</span><span>›</span><span>›</span><span>›</span></div>
-        <div class="node-hint" id="nodeHint">模块开发中</div>
       </div>
       <div class="pj-autoplay">
         <button class="btn-autoplay is-paused" id="autoplayBtn" type="button">
@@ -1069,7 +1066,6 @@ const REDUCED_MOTION = window.matchMedia && window.matchMedia('(prefers-reduced-
  * ============================================================ */
 const track = document.getElementById('journeyTrack');
 const playhead = document.getElementById('playhead');
-const nodeHint = document.getElementById('nodeHint');
 const pjModule = document.getElementById('pjModule');
 const thinkingCol = document.getElementById('thinkingCol');
 const artifactCol = document.getElementById('artifactCol');
@@ -1111,7 +1107,7 @@ function buildJourney(){
       node.dataset.id = mid;
       node.setAttribute('role','button');
       node.setAttribute('tabindex','0');
-      node.setAttribute('title', mod.status==='pending' ? (mod.title+'（开发中）') : mod.title);
+      node.dataset.tooltip = mod.status==='pending' ? (mod.title+'（开发中）') : mod.title;
       const dot = document.createElement('div');
       dot.className = 'j-dot';
       dot.textContent = mod.number;
@@ -1156,13 +1152,9 @@ function onNodeClick(id){
 
 function showNodeHint(id){
   const node = nodeEls[id];
-  const trackRect = track.getBoundingClientRect();
-  const r = node.getBoundingClientRect();
-  nodeHint.style.left = (r.left - trackRect.left + r.width/2) + 'px';
-  nodeHint.style.top = (r.top - trackRect.top - 6) + 'px';
-  nodeHint.classList.add('is-visible');
-  clearTimeout(showNodeHint._t);
-  showNodeHint._t = setTimeout(()=>nodeHint.classList.remove('is-visible'), 1600);
+  if(!node) return;
+  var evt = new MouseEvent('mouseover', { bubbles:true, cancelable:true, view:window });
+  node.dispatchEvent(evt);
 }
 
 /* ============================================================
