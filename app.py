@@ -39,7 +39,7 @@ HOMEPAGE_HTML = """
             <div class="brand-subtitle">让爱宠更健康</div>
           </div>
         </div>
-        <button class="icon-btn collapse-btn" id="collapseLeftBtn" title="收起侧边栏" aria-label="收起侧边栏">
+        <button class="icon-btn collapse-btn" id="collapseLeftBtn" data-tooltip="收起侧边栏" aria-label="收起侧边栏">
           <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#6F6763" stroke-width="2">
             <rect x="3" y="5" width="18" height="14" rx="2" />
             <line x1="9" y1="5" x2="9" y2="19" />
@@ -108,7 +108,7 @@ HOMEPAGE_HTML = """
 
     <!-- 缩略态（窄条） -->
     <div class="collapsed-bar">
-      <div class="collapsed-logo-wrap" id="expandLeftBtn" title="展开侧边栏">
+      <div class="collapsed-logo-wrap" id="expandLeftBtn" data-tooltip="展开侧边栏">
         <img src="file=asset/logo.jpg" class="collapsed-logo" alt="宠医助手" />
         <div class="expand-icon" aria-label="展开">
           <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#6B5045" stroke-width="2">
@@ -117,10 +117,10 @@ HOMEPAGE_HTML = """
           </svg>
         </div>
       </div>
-      <button class="collapsed-tool" title="新建任务">
+      <button class="collapsed-tool" data-tooltip="新建任务">
         <span class="collapsed-plus">+</span>
       </button>
-      <button class="collapsed-tool" title="搜索">
+      <button class="collapsed-tool" data-tooltip="搜索">
         <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#6F6763" stroke-width="2">
           <circle cx="11" cy="11" r="8" />
           <line x1="21" y1="21" x2="16.65" y2="16.65" />
@@ -132,7 +132,7 @@ HOMEPAGE_HTML = """
   <!-- 中间主区域 -->
   <main class="main-area" id="mainArea">
     <!-- 打开右侧按钮 -->
-    <button class="icon-btn open-right-btn" id="openRightBtn" title="打开右侧栏">
+    <button class="icon-btn open-right-btn" id="openRightBtn" data-tooltip="打开右侧栏">
       <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#6F6763" stroke-width="2">
         <rect x="3" y="5" width="18" height="14" rx="2" />
         <line x1="15" y1="5" x2="15" y2="19" />
@@ -167,7 +167,7 @@ HOMEPAGE_HTML = """
           </div>
           <div class="input-toolbar">
             <div class="model-select-wrap">
-              <button class="input-tool model-btn" title="选择模型">
+              <button class="input-tool model-btn" data-tooltip="选择模型">
                 <span class="model-paw"><svg viewBox="0 0 1304 1024" width="14" height="14" aria-hidden="true"><path d="M82.59529938 450.3801144a150.60833431 128.0248712 90 1 0 256.0497433 4e-8 150.60833431 128.0248712 90 1 0-256.0497433-4e-8Z" fill="#B47B68"/><path d="M1074.58733465 734.21008403a123.50817892 150.6083343 12.07 1 0 62.98638385-294.55762892 123.50817892 150.6083343 12.07 1 0-62.98638385 294.55762892Z" fill="#B47B68"/><path d="M393.39047088 225.47997485a168.1299859 131.60707559 90 1 0 263.21415207 2e-8 168.1299859 131.60707559 90 1 0-263.21415207-2e-8Z" fill="#B47B68"/><path d="M864.14609382 436.84087636a131.60707559 168.1299859 6.71 1 0 39.28998639-333.95668374 131.60707559 168.1299859 6.71 1 0-39.28998639 333.95668373Z" fill="#B47B68"/><path d="M929.47515147 749.26056245c-9.42275492 142.66518562-147.18187788 219.21533615-310.17217958 208.39084944s-289.53556667-104.6626682-280.34643328-247.40572826 152.55518447-233.23265776 312.19690332-238.91746033c165.09289985 33.1743283 287.74446448 135.18927998 278.32170954 277.93233915z" fill="#B47B68"/></svg></span>
                 <span class="model-label">宠医助手 · Pro</span>
                 <svg class="caret" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#A99A90" stroke-width="2"><polyline points="6 9 12 15 18 9" /></svg>
@@ -178,10 +178,10 @@ HOMEPAGE_HTML = """
               </div>
             </div>
             <div class="toolbar-spacer"></div>
-            <button class="input-tool mic-btn" title="语音输入" hidden>
+            <button class="input-tool mic-btn" data-tooltip="语音输入" hidden>
               <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#6B5045" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" /><path d="M19 10v2a7 7 0 0 1-14 0v-2" /><line x1="12" y1="19" x2="12" y2="23" /><line x1="8" y1="23" x2="16" y2="23" /></svg>
             </button>
-            <button class="send-btn" title="发送">
+            <button class="send-btn" data-tooltip="发送">
               <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#FFFFFF" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13" /><polygon points="22 2 15 22 11 13 2 9 22 2" /></svg>
             </button>
           </div>
@@ -212,11 +212,12 @@ HOMEPAGE_HTML = """
         </div>
         <div class="feature-card">
           <div class="feature-icon">
-<svg viewBox="0 0 1024 1024" width="22" height="22" aria-hidden="true"><path d="M704 128C833.621333 128 938.666667 234.666667 938.666667 384c0 298.666667-320 469.333333-426.666667 533.333333-84.352-50.602667-302.208-167.978667-389.589333-362.624L42.666667 554.666667v-85.333334h51.626666A407.552 407.552 0 0 1 85.333333 384c0-149.333333 106.666667-256 234.666667-256C399.36 128 469.333333 170.666667 512 213.333333c42.666667-42.666667 112.64-85.333333 192-85.333333z m0 85.333333c-45.909333 0-95.573333 24.32-131.669333 60.330667L512 333.994667l-60.330667-60.330667C415.573333 237.653333 365.909333 213.333333 320 213.333333 237.226667 213.333333 170.666667 283.989333 170.666667 384c0 29.226667 3.84 57.685333 11.392 85.333333h92.458666L362.666667 322.389333l128 213.333334L530.517333 469.333333H725.333333v85.333334h-146.517333L490.666667 701.610667l-128-213.333334L322.816 554.666667H217.941333c33.706667 58.624 84.693333 113.834667 150.912 166.528 31.786667 25.301333 65.706667 48.896 103.296 72.533333 12.757333 8.064 25.386667 15.786667 39.850667 24.405333 14.464-8.618667 27.093333-16.341333 39.850667-24.362666a1141.418667 1141.418667 0 0 0 103.253333-72.576C782.293333 620.074667 853.333333 509.568 853.333333 384c0-100.693333-65.578667-170.666667-149.333333-170.666667z" fill="#8C6B5D" p-id="23497"></path></svg>
+<svg viewBox="0 0 1024 1024" width="22" height="22" aria-hidden="true"><path d="M704 128C833.621333 128 938.666667 234.666667 938.666667 384c0 298.666667-320 469.333333-426.666667 533.333333-84.352-50.602667-302.208-167.978667-389.589333-362.624L42.666667 554.666667v-85.333334h51.626666A407.552 407.552 0 0 1 85.333333 384c0-149.333333 106.666667-256 234.666667-256C399.36 128 469.333333 170.666667 512 213.333333c42.666667-42.666667 112.64-85.333333 192-85.333333z m0 85.333333c-45.909333 0-95.573333 24.32-131.669333 60.330667L512 333.994667l-60.330667-60.330667C415.573333 237.653333 365.909333 213.333333 320 213.333333 237.226667 213.333333 170.666667 283.989333 170.666667 384c0 29.226667 3.84 57.685333 11.392 85.333333h92.458666L362.666667 322.389333l128 213.333134L530.517333 469.333333H725.333333v85.333334h-146.517333L490.666667 701.610667l-128-213.333134L322.816 554.666667H217.941333c33.706667 58.624 84.693333 113.834667 150.912 166.528 31.786667 25.301333 65.706667 48.896 103.296 72.533333 12.757333 8.064 25.386667 15.786667 39.850667 24.405333 14.464-8.618667 27.093333-16.341333 39.850667-24.362666a1141.418667 1141.418667 0 0 0 103.253333-72.576C782.293333 620.074667 853.333333 509.568 853.333333 384c0-100.693333-65.578667-170.666667-149.333333-170.666667z" fill="#8C6B5D" p-id="23497"></path></svg>
           </div>
           <div class="feature-text">
-            <div class="feature-name">治疗预期与风险</div>
+            <div class="feature-name">441安全吗？能治好吗？</div>
           </div>
+          <div class="feature-tag">常问</div>
         </div>
       </section>
 
@@ -246,12 +247,12 @@ HOMEPAGE_HTML = """
             <span>AI 分析过程</span>
           </div>
           <div class="right-actions">
-            <button class="icon-btn fullscreen-btn" id="fullscreenRightBtn" title="全屏">
+            <button class="icon-btn fullscreen-btn" id="fullscreenRightBtn" data-tooltip="全屏">
               <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#6F6763" stroke-width="2">
                 <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3" />
               </svg>
             </button>
-            <button class="icon-btn close-right-btn" id="closeRightBtn" title="收起">
+            <button class="icon-btn close-right-btn" id="closeRightBtn" data-tooltip="收起">
               <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#6F6763" stroke-width="2">
                 <line x1="18" y1="6" x2="6" y2="18" />
                 <line x1="6" y1="6" x2="18" y2="18" />
@@ -300,6 +301,55 @@ document.title = '潘的宠医助手 · FIP知识推理系统';
 window.__GRAPH_HTML__=__GRAPH_HTML_JSON__;
 window.__DOCS_HTML__=__DOCS_HTML_JSON__;
 window.__DESIGN_HTML__=__DESIGN_HTML_JSON__;
+
+/* ====== 全局自定义 tooltip（替代原生 title 黑底白字） ====== */
+(function(){
+  var tip = document.createElement('div');
+  tip.id = 'app-tooltip';
+  tip.className = 'app-tooltip';
+  document.body.appendChild(tip);
+  var timer = null;
+  var currentTarget = null;
+  function hide() {
+    currentTarget = null;
+    clearTimeout(timer);
+    tip.classList.remove('app-tooltip--show');
+  }
+  function position(el) {
+    var rect = el.getBoundingClientRect();
+    var tipRect = tip.getBoundingClientRect();
+    var pad = 6;
+    var top = rect.top - tipRect.height - pad;
+    var left = rect.left + rect.width/2 - tipRect.width/2;
+    if (left < 4) left = 4;
+    if (left + tipRect.width > window.innerWidth - 4) left = window.innerWidth - tipRect.width - 4;
+    if (top < 4) top = rect.bottom + pad;
+    tip.style.top = top + 'px';
+    tip.style.left = left + 'px';
+  }
+  function show(el) {
+    var text = el.getAttribute('data-tooltip');
+    if (!text) return;
+    currentTarget = el;
+    tip.textContent = text;
+    tip.classList.add('app-tooltip--show');
+    position(el);
+  }
+  document.addEventListener('mouseover', function(e){
+    var el = e.target.closest && e.target.closest('[data-tooltip]');
+    if (!el) return;
+    clearTimeout(timer);
+    timer = setTimeout(function(){ show(el); }, 400);
+  });
+  document.addEventListener('mouseout', function(e){
+    var el = e.target.closest && e.target.closest('[data-tooltip]');
+    if (!el) return;
+    hide();
+  });
+  window.addEventListener('scroll', function(){ if(currentTarget) position(currentTarget); }, true);
+  window.addEventListener('resize', function(){ if(currentTarget) position(currentTarget); });
+})();
+
 (() => {
   /* ====== 导航路由：页面切换（图数据库 / 文献库 / 产品设计说明） ====== */
   (function(){
@@ -431,7 +481,7 @@ window.__DESIGN_HTML__=__DESIGN_HTML_JSON__;
       }
     }
     document.querySelectorAll('.detail-expand-btn').forEach(function (b) {
-      b.title = expanded ? '向下收起' : '向上展开';
+      b.dataset.tooltip = expanded ? '向下收起' : '向上展开';
     });
   }
 
@@ -440,7 +490,7 @@ window.__DESIGN_HTML__=__DESIGN_HTML_JSON__;
     const btn = document.createElement('button');
     btn.className = 'detail-expand-btn';
     btn.type = 'button';
-    btn.title = '向上展开';
+    btn.dataset.tooltip = '向上展开';
     btn.innerHTML =
       '<svg class="icon-up" viewBox="0 0 1024 1024" width="18" height="18"><path d="M838.116 732.779 877.7 693.195 511.979 327.549 146.3 693.195 185.883 732.779 512.003 406.652Z" fill="#4a3a2d"/></svg>' +
       '<svg class="icon-down" viewBox="0 0 1024 1024" width="18" height="18"><path d="M185.884 327.55 146.3 367.133 512.021 732.779 877.7 367.133 838.117 327.55 511.997 653.676Z" fill="#4a3a2d"/></svg>';
@@ -554,6 +604,25 @@ window.__DESIGN_HTML__=__DESIGN_HTML_JSON__;
     textarea.addEventListener('input', updateSendState);
     updateSendState();
 
+    /* 发送按钮两种态：默认纸飞机（发送）/ 处理中方块停止（中断）。
+       外框与底色不变（#B37560），仅替换中间图标；处理中态始终可点。 */
+    const SEND_ICON = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#FFFFFF" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13" /><polygon points="22 2 15 22 11 13 2 9 22 2" /></svg>';
+    const STOP_ICON = '<svg viewBox="0 0 24 24" width="18" height="18" fill="#FFFFFF"><rect x="5" y="5" width="14" height="14" rx="3" /></svg>';
+    /* mode: 'idle' 默认发送态（按有无文字决定灰/彩色）；'processing' 处理中→停止按钮（可点） */
+    function setSendMode(mode) {
+      if (mode === 'processing') {
+        sendBtn.innerHTML = STOP_ICON;
+        sendBtn.dataset.tooltip = '中断';
+        sendBtn.classList.add('sending');
+        sendBtn.disabled = false;
+      } else {
+        sendBtn.innerHTML = SEND_ICON;
+        sendBtn.dataset.tooltip = '发送';
+        sendBtn.classList.remove('sending');
+        updateSendState();
+      }
+    }
+
     /* 会话数据（内存态；聊天历史经 saveHistory 持久化到 localStorage） */
     let conversations = [];
     let currentConvoId = null;
@@ -615,6 +684,10 @@ window.__DESIGN_HTML__=__DESIGN_HTML_JSON__;
         }
       });
       scrollChatBottom();
+      /* 恢复待澄清状态：若该会话此前触发了澄清且未解决，重新渲染引导气泡 + 追问面板 */
+      if (convo.pendingClarify && convo.pendingClarify.options && convo.pendingClarify.options.length) {
+        addClarifyMsg(convo.pendingClarify.options);
+      }
     }
 
     /* 切换当前会话：清空聊天区并渲染目标会话，更新高亮。
@@ -625,6 +698,8 @@ window.__DESIGN_HTML__=__DESIGN_HTML_JSON__;
         if (conversations[i].id === cid) { target = conversations[i]; break; }
       }
       if (!target) return;
+      /* 切换对话时清除可能残留的追问/澄清面板（它挂在 input-box 上，不随消息区重建） */
+      hideClarifyPanel();
       currentConvoId = cid;
       enterChatMode();
       renderConvo(target);
@@ -779,6 +854,8 @@ window.__DESIGN_HTML__=__DESIGN_HTML_JSON__;
       }
       /* 右侧栏回到初始空态 */
       resetTracePanel();
+      /* 清理可能残留的追问面板 */
+      hideClarifyPanel();
     }
 
     function scrollChatBottom() {
@@ -813,7 +890,7 @@ window.__DESIGN_HTML__=__DESIGN_HTML_JSON__;
 
     function addThinkingMsg() {
       const row = document.createElement('div');
-      row.className = 'message message-bot';
+      row.className = 'message message-bot message-thinking';
       row.innerHTML =
         '<div class="avatar avatar-bot"><img src="file=asset/bot_avatar.jpg" alt="bot" /></div>' +
         '<div class="bubble bubble-bot bubble-thinking">' +
@@ -823,6 +900,31 @@ window.__DESIGN_HTML__=__DESIGN_HTML_JSON__;
       chatArea.appendChild(row);
       scrollChatBottom();
       return row;
+    }
+
+    /* 中断 / 取消当前任务：发送按钮（处理中→停止图标）与追问澄清面板 X 共用。
+       置空 activeReqId 使迟到的服务端回调因 id 不匹配被忽略；
+       移除「思考中」气泡、关闭追问澄清面板，新增一个正常的 bot 对话气泡「回答已中断」，
+       并恢复发送按钮为默认态（写入会话数据，便于切换/刷新后回显）。 */
+    function interruptCurrent() {
+      activeReqId = null;
+      /* 移除「思考中」气泡（普通对话中断时存在；追问澄清态下通常不存在） */
+      const thinking = chatArea.querySelector('.message-thinking');
+      if (thinking) thinking.remove();
+      /* 关闭追问澄清面板 + 引导气泡（若有） */
+      hideClarifyPanel();
+      /* 新增「回答已中断」对话气泡 + 清状态 */
+      const convo = getCurrentConvo();
+      if (convo) {
+        convo.pendingClarify = null;
+        convo.msgs.push({ role: 'bot', text: '回答已中断' });
+        saveHistory();
+      }
+      if (convo && currentConvoId === convo.id) {
+        typeText(addBotMsg(), '回答已中断');
+      }
+      /* 恢复发送按钮为默认发送态（无文字时为灰色禁用） */
+      setSendMode('idle');
     }
 
     function addBotMsg() {
@@ -859,9 +961,18 @@ window.__DESIGN_HTML__=__DESIGN_HTML_JSON__;
 
     /* ===== 后端推理调用与结果渲染 ===== */
 
+    /* 在途请求跟踪：reqSeq 自增生成唯一 id，activeReqId 指向当前进行中的请求。
+       中断时把 activeReqId 置空，使后续迟到的回调因 id 不匹配而被忽略，达到「中断回答」效果。 */
+    let reqSeq = 0;
+    let activeReqId = null;
+
     function runQuery(text) {
       /* 锁定发起时的会话 id：避免回复返回前用户切换会话，导致回复错配到新会话 */
       const convoId = currentConvoId;
+      const reqId = ++reqSeq;
+      activeReqId = reqId;
+      /* 发送按钮切换为「停止」态（外框不变，纸飞机→方块中止图标，始终可点） */
+      setSendMode('processing');
       /* 读取发起时会话的上下文实体（上一轮成功解析的实体，供连续对话继承） */
       let convo = null;
       for (var i = 0; i < conversations.length; i++) {
@@ -870,14 +981,27 @@ window.__DESIGN_HTML__=__DESIGN_HTML_JSON__;
       const contextEntities = convo ? (convo.contextEntities || []) : [];
       const thinking = addThinkingMsg();
       server.respond(text, contextEntities).then(function (result) {
+        /* 若请求已被中断（用户点了停止 / 面板 X），直接丢弃该迟到结果 */
+        if (reqId !== activeReqId) return;
+        activeReqId = null;
+        setSendMode('idle');
         thinking.remove();
         /* 回填到发起时的会话（而非「当前」会话） */
-        if (convo) convo.msgs.push({ role: 'bot', text: result.summary || result.boundary_hint || '' });
-        /* 保存本次推理轨迹：供切换/恢复会话时回显最后一步分析过程 */
-        if (convo) convo.lastTrace = result.trace;
-        /* 更新上下文实体：本轮成功解析到实体则缓存，供下一轮继承 */
-        if (convo && result.entities && result.entities.length) {
-          convo.contextEntities = result.entities;
+        if (convo) {
+          /* 保存本次推理轨迹：供切换/恢复会话时回显最后一步分析过程 */
+          convo.lastTrace = result.trace;
+          /* 更新上下文实体：本轮成功解析到实体则缓存，供下一轮继承 */
+          if (result.entities && result.entities.length) {
+            convo.contextEntities = result.entities;
+          }
+          if (result.status === 'clarify') {
+            /* 待澄清状态：存入会话数据，切换/刷新后可继续；不清空已有消息 */
+            convo.pendingClarify = { options: result.clarify_options };
+          } else {
+            /* 已澄清/已解答：清除待澄清状态，并写入 bot 回复 */
+            convo.pendingClarify = null;
+            convo.msgs.push({ role: 'bot', text: result.summary || result.boundary_hint || '' });
+          }
         }
         saveHistory();
         /* 仅当仍停留在发起时的会话，才把回复渲染到当前画面 */
@@ -885,6 +1009,10 @@ window.__DESIGN_HTML__=__DESIGN_HTML_JSON__;
           renderResult(result);
         }
       }).catch(function () {
+        /* 若请求已被中断，忽略错误（不重复渲染） */
+        if (reqId !== activeReqId) return;
+        activeReqId = null;
+        setSendMode('idle');
         thinking.remove();
         if (currentConvoId === convoId) {
           typeText(addBotMsg(), '抱歉，服务暂时不可用，请稍后再试。');
@@ -907,28 +1035,104 @@ window.__DESIGN_HTML__=__DESIGN_HTML_JSON__;
 
     function addClarifyMsg(options) {
       const row = addBotMsg();
+      row.classList.add('clarify-bubble');
       const body = row.querySelector('.bubble-body');
-      const box = document.createElement('div');
-      box.className = 'clarify-box';
       const tip = document.createElement('div');
       tip.className = 'clarify-tip';
       tip.textContent = '这个问题可能涉及多个方面，你想了解哪一方面？';
-      box.appendChild(tip);
-      const btns = document.createElement('div');
-      btns.className = 'clarify-btns';
+      body.appendChild(tip);
+      showClarifyPanel(options);
+  scrollChatBottom();
+    }
+
+    /* 追问面板：覆盖在 textarea 区域（遮住「描述你的问题…」），竖排候选项 + 底部自由输入 */
+    function showClarifyPanel(options) {
+      hideClarifyPanel();
+      const box = document.querySelector('.input-box');
+      const textWrap = document.querySelector('.input-text-wrap');
+      if (!box || !textWrap) return;
+      const panel = document.createElement('div');
+      panel.className = 'clarify-panel';
+      /* 顶部小标题：请您确认： */
+      const sub = document.createElement('div');
+      sub.className = 'clarify-subtitle';
+      sub.textContent = '请您确认：';
+      panel.appendChild(sub);
+      /* 右上角关闭 X（无外框，仅简单 X）：点击走与发送按钮停止相同的中断逻辑 */
+      const closeX = document.createElement('button');
+      closeX.type = 'button';
+      closeX.className = 'clarify-close';
+      closeX.dataset.tooltip = '中断';
+      closeX.innerHTML = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg>';
+      closeX.addEventListener('click', function () { interruptCurrent(); });
+      panel.appendChild(closeX);
+      /* 2~3 个追问选项（纵向轻量胶囊，右侧箭头） */
       (options || []).forEach(function (o) {
-        const b = document.createElement('button');
-        b.type = 'button';
-        b.className = 'clarify-btn';
-        b.textContent = o.label;
-        b.addEventListener('click', function () {
+        const opt = document.createElement('button');
+        opt.type = 'button';
+        opt.className = 'clarify-opt';
+        const lbl = document.createElement('span');
+        lbl.className = 'clarify-opt-label';
+        lbl.textContent = o.label;
+        const arr = document.createElement('span');
+        arr.className = 'clarify-opt-arrow';
+        arr.innerHTML = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>';
+        opt.appendChild(lbl);
+        opt.appendChild(arr);
+        opt.addEventListener('click', function () {
+          hideClarifyPanel();
           runQuery(o.value);
         });
-        btns.appendChild(b);
+        panel.appendChild(opt);
       });
-      box.appendChild(btns);
-      body.appendChild(box);
-      scrollChatBottom();
+      /* 底部自由输入：与上面一致的胶囊，占位「其他（请补充）」（回车 / 点发送，继承当前实体上下文） */
+      const other = document.createElement('div');
+      other.className = 'clarify-other';
+      const inp = document.createElement('input');
+      inp.type = 'text';
+      inp.className = 'clarify-other-input';
+      inp.placeholder = '其他（请补充）';
+      const obtn = document.createElement('button');
+      obtn.type = 'button';
+      obtn.className = 'clarify-send';
+      obtn.dataset.tooltip = '发送';
+      obtn.disabled = true;
+      obtn.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>';
+      function updateClarifySend() {
+        obtn.disabled = !((inp.value || '').trim());
+      }
+      obtn.addEventListener('click', function () {
+        const v = (inp.value || '').trim();
+        if (!v) return;
+        hideClarifyPanel();
+        send(v);
+      });
+      inp.addEventListener('keydown', function (e) {
+        if (e.isComposing || e.keyCode === 229) return;
+        if (e.key === 'Enter' && !e.shiftKey) {
+          e.preventDefault();
+          const v = (inp.value || '').trim();
+          if (!v) return;
+          hideClarifyPanel();
+          send(v);
+        }
+      });
+      inp.addEventListener('input', updateClarifySend);
+      other.appendChild(inp);
+      other.appendChild(obtn);
+      panel.appendChild(other);
+      box.insertBefore(panel, textWrap);
+      /* 标记 clarifying：隐藏真正的 textarea，避免两个可输入区域同时出现 */
+      box.classList.add('clarifying');
+    }
+
+    function hideClarifyPanel() {
+      const p = document.querySelector('.clarify-panel');
+      if (p) p.remove();
+      const bubble = document.querySelector('.clarify-bubble');
+      if (bubble) bubble.remove();
+      const box = document.querySelector('.input-box');
+      if (box) box.classList.remove('clarifying');
     }
 
     /* ===== 右侧栏 AI 分析过程（三段式：Header + Timeline + Detail）===== */
@@ -1414,10 +1618,10 @@ window.__DESIGN_HTML__=__DESIGN_HTML_JSON__;
       });
     }
 
-    function send() {
-      const text = (textarea.innerText || '').trim();
+    function send(prefill) {
+      const text = (prefill != null ? String(prefill) : (textarea.innerText || '')).trim();
       if (!text) return;
-      textarea.innerText = '';
+      if (prefill == null) textarea.innerText = '';
       updateSendState();
       enterChatMode();
       /* 会话记录：首次发送新建条目（标题 = 首条消息）置顶插入最近对话 */
@@ -1429,7 +1633,14 @@ window.__DESIGN_HTML__=__DESIGN_HTML_JSON__;
       runQuery(text);
     }
 
-    sendBtn.addEventListener('click', send);
+    /* 发送按钮：处理中（activeReqId 非空）点击=中断；否则=发送 */
+    sendBtn.addEventListener('click', function () {
+      if (activeReqId !== null) {
+        interruptCurrent();
+      } else {
+        send();
+      }
+    });
     textarea.addEventListener('keydown', function (e) {
       if (e.key === 'Enter' && !e.shiftKey) {
         e.preventDefault();
@@ -1461,6 +1672,26 @@ window.__DESIGN_HTML__=__DESIGN_HTML_JSON__;
         /* 切换到历史对话时，取消左侧导航页高亮 */
         document.querySelectorAll('.nav-item.active').forEach(function(n){n.classList.remove('active');});
         switchConvo(ci.dataset.cid);
+        return;
+      }
+      /* 快速开始卡片：点击直接用卡片文字发起对话 */
+      var fc = t.closest('.feature-card');
+      if (fc) {
+        var nameEl = fc.querySelector('.feature-name');
+        if (nameEl) {
+          var shell = document.getElementById('appShell');
+          if (shell) shell.classList.remove('mode-graph', 'mode-docs', 'mode-design');
+          document.querySelectorAll('.nav-item.active').forEach(function(n){n.classList.remove('active');});
+          send(nameEl.textContent.trim());
+        }
+        return;
+      }
+      /* 左上角 LOGO + slogan：点击回到默认首页（与新建任务一致的复位逻辑） */
+      if (t.closest('.brand')) {
+        var shell = document.getElementById('appShell');
+        if (shell) shell.classList.remove('mode-graph', 'mode-docs', 'mode-design');
+        document.querySelectorAll('.nav-item.active').forEach(function(n){n.classList.remove('active');});
+        resetChat();
         return;
       }
     });
@@ -1614,7 +1845,7 @@ div:has(> .app-shell) { padding: 0 !important; margin: 0 !important; background:
 /* 顶部 Header：flex-start 让折叠按钮顶部与 logo 顶部对齐（都=16px，即 sidebar padding-top）；
    此前 align-items:center 使 30px 按钮在 40px header 内居中，顶部落在 21px，比右侧图标低 5px */
 .left-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 14px; }
-.brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.brand { display: flex; align-items: center; gap: 10px; min-width: 0; cursor: pointer; }
 .brand-logo { width: 40px; height: 40px; border-radius: 999px; object-fit: cover; box-shadow: 0 1px 4px rgba(107, 80, 69, 0.15); }
 /* 文本块固定 40px 高并垂直居中，使 .brand 总高 = logo 高(40px)，
    logo 在 align-items:center 下精确位于 padding-top 16px 处，与收起态一致 */
@@ -1917,7 +2148,8 @@ div:has(> .app-shell) { padding: 0 !important; margin: 0 !important; background:
 /* 功能卡片：用户色 #FCFBF9/#F8F1EB */
 .feature-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  /* 按卡片字数比例分配宽度：卡片1/2 约 7 字，卡片3（含「常问」标签）约 13 字，取 8:8:11 */
+  grid-template-columns: 8fr 8fr 11fr;
   gap: 12px;
   margin-bottom: 0;
 }
@@ -1944,7 +2176,17 @@ div:has(> .app-shell) { padding: 0 !important; margin: 0 !important; background:
 }
 .feature-text { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
 /* 卡片标题：Body-sm 风格（常规字重 400，非粗体），14px */
-.feature-name { font-size: 13px; font-weight: 400; color: #3E3836 !important; line-height: 1.5; }
+.feature-name { font-size: 13px; font-weight: 400; color: #3E3836 !important; line-height: 1.5; white-space: nowrap; }
+/* 卡片右侧「常问」灰色小字标签 */
+.app-shell .feature-tag {
+  margin-left: auto !important;
+  flex-shrink: 0 !important;
+  font-size: 11px !important;
+  font-weight: 400 !important;
+  color: #A89F93 !important;
+  line-height: 1 !important;
+  letter-spacing: 0.5px !important;
+}
 
 /* 示例问题（用户色：底 #FDF8F4 框 #F8F1EB 图标 #B47B68） */
 .example-section { margin-bottom: 18px; }
@@ -2010,6 +2252,7 @@ div:has(> .app-shell) { padding: 0 !important; margin: 0 !important; background:
   font-size: 15px;
   line-height: 1.5;
   overflow: hidden;
+  position: relative;
 }
 .bubble-bot { background: #FFFFFF; border: 1.5px solid #F8F1EB; }
 .bubble-user {
@@ -2589,20 +2832,123 @@ details[open] .chevron { transform: rotate(180deg); }
 .detail-relation .rel-evidence { margin-top: 3px; font-size: 12px; color: #A99A90; line-height: 1.5; word-break: break-all; }
 
 /* 澄清按钮（中间对话区） */
-.clarify-box { margin-top: 2px; }
-.clarify-tip { font-size: 13px; color: #6F6763; line-height: 1.5; margin-bottom: 8px; }
-.clarify-btns { display: flex; flex-wrap: wrap; gap: 8px; }
-.clarify-btn {
-  padding: 7px 14px;
-  background: #FFFFFF;
-  border: 1px solid #8C6B5D;
-  border-radius: 6px;
-  color: #8C6B5D;
-  font-size: 13px;
-  cursor: pointer;
-  transition: background 150ms;
+/* 引导语（对话气泡内） */
+.app-shell .clarify-tip { font-size: 13px; color: #6F6763; line-height: 1.6; margin-bottom: 4px; }
+/* 追问面板：渲染在输入框上方，竖排候选项 + 最后的「其他补充」输入框 */
+/* clarifying 时隐藏真正的 textarea，让追问面板覆盖输入区，避免两个可输入区域 */
+.app-shell .input-box.clarifying .input-text-wrap { display: none; }
+.app-shell .clarify-panel {
+  position: relative !important;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 10px;
+  padding: 12px;
+  background: #FFFFFF !important;
+  border: 1.5px solid #F8F1EB !important;
+  border-radius: 14px !important;
 }
-.clarify-btn:hover { background: #FAF3EC; }
+/* 追问澄清面板右上角关闭 X（无外框，仅简单 X） */
+.app-shell .clarify-close {
+  position: absolute !important;
+  top: 8px !important;
+  right: 8px !important;
+  width: 22px !important;
+  height: 22px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 !important;
+  border: none !important;
+  background: transparent !important;
+  border-radius: 6px !important;
+  color: #A89F93 !important;
+  cursor: pointer !important;
+  transition: background 150ms var(--ease), color 150ms var(--ease) !important;
+}
+.app-shell .clarify-close:hover { background: #F6F0EA !important; color: #6B5045 !important; }
+.app-shell .clarify-close svg { display: block; }
+.app-shell .clarify-subtitle {
+  font-size: 14px;
+  font-weight: 500;
+  color: #6F6763;
+  line-height: 1.5;
+  margin-bottom: 2px;
+}
+.app-shell .clarify-opt {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  width: 100% !important;
+  text-align: left !important;
+  padding: 11px 14px !important;
+  background: #FDFBF7 !important;
+  border: 1px solid #EDE5DD !important;
+  border-radius: 10px !important;
+  color: #6F6763 !important;
+  font-size: 13px !important;
+  font-weight: 400 !important;
+  line-height: 1.4 !important;
+  cursor: pointer !important;
+  transition: background 150ms var(--ease), border-color 150ms var(--ease), color 150ms var(--ease) !important;
+}
+.app-shell .clarify-opt-label { flex: 1; min-width: 0; }
+.app-shell .clarify-opt-arrow { display: inline-flex; color: #C7A18E; margin-left: 10px; flex-shrink: 0; transition: color 150ms var(--ease); }
+.app-shell .clarify-opt:hover {
+  background: #FAF3EC !important;
+  border-color: #C7A18E !important;
+  color: #3E3836 !important;
+}
+.app-shell .clarify-opt:hover .clarify-opt-arrow { color: #8C6B5D; }
+.app-shell .clarify-opt:active { transform: scale(0.99); }
+.app-shell .clarify-other {
+  display: flex !important;
+  align-items: center !important;
+  width: 100% !important;
+  margin-top: 0 !important;
+  padding: 11px 14px !important;
+  background: #FDFBF7 !important;
+  border: 1px solid #EDE5DD !important;
+  border-radius: 10px !important;
+  box-shadow: none !important;
+  transition: background 150ms var(--ease), border-color 150ms var(--ease) !important;
+}
+/* 焦点进入底部输入框时，胶囊呈现与 hover 一致的态 */
+.app-shell .clarify-other:focus-within {
+  background: #FAF3EC !important;
+  border-color: #C7A18E !important;
+}
+.app-shell .clarify-other-input {
+  flex: 1 !important;
+  width: 100% !important;
+  border: none !important;
+  outline: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  font-size: 13px !important;
+  color: #3E3836 !important;
+  font-family: inherit !important;
+}
+.app-shell .clarify-other-input::placeholder { color: #A89F93 !important; }
+/* 底部发送图标：与上面一致的 → 箭头，无外框；空时灰色不可点，有字时箭头色 */
+.app-shell .clarify-send {
+  flex-shrink: 0 !important;
+  width: auto !important;
+  height: auto !important;
+  padding: 0 !important;
+  border: none !important;
+  background: transparent !important;
+  color: #C4B9B1 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: not-allowed !important;
+  transition: color 150ms var(--ease) !important;
+}
+.app-shell .clarify-send:not(:disabled) { cursor: pointer !important; color: #C7A18E !important; }
+.app-shell .clarify-send:not(:disabled):hover { color: #8C6B5D !important; }
+.app-shell .clarify-send:disabled { color: #C4B9B1 !important; }
 
 /* ============================================================
    小屏适配：默认左侧缩略；常规 PC 优先完整展示
@@ -2679,6 +3025,9 @@ _STYLE_HTML = (
     + ".app-shell.mode-design .main-area,.app-shell.mode-design .right-sidebar{display:none!important;}\n"
     + ".app-shell.mode-design .page-design{display:block;}\n"
     + ".page-design.is-modal{position:fixed!important;inset:0!important;width:100vw!important;height:100vh!important;z-index:2000!important;display:block!important;background:#FDFBF7;}\n"
+    + "/* 全局自定义 tooltip：替代 title 黑底白字 */\n"
+    + ".app-tooltip{position:fixed;z-index:9999;background:#FFFFFF;color:#3E3836;border:1px solid #EDE5DD;border-radius:6px;padding:6px 8px;font-size:12px;line-height:18px;box-shadow:0 4px 12px rgba(62,56,54,0.10);pointer-events:none;opacity:0;transform:translateY(2px);transition:opacity 100ms ease, transform 100ms ease;white-space:nowrap;max-width:260px;overflow:hidden;text-overflow:ellipsis;}\n"
+    + ".app-tooltip.app-tooltip--show{opacity:1;transform:translateY(0);transition:opacity 150ms ease, transform 150ms ease;}\n"
     + "</style>"
 )
 

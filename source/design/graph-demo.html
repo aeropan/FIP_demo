@@ -289,6 +289,8 @@ body{
   border-radius:var(--radius-pill);padding:6px 14px;box-shadow:var(--shadow-xs);
   pointer-events:none;
 }
+.graph-tooltip{position:fixed;z-index:9999;background:#FFFFFF;color:#3E3836;border:1px solid #EDE5DD;border-radius:6px;padding:6px 8px;font-size:12px;line-height:18px;box-shadow:0 4px 12px rgba(62,56,54,0.10);pointer-events:none;opacity:0;transform:translateY(2px);transition:opacity 100ms ease, transform 100ms ease;white-space:nowrap;max-width:260px;overflow:hidden;text-overflow:ellipsis;}
+.graph-tooltip.graph-tooltip--show{opacity:1;transform:translateY(0);transition:opacity 150ms ease, transform 150ms ease;}
 </style>
 </head>
 <body>
@@ -596,7 +598,7 @@ const CONF_DESC = {
 };
 function panelBackBtn(){
   /* 向左箭头 SVG（向左_o.svg）：fill=currentColor 继承按钮色，与关闭按钮一致 */
-  return '<button class="panel-back" title="返回">'+
+  return '<button class="panel-back" data-tooltip="返回">'+
     '<svg viewBox="0 0 1024 1024" width="18" height="18" fill="currentColor" aria-hidden="true">'+
     '<path d="M396.8 494.933333l332.8-332.8-29.866667-29.866666-362.666666 362.666666 362.666666 362.666667 29.866667-29.866667-332.8-332.8z"/>'+
     '</svg></button>';
@@ -633,7 +635,7 @@ function bindPanelClose(el){
     clearNodeStates(); resetEdges();
   });
 }
-function panelCloseBtn(){ return '<button class="panel-close" title="收起面板">✕</button>'; }
+function panelCloseBtn(){ return '<button class="panel-close" data-tooltip="收起面板">✕</button>'; }
 function renderEmptyPanel(){
   const el = document.getElementById('rightPanel');
   el.innerHTML = panelCloseBtn() +
@@ -682,7 +684,7 @@ function renderNodeDetail(id){
             return '<div class="rel-item" data-edge="'+e.id+'" style="--rel-color:'+oc.main+'">'+
               '<div class="rel-top">'+
                 '<div class="rel-flags">'+
-                  '<span class="pol-dot" title="'+e.polarity+'">'+polIcon(e.polarity)+'</span>'+
+                  '<span class="pol-dot" data-tooltip="'+e.polarity+'">'+polIcon(e.polarity)+'</span>'+
                   confBadge(e.confidence)+
                 '</div>'+
               '</div>'+
@@ -1043,6 +1045,39 @@ document.addEventListener('keydown', e => {
 /* ============ 初始化 ============ */
 renderTypeLegend();
 readUrlPath();
+
+/* 全局自定义 tooltip（替代 title） */
+(function(){
+  var tip = document.createElement('div');
+  tip.id = 'graph-tooltip';
+  tip.className = 'graph-tooltip';
+  document.body.appendChild(tip);
+  var timer = null;
+  var currentTarget = null;
+  function hide(){ currentTarget=null; clearTimeout(timer); tip.classList.remove('graph-tooltip--show'); }
+  function position(el){
+    var rect=el.getBoundingClientRect(), tr=tip.getBoundingClientRect(), pad=6;
+    var top=rect.top-tr.height-pad, left=rect.left+rect.width/2-tr.width/2;
+    if(left<4) left=4;
+    if(left+tr.width>window.innerWidth-4) left=window.innerWidth-tr.width-4;
+    if(top<4) top=rect.bottom+pad;
+    tip.style.top=top+'px'; tip.style.left=left+'px';
+  }
+  function show(el){
+    var text=el.getAttribute('data-tooltip'); if(!text) return;
+    currentTarget=el; tip.textContent=text; tip.classList.add('graph-tooltip--show'); position(el);
+  }
+  document.addEventListener('mouseover',function(e){
+    var el=e.target.closest&&e.target.closest('[data-tooltip]'); if(!el) return;
+    clearTimeout(timer); timer=setTimeout(function(){ show(el); },400);
+  });
+  document.addEventListener('mouseout',function(e){
+    var el=e.target.closest&&e.target.closest('[data-tooltip]'); if(!el) return;
+    hide();
+  });
+  window.addEventListener('scroll',function(){ if(currentTarget) position(currentTarget); },true);
+  window.addEventListener('resize',function(){ if(currentTarget) position(currentTarget); });
+})();
 </script>
 </body>
 </html>
