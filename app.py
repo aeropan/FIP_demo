@@ -285,6 +285,27 @@ HOMEPAGE_HTML = """
   <!-- 产品设计说明页面（空页面占位） -->
   <iframe id="pageDesign" class="page-design" hidden title="产品设计说明"></iframe>
 </div>
+<div id="styleDemoModal" class="style-demo-modal" aria-hidden="true">
+  <div class="style-demo-modal__overlay" data-close></div>
+  <div class="style-demo-modal__content">
+    <div class="style-demo-modal__head">
+      <span class="style-demo-modal__title">视觉设计 demo</span>
+      <div role="button" tabindex="0" class="style-demo-modal__close" data-close aria-label="关闭">&times;</div>
+    </div>
+    <iframe class="style-demo-modal__frame" id="styleDemoFrame" sandbox="allow-scripts allow-same-origin"></iframe>
+  </div>
+</div>
+<!-- 展开弹窗（顶层覆盖层，与 styleDemoModal 同构）：详情内容通过 iframe srcdoc 加载 -->
+<div id="designExpandModal" class="design-expand-modal" aria-hidden="true">
+  <div class="design-expand-modal__overlay" data-close></div>
+  <div class="design-expand-modal__content">
+    <div class="design-expand-modal__head">
+      <span class="design-expand-modal__title"></span>
+      <div role="button" tabindex="0" class="design-expand-modal__close" data-close aria-label="关闭">&times;</div>
+    </div>
+    <iframe class="design-expand-modal__frame" id="designExpandFrame" sandbox="allow-scripts allow-same-origin"></iframe>
+  </div>
+</div>
 """
 
 # Gradio 的 gr.HTML 中插入的 <script> 不会被执行，因此交互逻辑通过 Blocks 的 js 参数注入。
@@ -301,6 +322,7 @@ document.title = '潘的宠医助手 · FIP知识推理系统';
 window.__GRAPH_HTML__=__GRAPH_HTML_JSON__;
 window.__DOCS_HTML__=__DOCS_HTML_JSON__;
 window.__DESIGN_HTML__=__DESIGN_HTML_JSON__;
+window.__STYLE_DEMO_HTML__=__STYLE_DEMO_HTML_JSON__;
 
 /* ====== 全局自定义 tooltip（替代原生 title 黑底白字） ====== */
 (function(){
@@ -402,21 +424,95 @@ window.__DESIGN_HTML__=__DESIGN_HTML_JSON__;
     });
   })();
 
-  /* ====== 产品设计说明 iframe 内 Expand 模态框跨 iframe 全屏遮罩 ====== */
+  /* ====== 产品设计说明 展开弹窗（顶层覆盖层，与 demo 同构；监听 design.html 内详情消息） ====== */
   (function(){
-    var pageDesign = document.getElementById('pageDesign');
-    if(!pageDesign) return;
+    var modal = document.getElementById('designExpandModal');
+    if(!modal) return;
+    var frame = document.getElementById('designExpandFrame');
+    var contentEl = modal.querySelector('.design-expand-modal__content');
+    var titleEl = modal.querySelector('.design-expand-modal__title');
+    var overlay = modal.querySelector('.design-expand-modal__overlay');
+    var closeBtn = modal.querySelector('.design-expand-modal__close');
+    function openExpand(data){
+      modal.classList.remove('is-closing');
+      if(titleEl && data.title != null) titleEl.textContent = data.title;
+      if(frame && data.srcdoc) frame.srcdoc = data.srcdoc;
+      if(contentEl && data.width) contentEl.style.width = data.width + 'px';
+      modal.classList.add('is-open');
+      modal.setAttribute('aria-hidden','false');
+      document.body.classList.add('design-expand-open');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeExpand(){
+      if(!modal.classList.contains('is-open')) return;
+      modal.classList.remove('is-open');
+      modal.classList.add('is-closing');
+      modal.setAttribute('aria-hidden','true');
+      document.body.classList.remove('design-expand-open');
+      document.body.style.overflow = '';
+      setTimeout(function(){
+        modal.classList.remove('is-closing');
+        if(frame){ frame.srcdoc = ''; }
+      }, 320);
+    }
     window.addEventListener('message', function(e){
-      if(e.source !== pageDesign.contentWindow) return;
-      if(!e.data || e.data.type !== 'design-modal') return;
-      if(e.data.open){
-        pageDesign.classList.add('is-modal');
-        document.body.style.overflow = 'hidden';
-      } else {
-        pageDesign.classList.remove('is-modal');
-        document.body.style.overflow = '';
-      }
+      if(!e.data || e.data.type !== 'design-expand') return;
+      if(e.data.open){ openExpand(e.data); } else { closeExpand(); }
     });
+    if(overlay) overlay.addEventListener('click', closeExpand);
+    if(closeBtn) closeBtn.addEventListener('click', closeExpand);
+    document.addEventListener('keydown', function(e){ if(e.key === 'Escape' && modal.classList.contains('is-open')) closeExpand(); });
+  })();
+
+  /* ====== Module 04 视觉设计 demo 弹窗（顶层模态框，监听 design.html 内按钮消息） ====== */
+  (function(){
+    var modal = document.getElementById('styleDemoModal');
+    if(!modal) return;
+    var frame = document.getElementById('styleDemoFrame');
+    var overlay = modal.querySelector('.style-demo-modal__overlay');
+    var closeBtn = modal.querySelector('.style-demo-modal__close');
+    function injectScrollbar(){
+      try{
+        var fd = frame.contentWindow.document;
+        if(!fd.getElementById('demoScrollbarStyle')){
+          var st = fd.createElement('style');
+          st.id = 'demoScrollbarStyle';
+          st.textContent = '::-webkit-scrollbar{width:8px;height:8px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:rgba(111,103,99,.2);border-radius:4px;}::-webkit-scrollbar-thumb:hover{background:#6F6763;}*{scrollbar-width:thin;scrollbar-color:rgba(111,103,99,.2) transparent;}';
+          fd.head.appendChild(st);
+        }
+      }catch(err){}
+    }
+    function openDemo(){
+      modal.classList.remove('is-closing');
+      if(frame && window.__STYLE_DEMO_HTML__){
+        frame.onload = injectScrollbar;
+        frame.srcdoc = window.__STYLE_DEMO_HTML__;
+      }
+      modal.classList.add('is-open');
+      modal.setAttribute('aria-hidden','false');
+      document.body.classList.add('style-demo-open');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeDemo(){
+      if(!modal.classList.contains('is-open')) return;
+      modal.classList.remove('is-open');
+      modal.classList.add('is-closing');
+      modal.setAttribute('aria-hidden','true');
+      document.body.classList.remove('style-demo-open');
+      document.body.style.overflow = '';
+      if(frame){ frame.onload = null; }
+      setTimeout(function(){
+        modal.classList.remove('is-closing');
+        if(frame){ frame.srcdoc = ''; }
+      }, 320);
+    }
+    window.addEventListener('message', function(e){
+      if(!e.data || e.data.type !== 'style-demo-modal') return;
+      if(e.data.open){ openDemo(); } else { closeDemo(); }
+    });
+    if(overlay) overlay.addEventListener('click', closeDemo);
+    if(closeBtn) closeBtn.addEventListener('click', closeDemo);
+    document.addEventListener('keydown', function(e){ if(e.key === 'Escape' && modal.classList.contains('is-open')) closeDemo(); });
   })();
 
   function bindShell() {
@@ -1825,7 +1921,7 @@ div:has(> .app-shell) { padding: 0 !important; margin: 0 !important; background:
   border-right: 1px solid #F1E4D5;
   display: flex;
   flex-direction: column;
-  transition: width 280ms var(--ease);
+  transition: width 280ms var(--ease), transform 300ms var(--ease);
   position: relative;
   z-index: 30;
   overflow: hidden;
@@ -3009,6 +3105,15 @@ _DESIGN_PAGE_HTML = open(os.path.join(os.path.dirname(__file__), 'source/design/
 _JS_EXEC = _JS_EXEC.replace('__DOCS_HTML_JSON__', _json.dumps(_DOCS_PAGE_HTML).replace('</', '<\\/'))
 _JS_EXEC = _JS_EXEC.replace('__DESIGN_HTML_JSON__', _json.dumps(_DESIGN_PAGE_HTML).replace('</', '<\\/'))
 
+# 视觉设计 demo（Module 04 标题栏入口）：独立 HTML 文件。
+# 用 try/except 安全读取，缺失/失败时不阻断 app.py 启动（避免顶层异常导致 Gradio 起不来、被旧进程/缓存顶替）。
+try:
+    _STYLE_DEMO_HTML = open(os.path.join(os.path.dirname(__file__), 'source/UI/style-demo.html'), encoding='utf-8').read()
+except Exception as _e:
+    print('[warn] 未能加载 source/UI/style-demo.html，style-demo 弹窗将不可用：', repr(_e))
+    _STYLE_DEMO_HTML = ''
+_JS_EXEC = _JS_EXEC.replace('__STYLE_DEMO_HTML_JSON__', _json.dumps(_STYLE_DEMO_HTML).replace('</', '<\\/'))
+
 _STYLE_HTML = (
     "<style>\n"
     + _GRADIO_CSS
@@ -3024,10 +3129,39 @@ _STYLE_HTML = (
     + ".app-shell.mode-docs .page-docs{display:block;}\n"
     + ".app-shell.mode-design .main-area,.app-shell.mode-design .right-sidebar{display:none!important;}\n"
     + ".app-shell.mode-design .page-design{display:block;}\n"
-    + ".page-design.is-modal{position:fixed!important;inset:0!important;width:100vw!important;height:100vh!important;z-index:2000!important;display:block!important;background:#FDFBF7;}\n"
+    + "body.design-expand-open #leftSidebar{position:absolute;top:0;left:0;bottom:0;transform:translateX(-100%);}\n"
     + "/* 全局自定义 tooltip：替代 title 黑底白字 */\n"
     + ".app-tooltip{position:fixed;z-index:9999;background:#FFFFFF;color:#3E3836;border:1px solid #EDE5DD;border-radius:6px;padding:6px 8px;font-size:12px;line-height:18px;box-shadow:0 4px 12px rgba(62,56,54,0.10);pointer-events:none;opacity:0;transform:translateY(2px);transition:opacity 100ms ease, transform 100ms ease;white-space:nowrap;max-width:260px;overflow:hidden;text-overflow:ellipsis;}\n"
     + ".app-tooltip.app-tooltip--show{opacity:1;transform:translateY(0);transition:opacity 150ms ease, transform 150ms ease;}\n"
+    + "/* 视觉设计 demo 模态框（独立顶层，避免受 Gradio reset 影响） */\n"
+    + ".style-demo-modal{position:fixed;inset:0;z-index:3000;display:none;background:rgba(62,56,54,.45);}\n"
+    + ".style-demo-modal.is-open{display:flex;align-items:center;justify-content:center;padding:24px;animation:demoFadeIn 300ms var(--ease) both;}\n"
+    + ".style-demo-modal.is-closing{display:flex;align-items:center;justify-content:center;padding:24px;animation:demoFadeOut 300ms var(--ease) both;}\n"
+    + ".style-demo-modal__content{position:relative;z-index:1;width:min(1100px,100%);height:min(780px, calc(100% - 48px));max-height:100%;background:#FDFBF7;border-radius:12px;box-shadow:0 24px 60px rgba(62,56,54,.18);display:flex;flex-direction:column;overflow:hidden;animation:demoIn 300ms var(--ease) both;}\n"
+    + ".style-demo-modal__head{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid #EDE5DD;background:#FFFFFF!important;}\n"
+    + ".style-demo-modal__title{font-size:15px;font-weight:600;color:#6B5045!important;}\n"
+    + ".style-demo-modal__close{display:flex;align-items:center;justify-content:center;width:28px;height:28px;border:none!important;box-shadow:none!important;outline:none!important;border-radius:6px;background:transparent!important;color:#6F6763!important;cursor:pointer;font-size:18px;line-height:1;}\n"
+    + ".style-demo-modal__close:hover{background:#FAF3EC!important;color:#3E3836!important;}\n"
+    + ".style-demo-modal__frame{flex:1;min-height:0;border:none;width:100%;height:100%;background:#fff;}\n"
+    + ".style-demo-modal.is-closing .style-demo-modal__content{animation:demoOut 300ms var(--ease) both;}\n"
+    + "/* 展开弹窗（产品设计说明详情）：顶层覆盖层，与 style-demo 弹窗同构 */\n"
+    + ".design-expand-modal{position:fixed;inset:0;z-index:3000;display:none;background:rgba(62,56,54,.45);}\n"
+    + ".design-expand-modal.is-open{display:flex;align-items:center;justify-content:center;padding:24px;animation:demoFadeIn 300ms var(--ease) both;}\n"
+    + ".design-expand-modal.is-closing{display:flex;align-items:center;justify-content:center;padding:24px;animation:demoFadeOut 300ms var(--ease) both;}\n"
+    + ".design-expand-modal__content{position:relative;z-index:1;max-width:90vw;height:min(780px, calc(100% - 48px));max-height:100%;background:#FFFFFF;border-radius:12px;box-shadow:0 24px 60px rgba(62,56,54,.18);display:flex;flex-direction:column;overflow:hidden;animation:demoIn 300ms var(--ease) both;}\n"
+    + ".design-expand-modal__head{display:flex;align-items:center;justify-content:space-between;padding:24px 24px 16px;border-bottom:1px solid #EDE5DD;background:#FFFFFF!important;}\n"
+    + ".design-expand-modal__title{font-size:15px;font-weight:600;color:#6B5045!important;}\n"
+    + ".design-expand-modal__close{display:flex;align-items:center;justify-content:center;width:28px;height:28px;border:none!important;box-shadow:none!important;outline:none!important;border-radius:6px;background:transparent!important;color:#6F6763!important;cursor:pointer;font-size:18px;line-height:1;}\n"
+    + ".design-expand-modal__close:hover{background:#FAF3EC!important;color:#3E3836!important;}\n"
+    + ".design-expand-modal__frame{flex:1;min-height:0;border:none;width:100%;height:100%;background:#fff;}\n"
+    + ".design-expand-modal.is-closing .design-expand-modal__content{animation:demoOut 300ms var(--ease) both;}\n"
+    + "@keyframes demoFadeIn{from{opacity:0;}to{opacity:1;}}\n"
+    + "@keyframes demoFadeOut{from{opacity:1;}to{opacity:0;}}\n"
+    + "@keyframes demoIn{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}\n"
+    + "@keyframes demoOut{from{opacity:1;transform:translateY(0);}to{opacity:0;transform:translateY(12px);}}\n"
+    + "/* 打开弹窗时：侧边栏向右划出（300ms）+ 下方不可交互 */\n"
+    + "body.style-demo-open #leftSidebar{position:absolute;top:0;left:0;bottom:0;transform:translateX(-100%);}\n"
+    + "body.style-demo-open #pageDesign{pointer-events:none!important;}\n"
     + "</style>"
 )
 
