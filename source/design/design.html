@@ -216,7 +216,7 @@ body{
 .t-block__subtitle{font-size:18px;font-weight:700;color:var(--c-primary-900);margin:0 0 var(--s3);}
 .t-question-list{margin:var(--s3) 0 0;padding-left:var(--s5);display:flex;flex-direction:column;gap:var(--s2);}
 .t-question-list li{font-size:14px;color:var(--c-text-main);}
-.t-signal-box{border:1px solid var(--c-border);border-radius:var(--r-md);padding:var(--s4);margin-top:var(--s4);background:var(--c-card);}
+.t-signal-box{border:1px solid var(--c-border);border-radius:var(--r-md);padding:var(--s4);margin-top:var(--s6);background:var(--c-card);}
 .t-signal-box__title{font-size:13px;font-weight:600;color:var(--c-primary-900);margin-bottom:var(--s3);}
 .t-signal-row{display:flex;align-items:center;gap:var(--s3);margin-bottom:var(--s2);}
 .t-signal-row:last-child{margin-bottom:0;}
@@ -230,15 +230,15 @@ body{
 .t-flow-chain__item{background:var(--c-primary-100);color:var(--c-primary-900);padding:var(--s1) var(--s3);border-radius:var(--r-sm);font-weight:600;}
 .t-flow-chain__arrow{color:var(--c-primary-500);}
 .t-quote-pairs{display:flex;flex-direction:column;gap:var(--s4);margin-top:var(--s3);}
-.t-quote-pair{border-left:2px solid var(--c-border);padding-left:var(--s4);}
-.t-quote-pair__quote{font-size:14px;color:var(--c-text-secondary);font-style:italic;}
+.t-quote-pair{border-left:2px solid var(--c-border);padding-left:var(--s4);display:flex;flex-direction:column;gap:var(--s3);}
+.t-quote-pair__quote{font-size:14px;color:var(--c-text-secondary);font-style:italic;line-height:1.6;}
 .t-quote-pair__arrow{text-align:left;color:var(--c-primary-500);font-size:16px;padding:var(--s1) 0;}
-.t-quote-pair__need{font-size:15px;color:var(--c-text-main);}
+.t-quote-pair__need{font-size:15px;color:var(--c-text-main);line-height:1.6;}
 .t-cases{display:flex;flex-direction:column;gap:var(--s4);margin-top:var(--s3);}
-.t-case{border-left:2px solid var(--c-primary-700);padding-left:var(--s4);display:flex;flex-direction:column;gap:var(--s2);}
+.t-case{background:var(--c-card);border:1px solid var(--c-border);border-top:3px solid var(--c-primary-700);border-radius:var(--r-md);padding:var(--s4);display:flex;flex-direction:column;gap:var(--s3);box-shadow:var(--sh-card);}
 .t-case__tag{font-size:11px;letter-spacing:1px;color:var(--c-primary-700);font-weight:600;display:block;margin-bottom:2px;}
 .t-case__before,.t-case__after{font-size:14px;color:var(--c-text-main);}
-.t-case__decision{font-size:14px;color:var(--c-primary-900);font-weight:600;}
+.t-case__decision{font-size:14px;color:var(--c-primary-900);font-weight:600;padding-top:var(--s2);border-top:1px dashed var(--c-border);}
 .t-case__arrow{color:var(--c-primary-500);font-size:16px;}
 .t-key-insight{margin-top:var(--s5);padding:var(--s4) var(--s5);background:var(--c-primary-100);border-left:3px solid var(--c-primary-700);border-radius:0 var(--r-md) var(--r-md) 0;font-size:15px;color:var(--c-primary-900);font-weight:600;}
 /* Module 03 specific */
@@ -370,12 +370,19 @@ body{
 .nti__shift-from{font-size:12px;color:var(--c-text-secondary);background:var(--c-surface);padding:2px var(--s2);border-radius:var(--r-sm);}
 .nti__shift-to{font-size:12px;color:var(--c-primary-900);background:var(--c-primary-100);padding:2px var(--s2);border-radius:var(--r-sm);font-weight:600;}
 .nti__shift-arrow{color:var(--c-primary-500);font-size:14px;text-align:center;}
-.nti__update-summary{margin-top:auto;padding:var(--s3) var(--s4);background:var(--c-primary-100);border-left:3px solid var(--c-primary-700);border-radius:0 var(--r-md) var(--r-md) 0;font-size:14px;color:var(--c-primary-900);font-weight:600;}
+.nti__update-summary{margin-top:var(--s5);padding:var(--s3) var(--s4);background:var(--c-primary-100);border-left:3px solid var(--c-primary-700);border-radius:0 var(--r-md) var(--r-md) 0;font-size:14px;color:var(--c-primary-900);font-weight:600;}
 
 /* ---------- Module 03 · Decision Tree (§8.2) ---------- */
 .dt-wrap{margin-top:var(--s2);}
 .dt-problem{background:var(--c-primary-100);border-left:3px solid var(--c-primary-700);border-radius:0 var(--r-md) var(--r-md) 0;padding:var(--s4) var(--s5);font-size:14px;color:var(--c-text-main);}
+.dt-problem__title{font-size:14px;font-weight:600;color:var(--c-primary-900);margin-bottom:var(--s2);}
+.dt-problem__body{font-size:14px;color:var(--c-text-main);line-height:1.6;}
 .dt-problem strong{color:var(--c-primary-900);font-weight:600;}
+.dt-objectives{margin-top:var(--s5);padding-left:var(--s4);display:flex;flex-direction:column;gap:var(--s3);}
+.dt-objective{display:flex;gap:var(--s2);font-size:14px;color:var(--c-text-main);line-height:1.5;}
+.dt-objective__dot{color:var(--c-primary-700);font-weight:700;flex:0 0 auto;}
+.dt-objective__text{flex:1;}
+.dt-objective strong{color:var(--c-primary-900);font-weight:600;}
 .dt-tag{font-size:11px;letter-spacing:.6px;color:var(--c-text-secondary);margin:var(--s4) 0 var(--s2);}
 .dt-options{display:flex;flex-direction:column;gap:var(--s3);}
 .dt-option{display:flex;gap:var(--s3);align-items:flex-start;border:1px solid var(--c-border);border-radius:var(--r-md);padding:var(--s3) var(--s4);background:var(--c-card);}
@@ -420,6 +427,11 @@ body{
 .ip-col--trace{background:var(--c-header);}
 .ip-answer{background:var(--c-primary-100);border-radius:var(--r-sm);padding:var(--s2) var(--s3);font-size:11px;color:var(--c-text-main);margin-bottom:var(--s2);}
 .ip-step{font-family:var(--f-mono);font-size:10px;color:var(--c-text-secondary);padding:var(--s1) 0;border-bottom:1px dashed var(--c-border);}
+.ip-bottom{display:flex;align-items:center;justify-content:center;gap:var(--s4);padding:var(--s4);border-top:1px solid var(--c-border);background:var(--c-card);position:relative;}
+.ip-bottom__box{border:1px solid var(--c-border);border-radius:var(--r-sm);padding:var(--s3) var(--s4);background:var(--c-card);font-size:12px;color:var(--c-text-main);min-width:112px;text-align:center;}
+.ip-bottom__box--accent{background:var(--c-primary-100);border-color:var(--c-primary-500);}
+.ip-bottom__arrow{color:var(--c-primary-500);font-weight:700;font-size:14px;}
+.ip-up-arrow{position:absolute;top:-18px;right:18%;color:var(--c-primary-500);font-weight:700;font-size:14px;}
 
 /* ============ Module 04/05/06/08/09 左侧新叙事 kind ============ */
 .art-sub{font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--c-text-secondary);font-weight:600;margin-bottom:var(--s3);}
@@ -616,13 +628,13 @@ body{
 }
 
 /* ============ Responsive ============ */
-@media (min-width:1600px){
-  .journey-band{gap:var(--s6);}
-  .journey-divider{margin:0 var(--s8);}
-  .j-node{padding:6px 4px;}
+@media (min-width:1200px){
+  .journey-band{gap:var(--s4);}
+  .journey-divider{margin:0 var(--s6);}
+  .j-node{padding:6px 3px;}
   .j-dot{width:34px;height:34px;font-size:14px;}
   .j-title{max-width:72px;font-size:11px;}
-  .j-link{width:28px;margin:0 var(--s2);margin-top:16px;}
+  .j-link{width:26px;margin:0 var(--s2);margin-top:16px;}
   .playhead span{font-size:12px;}
   .btn-autoplay{flex-direction:row;gap:6px;padding:var(--s2) var(--s3);font-size:13px;}
   .btn-autoplay__ico{font-size:13px;}
@@ -836,20 +848,26 @@ const MODULES = [
     status:"ready", englishLabel:"FROM VALIDATED NEEDS TO PRODUCT SYSTEM",
     thesis:"需求本身不会自动变成产品。真正的设计工作，是决定哪些能力必须共同出现，才能形成完整体验。",
     leftType:"decision-tree",
-    keyDecision:"不把能力拆成三个独立页面，而是把它们组织成一个可解释知识闭环：回答 → 解释 → 验证。",
+    keyDecision:"使用经典的三栏式AI对话样式，在同一页面中呈现出一套可解释知识闭环：回答 → 解释 → 验证。",
     thinking:[
       { kind:"decision-tree",
-        problem:"如何把三个分散的能力——对话、因果图、证据库——组织成完整可用的产品体验？",
+        problem:"把三个分散的能力——对话、因果图、证据库——组织成完整可用的产品。",
+        objectives:[
+          { title:"易上手", desc:"使用门槛低、没有学习成本、减少不必要的跳转" },
+          { title:"可解释", desc:"解释链路表达完整、逻辑清晰、可读性强" },
+          { title:"可追溯", desc:"保留原始数据，可随时追溯与查看" }
+        ],
         options:[
           { tag:"Option A", name:"三个独立页面", verdict:"×", reason:"用户在页面间跳转，能力割裂，无法形成闭环。", rejected:true },
           { tag:"Option B", name:"纯聊天机器人", verdict:"×", reason:"只给答案不给解释，无法建立可信度，违背“可解释”初衷。", rejected:true },
-          { tag:"Option C", name:"可解释知识闭环", verdict:"✓", reason:"把 Answer → Explain → Verify 串成一条线：对话入口、因果图支撑、证据库兜底。", chosen:true,
+          { tag:"Option C", name:"可解释知识闭环", verdict:"✓", reason:"把 回答 → 解释 → 验证 串成一条线：对话入口、因果图支撑、证据库兜底。", chosen:true,
             decompose:[
               { idx:"01", tag:"CONVERSATION", d:"让用户自然提问" },
               { idx:"02", tag:"CAUSAL GRAPH", d:"让用户理解答案如何得出" },
-              { idx:"03", tag:"EVIDENCE LIBRARY", d:"让用户追溯知识来源" }
+              { idx:"03", tag:"EVIDENCE LIBRARY", d:"让用户追溯知识来源" },
+              { idx:"04", tag:"KNOWLEDGE BASE", d:"保留知识库随时可查" }
             ],
-            note:"能力闭环：Answer → Explain → Verify。主动控制演示环境的不确定性（demo 不引入 LLM），把重点放在知识图谱推理本身。" }
+            note:"能力闭环：回答 → 解释 → 验证。主动控制演示环境的不确定性（demo 不引入 LLM），把重点放在知识图谱推理本身。" }
         ] }
     ],
     artifact:{ type:"A", subtype:"loop", name:"Explainable Product Blueprint", density:"fill",
@@ -1563,7 +1581,18 @@ function buildBlock(b){
   else if(b.kind==='decision-tree'){
     const prob = document.createElement('div');
     prob.className = 'dt-problem';
-    prob.innerHTML = '<strong>PROBLEM</strong><br>'+b.problem;
+    prob.innerHTML = '<div class="dt-problem__title">Objectives</div><div class="dt-problem__body">'+b.problem+'</div>';
+    if(b.objectives && b.objectives.length){
+      const objList = document.createElement('div');
+      objList.className = 'dt-objectives';
+      b.objectives.forEach(o=>{
+        const item = document.createElement('div');
+        item.className = 'dt-objective';
+        item.innerHTML = '<span class="dt-objective__dot">•</span><span class="dt-objective__text"><strong>'+o.title+'：</strong>'+o.desc+'</span>';
+        objList.appendChild(item);
+      });
+      prob.appendChild(objList);
+    }
     frag.appendChild(prob);
     const tag = document.createElement('div');
     tag.className = 'dt-tag';
@@ -1810,12 +1839,12 @@ function renderBlueprint(body, a){
   svg.setAttribute('class','blueprint');
   // node helper
   const nodes = [
-    { id:'q', x:210, y:14, w:100, h:42, cls:'bp-box--center', label:'USER QUESTION', sub:'自然语言提问' },
-    { id:'c', x:200, y:82, w:120, h:42, cls:'bp-box--accent', label:'CONVERSATION', sub:'Ask naturally' },
-    { id:'k', x:185, y:150, w:150, h:42, cls:'bp-box', label:'KNOWLEDGE QUERY', sub:'Semantic routing' },
-    { id:'g', x:24, y:218, w:150, h:52, cls:'bp-box', label:'CAUSAL GRAPH', sub:'See why' },
-    { id:'e', x:346, y:218, w:150, h:52, cls:'bp-box', label:'EVIDENCE LIBRARY', sub:'Trace the source' },
-    { id:'a', x:175, y:312, w:170, h:54, cls:'bp-box--core', label:'EXPLAINABLE ANSWER', sub:'Trusted answer', core:true }
+    { id:'q', x:210, y:14, w:100, h:42, cls:'bp-box--center', label:'用户提问', sub:'自然语言输入' },
+    { id:'c', x:205, y:82, w:110, h:42, cls:'bp-box--accent', label:'对话入口', sub:'自然交互' },
+    { id:'k', x:200, y:150, w:120, h:42, cls:'bp-box', label:'知识查询', sub:'语义路由' },
+    { id:'g', x:49, y:218, w:100, h:52, cls:'bp-box', label:'因果图', sub:'看见原因' },
+    { id:'e', x:371, y:218, w:100, h:52, cls:'bp-box', label:'证据库', sub:'追溯来源' },
+    { id:'a', x:195, y:312, w:130, h:54, cls:'bp-box--core', label:'可解释回答', sub:'可信回答', core:true }
   ];
   const links = [
     ['q','c'],['c','k'],['k','g'],['k','e'],['g','a'],['e','a']
@@ -1861,7 +1890,7 @@ function renderBlueprint(body, a){
       tag.setAttribute('x',cx(n)); tag.setAttribute('y',n.y-6);
       tag.setAttribute('text-anchor','middle');
       tag.setAttribute('class','bp-core-tag');
-      tag.textContent = 'PRODUCT CORE';
+      tag.textContent = '产品核心';
       g.appendChild(tag);
     }
     // hover dim others
@@ -1880,11 +1909,17 @@ function renderBlueprint(body, a){
   if(a.preview){
     const ip = document.createElement('div');
     ip.className = 'interface-preview reveal-item';
-    ip.innerHTML = '<div class="interface-preview__label">HOW IT APPEARS · Blueprint Preview</div>'+
+    ip.innerHTML = '<div class="interface-preview__label">呈现方式 · 方案预览</div>'+
       '<div class="ip-grid">'+
-      '<div class="ip-col ip-col--nav">Nav<br>· 首页<br>· 图库<br>· 文献</div>'+
-      '<div class="ip-col ip-col--mid"><div class="ip-answer">Answer</div>对话区承载任务与解释</div>'+
-      '<div class="ip-col ip-col--trace"><div class="ip-step">Step 01</div><div class="ip-step">Step 02</div><div class="ip-step">Step 03</div></div>'+
+      '<div class="ip-col ip-col--nav">导航<br>· 首页<br>· 图库<br>· 文献</div>'+
+      '<div class="ip-col ip-col--mid"><div class="ip-answer">回答</div>对话区承载任务与解释</div>'+
+      '<div class="ip-col ip-col--trace"><div class="ip-step">步骤 01</div><div class="ip-step">步骤 02</div><div class="ip-step">步骤 03</div></div>'+
+      '</div>'+
+      '<div class="ip-bottom">'+
+      '<div class="ip-up-arrow">↑</div>'+
+      '<div class="ip-bottom__box">知识库 / 文献库</div>'+
+      '<div class="ip-bottom__arrow">→</div>'+
+      '<div class="ip-bottom__box ip-bottom__box--accent">知识图谱</div>'+
       '</div>';
     body.appendChild(ip);
   }
