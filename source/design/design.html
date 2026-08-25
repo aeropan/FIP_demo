@@ -141,7 +141,7 @@ body{
 .module-header__count{font-family:var(--f-mono);font-size:14px;color:var(--c-text-secondary);white-space:nowrap;padding-top:var(--s2);}
 
 /* ============ 04 · Module Workspace ============ */
-.module-workspace{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(420px,0.9fr);gap:var(--s12);padding:var(--s8) 0;align-items:start;}
+.module-workspace{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(420px,0.85fr);gap:var(--s8);padding:var(--s8) 0;align-items:start;}
 /* left thinking · vertical narrative rail */
 .thinking{position:relative;display:flex;flex-direction:column;}
 /* ===== 左侧：由各 leftType 决定布局节奏，不再统一时间线壳 ===== */
@@ -259,7 +259,7 @@ body{
 .t-parts__idx{font-family:var(--f-mono);font-size:13px;color:var(--c-primary-700);font-weight:600;flex:0 0 auto;}
 .t-parts__tag{font-size:14px;font-weight:600;color:var(--c-primary-900);}
 .t-parts__desc{font-size:13px;color:var(--c-text-secondary);margin-top:2px;}
-.t-note--loop{background:var(--c-primary-100);border-style:solid;border-color:var(--c-border);font-style:normal;}
+.t-note--loop{background:var(--c-primary-100);border-style:solid;border-color:var(--c-border);font-style:normal;white-space:pre-wrap;}
 .t-decision-q{font-size:14px;font-weight:600;color:var(--c-primary-900);margin-top:var(--s3);}
 .t-decision-a{font-size:14px;color:var(--c-text-secondary);margin-top:2px;}
 
@@ -283,6 +283,107 @@ body{
 .artifact--fill .artifact__head{margin-bottom:var(--s8);}
 .artifact--dense{padding:var(--s5);font-size:13px;}
 .artifact--dense .artifact__head{margin-bottom:var(--s5);}
+
+/* ===== Module 06 · Agent 设计 ===== */
+.module-header.is-agent-design .module-header__meta{color:#6B5045;}
+.module-header.is-agent-design .module-header__title{color:#6B5045;font-weight:700;}
+.module-header.is-agent-design{border-bottom-color:var(--c-border);}
+
+/* 章节标签 CONCEPT / RULE / FUTURE EXTENSION */
+.agent-section{margin-top:var(--s6);}
+.agent-section__label{font-size:11px;letter-spacing:1px;text-transform:uppercase;color:#8C6B5D;font-weight:600;margin-bottom:var(--s3);}
+
+/* CONCEPT 设计理念 */
+.agent-concept{margin-bottom:var(--s6);}
+.agent-concept__list{display:flex;flex-direction:column;}
+.agent-concept__item{padding:var(--s3) 0;border-bottom:1px dashed var(--c-border);}
+.agent-concept__item:last-child{border-bottom:none;}
+.agent-concept__title{font-size:14px;font-weight:600;color:#6B5045;margin-bottom:4px;}
+.agent-concept__desc{font-size:13px;color:#6F6763;line-height:1.5;}
+
+/* 左侧：What I Did 时间线 */
+.module-workspace.is-agent-design .agent-timeline{margin-top:var(--s2);}
+.module-workspace.is-agent-design .agent-step{display:flex;gap:var(--s4);padding:var(--s3) var(--s4);border-radius:var(--r-md);}
+.module-workspace.is-agent-design .agent-step:nth-child(odd){background:#FFFFFF;}
+.module-workspace.is-agent-design .agent-step:nth-child(even){background:#FAF7F2;}
+.module-workspace.is-agent-design .agent-step__rail{display:flex;flex-direction:column;align-items:center;flex:0 0 auto;}
+.module-workspace.is-agent-design .agent-step__node{width:26px;height:26px;border-radius:50%;background:#FFFFFF;border:1px solid var(--c-border);color:#6B5045;font-size:12px;font-weight:600;display:flex;align-items:center;justify-content:center;}
+.module-workspace.is-agent-design .agent-step__line{flex:1 1 auto;width:0;border-left:1px dashed var(--c-border);margin:4px 0 0;}
+.module-workspace.is-agent-design .agent-step:last-child .agent-step__line{display:none;}
+.module-workspace.is-agent-design .agent-step__body{padding-top:2px;}
+.module-workspace.is-agent-design .agent-step__title{font-size:13px;font-weight:600;color:#6B5045;margin-bottom:4px;}
+.module-workspace.is-agent-design .agent-step__desc{font-size:13px;color:#6F6763;line-height:1.5;}
+
+/* Key Insight 强调块（Module 06 专用） */
+.module-workspace.is-agent-design .key-decision{
+  border-left:4px solid #8C6B5D;
+  background:#FAF3EC;
+  border-radius:8px;
+  padding:16px;
+  margin-top:var(--s5);
+  white-space:pre-wrap;
+  color:#3E3836;
+  line-height:1.6;
+}
+.module-workspace.is-agent-design .key-decision strong{
+  display:block;
+  font-size:11px;
+  letter-spacing:1px;
+  text-transform:uppercase;
+  color:#8C6B5D;
+  font-weight:600;
+  margin-bottom:8px;
+}
+
+/* 右侧 Artifact 容器覆盖 */
+.artifact--agent{
+  padding:24px;
+  border-color:var(--c-border);
+  box-shadow:0 1px 2px rgba(62,56,54,0.04);
+  border-radius:12px;
+}
+.artifact--agent .artifact__name{font-size:14px;font-weight:600;color:#8C6B5D;letter-spacing:.5px;display:flex;align-items:center;gap:6px;}
+
+/* 分层泳道图 */
+.module-workspace.is-agent-design .agent-artifact{margin-top:var(--s2);}
+.module-workspace.is-agent-design .agent-lanes{display:flex;flex-direction:column;}
+.module-workspace.is-agent-design .agent-lane{display:flex;align-items:stretch;gap:var(--s4);background:#FAF7F2;border-radius:8px;padding:10px 12px;min-height:56px;}
+.module-workspace.is-agent-design .agent-lane__label{flex:0 0 116px;display:flex;flex-direction:column;justify-content:center;}
+.module-workspace.is-agent-design .agent-lane__en{font-size:11px;letter-spacing:1px;color:#8C6B5D;font-weight:600;}
+.module-workspace.is-agent-design .agent-lane__zh{font-size:12px;color:#6F6763;margin-top:2px;}
+.module-workspace.is-agent-design .agent-lane__body{flex:1 1 auto;display:flex;flex-wrap:wrap;align-items:center;gap:var(--s3);}
+.module-workspace.is-agent-design .agent-lane__body--empty{color:#9a938c;font-size:12px;}
+.module-workspace.is-agent-design .agent-chip{background:#FFFFFF;border:1px solid var(--c-border);border-radius:6px;padding:6px 12px;min-height:48px;display:flex;flex-direction:column;justify-content:center;min-width:96px;}
+.module-workspace.is-agent-design .agent-chip__en{font-size:11px;color:#6B5045;font-weight:600;}
+.module-workspace.is-agent-design .agent-chip__zh{font-size:11px;color:#6F6763;margin-top:2px;}
+
+/* 流程连接线 */
+.module-workspace.is-agent-design .agent-conn{display:flex;align-items:center;justify-content:center;gap:10px;height:22px;}
+.module-workspace.is-agent-design .agent-conn__line{width:0;height:18px;border-left-width:1.5px;border-left-style:solid;}
+.module-workspace.is-agent-design .agent-conn--normal .agent-conn__line{border-left-color:#B8B0AA;}
+.module-workspace.is-agent-design .agent-conn--skip .agent-conn__line{border-left:1.5px dashed #B8B0AA;}
+.module-workspace.is-agent-design .agent-conn--clarify .agent-conn__line{border-left:1.5px dashed #D9A13B;}
+.module-workspace.is-agent-design .agent-conn--compound .agent-conn__line{border-left:1.5px dashed #8C6B5D;}
+.module-workspace.is-agent-design .agent-conn__note{font-size:10px;color:#6F6763;}
+
+/* 图例 */
+.module-workspace.is-agent-design .agent-legend{display:flex;flex-wrap:wrap;gap:var(--s4);margin-top:var(--s5);padding-top:var(--s4);border-top:1px solid var(--c-border);font-size:11px;color:#6F6763;}
+.module-workspace.is-agent-design .agent-legend__item{display:flex;align-items:center;gap:6px;}
+.module-workspace.is-agent-design .agent-legend__swatch{width:22px;height:0;border-top-width:1.5px;}
+.module-workspace.is-agent-design .agent-legend__swatch--normal{border-top:1.5px solid #B8B0AA;}
+.module-workspace.is-agent-design .agent-legend__swatch--skip{border-top:1.5px dashed #B8B0AA;}
+.module-workspace.is-agent-design .agent-legend__swatch--clarify{border-top:1.5px dashed #D9A13B;}
+.module-workspace.is-agent-design .agent-legend__swatch--compound{border-top:1.5px dashed #8C6B5D;}
+
+/* 未来可插拔设计小卡片 */
+.module-workspace.is-agent-design .agent-future{margin-top:var(--s2);border:1px dashed var(--c-border);background:#FAF7F2;border-radius:8px;padding:14px 16px;}
+.module-workspace.is-agent-design .agent-future__title{font-size:11px;letter-spacing:1px;text-transform:uppercase;color:#8C6B5D;font-weight:600;margin-bottom:10px;}
+.module-workspace.is-agent-design .agent-future__flow{font-size:11px;color:#6F6763;line-height:1.9;}
+.module-workspace.is-agent-design .agent-future__flow b{color:#6B5045;font-weight:600;}
+.module-workspace.is-agent-design .agent-future__branch{display:flex;gap:var(--s6);margin-top:6px;padding-left:var(--s4);}
+.module-workspace.is-agent-design .agent-future__node{border:1px solid var(--c-border);background:#FFFFFF;border-radius:6px;padding:3px 10px;font-size:11px;color:#6F6763;white-space:nowrap;}
+.artifact--stepped .artifact__head{margin-bottom:0;}
+.artifact__cap-divider{height:1px;background:var(--c-border);margin:var(--s4) 0 var(--s2) 0;}
 
 /* reveal animation */
 .reveal-item{opacity:0;transform:translateY(8px);transition:opacity .4s ease, transform .4s ease;}
@@ -340,9 +441,9 @@ body{
 .nti__tab.is-active .nti__tab-title{color:var(--c-primary-900);font-weight:600;}
 .nti__switcher{display:none;}
 .nti__canvas{position:relative;display:flex;flex-direction:column;gap:var(--s5);}
-.nti__pane{display:flex;flex-direction:column;gap:var(--s3);}
-.nti__step-header{display:flex;align-items:baseline;gap:var(--s3);padding:var(--s3) 0 var(--s4);margin-bottom:var(--s2);}
-.nti__divider{height:1px;background:var(--c-border);margin:var(--s2) 0;}
+.nti__pane{display:flex;flex-direction:column;gap:var(--s1);}
+.nti__step-header{display:flex;align-items:baseline;gap:var(--s3);padding:var(--s2) 0 var(--s2);margin-bottom:0;}
+.nti__divider{height:1px;background:var(--c-border);margin:var(--s1) 0;}
 .nti__step-idx{font-family:var(--f-mono);font-size:14px;color:var(--c-primary-700);font-weight:600;}
 .nti__step-en{font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--c-primary-700);font-weight:600;}
 .nti__step-title{font-size:15px;color:var(--c-text-main);font-weight:600;}
@@ -368,7 +469,7 @@ body{
 .nti__fragment--normal{background:#fff;color:var(--c-text-secondary);border-color:var(--c-border);}
 .nti__fragment--important{background:var(--c-primary-100);color:var(--c-primary-900);border-color:rgba(199,161,142,.5);}
 .nti__fragment--core{background:transparent;border:none;color:var(--c-primary-900);font-weight:700;padding:0;}
-.nti__listen-insight{margin-top:auto;padding-top:var(--s3);border-top:1px solid var(--c-border);}
+.nti__listen-insight{margin-top:var(--s4);padding:var(--s4) var(--s5);border:1px solid var(--c-border);border-radius:var(--r-md);background:var(--c-card);}
 .nti__listen-insight-lead{font-size:13px;color:var(--c-text-secondary);margin-bottom:var(--s2);}
 .nti__listen-insight-item{font-size:15px;color:var(--c-primary-900);font-weight:600;margin-bottom:var(--s1);}
 .nti__shift-board{border:1px solid var(--c-border);border-radius:var(--r-md);padding:var(--s4) var(--s5);background:var(--c-card);margin-top:var(--s2);}
@@ -581,6 +682,12 @@ body{
 .arch__meta{display:flex;gap:var(--s3);flex-wrap:wrap;}
 .arch__meta-item{font-size:12px;letter-spacing:.5px;color:var(--c-primary-900);background:var(--c-primary-100);border:1px solid var(--c-border);border-radius:var(--r-pill);padding:2px var(--s3);}
 .arch__graph{border:1px solid var(--c-border);border-radius:var(--r-md);padding:var(--s5);background:var(--c-card);margin-top:var(--s3);}
+.arch__demo-figure{position:relative;display:block;margin:0 0 var(--s4) 0;cursor:zoom-in;}
+.arch__demo-figure:last-child{margin-bottom:0;}
+.arch__demo-img{display:block;width:100%;height:auto;border-radius:var(--r-sm);}
+.arch__zoom-hint{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);display:flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:999px;background:rgba(62,56,54,.55);color:#fff;opacity:0;transition:opacity 200ms var(--ease);pointer-events:none;box-shadow:0 4px 12px rgba(62,56,54,.25);}
+.arch__demo-figure:hover .arch__zoom-hint{opacity:1;}
+.arch__demo-img:last-child{margin-bottom:0;}
 .arch__gnode{display:flex;align-items:center;gap:var(--s3);}
 .arch__gnode--root{justify-content:center;margin-bottom:var(--s2);}
 .arch__edge{display:flex;align-items:center;gap:var(--s3);margin:var(--s2) 0;padding-left:40px;}
@@ -1049,11 +1156,11 @@ const MODULES = [
       { kind:"rules", title:"THE RULES · 建模规则",
         cats:[
           { tag:"知识从哪里来？", d:"选取40篇FIP领域专业文献" },
-          { tag:"抽取专业知识？", d:"利用NotebookLM进行抽取与人工校验" },
           { tag:"把知识数据化？", d:"知识schema设计、节点与关系类型设计" },
+		  { tag:"抽取专业知识？", d:"利用NotebookLM进行抽取与人工校验" },
           { tag:"知识数据技术栈？", d:"选用合适图数据工具" }
         ],
-        rel:"关系类型：导致 / 表现为 / 诊断于 / 治疗于 / 影响" },
+        rel:"MPV阶段下，基于工具提炼有效的知识片段，人工确认后设计类型与关系。在正式产品中需要做成工程化，实现“知识→抽取→构建→挂载”自动化的知识入库pipeline，并提供专家干预的权限以及兜底方案。" },
       { kind:"result", title:"THE RESULT · 可查询网络",
         stats:[
           { k:"67", d:"Causal Triples" },
@@ -1062,14 +1169,14 @@ const MODULES = [
         text:"从非结构化医学知识，转化为可查询、可追踪的因果关系网络。" }
     ],
     artifact:{ type:"A", subtype:"architecture", name:"Knowledge Architecture", density:"fill",
-      caption:"A schema designed before knowledge extraction.",
+      caption:"从知识获取到图数据库构建的全过程。",
       cats:[
-        { tag:"CAUSE & PATHOGEN", c:"#C08A6A" },
-        { tag:"MECHANISM & PROCESS", c:"#D8A657" },
-        { tag:"DIAGNOSIS & DETECTION", c:"#8AA0B0" },
-        { tag:"INTERVENTION & OUTCOME", c:"#8AA088" }
+        { tag:"病因与病原", c:"#C08A6A" },
+        { tag:"机制与过程", c:"#D8A657" },
+        { tag:"诊断与检测", c:"#8AA0B0" },
+        { tag:"干预与结局", c:"#8AA088" }
       ],
-      meta:["POLARITY","CONFIDENCE","EVIDENCE"],
+      meta:["极性（正向 / 负向 / 中性）","置信度","证据 / 证据链","关系类型（导致 / 表现为 / 诊断于 / 治疗于 / 影响...）"],
       graph:{ root:"FIP", edges:[
         { to:"Feline Coronavirus", rel:"caused by" },
         { to:"Fever", rel:"manifests as" },
@@ -1078,37 +1185,44 @@ const MODULES = [
       ] } }
   },
   {
-    id:6, number:"06", title:"前端页面设计", short:"前端设计", phase:"engineering-design",
-    status:"ready", englishLabel:"FROM PRODUCT LOGIC TO INTERFACE",
-    thesis:"界面不是设计过程的起点，而是产品需求、信息结构与视觉规则共同收敛后的结果。",
-    leftType:"interface",
+    id:6, number:"06", title:"多 Agent 协同与确定性推理设计", short:"Agent 设计", phase:"engineering-design",
+    status:"ready", englishLabel:"AGENT DESIGN",
+    thesis:"",
+    leftType:"agent",
     keyLabel:"KEY INSIGHT",
-    keyDecision:"先定义结构，再进入视觉细节——界面是需求、信息架构与视觉规范收敛后的产物。",
-    thinking:[
-      { kind:"questions", title:"DEFINE · 先问清页面目的",
-        qs:["What is the user trying to do?","What information is needed?","What should happen next?"] },
-      { kind:"flow", title:"STRUCTURE · 需求转结构",
-        steps:["REQUIREMENT","INFORMATION ARCHITECTURE","INTERACTION LOGIC"],
-        note:"先定义结构，再进入视觉细节。" },
-      { kind:"pages", title:"MATERIALIZE · 三个页面",
-        pages:["Conversation","Knowledge Graph","Literature Library"] }
+    keyDecision:"系统智能感来自编排逻辑与状态管理，而非模型生成能力。\n未来可平滑接入大模型，通过语义匹配过滤与主备模型设计控制成本。",
+    agentSteps:[
+      { idx:"01", title:"梳理处理链路", d:"将输入到输出拆解为语义识别、任务分配、图查询、证据加工、输出生成。" },
+      { idx:"02", title:"划分 Agent 职责", d:"定义 Intent / Entity / GraphQuery / Evidence / Risk / Response / Boundary 等 Agent。" },
+      { idx:"03", title:"设计调度逻辑", d:"确定正常、短路、澄清、复合输入四种执行路径。" },
+      { idx:"04", title:"定义数据结构", d:"引入 ReasoningStep、AgentResponse、PipelineTrace 支撑可解释展示。" }
     ],
-    artifact:{ type:"B", subtype:"interface", name:"Interface Evolution",
-      caption:"From page purpose to working interface.",
-      tabs:[
-        { id:"conversation", label:"Conversation", hotspots:[
-          { n:"①", x:10, y:16, label:"Navigation", tip:"左侧导航承载首页 / 图库 / 文献入口。" },
-          { n:"②", x:50, y:34, label:"Conversation", tip:"中间对话区承载问答与执行轨迹解释。" },
-          { n:"③", x:88, y:58, label:"Execution Trace", tip:"右侧执行轨迹展示推理步骤来源。" } ] },
-        { id:"graph", label:"Knowledge Graph", hotspots:[
-          { n:"①", x:12, y:18, label:"Legend", tip:"图例说明四类节点与语义色。" },
-          { n:"②", x:50, y:48, label:"Graph Canvas", tip:"因果图谱主画布，可点击节点查看详情。" },
-          { n:"③", x:86, y:30, label:"Detail Panel", tip:"右侧详情面板展示选中节点的关系与证据。" } ] },
-        { id:"literature", label:"Literature Library", hotspots:[
-          { n:"①", x:14, y:16, label:"Search & Filter", tip:"顶部搜索与筛选快速定位文献。" },
-          { n:"②", x:42, y:46, label:"Collection", tip:"文献集合以卡片形式组织。" },
-          { n:"③", x:84, y:60, label:"Evidence Detail", tip:"点击文献卡片展开证据详情。" } ] }
-      ] }
+    artifact:{ type:"B", subtype:"agent-flow", name:"AGENT ARCHITECTURE & FLOW",
+      caption:"从输入到输出：一条确定性的多 Agent 推理流水线。",
+      lanes:[
+        { en:"INPUT", zh:"输入层", agents:[] },
+        { en:"SEMANTIC", zh:"语义识别层", agents:[{en:"IntentAgent", zh:"意图识别"},{en:"EntityAgent", zh:"实体解析"}] },
+        { en:"ORCHESTRATION", zh:"任务分配层", agents:[{en:"Orchestrator", zh:"调度与模板选择"}] },
+        { en:"DECISION", zh:"决策层", agents:[{en:"GraphQueryAgent", zh:"图查询执行"}] },
+        { en:"EVIDENCE", zh:"证据加工层", agents:[{en:"EvidenceAgent", zh:"证据标准化"},{en:"RiskAgent", zh:"风险标记"}] },
+        { en:"OUTPUT", zh:"输出层", agents:[{en:"ResponseAgent", zh:"回复生成"}] },
+        { en:"BOUNDARY", zh:"边界处理（横切）", agents:[{en:"BoundaryAgent", zh:"知识边界兜底"}] }
+      ],
+      conns:[
+        { type:"normal", notes:[] },
+        { type:"normal", notes:[] },
+        { type:"clarify", notes:["意图不明确时等待澄清","实体为空时跳过"] },
+        { type:"normal", notes:[] },
+        { type:"normal", notes:[] },
+        { type:"compound", notes:["复合输入直接执行"] }
+      ],
+      legend:[
+        { type:"normal", label:"正常流程" },
+        { type:"skip", label:"短路/跳过" },
+        { type:"clarify", label:"澄清分支" },
+        { type:"compound", label:"复合输入" }
+      ]
+    }
   },
   {
     id:7, number:"07", title:"开发实现", short:"开发实现", phase:"engineering-design",
@@ -1223,6 +1337,8 @@ const modalMask = document.getElementById('modalMask');
 const modalBox = document.getElementById('modalBox');
 const modalClose = document.getElementById('modalClose');
 const modalTitle = document.getElementById('modalTitle');
+const moduleWorkspace = pjModule.querySelector('.module-workspace');
+const moduleHeader = pjModule.querySelector('.module-header');
 const modalBody = document.getElementById('modalBody');
 
 let currentId = 1;
@@ -1342,6 +1458,9 @@ function updateJourneyStates(){
 }
 
 function renderHeader(mod){
+  const isAgent = mod.id===6;
+  moduleWorkspace.classList.toggle('is-agent-design', isAgent);
+  moduleHeader.classList.toggle('is-agent-design', isAgent);
   mMeta.textContent = 'MODULE ' + mod.number + '  ·  ' + mod.englishLabel;
   mTitle.textContent = mod.title;
   mThesis.textContent = mod.thesis || '';
@@ -1363,6 +1482,7 @@ function renderLeftContent(mod){
     'gallery': renderGalleryNarrative,
     'architecture': renderArchitectureNarrative,
     'interface': renderInterfaceNarrative,
+    'agent': renderAgentNarrative,
     'engineering': renderEngineeringNarrative,
     'proof': renderProofNarrative,
     'delivery': renderDeliveryNarrative
@@ -1448,6 +1568,85 @@ function renderInterfaceNarrative(mod){
     stage.appendChild(buildBlock(b));
     thinkingCol.appendChild(stage);
   });
+}
+function renderAgentNarrative(mod){
+  // CONCEPT · 设计理念（章节体系最上方）
+  const concept = document.createElement('div');
+  concept.className = 'agent-concept reveal-item';
+  concept.innerHTML =
+    '<div class="agent-section__label">CONCEPT · 设计理念</div>'+
+    '<div class="agent-concept__list">'+
+      conceptItem('确定性优先','系统智能感来自编排逻辑与状态管理，而非模型生成能力；优先保证可解释与可控。')+
+      conceptItem('多 Agent 协同','按职责拆分意图、实体、查询、证据、风险、回复与边界等独立 Agent。')+
+      conceptItem('可插拔演进','预留语义匹配过滤与主备模型切换，未来可平滑接入大模型。')+
+    '</div>';
+  thinkingCol.appendChild(concept);
+
+  // RULE · 智能体搭建（时间线）
+  const ruleLabel = document.createElement('div');
+  ruleLabel.className = 'agent-section__label reveal-item';
+  ruleLabel.textContent = 'RULE · 智能体搭建';
+  thinkingCol.appendChild(ruleLabel);
+
+  const steps = mod.agentSteps || [];
+  const tl = document.createElement('div');
+  tl.className = 'agent-timeline';
+  steps.forEach(s=>{
+    const step = document.createElement('div');
+    step.className = 'agent-step reveal-item';
+    step.innerHTML = '<div class="agent-step__rail"><span class="agent-step__node">'+s.idx+'</span><span class="agent-step__line"></span></div>'+
+      '<div class="agent-step__body"><div class="agent-step__title">'+s.title+'</div><div class="agent-step__desc">'+s.d+'</div></div>';
+    tl.appendChild(step);
+  });
+  thinkingCol.appendChild(tl);
+
+  // FUTURE EXTENSION · 扩展性（从右侧 Artifact 移至此处，置于 KEY INSIGHT 上方）
+  const future = document.createElement('div');
+  future.className = 'agent-section reveal-item';
+  future.innerHTML =
+    '<div class="agent-section__label">FUTURE EXTENSION · 扩展性</div>'+
+    '<div class="agent-future"><div class="agent-future__flow"><b>用户输入</b> → <b>语义匹配过滤</b> → <b>路由判断</b></div>'+
+    '<div class="agent-future__branch"><span class="agent-future__node">确定性图谱路径</span><span class="agent-future__node">可插拔 LLM → 主备模型切换</span></div></div>';
+  thinkingCol.appendChild(future);
+}
+function conceptItem(title, desc){
+  return '<div class="agent-concept__item"><div class="agent-concept__title">'+title+'</div><div class="agent-concept__desc">'+desc+'</div></div>';
+}
+function renderAgentFlow(body, a){
+  const wrap = document.createElement('div');
+  wrap.className = 'agent-artifact';
+  const lanes = document.createElement('div');
+  lanes.className = 'agent-lanes';
+  a.lanes.forEach((l, i)=>{
+    const lane = document.createElement('div');
+    lane.className = 'agent-lane reveal-item';
+    let bodyHtml;
+    if(l.agents && l.agents.length){
+      bodyHtml = l.agents.map(ag=>'<div class="agent-chip"><div class="agent-chip__en">'+ag.en+'</div><div class="agent-chip__zh">'+ag.zh+'</div></div>').join('');
+    } else {
+      bodyHtml = '<div class="agent-lane__body--empty">用户输入 · 查询语句</div>';
+    }
+    lane.innerHTML = '<div class="agent-lane__label"><span class="agent-lane__en">'+l.en+'</span><span class="agent-lane__zh">'+l.zh+'</span></div>'+
+      '<div class="agent-lane__body">'+bodyHtml+'</div>';
+    lanes.appendChild(lane);
+    if(i < a.conns.length){
+      const c = a.conns[i];
+      const conn = document.createElement('div');
+      conn.className = 'agent-conn agent-conn--'+c.type+' reveal-item';
+      const notes = (c.notes && c.notes.length) ? c.notes.map(n=>'<span class="agent-conn__note">'+n+'</span>').join('') : '';
+      conn.innerHTML = '<span class="agent-conn__line"></span>'+notes;
+      lanes.appendChild(conn);
+    }
+  });
+  wrap.appendChild(lanes);
+
+  const legend = document.createElement('div');
+  legend.className = 'agent-legend reveal-item';
+  legend.innerHTML = a.legend.map(it=>'<span class="agent-legend__item"><span class="agent-legend__swatch agent-legend__swatch--'+it.type+'"></span>'+it.label+'</span>').join('');
+  wrap.appendChild(legend);
+
+  body.appendChild(wrap);
+  revealSequence(body.querySelectorAll('.reveal-item'), 120, 500);
 }
 function renderEngineeringNarrative(mod){
   mod.thinking.forEach(b=>{
@@ -1912,7 +2111,7 @@ function buildBlock(b){
 function renderArtifact(mod){
   if(ifaceTimer){ clearInterval(ifaceTimer); ifaceTimer = null; }
   const a = mod.artifact;
-  artifactCol.className = 'artifact' + (a.density ? ' artifact--'+a.density : '');
+  artifactCol.className = 'artifact' + (a.density ? ' artifact--'+a.density : '') + (a.subtype==='noise-to-insight' ? ' artifact--stepped' : '') + (a.subtype==='agent-flow' ? ' artifact--agent' : '');
   artifactCol.innerHTML = '';
   if(mod.status==='pending'){
     artifactCol.innerHTML = '<div class="pending-note">Artifact 开发中</div>';
@@ -1924,6 +2123,11 @@ function renderArtifact(mod){
     '<div class="artifact__caption">'+a.caption+'</div></div>'+
     '<button class="artifact__expand" type="button">展开 ↗</button>';
   artifactCol.appendChild(head);
+  if(a.subtype==='noise-to-insight'){
+    const capDivider = document.createElement('div');
+    capDivider.className = 'artifact__cap-divider';
+    artifactCol.appendChild(capDivider);
+  }
   const body = document.createElement('div');
   body.className = 'artifact__body';
   artifactCol.appendChild(body);
@@ -1937,6 +2141,7 @@ function renderArtifact(mod){
   else if(a.subtype==='system') renderSystem(body, a);
   else if(a.subtype==='proof') renderProof(body, a);
   else if(a.subtype==='deployment') renderDeployment(body, a);
+  else if(a.subtype==='agent-flow') renderAgentFlow(body, a);
   else if(a.subtype==='noise-to-insight') renderNoiseToInsight(body, a, head.querySelector('.artifact__expand'));
 
   // expand modal for all subtypes except noise-to-insight (which handles its own modal)
@@ -2183,8 +2388,8 @@ function renderArchitecture(body, a){
   body.appendChild(cats);
   const sub2 = document.createElement('div');
   sub2.className = 'art-sub';
-  sub2.style.marginTop = 'var(--s5)';
-  sub2.textContent = 'RELATIONSHIP METADATA';
+  sub2.style.marginTop = 'calc(var(--s5) * 2.0)';
+  sub2.textContent = 'RELATIONSHIP METADATA · 关系元数据';
   body.appendChild(sub2);
   const meta = document.createElement('div');
   meta.className = 'arch__meta';
@@ -2197,24 +2402,16 @@ function renderArchitecture(body, a){
   body.appendChild(meta);
   const sub3 = document.createElement('div');
   sub3.className = 'art-sub';
-  sub3.style.marginTop = 'var(--s5)';
-  sub3.textContent = 'LIVE GRAPH PREVIEW · FIP';
+  sub3.style.marginTop = 'calc(var(--s5) * 2.0)';
+  sub3.textContent = 'LIVE GRAPH PREVIEW · 图谱结构预览';
   body.appendChild(sub3);
-  const g = a.graph;
-  const graph = document.createElement('div');
-  graph.className = 'arch__graph';
-  const root = document.createElement('div');
-  root.className = 'arch__gnode arch__gnode--root reveal-item';
-  root.innerHTML = '<div class="arch__g-label">'+g.root+'</div><div class="arch__g-sub">center entity</div>';
-  graph.appendChild(root);
-  g.edges.forEach(e=>{
-    const row = document.createElement('div');
-    row.className = 'arch__edge reveal-item';
-    row.innerHTML = '<span class="arch__g-rel">'+e.rel+'</span><span class="arch__g-arrow">→</span>'+
-      '<span class="arch__gnode arch__gnode--leaf"><span class="arch__g-label">'+e.to+'</span></span>';
-    graph.appendChild(row);
-  });
-  body.appendChild(graph);
+  const imgs = document.createElement('div');
+  imgs.className = 'arch__graph';
+  const zoomHint = '<span class="arch__zoom-hint"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span>';
+  imgs.innerHTML =
+    '<figure class="arch__demo-figure"><img class="arch__demo-img" src="file=asset/neo4j_demo_1.png" alt="Neo4j 图谱示例 1" />' + zoomHint + '</figure>' +
+    '<figure class="arch__demo-figure"><img class="arch__demo-img" src="file=asset/neo4j_demo_2.png" alt="Neo4j 图谱示例 2" />' + zoomHint + '</figure>';
+  body.appendChild(imgs);
   revealSequence(body.querySelectorAll('.reveal-item'), 110, 550);
 }
 
@@ -2813,6 +3010,10 @@ function buildDetailDoc(contentNode){
     '  }',
     '  var seed = document.querySelector(".nti__pane.is-active") || document.body;',
     '  reveal(seed.querySelectorAll(".reveal-item"), 110, 900);',
+    '  document.addEventListener("click", function(e){',
+    '    var img = e.target.closest && e.target.closest(".arch__demo-img");',
+    '    if(img){ var src = img.getAttribute("src") || img.src; try{ parent.postMessage({type:"img-zoom", src:src}, "*"); }catch(err){} }',
+    '  });',
     '})();'
   ].join('\n');
   return '<!DOCTYPE html><html><head><meta charset="utf-8">' +
@@ -2836,6 +3037,14 @@ function closeModal(){
   }
 }
 modalClose.addEventListener('click', closeModal);
+/* Module 05 图片：点击放大（向父窗口发送 img-zoom 消息，由顶层灯箱处理） */
+document.addEventListener('click', function(e){
+  var img = e.target.closest && e.target.closest('.arch__demo-img');
+  if(img){
+    var src = img.getAttribute('src') || img.src;
+    try{ window.parent.postMessage({type:'img-zoom', src:src}, '*'); }catch(err){}
+  }
+});
 
 /* ============================================================
  * Init
