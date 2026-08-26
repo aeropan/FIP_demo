@@ -334,7 +334,7 @@ body{
 .agent-sec__name{font-size:13px;font-weight:600;letter-spacing:.5px;color:var(--c-text-main);}
 .agent-sec__caption{font-size:12px;color:var(--c-text-secondary);}
 .agent-sec__toggle{flex:0 0 auto;font-size:18px;line-height:1;color:var(--c-primary-700);width:24px;height:24px;display:flex;align-items:center;justify-content:center;}
-.agent-sec__body{display:none;padding:0 20px 20px;}
+.agent-sec__body{display:none;padding:20px 20px 20px;}
 .agent-sec.is-open .agent-sec__body{display:block;}
 
 /* 右侧：架构图 SVG（主流程实线 / Boundary 虚线旁路） */
@@ -1683,36 +1683,55 @@ function renderAgentFlow(body, a){
   revealSequence(body.querySelectorAll('.reveal-item'), 120, 500);
 }
 
-/* ---------- Module 06 · AGENT SYSTEM 手风琴 ---------- */
+/* ---------- Module 06 · AGENT SYSTEM 手风琴（融入白底可展开 artifact 区域） ---------- */
 function renderAgentSystem(mod){
-  artifactCol.className = 'agent-system';
+  // 外层白底可展开容器，与其他 module 的 .artifact 一致
+  const aName = mod.agentArtifact ? mod.agentArtifact.name : 'AGENT SYSTEM';
+  const aCap = mod.agentArtifact ? mod.agentArtifact.caption : '多 Agent 协同与确定性推理：架构流程、真实案例与未来扩展，三栏可独立展开查看。';
+  artifactCol.className = 'artifact';
   artifactCol.innerHTML = '';
+  const artHead = document.createElement('div');
+  artHead.className = 'artifact__head';
+  artHead.innerHTML = '<div><div class="artifact__name">'+aName+'</div>'+
+    '<div class="artifact__caption">'+aCap+'</div></div>'+
+    '<button class="artifact__expand" type="button">展开 ↗</button>';
+  artifactCol.appendChild(artHead);
+  const artBody = document.createElement('div');
+  artBody.className = 'artifact__body';
+  artifactCol.appendChild(artBody);
+
   const inner = document.createElement('div');
   inner.className = 'agent-system__inner';
   mod.artifacts.forEach((af, i)=>{
-    const open = (i===0);
+    const open = true; // 三个组件默认展开
     const sec = document.createElement('section');
     sec.className = 'agent-sec' + (open ? ' is-open' : '');
-    const head = document.createElement('button');
-    head.type = 'button';
-    head.className = 'agent-sec__head';
-    head.innerHTML = '<span class="agent-sec__idx">'+(i+1<10?'0':'')+(i+1)+'</span>'+
+    const secHead = document.createElement('button');
+    secHead.type = 'button';
+    secHead.className = 'agent-sec__head';
+    secHead.innerHTML = '<span class="agent-sec__idx">'+(i+1<10?'0':'')+(i+1)+'</span>'+
       '<span class="agent-sec__titles"><span class="agent-sec__name">'+af.name+'</span><span class="agent-sec__caption">'+af.caption+'</span></span>'+
       '<span class="agent-sec__toggle">'+(open?'−':'+')+'</span>';
-    const body = document.createElement('div');
-    body.className = 'agent-sec__body';
-    if(af.kind==='arch') renderAgentArchitecture(body, mod);
-    else if(af.kind==='case') renderCaseWalkthrough(body, mod);
-    else if(af.kind==='future') renderAgentFuture(body, mod);
-    head.addEventListener('click', ()=>{
+    const secBody = document.createElement('div');
+    secBody.className = 'agent-sec__body';
+    if(af.kind==='arch') renderAgentArchitecture(secBody, mod);
+    else if(af.kind==='case') renderCaseWalkthrough(secBody, mod);
+    else if(af.kind==='future') renderAgentFuture(secBody, mod);
+    secHead.addEventListener('click', ()=>{
       const isOpen = sec.classList.toggle('is-open');
-      head.querySelector('.agent-sec__toggle').textContent = isOpen ? '−' : '+';
+      secHead.querySelector('.agent-sec__toggle').textContent = isOpen ? '−' : '+';
     });
-    sec.appendChild(head);
-    sec.appendChild(body);
+    sec.appendChild(secHead);
+    sec.appendChild(secBody);
     inner.appendChild(sec);
   });
-  artifactCol.appendChild(inner);
+  artBody.appendChild(inner);
+
+  // 展开按钮：与其他 module 一致，打开放大弹窗
+  artHead.querySelector('.artifact__expand').addEventListener('click', ()=>{
+    pauseAutoPlay();
+    openModal(aName, inner.cloneNode(true));
+  });
 }
 
 function renderAgentArchitecture(body, mod){
