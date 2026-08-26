@@ -299,6 +299,12 @@ body{
 .agent-concept__body{flex:1 1 auto;}
 .agent-concept__title{font-size:14px;font-weight:600;color:#6B5045;margin-bottom:4px;}
 .agent-concept__desc{font-size:13px;color:#6F6763;line-height:1.5;}
+/* CONCEPT · 职责拆分 下方：Agent 职责矩形链（视觉语言对齐 Module 05 KNOWLEDGE 流） */
+.agent-concept__agents{display:flex;align-items:stretch;flex-wrap:wrap;gap:var(--s2);margin-top:var(--s3);}
+.agent-concept__agent{flex:1 1 150px;background:var(--c-card);border:1px solid var(--c-border);border-radius:var(--r-sm);padding:var(--s2) var(--s3);}
+.agent-concept__agent-en{font-family:var(--f-mono),ui-monospace,monospace;font-size:12px;font-weight:600;color:var(--c-primary-700);line-height:1.3;}
+.agent-concept__agent-d{font-size:12px;color:var(--c-text-secondary);margin-top:2px;}
+.agent-concept__arrow{color:var(--c-primary-500);font-weight:700;align-self:center;flex:0 0 auto;}
 
 /* 左侧：RULE · 设计决策（编号 + 左关键词 + 右解释 纵向列表） */
 .agent-decision{margin-top:var(--s6);}
@@ -1200,7 +1206,16 @@ const MODULES = [
     keyDecision:"真正需要设计的不是“模型有多聪明”，而是系统如何管理不确定性。\nAgent 将“能否回答、为什么回答、证据是否可靠、何时停止”转化为可执行的系统机制。",
     concept:[
       { title:"确定性优先", d:"系统智能感来自编排逻辑与状态管理，而非模型生成能力；优先保证过程可解释、结果可控。" },
-      { title:"职责拆分", d:"将复杂问答拆解为意图、实体、查询、证据、风险、响应等独立 Agent，降低单一模块复杂度。" },
+      { title:"职责拆分", d:"将复杂问答拆解为意图、实体、查询、证据、风险、响应等独立 Agent，降低单一模块复杂度。",
+        agents:[
+          { en:"IntentAgent", d:"负责意图识别" },
+          { en:"EntityAgent", d:"负责实体解析" },
+          { en:"GraphQueryAgent", d:"负责图查询执行" },
+          { en:"EvidenceAgent", d:"负责证据标准化" },
+          { en:"RiskAgent", d:"负责风险标记" },
+          { en:"ResponseAgent", d:"负责回复生成" },
+          { en:"BoundaryAgent", d:"负责知识边界兜底" }
+        ] },
       { title:"可解释且可验证", d:"每个 Agent 都有明确输入、输出与执行状态，使推理过程能够被追踪、测试和展示。" },
       { title:"可插拔演进", d:"当前以确定性路径为主，未来可在低置信度环节接入 LLM，而不改变现有 Agent 链路。" }
     ],
@@ -1604,7 +1619,7 @@ function renderAgentNarrative(mod){
   concept.innerHTML =
     '<div class="agent-section__label">CONCEPT · 设计理念</div>'+
     '<div class="agent-concept__list">'+
-      (mod.concept||[]).map(c=>conceptItem(c.title, c.d)).join('')+
+      (mod.concept||[]).map(c=>conceptItem(c.title, c.d, c.agents)).join('')+
     '</div>';
   thinkingCol.appendChild(concept);
 
@@ -1643,8 +1658,20 @@ function renderAgentNarrative(mod){
     '</div>';
   thinkingCol.appendChild(fe);
 }
-function conceptItem(title, desc){
-  return '<div class="agent-concept__item"><span class="agent-concept__node"></span><div class="agent-concept__body"><div class="agent-concept__title">'+title+'</div><div class="agent-concept__desc">'+desc+'</div></div></div>';
+function conceptItem(title, desc, agents){
+  let html = '<div class="agent-concept__item"><span class="agent-concept__node"></span>'+
+    '<div class="agent-concept__body"><div class="agent-concept__title">'+title+'</div>'+
+    '<div class="agent-concept__desc">'+desc+'</div>';
+  if(agents && agents.length){
+    html += '<div class="agent-concept__agents">';
+    agents.forEach((a, i)=>{
+      html += '<div class="agent-concept__agent"><div class="agent-concept__agent-en">'+a.en+'</div><div class="agent-concept__agent-d">'+a.d+'</div></div>';
+      if(i < agents.length-1) html += '<span class="agent-concept__arrow">→</span>';
+    });
+    html += '</div>';
+  }
+  html += '</div></div>';
+  return html;
 }
 function renderAgentFlow(body, a){
   const wrap = document.createElement('div');
