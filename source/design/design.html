@@ -362,7 +362,7 @@ body{
 .agent-flow__dash{stroke:#C7A18E;stroke-width:1.5;stroke-dasharray:4 4;fill:none;}
 .agent-flow__en{fill:#8C6B5D;font-size:11px;letter-spacing:1px;font-weight:600;font-family:var(--f-mono),ui-monospace,monospace;}
 .agent-flow__zh{fill:#6B5045;font-size:13px;font-weight:600;}
-.agent-flow__detail{fill:#6F6763;font-size:11px;}
+.agent-flow__detail{fill:#6F6763;font-size:12px;}
 .agent-flow__note{fill:#8C6B5D;font-size:10px;}
 .agent-flow__cond{fill:#6F6763;font-size:10px;}
 
@@ -1819,8 +1819,9 @@ function renderAgentArchitecture(body, mod){
     { en:"EVIDENCE", zh:"证据加工层", detail:"EvidenceAgent 证据标准化 · RiskAgent 风险标记" },
     { en:"OUTPUT", zh:"输出层", detail:"ResponseAgent 回复生成" }
   ];
-  const x=40, w=210, h=64, gap=36, top0=12, cx=145;
-  let svg = '<svg class="agent-flow" viewBox="0 0 400 600" preserveAspectRatio="xMidYMin meet" role="img" aria-label="Agent 架构图：主流程 INPUT 到 OUTPUT，Boundary 为旁路">';
+  const x=28, w=212, h=86, gap=26, top0=12;
+  const cx = x + w/2;
+  let svg = '<svg class="agent-flow" viewBox="0 0 400 690" preserveAspectRatio="xMidYMin meet" role="img" aria-label="Agent 架构图：主流程 INPUT 到 OUTPUT，Boundary 为旁路">';
   nodes.forEach((n,i)=>{
     if(i < nodes.length-1){
       const y1 = top0 + i*(h+gap) + h;
@@ -1830,21 +1831,29 @@ function renderAgentArchitecture(body, mod){
   });
   nodes.forEach((n,i)=>{
     const y = top0 + i*(h+gap);
+    const lines = n.detail.split(' · ');
+    let detailSvg = '';
+    lines.forEach((ln, k)=>{
+      detailSvg += '<text class="agent-flow__detail" x="'+(x+14)+'" y="'+(y+61+k*15)+'">'+ln+'</text>';
+    });
     svg += '<g class="agent-flow__node"><rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" rx="10"/>'+
-      '<text class="agent-flow__en" x="'+(x+14)+'" y="'+(y+18)+'">'+n.en+'</text>'+
-      '<text class="agent-flow__zh" x="'+(x+14)+'" y="'+(y+35)+'">'+n.zh+'</text>'+
-      '<text class="agent-flow__detail" x="'+(x+14)+'" y="'+(y+51)+'">'+n.detail+'</text></g>';
+      '<text class="agent-flow__en" x="'+(x+14)+'" y="'+(y+21)+'">'+n.en+'</text>'+
+      '<text class="agent-flow__zh" x="'+(x+14)+'" y="'+(y+42)+'">'+n.zh+'</text>'+
+      detailSvg+'</g>';
   });
   // Boundary 旁路（从 SEMANTIC 条件触发，直接返回响应，不接回主流程）
   const semTop = top0 + 1*(h+gap);
-  const bX=280, bY=semTop+8, bW=104, bH=104;
-  svg += '<path class="agent-flow__dash" d="M250 '+(semTop+24)+' H266 V'+(bY+52)+' H'+bX+'"/>';
+  const bX=270, bY=semTop + (h+gap)*2 - 20, bW=118, bH=96;
+  const semEdgeX = x + w;
+  const semMidY = semTop + h/2;
+  const bTopCx = bX + bW/2;
+  svg += '<path class="agent-flow__dash" d="M'+semEdgeX+' '+semMidY+' H'+(semEdgeX+12)+' V'+(bY-14)+' H'+bTopCx+' V'+bY+'"/>';
   svg += '<g class="agent-flow__boundary"><rect x="'+bX+'" y="'+bY+'" width="'+bW+'" height="'+bH+'" rx="10"/>'+
     '<text class="agent-flow__en" x="'+(bX+14)+'" y="'+(bY+20)+'">BOUNDARY</text>'+
-    '<text class="agent-flow__zh" x="'+(bX+14)+'" y="'+(bY+38)+'">BoundaryAgent</text>'+
-    '<text class="agent-flow__detail" x="'+(bX+14)+'" y="'+(bY+55)+'">知识边界兜底</text>'+
-    '<text class="agent-flow__note" x="'+(bX+14)+'" y="'+(bY+74)+'">短路 · 直接返回响应</text></g>';
-  svg += '<text class="agent-flow__cond" x="'+(bX+14)+'" y="'+(bY+bH+18)+'">无实体 / 越界 → 不进入主流程</text>';
+    '<text class="agent-flow__zh" x="'+(bX+14)+'" y="'+(bY+40)+'">BoundaryAgent</text>'+
+    '<text class="agent-flow__detail" x="'+(bX+14)+'" y="'+(bY+60)+'">知识边界兜底</text>'+
+    '<text class="agent-flow__note" x="'+(bX+14)+'" y="'+(bY+76)+'">短路 · 直接返回响应</text></g>';
+  svg += '<text class="agent-flow__cond" x="'+bX+'" y="'+(bY+bH+18)+'">无实体 / 越界 → 不进入主流程</text>';
   svg += '</svg>';
   body.innerHTML = svg;
 }
