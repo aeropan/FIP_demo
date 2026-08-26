@@ -3188,11 +3188,22 @@ function buildDetailDoc(contentNode){
     '  }',
     '  var seed = document.querySelector(".nti__pane.is-active") || document.body;',
     '  reveal(seed.querySelectorAll(".reveal-item"), 110, 900);',
-    '  document.addEventListener("click", function(e){',
-    '    var img = e.target.closest && e.target.closest(".arch__demo-img");',
-    '    if(img){ var src = img.getAttribute("src") || img.src; try{ parent.postMessage({type:"img-zoom", src:src}, "*"); }catch(err){} }',
-    '  });',
-    '})();'
+  '  document.addEventListener("click", function(e){',
+  '    var img = e.target.closest && e.target.closest(".arch__demo-img");',
+  '    if(img){ var src = img.getAttribute("src") || img.src; try{ parent.postMessage({type:"img-zoom", src:src}, "*"); }catch(err){} }',
+  '  });',
+  '  /* Module 06 · 放大面板内的三折叠 Section 重新绑定收纳/展开（cloneNode 不复制监听器） */',
+  '  var secHeads = Array.from(document.querySelectorAll(".agent-sec__head"));',
+  '  secHeads.forEach(function(h){',
+  '    h.addEventListener("click", function(){',
+  '      var sec = h.closest(".agent-sec");',
+  '      if(!sec) return;',
+  '      var isOpen = sec.classList.toggle("is-open");',
+  '      var t = h.querySelector(".agent-sec__toggle");',
+  '      if(t) t.textContent = isOpen ? "−" : "+";',
+  '    });',
+  '  });',
+  '})();'
   ].join('\n');
   return '<!DOCTYPE html><html><head><meta charset="utf-8">' +
          '<style>' + css + '</style></head>' +
