@@ -398,9 +398,9 @@ body{
   font-size:12px;letter-spacing:2px;color:var(--c-primary-900);font-weight:600;
   padding:var(--s4) var(--s4) var(--s3);
   border-top:1px solid var(--c-border);border-bottom:1px solid var(--c-border);
+  margin-bottom:var(--s6);
 }
 .future-core__row{display:grid;grid-template-columns:0.8fr auto 1.5fr;align-items:center;padding:2px 0;}
-.future-core__row:first-of-type{margin-top:var(--s8);}
 .future-core__box{
   grid-column:2;justify-self:center;min-width:200px;text-align:center;
   border:1px solid var(--c-border);background:#FFFFFF;border-radius:8px;
@@ -424,7 +424,11 @@ body{
   font-size:11px;color:var(--c-primary-700);line-height:1.4;
   align-self:end;
 }
-.future-core__arrow{text-align:center;color:var(--c-primary-500);font-size:16px;line-height:1;padding:2px 0;}
+.future-core__arrow{
+  display:grid;grid-template-columns:0.8fr auto 1.5fr;text-align:center;
+  color:var(--c-primary-500);font-size:16px;line-height:1;padding:2px 0;
+}
+.future-core__arrow::before{content:'';}
 .future-core__foot{
   text-align:center;font-size:12px;color:var(--c-text-secondary);line-height:1.5;
   padding:var(--s3) var(--s4) var(--s4);margin-top:var(--s5);
@@ -1241,7 +1245,7 @@ const MODULES = [
     thesis:"agent各司其职，harness机制划定边界，保证协同的确定性、可解释性与可扩展性。。",
     leftType:"agent",
     keyLabel:"KEY INSIGHT",
-    keyDecision:"真正需要设计的不是“模型有多聪明”，而是系统如何管理不确定性。\nAgent 将“能否回答、为什么回答、证据是否可靠、何时停止”转化为可执行的系统机制。",
+    keyDecision:"真正需要设计的不是“模型有多聪明”，而是系统如何管理不确定性。\nHarness 机制将“能否回答、为什么回答、证据是否可靠、何时停止”转化为边界明确、可执行的系统规则。",
     concept:[
       { title:"确定性优先", d:"系统智能感来自编排逻辑与状态管理，而非模型生成能力；运用 harness思维保证过程可解释、结果可控。" },
       { title:"职责拆分", d:"将复杂问答拆解为意图、实体、查询、证据、风险、响应等独立 Agent，降低单一模块复杂度。",
@@ -1255,7 +1259,7 @@ const MODULES = [
           { en:"BoundaryAgent", d:"负责知识边界兜底" }
         ] },
       { title:"可解释且可验证", d:"每个 Agent 都有明确输入、输出与执行状态，使推理过程能够被追踪、测试和展示。" },
-      { title:"可插拔演进", d:"当前以确定性路径为主，未来可在低置信度环节接入 LLM，用 harness 驾驭系统，而不改变现有 Agent 链路。" }
+      { title:"可插拔演进", d:"当前以确定性路径为主，未来可在语义识别、输出结果拼装等环节接入 LLM，使用灵活的架构并用 harness 驾驭系统，而不改变现有 Agent 链路。" }
     ],
     designDecisions:[
       { idx:"01", trigger:"多轮对话", mech:"上下文继承", harness:"状态harness", d:"考虑多轮对话的可能性。建立上下文区域，用户进行追问时调度并注入上下文，当新一轮实体解析为空但意图明确时，继承上一轮成功解析的实体；检测到新实体后自动增量替换上下文。" },
@@ -1270,8 +1274,8 @@ const MODULES = [
         { idx:"01", name:"语义识别层", adv:"理解长尾口语，提升召回", risk:"延迟增加、成本上升、可能误判", fix:"规则优先，LLM 低置信度兜底" },
         { idx:"02", name:"内容输出层", adv:"语言自然，减少模板感", risk:"事实偏移，模糊置信度", fix:"证据骨架约束，LLM 仅做表面润色" }
       ],
-      reserves:["Agent 可替换","数据结构契约","语义兜底槽位","主备降级"],
-      reserveNote:"统一数据结构、制定通信协议规范，在接入 LLM 也不会污染现有流程。",
+      reserves:["插件化配置","Agent 可替换","数据结构规范","通信协议","语义兜底槽位","主备降级"],
+      reserveNote:"统一数据结构、制定通信协议规范，在接入 LLM 也不会污染现有流程。\n三个边界原则共同构成 LLM 接入的 harness 框架：模型可以进入系统，但必须被路由、契约和降级策略约束。",
       principles:[
         { title:"不替换", d:"LLM 不替代现有 Agent，而是进入特定语义识别环节" },
         { title:"不污染", d:"无论规则还是 LLM，最终都必须输出统一的数据结构" },
@@ -1302,9 +1306,9 @@ const MODULES = [
       coreTitle:"DETERMINISTIC CORE · 确定性主干",
       nodes:[
         { text:"用户输入" },
-        { text:"规则语义匹配", note:"← 接入点① 语义兜底（可插拔）", tone:"apricot" },
+        { text:"规则语义匹配", note:"← 接入点① 语义类LLM · 语义分析", tone:"apricot" },
         { text:"确定性推理主干", sub:"图谱查询 · 证据加工", tone:"core" },
-        { text:"模板输出", note:"← 接入点② 语言润色（可插拔）", tone:"beige" },
+        { text:"模板输出", note:"← 接入点② 角色扮演类LLM · 丰富输出情感", tone:"beige" },
         { text:"统一数据结构" },
         { text:"回复生成" }
       ],
