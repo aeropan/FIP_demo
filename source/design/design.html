@@ -398,8 +398,8 @@ body{
   font-size:12px;letter-spacing:2px;color:var(--c-primary-900);font-weight:600;
   padding:var(--s4) var(--s4) var(--s3);
   border-top:1px solid var(--c-border);border-bottom:1px solid var(--c-border);
-  margin-bottom:var(--s6);
 }
+.future-core__head + .future-core__row{margin-top:var(--s8);}
 .future-core__row{display:grid;grid-template-columns:0.8fr auto 1.5fr;align-items:center;padding:2px 0;}
 .future-core__box{
   grid-column:2;justify-self:center;min-width:200px;text-align:center;
@@ -424,11 +424,12 @@ body{
   font-size:11px;color:var(--c-primary-700);line-height:1.4;
   align-self:end;
 }
-.future-core__arrow{
-  display:grid;grid-template-columns:0.8fr auto 1.5fr;text-align:center;
+.future-core__arrow{display:grid;grid-template-columns:0.8fr auto 1.5fr;}
+.future-core__arrow-ph{
+  grid-column:2;justify-self:center;
+  display:flex;justify-content:center;align-items:center;
   color:var(--c-primary-500);font-size:16px;line-height:1;padding:2px 0;
 }
-.future-core__arrow::before{content:'';}
 .future-core__foot{
   text-align:center;font-size:12px;color:var(--c-text-secondary);line-height:1.5;
   padding:var(--s3) var(--s4) var(--s4);margin-top:var(--s5);
@@ -1929,7 +1930,10 @@ function renderAgentFuture(body, mod){
     html += '<div class="future-core__box'+(n.tone ? ' future-core__box--'+n.tone : '')+'">'+(n.sub ? n.text+'<span class="future-core__box-sub">'+n.sub+'</span>' : n.text)+'</div>';
     if(n.note) html += '<div class="future-core__note">'+n.note+'</div>';
     html += '</div>';
-    if(i < (f.nodes||[]).length - 1) html += '<div class="future-core__arrow">↓</div>';
+    if(i < (f.nodes||[]).length - 1){
+      const w = n.tone === 'core' ? 240 : 200;
+      html += '<div class="future-core__arrow"><span class="future-core__arrow-ph" style="min-width:'+w+'px">↓</span></div>';
+    }
   });
   if(f.foot) html += '<div class="future-core__foot">'+f.foot+'</div>';
   html += '</div>';
