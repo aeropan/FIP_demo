@@ -91,7 +91,10 @@ body{
 .btn-autoplay.is-playing{background:#EFE3D6;color:var(--c-primary-900);}
 .btn-autoplay:hover{color:var(--c-primary-700);}
 
-.journey-track{position:relative;display:flex;align-items:center;}
+.journey-track{position:relative;display:flex;align-items:center;flex:1 1 auto;min-width:0;overflow-x:auto;padding:0 0 14px;scrollbar-width:thin;scrollbar-color:var(--c-border) transparent;}
+.journey-track::-webkit-scrollbar{height:6px;}
+.journey-track::-webkit-scrollbar-thumb{background:var(--c-border);border-radius:3px;}
+.journey-track::-webkit-scrollbar-track{background:transparent;}
 .journey-segment{display:flex;flex-direction:column;}
 .segment-label{display:none;}
 .segment-nodes{display:flex;align-items:center;}
