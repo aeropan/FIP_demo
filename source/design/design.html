@@ -300,73 +300,95 @@ body{
 .agent-concept__title{font-size:14px;font-weight:600;color:#6B5045;margin-bottom:4px;}
 .agent-concept__desc{font-size:13px;color:#6F6763;line-height:1.5;}
 
-/* 左侧：What I Did 时间线 */
-.module-workspace.is-agent-design .agent-timeline{margin-top:var(--s2);}
-.module-workspace.is-agent-design .agent-step{display:flex;gap:var(--s4);padding:var(--s3) var(--s4);border-radius:var(--r-md);}
-.module-workspace.is-agent-design .agent-step:nth-child(odd){background:#FFFFFF;}
-.module-workspace.is-agent-design .agent-step:nth-child(even){background:#FAF7F2;}
-.module-workspace.is-agent-design .agent-step__rail{display:flex;flex-direction:column;align-items:center;flex:0 0 auto;}
-.module-workspace.is-agent-design .agent-step__node{width:26px;height:26px;border-radius:50%;background:#FFFFFF;border:1px solid var(--c-border);color:#6B5045;font-size:12px;font-weight:600;display:flex;align-items:center;justify-content:center;}
-.module-workspace.is-agent-design .agent-step__line{flex:1 1 auto;width:0;border-left:1px dashed var(--c-border);margin:4px 0 0;}
-.module-workspace.is-agent-design .agent-step:last-child .agent-step__line{display:none;}
-.module-workspace.is-agent-design .agent-step__body{padding-top:2px;}
-.module-workspace.is-agent-design .agent-step__title{font-size:13px;font-weight:600;color:#6B5045;margin-bottom:4px;}
-.module-workspace.is-agent-design .agent-step__desc{font-size:13px;color:#6F6763;line-height:1.5;}
+/* 左侧：RULE · 设计决策（编号 + 左关键词 + 右解释 纵向列表） */
+.agent-decision{margin-top:var(--s6);}
+.agent-decision__list{display:flex;flex-direction:column;}
+.agent-decision__item{display:flex;gap:var(--s4);padding:var(--s4) 0;border-bottom:1px dashed var(--c-border);}
+.agent-decision__item:last-child{border-bottom:none;}
+.agent-decision__idx{font-family:var(--f-mono),ui-monospace,monospace;font-size:13px;color:var(--c-primary-700);font-weight:600;flex:0 0 auto;padding-top:1px;}
+.agent-decision__body{flex:1 1 auto;min-width:0;}
+.agent-decision__tags{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;margin-bottom:4px;}
+.agent-decision__trigger{font-size:14px;font-weight:600;color:var(--c-text-main);}
+.agent-decision__arrow{color:var(--c-primary-700);}
+.agent-decision__mech{font-size:12px;font-weight:600;color:var(--c-primary-700);background:var(--c-primary-100);padding:2px 8px;border-radius:999px;}
+.agent-decision__desc{font-size:13px;color:var(--c-text-secondary);line-height:1.55;}
 
-/* Key Insight 块（Module 06）回退到与其它模块一致的基准 .key-decision 样式，消除右移；仅保留多行文本的 pre-wrap */
-.module-workspace.is-agent-design .key-decision{
-  white-space:pre-wrap;
-  line-height:1.6;
-  margin-top:var(--s5);
-}
+/* 左侧：FUTURE EXTENSION · 扩展性（小型虚线框，精简路径） */
+.agent-future{margin-top:var(--s6);}
+.agent-future__box{border:1px dashed var(--c-border);background:#FAF7F2;border-radius:8px;padding:14px 16px;}
+.agent-future__flow{font-size:12px;color:var(--c-text-secondary);line-height:1.9;}
+.agent-future__flow b{color:var(--c-primary-900);font-weight:600;}
+.agent-future__sep{color:var(--c-border);margin:0 6px;}
+.agent-future__branch{display:inline-flex;flex-direction:column;vertical-align:middle;margin-left:4px;gap:2px;}
+.agent-future__b{color:var(--c-text-secondary);}
+.agent-future__tags{display:flex;flex-wrap:wrap;gap:var(--s3);margin-top:10px;}
+.agent-future__tag{font-size:11px;color:var(--c-primary-700);border:1px solid var(--c-border);border-radius:999px;padding:2px 10px;background:#FFFFFF;}
 
-/* 右侧 Artifact 容器覆盖 */
-.artifact--agent{
-  padding:24px;
-  border-color:var(--c-border);
-  box-shadow:0 1px 2px rgba(62,56,54,0.04);
-  border-radius:12px;
-}
-.artifact--agent .artifact__name{font-size:14px;font-weight:600;color:#8C6B5D;letter-spacing:.5px;display:flex;align-items:center;gap:6px;}
+/* 右侧：AGENT SYSTEM 手风琴容器 */
+.agent-system{display:block;}
+.agent-system__inner{display:flex;flex-direction:column;gap:var(--s4);}
+.agent-sec{border:1px solid var(--c-border);border-radius:12px;overflow:hidden;background:#FFFFFF;}
+.agent-sec__head{display:flex;align-items:center;gap:var(--s4);width:100%;text-align:left;background:#FFF9F5;border:0;cursor:pointer;padding:16px 20px;font-family:inherit;}
+.agent-sec__idx{font-family:var(--f-mono),ui-monospace,monospace;font-size:13px;color:var(--c-primary-700);font-weight:600;flex:0 0 auto;}
+.agent-sec__titles{flex:1 1 auto;display:flex;flex-direction:column;gap:2px;min-width:0;}
+.agent-sec__name{font-size:13px;font-weight:600;letter-spacing:.5px;color:var(--c-text-main);}
+.agent-sec__caption{font-size:12px;color:var(--c-text-secondary);}
+.agent-sec__toggle{flex:0 0 auto;font-size:18px;line-height:1;color:var(--c-primary-700);width:24px;height:24px;display:flex;align-items:center;justify-content:center;}
+.agent-sec__body{display:none;padding:0 20px 20px;}
+.agent-sec.is-open .agent-sec__body{display:block;}
 
-/* 分层泳道图 */
-.module-workspace.is-agent-design .agent-artifact{margin-top:var(--s2);}
-.module-workspace.is-agent-design .agent-lanes{display:flex;flex-direction:column;}
-.module-workspace.is-agent-design .agent-lane{display:flex;align-items:stretch;gap:var(--s4);background:#FAF7F2;border-radius:8px;padding:10px 12px;min-height:56px;}
-.module-workspace.is-agent-design .agent-lane__label{flex:0 0 116px;display:flex;flex-direction:column;justify-content:center;}
-.module-workspace.is-agent-design .agent-lane__en{font-size:11px;letter-spacing:1px;color:#8C6B5D;font-weight:600;}
-.module-workspace.is-agent-design .agent-lane__zh{font-size:12px;color:#6F6763;margin-top:2px;}
-.module-workspace.is-agent-design .agent-lane__body{flex:1 1 auto;display:flex;flex-wrap:wrap;align-items:center;gap:var(--s3);}
-.module-workspace.is-agent-design .agent-lane__body--empty{color:#9a938c;font-size:12px;}
-.module-workspace.is-agent-design .agent-chip{background:#FFFFFF;border:1px solid var(--c-border);border-radius:6px;padding:6px 12px;min-height:48px;display:flex;flex-direction:column;justify-content:center;min-width:96px;}
-.module-workspace.is-agent-design .agent-chip__en{font-size:11px;color:#6B5045;font-weight:600;}
-.module-workspace.is-agent-design .agent-chip__zh{font-size:11px;color:#6F6763;margin-top:2px;}
+/* 右侧：架构图 SVG（主流程实线 / Boundary 虚线旁路） */
+.agent-flow{width:100%;height:auto;display:block;}
+.agent-flow__node rect{fill:#FFFFFF;stroke:var(--c-border);stroke-width:1;}
+.agent-flow__boundary rect{fill:#FAF3EC;stroke:#EDE5DD;stroke-width:1;}
+.agent-flow__line{stroke:var(--c-border);stroke-width:1.5;}
+.agent-flow__dash{stroke:#C7A18E;stroke-width:1.5;stroke-dasharray:4 4;fill:none;}
+.agent-flow__en{fill:#8C6B5D;font-size:11px;letter-spacing:1px;font-weight:600;font-family:var(--f-mono),ui-monospace,monospace;}
+.agent-flow__zh{fill:#6B5045;font-size:13px;font-weight:600;}
+.agent-flow__detail{fill:#6F6763;font-size:11px;}
+.agent-flow__note{fill:#8C6B5D;font-size:10px;}
+.agent-flow__cond{fill:#6F6763;font-size:10px;}
 
-/* 流程连接线 */
-.module-workspace.is-agent-design .agent-conn{display:flex;align-items:center;justify-content:center;gap:10px;height:22px;}
-.module-workspace.is-agent-design .agent-conn__line{width:0;height:18px;border-left-width:1.5px;border-left-style:solid;}
-.module-workspace.is-agent-design .agent-conn--normal .agent-conn__line{border-left-color:#B8B0AA;}
-.module-workspace.is-agent-design .agent-conn--skip .agent-conn__line{border-left:1.5px dashed #B8B0AA;}
-.module-workspace.is-agent-design .agent-conn--clarify .agent-conn__line{border-left:1.5px dashed #D9A13B;}
-.module-workspace.is-agent-design .agent-conn--compound .agent-conn__line{border-left:1.5px dashed #8C6B5D;}
-.module-workspace.is-agent-design .agent-conn__note{font-size:10px;color:#6F6763;}
+/* 右侧：Case Walkthrough */
+.case-bubble{background:var(--c-primary-100);border-radius:12px 12px 12px 2px;padding:12px 16px;font-size:14px;color:var(--c-text-main);max-width:82%;margin-bottom:var(--s5);}
+.case-metrics{display:flex;gap:var(--s4);margin-bottom:var(--s5);}
+.case-metric{flex:1 1 0;min-width:0;border:1px solid var(--c-border);border-radius:10px;padding:12px;text-align:center;background:#FAF7F2;}
+.case-metric__num{font-size:20px;font-weight:700;color:var(--c-primary-700);line-height:1.1;}
+.case-metric__label{font-size:11px;color:var(--c-text-secondary);margin-top:4px;}
+.case-track{display:flex;flex-direction:column;}
+.case-step{display:flex;gap:var(--s4);padding:var(--s3) 0;border-bottom:1px dashed var(--c-border);}
+.case-step:last-child{border-bottom:none;}
+.case-step__rail{flex:0 0 auto;padding-top:2px;}
+.case-step__idx{display:flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:#FFFFFF;border:1px solid var(--c-border);color:var(--c-primary-700);font-size:11px;font-weight:600;font-family:var(--f-mono),ui-monospace,monospace;}
+.case-step__body{flex:1 1 auto;min-width:0;}
+.case-step__head{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px;}
+.case-step__name{font-size:13px;font-weight:600;color:var(--c-text-main);}
+.case-step__agent{font-size:11px;color:var(--c-primary-700);}
+.case-step__status{font-size:10px;color:var(--c-text-secondary);border:1px solid var(--c-border);border-radius:999px;padding:1px 8px;letter-spacing:.5px;}
+.case-step__io{font-size:12px;color:var(--c-text-secondary);line-height:1.5;}
+.case-step__k{display:inline-block;min-width:34px;color:var(--c-primary-700);font-weight:600;margin-right:6px;}
+.case-answer{margin-top:var(--s5);background:var(--c-primary-100);border-radius:12px;padding:14px 16px;}
+.case-answer__text{font-size:13px;color:var(--c-text-main);line-height:1.6;}
+.case-answer__tag{display:inline-block;margin-top:8px;font-size:11px;color:var(--c-primary-700);border:1px solid var(--c-border);border-radius:999px;padding:2px 10px;background:#FFFFFF;}
+.case-answer__note{font-size:12px;color:var(--c-text-secondary);margin-top:8px;}
 
-/* 图例 */
-.module-workspace.is-agent-design .agent-legend{display:flex;flex-wrap:wrap;gap:var(--s4);margin-top:var(--s5);padding-top:var(--s4);border-top:1px solid var(--c-border);font-size:11px;color:#6F6763;}
-.module-workspace.is-agent-design .agent-legend__item{display:flex;align-items:center;gap:6px;}
-.module-workspace.is-agent-design .agent-legend__swatch{width:22px;height:0;border-top-width:1.5px;}
-.module-workspace.is-agent-design .agent-legend__swatch--normal{border-top:1.5px solid #B8B0AA;}
-.module-workspace.is-agent-design .agent-legend__swatch--skip{border-top:1.5px dashed #B8B0AA;}
-.module-workspace.is-agent-design .agent-legend__swatch--clarify{border-top:1.5px dashed #D9A13B;}
-.module-workspace.is-agent-design .agent-legend__swatch--compound{border-top:1.5px dashed #8C6B5D;}
+/* 右侧：Future Extension 分叉 + 三结论 */
+.future-flow{display:flex;flex-direction:column;align-items:center;gap:var(--s2);}
+.future-node{border:1px solid var(--c-border);background:#FFFFFF;border-radius:999px;padding:6px 16px;font-size:12px;color:var(--c-text-main);text-align:center;}
+.future-node--cond{color:var(--c-primary-700);border-color:var(--c-primary-500);}
+.future-node--dest{color:var(--c-text-secondary);}
+.future-node--contract{background:var(--c-primary-100);color:var(--c-primary-900);font-weight:600;}
+.future-fork{display:flex;gap:var(--s4);align-items:stretch;}
+.future-branch{display:flex;flex-direction:column;align-items:center;gap:var(--s2);padding:var(--s2) var(--s4);border-left:1px dashed var(--c-border);border-right:1px dashed var(--c-border);}
+.future-concl{display:flex;flex-direction:column;gap:var(--s3);margin-top:var(--s5);}
+.future-concl__item{display:flex;gap:var(--s4);}
+.future-concl__idx{font-family:var(--f-mono),ui-monospace,monospace;font-size:13px;color:var(--c-primary-700);font-weight:600;flex:0 0 auto;padding-top:1px;}
+.future-concl__body{flex:1 1 auto;min-width:0;}
+.future-concl__title{font-size:13px;font-weight:600;color:var(--c-text-main);margin-bottom:2px;}
+.future-concl__desc{font-size:12px;color:var(--c-text-secondary);line-height:1.5;}
 
-/* 未来可插拔设计小卡片 */
-.module-workspace.is-agent-design .agent-future{margin-top:var(--s2);border:1px dashed var(--c-border);background:#FAF7F2;border-radius:8px;padding:14px 16px;}
-.module-workspace.is-agent-design .agent-future__title{font-size:11px;letter-spacing:1px;text-transform:uppercase;color:#8C6B5D;font-weight:600;margin-bottom:10px;}
-.module-workspace.is-agent-design .agent-future__flow{font-size:11px;color:#6F6763;line-height:1.9;}
-.module-workspace.is-agent-design .agent-future__flow b{color:#6B5045;font-weight:600;}
-.module-workspace.is-agent-design .agent-future__branch{display:flex;gap:var(--s6);margin-top:6px;padding-left:var(--s4);}
-.module-workspace.is-agent-design .agent-future__node{border:1px solid var(--c-border);background:#FFFFFF;border-radius:6px;padding:3px 10px;font-size:11px;color:#6F6763;white-space:nowrap;}
+/* Key Insight 块（Module 06）多行文本 pre-wrap */
+.module-workspace.is-agent-design .key-decision{white-space:pre-wrap;line-height:1.6;margin-top:var(--s5);}
 .artifact--stepped .artifact__head{margin-bottom:0;}
 .artifact__cap-divider{height:1px;background:var(--c-border);margin:var(--s4) 0 var(--s2) 0;}
 
@@ -1175,39 +1197,61 @@ const MODULES = [
     thesis:"agent各司其职，harness机制划定边界，实现高效的agent协同。",
     leftType:"agent",
     keyLabel:"KEY INSIGHT",
-    keyDecision:"系统智能感来自编排逻辑与状态管理，而非模型生成能力。\n未来可平滑接入大模型，通过语义匹配过滤与主备模型设计控制成本。",
-    agentSteps:[
-      { idx:"01", title:"梳理处理链路", d:"将输入到输出拆解为语义识别、任务分配、图查询、证据加工、输出生成。" },
-      { idx:"02", title:"划分 Agent 职责", d:"定义 Intent / Entity / GraphQuery / Evidence / Risk / Response / Boundary 等 Agent。" },
-      { idx:"03", title:"设计调度逻辑", d:"确定正常、短路、澄清、复合输入四种执行路径。" },
-      { idx:"04", title:"定义数据结构", d:"引入 ReasoningStep、AgentResponse、PipelineTrace 支撑可解释展示。" }
+    keyDecision:"真正需要设计的不是“模型有多聪明”，而是系统如何管理不确定性。\nAgent 将“能否回答、为什么回答、证据是否可靠、何时停止”转化为可执行的系统机制。",
+    concept:[
+      { title:"确定性优先", d:"系统智能感来自编排逻辑与状态管理，而非模型生成能力；优先保证过程可解释、结果可控。" },
+      { title:"职责拆分", d:"将复杂问答拆解为意图、实体、查询、证据、风险、响应等独立 Agent，降低单一模块复杂度。" },
+      { title:"可解释且可验证", d:"每个 Agent 都有明确输入、输出与执行状态，使推理过程能够被追踪、测试和展示。" },
+      { title:"可插拔演进", d:"当前以确定性路径为主，未来可在低置信度环节接入 LLM，而不改变现有 Agent 链路。" }
     ],
-    artifact:{ type:"B", subtype:"agent-flow", name:"AGENT ARCHITECTURE & FLOW",
-      caption:"从输入到输出：一条确定性的多 Agent 推理流水线。",
-      lanes:[
-        { en:"INPUT", zh:"输入层", agents:[] },
-        { en:"SEMANTIC", zh:"语义识别层", agents:[{en:"IntentAgent", zh:"意图识别"},{en:"EntityAgent", zh:"实体解析"}] },
-        { en:"ORCHESTRATION", zh:"任务分配层", agents:[{en:"Orchestrator", zh:"调度与模板选择"}] },
-        { en:"DECISION", zh:"决策层", agents:[{en:"GraphQueryAgent", zh:"图查询执行"}] },
-        { en:"EVIDENCE", zh:"证据加工层", agents:[{en:"EvidenceAgent", zh:"证据标准化"},{en:"RiskAgent", zh:"风险标记"}] },
-        { en:"OUTPUT", zh:"输出层", agents:[{en:"ResponseAgent", zh:"回复生成"}] },
-        { en:"BOUNDARY", zh:"边界处理（横切）", agents:[{en:"BoundaryAgent", zh:"知识边界兜底"}] }
+    designDecisions:[
+      { idx:"01", trigger:"省略主语", mech:"上下文继承", d:"用户连续追问时常省略疾病名称。当新一轮实体解析为空但意图明确时，继承上一轮成功解析的实体；检测到新实体后自动覆盖旧上下文。" },
+      { idx:"02", trigger:"多意图混合", mech:"澄清机制", d:"当一句话同时包含多个意图时，不直接武断判断。最高与次高意图置信度接近时，返回候选意图，由用户确认后继续执行。" },
+      { idx:"03", trigger:"知识越界", mech:"短路处理", d:"不是所有问题都应进入图谱查询。无实体且无可用上下文时，直接由 BoundaryAgent 处理，跳过后续无意义流程。" },
+      { idx:"04", trigger:"证据不确定", mech:"独立风险处理", d:"找到答案不等于答案足够可靠。EvidenceAgent 标准化证据，RiskAgent 独立识别低置信度与争议关系。" },
+      { idx:"05", trigger:"系统异常", mech:"明确降级", d:"查询失败与查询无结果属于两种不同状态。Agent 保留真实执行状态，由 Pipeline 统一捕获异常并转化为可读反馈。" }
+    ],
+    futureExt:{
+      steps:["用户输入","语义匹配","路由判断"],
+      branches:[{ label:"高置信度", dest:"确定性图谱路径" },{ label:"低置信度", dest:"LLM 语义兜底" }],
+      tags:["确定性路径优先","LLM 按需接入"]
+    },
+    caseWalk:{
+      query:"什么是猫传腹？",
+      steps:[
+        { idx:"01", name:"实体解析", agent:"EntityAgent", input:"什么是猫传腹？", output:"湿性猫传染性腹膜炎（湿性FIP）｜干性猫传染性腹膜炎（干性FIP）", status:"DONE" },
+        { idx:"02", name:"意图识别", agent:"IntentAgent", output:"concept", status:"DONE" },
+        { idx:"03", name:"任务分配", agent:"Orchestrator", output:"CONCEPT_QUERY", status:"DONE" },
+        { idx:"04", name:"图查询", agent:"GraphQueryAgent", output:"命中 15 条关系", status:"15 RELATIONS" },
+        { idx:"05", name:"证据加工", agent:"EvidenceAgent", output:"发病机制 13 条｜诱因链 2 条", status:"2 GROUPS" },
+        { idx:"06", name:"风险标记", agent:"RiskAgent", output:"未发现低置信度关系", status:"NO RISK" },
+        { idx:"07", name:"响应生成", agent:"ResponseAgent", output:"生成回答 + 推理链卡片", status:"DONE" }
       ],
-      conns:[
-        { type:"normal", notes:[] },
-        { type:"normal", notes:[] },
-        { type:"clarify", notes:["意图不明确时等待澄清","实体为空时跳过"] },
-        { type:"normal", notes:[] },
-        { type:"normal", notes:[] },
-        { type:"compound", notes:["复合输入直接执行"] }
+      metrics:[
+        { num:"15", label:"命中关系" },
+        { num:"13 + 2", label:"证据分组" },
+        { num:"0", label:"低置信度关系" }
       ],
-      legend:[
-        { type:"normal", label:"正常流程" },
-        { type:"skip", label:"短路/跳过" },
-        { type:"clarify", label:"澄清分支" },
-        { type:"compound", label:"复合输入" }
+      answer:"猫传腹（FIP）是由猫肠道冠状病毒发生基因突变后，在巨噬细胞内大量复制并引发全身性血管炎的严重疾病。",
+      answerTag:"+ 推理链卡片",
+      answerNote:"多猫环境与应激可能增加感染和发病风险。"
+    },
+    futureSys:{
+      steps:["用户输入","规则语义匹配"],
+      branches:[{ label:"高置信度", dest:"确定性图谱路径" },{ label:"低置信度", dest:"LLM 语义兜底" }],
+      contract:"Unified Contract",
+      tail:"ResponseAgent",
+      conclusions:[
+        { idx:"01", title:"不替换", d:"LLM 不替代现有 Agent，而是进入特定语义识别环节。" },
+        { idx:"02", title:"不污染", d:"无论规则还是 LLM，最终都必须输出统一的数据结构。" },
+        { idx:"03", title:"不失控", d:"通过路由、超时与降级策略控制成本与风险。" }
       ]
-    }
+    },
+    artifacts:[
+      { id:"arch", name:"AGENT ARCHITECTURE & FLOW", caption:"从输入到输出：一条确定性的多 Agent 推理流水线。", kind:"arch" },
+      { id:"case", name:"CASE WALKTHROUGH", caption:"一个真实问题如何经过多个 Agent 被拆解、查询与加工。", kind:"case" },
+      { id:"future", name:"FUTURE EXTENSION", caption:"保留确定性主路径，仅在需要时引入 LLM。", kind:"future" }
+    ]
   },
   {
     id:7, number:"07", title:"开发实现", short:"开发实现", phase:"engineering-design",
@@ -1554,44 +1598,50 @@ function renderInterfaceNarrative(mod){
   });
 }
 function renderAgentNarrative(mod){
-  // CONCEPT · 设计理念（章节体系最上方）
+  // CONCEPT · 设计理念（4 条：圆点 + 标题 + 一句话，不做卡片）
   const concept = document.createElement('div');
   concept.className = 'agent-concept reveal-item';
   concept.innerHTML =
     '<div class="agent-section__label">CONCEPT · 设计理念</div>'+
     '<div class="agent-concept__list">'+
-      conceptItem('确定性优先','系统智能感来自编排逻辑与状态管理，而非模型生成能力；优先保证可解释与可控。')+
-      conceptItem('多 Agent 协同','按职责拆分意图、实体、查询、证据、风险、回复与边界等独立 Agent。')+
-      conceptItem('可插拔演进','预留语义匹配过滤与主备模型切换，未来可平滑接入大模型。')+
+      (mod.concept||[]).map(c=>conceptItem(c.title, c.d)).join('')+
     '</div>';
   thinkingCol.appendChild(concept);
 
-  // RULE · 智能体搭建（时间线）
-  const ruleLabel = document.createElement('div');
-  ruleLabel.className = 'agent-section__label reveal-item';
-  ruleLabel.textContent = 'RULE · 智能体搭建';
-  thinkingCol.appendChild(ruleLabel);
+  // RULE · 设计决策（5 条：编号 + 左侧关键词 + 右侧解释 纵向列表）
+  const rule = document.createElement('div');
+  rule.className = 'agent-decision reveal-item';
+  rule.innerHTML = '<div class="agent-section__label">RULE · 设计决策</div>'+
+    '<div class="agent-decision__list">'+
+      (mod.designDecisions||[]).map(d=>
+        '<div class="agent-decision__item">'+
+          '<span class="agent-decision__idx">'+d.idx+'</span>'+
+          '<div class="agent-decision__body">'+
+            '<div class="agent-decision__tags"><span class="agent-decision__trigger">'+d.trigger+'</span><span class="agent-decision__arrow">→</span><span class="agent-decision__mech">'+d.mech+'</span></div>'+
+            '<div class="agent-decision__desc">'+d.d+'</div>'+
+          '</div>'+
+        '</div>'
+      ).join('')+
+    '</div>';
+  thinkingCol.appendChild(rule);
 
-  const steps = mod.agentSteps || [];
-  const tl = document.createElement('div');
-  tl.className = 'agent-timeline';
-  steps.forEach(s=>{
-    const step = document.createElement('div');
-    step.className = 'agent-step reveal-item';
-    step.innerHTML = '<div class="agent-step__rail"><span class="agent-step__node">'+s.idx+'</span><span class="agent-step__line"></span></div>'+
-      '<div class="agent-step__body"><div class="agent-step__title">'+s.title+'</div><div class="agent-step__desc">'+s.d+'</div></div>';
-    tl.appendChild(step);
-  });
-  thinkingCol.appendChild(tl);
-
-  // FUTURE EXTENSION · 扩展性（从右侧 Artifact 移至此处，置于 KEY INSIGHT 上方）
-  const future = document.createElement('div');
-  future.className = 'agent-section reveal-item';
-  future.innerHTML =
+  // FUTURE EXTENSION · 扩展性（小型虚线框，精简路径）
+  const fut = mod.futureExt || {};
+  const fe = document.createElement('div');
+  fe.className = 'agent-future reveal-item';
+  fe.innerHTML =
     '<div class="agent-section__label">FUTURE EXTENSION · 扩展性</div>'+
-    '<div class="agent-future"><div class="agent-future__flow"><b>用户输入</b> → <b>语义匹配过滤</b> → <b>路由判断</b></div>'+
-    '<div class="agent-future__branch"><span class="agent-future__node">确定性图谱路径</span><span class="agent-future__node">可插拔 LLM → 主备模型切换</span></div></div>';
-  thinkingCol.appendChild(future);
+    '<div class="agent-future__box">'+
+      '<div class="agent-future__flow">'+
+        (fut.steps||[]).map(s=>'<b>'+s+'</b>').join('<span class="agent-future__sep">→</span>')+
+        '<span class="agent-future__sep">→</span>'+
+        '<span class="agent-future__branch">'+
+          (fut.branches||[]).map(b=>'<span class="agent-future__b">'+b.label+' → '+b.dest+'</span>').join('')+
+        '</span>'+
+      '</div>'+
+      '<div class="agent-future__tags">'+(fut.tags||[]).map(t=>'<span class="agent-future__tag">'+t+'</span>').join('')+'</div>'+
+    '</div>';
+  thinkingCol.appendChild(fe);
 }
 function conceptItem(title, desc){
   return '<div class="agent-concept__item"><span class="agent-concept__node"></span><div class="agent-concept__body"><div class="agent-concept__title">'+title+'</div><div class="agent-concept__desc">'+desc+'</div></div></div>';
@@ -1632,6 +1682,127 @@ function renderAgentFlow(body, a){
   body.appendChild(wrap);
   revealSequence(body.querySelectorAll('.reveal-item'), 120, 500);
 }
+
+/* ---------- Module 06 · AGENT SYSTEM 手风琴 ---------- */
+function renderAgentSystem(mod){
+  artifactCol.className = 'agent-system';
+  artifactCol.innerHTML = '';
+  const inner = document.createElement('div');
+  inner.className = 'agent-system__inner';
+  mod.artifacts.forEach((af, i)=>{
+    const open = (i===0);
+    const sec = document.createElement('section');
+    sec.className = 'agent-sec' + (open ? ' is-open' : '');
+    const head = document.createElement('button');
+    head.type = 'button';
+    head.className = 'agent-sec__head';
+    head.innerHTML = '<span class="agent-sec__idx">'+(i+1<10?'0':'')+(i+1)+'</span>'+
+      '<span class="agent-sec__titles"><span class="agent-sec__name">'+af.name+'</span><span class="agent-sec__caption">'+af.caption+'</span></span>'+
+      '<span class="agent-sec__toggle">'+(open?'−':'+')+'</span>';
+    const body = document.createElement('div');
+    body.className = 'agent-sec__body';
+    if(af.kind==='arch') renderAgentArchitecture(body, mod);
+    else if(af.kind==='case') renderCaseWalkthrough(body, mod);
+    else if(af.kind==='future') renderAgentFuture(body, mod);
+    head.addEventListener('click', ()=>{
+      const isOpen = sec.classList.toggle('is-open');
+      head.querySelector('.agent-sec__toggle').textContent = isOpen ? '−' : '+';
+    });
+    sec.appendChild(head);
+    sec.appendChild(body);
+    inner.appendChild(sec);
+  });
+  artifactCol.appendChild(inner);
+}
+
+function renderAgentArchitecture(body, mod){
+  const nodes = [
+    { en:"INPUT", zh:"输入层", detail:"用户输入 · 查询语句" },
+    { en:"SEMANTIC", zh:"语义识别层", detail:"IntentAgent 意图识别 · EntityAgent 实体解析" },
+    { en:"ORCHESTRATION", zh:"任务分配层", detail:"Orchestrator 调度与模板选择" },
+    { en:"QUERY", zh:"知识查询层", detail:"GraphQueryAgent 图查询执行" },
+    { en:"EVIDENCE", zh:"证据加工层", detail:"EvidenceAgent 证据标准化 · RiskAgent 风险标记" },
+    { en:"OUTPUT", zh:"输出层", detail:"ResponseAgent 回复生成" }
+  ];
+  const x=40, w=210, h=64, gap=36, top0=12, cx=145;
+  let svg = '<svg class="agent-flow" viewBox="0 0 400 600" preserveAspectRatio="xMidYMin meet" role="img" aria-label="Agent 架构图：主流程 INPUT 到 OUTPUT，Boundary 为旁路">';
+  nodes.forEach((n,i)=>{
+    if(i < nodes.length-1){
+      const y1 = top0 + i*(h+gap) + h;
+      const y2 = top0 + (i+1)*(h+gap);
+      svg += '<line class="agent-flow__line" x1="'+cx+'" y1="'+y1+'" x2="'+cx+'" y2="'+y2+'"/>';
+    }
+  });
+  nodes.forEach((n,i)=>{
+    const y = top0 + i*(h+gap);
+    svg += '<g class="agent-flow__node"><rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" rx="10"/>'+
+      '<text class="agent-flow__en" x="'+(x+14)+'" y="'+(y+18)+'">'+n.en+'</text>'+
+      '<text class="agent-flow__zh" x="'+(x+14)+'" y="'+(y+35)+'">'+n.zh+'</text>'+
+      '<text class="agent-flow__detail" x="'+(x+14)+'" y="'+(y+51)+'">'+n.detail+'</text></g>';
+  });
+  // Boundary 旁路（从 SEMANTIC 条件触发，直接返回响应，不接回主流程）
+  const semTop = top0 + 1*(h+gap);
+  const bX=280, bY=semTop+8, bW=104, bH=104;
+  svg += '<path class="agent-flow__dash" d="M250 '+(semTop+24)+' H266 V'+(bY+52)+' H'+bX+'"/>';
+  svg += '<g class="agent-flow__boundary"><rect x="'+bX+'" y="'+bY+'" width="'+bW+'" height="'+bH+'" rx="10"/>'+
+    '<text class="agent-flow__en" x="'+(bX+14)+'" y="'+(bY+20)+'">BOUNDARY</text>'+
+    '<text class="agent-flow__zh" x="'+(bX+14)+'" y="'+(bY+38)+'">BoundaryAgent</text>'+
+    '<text class="agent-flow__detail" x="'+(bX+14)+'" y="'+(bY+55)+'">知识边界兜底</text>'+
+    '<text class="agent-flow__note" x="'+(bX+14)+'" y="'+(bY+74)+'">短路 · 直接返回响应</text></g>';
+  svg += '<text class="agent-flow__cond" x="'+(bX+14)+'" y="'+(bY+bH+18)+'">无实体 / 越界 → 不进入主流程</text>';
+  svg += '</svg>';
+  body.innerHTML = svg;
+}
+
+function renderCaseWalkthrough(body, mod){
+  const c = mod.caseWalk || {};
+  let html = '';
+  html += '<div class="case-bubble">'+c.query+'</div>';
+  html += '<div class="case-metrics">';
+  (c.metrics||[]).forEach(m=>{
+    html += '<div class="case-metric"><div class="case-metric__num">'+m.num+'</div><div class="case-metric__label">'+m.label+'</div></div>';
+  });
+  html += '</div>';
+  html += '<div class="case-track">';
+  (c.steps||[]).forEach(s=>{
+    html += '<div class="case-step">'+
+      '<div class="case-step__rail"><span class="case-step__idx">'+s.idx+'</span></div>'+
+      '<div class="case-step__body">'+
+        '<div class="case-step__head"><span class="case-step__name">'+s.name+'</span><span class="case-step__agent">'+s.agent+'</span>'+
+          (s.status?'<span class="case-step__status">'+s.status+'</span>':'')+'</div>'+
+        (s.input?'<div class="case-step__io"><span class="case-step__k">输入</span>'+s.input+'</div>':'')+
+        (s.output?'<div class="case-step__io"><span class="case-step__k">输出</span>'+s.output+'</div>':'')+
+      '</div></div>';
+  });
+  html += '</div>';
+  html += '<div class="case-answer">'+
+    '<div class="case-answer__text">'+c.answer+'</div>'+
+    '<div class="case-answer__tag">'+c.answerTag+'</div>'+
+    '<div class="case-answer__note">'+c.answerNote+'</div>'+
+    '</div>';
+  body.innerHTML = html;
+}
+
+function renderAgentFuture(body, mod){
+  const f = mod.futureSys || {};
+  let html = '<div class="future-flow">';
+  (f.steps||[]).forEach(s=>{ html += '<div class="future-node">'+s+'</div>'; });
+  html += '<div class="future-fork">';
+  (f.branches||[]).forEach(b=>{
+    html += '<div class="future-branch"><div class="future-node future-node--cond">'+b.label+'</div><div class="future-node future-node--dest">'+b.dest+'</div></div>';
+  });
+  html += '</div>';
+  html += '<div class="future-node future-node--contract">'+f.contract+'</div>';
+  html += '<div class="future-node">'+f.tail+'</div>';
+  html += '</div>';
+  html += '<div class="future-concl">';
+  (f.conclusions||[]).forEach(cn=>{
+    html += '<div class="future-concl__item"><span class="future-concl__idx">'+cn.idx+'</span><div class="future-concl__body"><div class="future-concl__title">'+cn.title+'</div><div class="future-concl__desc">'+cn.d+'</div></div></div>';
+  });
+  html += '</div>';
+  body.innerHTML = html;
+}
+
 function renderEngineeringNarrative(mod){
   mod.thinking.forEach(b=>{
     const item = document.createElement('div');
@@ -2094,6 +2265,10 @@ function buildBlock(b){
 /* ---------- Artifact renderers ---------- */
 function renderArtifact(mod){
   if(ifaceTimer){ clearInterval(ifaceTimer); ifaceTimer = null; }
+  if(mod.artifacts && Array.isArray(mod.artifacts)){
+    renderAgentSystem(mod);
+    return;
+  }
   const a = mod.artifact;
   artifactCol.className = 'artifact' + (a.density ? ' artifact--'+a.density : '') + (a.subtype==='noise-to-insight' ? ' artifact--stepped' : '') + (a.subtype==='agent-flow' ? ' artifact--agent' : '');
   artifactCol.innerHTML = '';
