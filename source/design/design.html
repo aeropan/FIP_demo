@@ -1853,8 +1853,8 @@ function renderAgentArchitecture(body, mod){
     '<text class="agent-flow__zh" x="'+(bX+14)+'" y="'+(bY+40)+'">BoundaryAgent</text>'+
     '<text class="agent-flow__detail" x="'+(bX+14)+'" y="'+(bY+60)+'">知识边界兜底</text>'+
     '<text class="agent-flow__note" x="'+(bX+14)+'" y="'+(bY+76)+'">短路 · 直接返回响应</text></g>';
-  svg += '<text class="agent-flow__cond" x="'+bX+'" y="'+(bY+bH+16)+'">无实体 / 越界</text>';
-  svg += '<text class="agent-flow__cond" x="'+bX+'" y="'+(bY+bH+32)+'">不进入主流程</text>';
+  svg += '<text class="agent-flow__cond" text-anchor="middle" x="'+bTopCx+'" y="'+(bY+bH+16)+'">无实体 / 越界</text>';
+  svg += '<text class="agent-flow__cond" text-anchor="middle" x="'+bTopCx+'" y="'+(bY+bH+32)+'">不进入主流程</text>';
   svg += '</svg>';
   body.innerHTML = svg;
 }
