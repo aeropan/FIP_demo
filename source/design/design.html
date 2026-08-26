@@ -318,6 +318,7 @@ body{
 .agent-decision__trigger{font-size:14px;font-weight:600;color:var(--c-text-main);}
 .agent-decision__arrow{color:var(--c-primary-700);}
 .agent-decision__mech{font-size:12px;font-weight:600;color:var(--c-primary-700);background:var(--c-primary-100);padding:2px 8px;border-radius:999px;}
+.agent-decision__harness{font-size:12px;font-weight:600;color:var(--c-primary-700);border:1px solid var(--c-primary-500);border-radius:999px;padding:2px 8px;}
 .agent-decision__desc{font-size:13px;color:var(--c-text-secondary);line-height:1.55;}
 
 /* 左侧：FUTURE EXTENSION · 扩展性设计（浅色虚线底框） */
@@ -1237,12 +1238,12 @@ const MODULES = [
   {
     id:6, number:"06", title:"多 Agent 协同与确定性推理设计", short:"Agent 设计", phase:"engineering-design",
     status:"ready", englishLabel:"AGENT DESIGN",
-    thesis:"agent各司其职，harness机制划定边界，实现高效的agent协同。",
+    thesis:"agent各司其职，harness机制划定边界，保证协同的确定性、可解释性与可扩展性。。",
     leftType:"agent",
     keyLabel:"KEY INSIGHT",
     keyDecision:"真正需要设计的不是“模型有多聪明”，而是系统如何管理不确定性。\nAgent 将“能否回答、为什么回答、证据是否可靠、何时停止”转化为可执行的系统机制。",
     concept:[
-      { title:"确定性优先", d:"系统智能感来自编排逻辑与状态管理，而非模型生成能力；优先保证过程可解释、结果可控。" },
+      { title:"确定性优先", d:"系统智能感来自编排逻辑与状态管理，而非模型生成能力；运用 harness思维保证过程可解释、结果可控。" },
       { title:"职责拆分", d:"将复杂问答拆解为意图、实体、查询、证据、风险、响应等独立 Agent，降低单一模块复杂度。",
         agents:[
           { en:"IntentAgent", d:"负责意图识别" },
@@ -1254,14 +1255,14 @@ const MODULES = [
           { en:"BoundaryAgent", d:"负责知识边界兜底" }
         ] },
       { title:"可解释且可验证", d:"每个 Agent 都有明确输入、输出与执行状态，使推理过程能够被追踪、测试和展示。" },
-      { title:"可插拔演进", d:"当前以确定性路径为主，未来可在低置信度环节接入 LLM，而不改变现有 Agent 链路。" }
+      { title:"可插拔演进", d:"当前以确定性路径为主，未来可在低置信度环节接入 LLM，用 harness 驾驭系统，而不改变现有 Agent 链路。" }
     ],
     designDecisions:[
-      { idx:"01", trigger:"多轮对话", mech:"上下文继承", d:"考虑多轮对话的可能性。建立上下文区域，用户进行追问时调度并注入上下文，当新一轮实体解析为空但意图明确时，继承上一轮成功解析的实体；检测到新实体后自动增量替换上下文。" },
-      { idx:"02", trigger:"多意图混合", mech:"澄清机制", d:"当一句话同时包含多个意图时，不直接武断判断。最高与次高意图置信度接近时，返回候选意图，前端触发澄清选择界面，由用户确认后继续执行。" },
-      { idx:"03", trigger:"知识越界", mech:"短路处理", d:"不是所有问题都应进入图谱查询。无实体且无可用上下文时，直接由 BoundaryAgent 处理，跳过后续无意义流程。" },
-      { idx:"04", trigger:"证据不确定", mech:"独立风险处理", d:"找到答案不等于答案足够可靠。EvidenceAgent 标准化证据，RiskAgent 独立识别低置信度与争议关系。" },
-      { idx:"05", trigger:"系统异常", mech:"明确降级", d:"查询失败与查询无结果属于两种不同状态。Agent 保留真实执行状态，由 Pipeline 统一捕获异常并转化为可读反馈。" }
+      { idx:"01", trigger:"多轮对话", mech:"上下文继承", harness:"状态harness", d:"考虑多轮对话的可能性。建立上下文区域，用户进行追问时调度并注入上下文，当新一轮实体解析为空但意图明确时，继承上一轮成功解析的实体；检测到新实体后自动增量替换上下文。" },
+      { idx:"02", trigger:"多意图混合", mech:"意图澄清", harness:"输入约束", d:"当一句话同时包含多个意图时，不直接武断判断。最高与次高意图置信度接近时，返回候选意图，前端触发澄清选择界面，由用户确认后继续执行。" },
+      { idx:"03", trigger:"知识越界", mech:"边界短路", harness:"能力边界", d:"不是所有问题都应进入图谱查询。无实体且无可用上下文时，直接由 BoundaryAgent 处理，跳过后续无意义流程。" },
+      { idx:"04", trigger:"证据不确定", mech:"证据+风险分离", harness:"事实harness", d:"找到答案不等于答案足够可靠。EvidenceAgent 标准化证据，RiskAgent 独立识别低置信度与争议关系。" },
+      { idx:"05", trigger:"系统异常", mech:"失败降级", harness:"可靠性harness", d:"查询失败与查询无结果属于两种不同状态。Agent 保留真实执行状态，由 Pipeline 统一捕获异常并转化为可读反馈。" }
     ],
     futureExt:{
       positioning:"引入 LLM 是产品化必然路径。关键不是“接不接”，而是“在哪里接、怎么接、如何不破坏确定性架构”。",
@@ -1679,7 +1680,7 @@ function renderAgentNarrative(mod){
         '<div class="agent-decision__item">'+
           '<span class="agent-decision__idx">'+d.idx+'</span>'+
           '<div class="agent-decision__body">'+
-            '<div class="agent-decision__tags"><span class="agent-decision__trigger">'+d.trigger+'</span><span class="agent-decision__arrow">→</span><span class="agent-decision__mech">'+d.mech+'</span></div>'+
+            '<div class="agent-decision__tags"><span class="agent-decision__trigger">'+d.trigger+'</span><span class="agent-decision__arrow">→</span><span class="agent-decision__mech">'+d.mech+'</span><span class="agent-decision__arrow">→</span><span class="agent-decision__harness">'+d.harness+'</span></div>'+
             '<div class="agent-decision__desc">'+d.d+'</div>'+
           '</div>'+
         '</div>'
