@@ -291,10 +291,12 @@ body{
 .agent-section__label{font-size:12px;letter-spacing:1.5px;text-transform:uppercase;color:var(--c-primary-700);font-weight:600;margin:0 0 var(--s3);}
 
 /* CONCEPT 设计理念 */
-.agent-concept{margin-bottom:var(--s6);}
+.agent-concept{margin-bottom:var(--s6);padding-top:var(--s3);}
 .agent-concept__list{display:flex;flex-direction:column;}
-.agent-concept__item{padding:var(--s3) 0;border-bottom:1px dashed var(--c-border);}
+.agent-concept__item{display:flex;gap:var(--s4);padding:var(--s3) 0;border-bottom:1px dashed var(--c-border);}
 .agent-concept__item:last-child{border-bottom:none;}
+.agent-concept__node{width:26px;height:26px;border-radius:50%;background:#FFFFFF;border:1px solid var(--c-border);color:#6B5045;font-size:12px;font-weight:600;display:flex;flex:0 0 auto;align-items:center;justify-content:center;}
+.agent-concept__body{flex:1 1 auto;}
 .agent-concept__title{font-size:14px;font-weight:600;color:#6B5045;margin-bottom:4px;}
 .agent-concept__desc{font-size:13px;color:#6F6763;line-height:1.5;}
 
@@ -1558,9 +1560,9 @@ function renderAgentNarrative(mod){
   concept.innerHTML =
     '<div class="agent-section__label">CONCEPT · 设计理念</div>'+
     '<div class="agent-concept__list">'+
-      conceptItem('确定性优先','系统智能感来自编排逻辑与状态管理，而非模型生成能力；优先保证可解释与可控。')+
-      conceptItem('多 Agent 协同','按职责拆分意图、实体、查询、证据、风险、回复与边界等独立 Agent。')+
-      conceptItem('可插拔演进','预留语义匹配过滤与主备模型切换，未来可平滑接入大模型。')+
+      conceptItem(1,'确定性优先','系统智能感来自编排逻辑与状态管理，而非模型生成能力；优先保证可解释与可控。')+
+      conceptItem(2,'多 Agent 协同','按职责拆分意图、实体、查询、证据、风险、回复与边界等独立 Agent。')+
+      conceptItem(3,'可插拔演进','预留语义匹配过滤与主备模型切换，未来可平滑接入大模型。')+
     '</div>';
   thinkingCol.appendChild(concept);
 
@@ -1591,8 +1593,8 @@ function renderAgentNarrative(mod){
     '<div class="agent-future__branch"><span class="agent-future__node">确定性图谱路径</span><span class="agent-future__node">可插拔 LLM → 主备模型切换</span></div></div>';
   thinkingCol.appendChild(future);
 }
-function conceptItem(title, desc){
-  return '<div class="agent-concept__item"><div class="agent-concept__title">'+title+'</div><div class="agent-concept__desc">'+desc+'</div></div>';
+function conceptItem(idx, title, desc){
+  return '<div class="agent-concept__item"><span class="agent-concept__node">'+idx+'</span><div class="agent-concept__body"><div class="agent-concept__title">'+title+'</div><div class="agent-concept__desc">'+desc+'</div></div></div>';
 }
 function renderAgentFlow(body, a){
   const wrap = document.createElement('div');
