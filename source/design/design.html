@@ -390,19 +390,34 @@ body{
 .case-answer__note{font-size:12px;color:var(--c-text-secondary);margin-top:8px;}
 
 /* 右侧：Future Extension 分叉 + 三结论 */
-.future-flow{display:flex;flex-direction:column;align-items:center;gap:var(--s2);}
-.future-node{border:1px solid var(--c-border);background:#FFFFFF;border-radius:999px;padding:6px 16px;font-size:12px;color:var(--c-text-main);text-align:center;}
-.future-node--cond{color:var(--c-primary-700);border-color:var(--c-primary-500);}
-.future-node--dest{color:var(--c-text-secondary);}
-.future-node--contract{background:var(--c-primary-100);color:var(--c-primary-900);font-weight:600;}
-.future-fork{display:flex;gap:var(--s4);align-items:stretch;}
-.future-branch{display:flex;flex-direction:column;align-items:center;gap:var(--s2);padding:var(--s2) var(--s4);border-left:1px dashed var(--c-border);border-right:1px dashed var(--c-border);}
-.future-concl{display:flex;flex-direction:column;gap:var(--s3);margin-top:var(--s5);}
-.future-concl__item{display:flex;gap:var(--s4);}
-.future-concl__idx{font-family:var(--f-mono),ui-monospace,monospace;font-size:13px;color:var(--c-primary-700);font-weight:600;flex:0 0 auto;padding-top:1px;}
-.future-concl__body{flex:1 1 auto;min-width:0;}
-.future-concl__title{font-size:13px;font-weight:600;color:var(--c-text-main);margin-bottom:2px;}
-.future-concl__desc{font-size:12px;color:var(--c-text-secondary);line-height:1.5;}
+/* 右侧：FUTURE EXTENSION · 确定性主干流程图 */
+.future-core{display:flex;flex-direction:column;align-items:stretch;}
+.future-core__head{
+  text-align:center;font-family:var(--f-mono),ui-monospace,monospace;
+  font-size:12px;letter-spacing:2px;color:var(--c-primary-900);font-weight:600;
+  padding:var(--s3) var(--s4);
+  background:var(--c-primary-100);
+  border-top:1px solid var(--c-border);border-bottom:1px solid var(--c-border);
+}
+.future-core__row{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:2px 0;}
+.future-core__box{
+  grid-column:2;justify-self:center;min-width:200px;text-align:center;
+  border:1px solid var(--c-border);background:#FFFFFF;border-radius:8px;
+  padding:var(--s3) var(--s5);font-size:14px;font-weight:500;color:var(--c-text-main);
+  display:flex;flex-direction:column;gap:2px;
+}
+.future-core__box-sub{font-size:12px;font-weight:400;color:var(--c-text-secondary);}
+.future-core__note{
+  grid-column:3;justify-self:start;text-align:left;padding-left:var(--s3);
+  font-size:11px;color:var(--c-primary-700);
+}
+.future-core__arrow{text-align:center;color:var(--c-primary-500);font-size:16px;line-height:1;padding:2px 0;}
+.future-core__foot{
+  text-align:center;font-size:12px;color:var(--c-text-secondary);line-height:1.5;
+  padding:var(--s3) var(--s4);margin-top:4px;
+  background:var(--c-primary-100);
+  border-top:1px solid var(--c-border);border-bottom:1px solid var(--c-border);
+}
 
 /* Key Insight 块（Module 06）多行文本 pre-wrap */
 .module-workspace.is-agent-design .key-decision{white-space:pre-wrap;line-height:1.6;margin-top:var(--s5);}
@@ -1231,8 +1246,8 @@ const MODULES = [
       { title:"可插拔演进", d:"当前以确定性路径为主，未来可在低置信度环节接入 LLM，而不改变现有 Agent 链路。" }
     ],
     designDecisions:[
-      { idx:"01", trigger:"省略主语", mech:"上下文继承", d:"用户连续追问时常省略疾病名称。当新一轮实体解析为空但意图明确时，继承上一轮成功解析的实体；检测到新实体后自动覆盖旧上下文。" },
-      { idx:"02", trigger:"多意图混合", mech:"澄清机制", d:"当一句话同时包含多个意图时，不直接武断判断。最高与次高意图置信度接近时，返回候选意图，由用户确认后继续执行。" },
+      { idx:"01", trigger:"多轮对话", mech:"上下文继承", d:"考虑多轮对话的可能性。建立上下文区域，用户进行追问时调度并注入上下文，当新一轮实体解析为空但意图明确时，继承上一轮成功解析的实体；检测到新实体后自动增量替换上下文。" },
+      { idx:"02", trigger:"多意图混合", mech:"澄清机制", d:"当一句话同时包含多个意图时，不直接武断判断。最高与次高意图置信度接近时，返回候选意图，前端触发澄清选择界面，由用户确认后继续执行。" },
       { idx:"03", trigger:"知识越界", mech:"短路处理", d:"不是所有问题都应进入图谱查询。无实体且无可用上下文时，直接由 BoundaryAgent 处理，跳过后续无意义流程。" },
       { idx:"04", trigger:"证据不确定", mech:"独立风险处理", d:"找到答案不等于答案足够可靠。EvidenceAgent 标准化证据，RiskAgent 独立识别低置信度与争议关系。" },
       { idx:"05", trigger:"系统异常", mech:"明确降级", d:"查询失败与查询无结果属于两种不同状态。Agent 保留真实执行状态，由 Pipeline 统一捕获异常并转化为可读反馈。" }
@@ -1244,11 +1259,11 @@ const MODULES = [
         { idx:"02", name:"内容输出层", adv:"语言自然，减少模板感", risk:"事实偏移，模糊置信度", fix:"证据骨架约束，LLM 仅做表面润色" }
       ],
       reserves:["Agent 可替换","数据结构契约","语义兜底槽位","主备降级"],
-      reserveNote:"统一数据结构是通信协议，LLM 不污染现有流程。",
+      reserveNote:"统一数据结构、制定通信协议规范，在接入 LLM 也不会污染现有流程。",
       principles:[
-        { title:"不替换", d:"LLM 只进入特定环节" },
-        { title:"不污染", d:"必须输出统一结构" },
-        { title:"不失控", d:"路由、超时、降级控制" }
+        { title:"不替换", d:"LLM 不替代现有 Agent，而是进入特定语义识别环节" },
+        { title:"不污染", d:"无论规则还是 LLM，最终都必须输出统一的数据结构" },
+        { title:"不失控", d:"通过路由、超时与降级策略控制成本与风险" }
       ]
     },
     caseWalk:{
@@ -1272,20 +1287,21 @@ const MODULES = [
       answerNote:"多猫环境与应激可能增加感染和发病风险。"
     },
     futureSys:{
-      steps:["用户输入","规则语义匹配"],
-      branches:[{ label:"高置信度", dest:"确定性图谱路径" },{ label:"低置信度", dest:"LLM 语义兜底" }],
-      contract:"Unified Contract",
-      tail:"ResponseAgent",
-      conclusions:[
-        { idx:"01", title:"不替换", d:"LLM 不替代现有 Agent，而是进入特定语义识别环节。" },
-        { idx:"02", title:"不污染", d:"无论规则还是 LLM，最终都必须输出统一的数据结构。" },
-        { idx:"03", title:"不失控", d:"通过路由、超时与降级策略控制成本与风险。" }
-      ]
+      coreTitle:"DETERMINISTIC CORE · 确定性主干",
+      nodes:[
+        { text:"用户输入" },
+        { text:"规则语义匹配", note:"← 接入点① 语义兜底（可插拔）" },
+        { text:"确定性推理主干", sub:"图谱查询 · 证据加工" },
+        { text:"模板输出", note:"← 接入点② 语言润色（可插拔）" },
+        { text:"统一数据结构" },
+        { text:"回复生成" }
+      ],
+      foot:"LLM 模块仅在需要时插入，不替代主干流程"
     },
     artifacts:[
-      { id:"arch", name:"AGENT ARCHITECTURE & FLOW", caption:"从输入到输出：一条确定性的多 Agent 推理流水线。", kind:"arch" },
-      { id:"case", name:"CASE WALKTHROUGH", caption:"一个真实问题如何经过多个 Agent 被拆解、查询与加工。", kind:"case" },
-      { id:"future", name:"FUTURE EXTENSION", caption:"保留确定性主路径，仅在需要时引入 LLM。", kind:"future" }
+      { id:"arch", name:"AGENT ARCHITECTURE & FLOW", caption:"输入到输出：一条确定性的多 Agent 推理流水线。", kind:"arch" },
+      { id:"case", name:"CASE WALKTHROUGH", caption:"真实问题：经过多个 Agent 被拆解、查询与加工。", kind:"case" },
+      { id:"future", name:"FUTURE EXTENSION", caption:"技术扩展的可能性：需要时引入并驾驭 LLM。", kind:"future" }
     ]
   },
   {
@@ -1890,20 +1906,16 @@ function renderCaseWalkthrough(body, mod){
 
 function renderAgentFuture(body, mod){
   const f = mod.futureSys || {};
-  let html = '<div class="future-flow">';
-  (f.steps||[]).forEach(s=>{ html += '<div class="future-node">'+s+'</div>'; });
-  html += '<div class="future-fork">';
-  (f.branches||[]).forEach(b=>{
-    html += '<div class="future-branch"><div class="future-node future-node--cond">'+b.label+'</div><div class="future-node future-node--dest">'+b.dest+'</div></div>';
+  let html = '<div class="future-core">';
+  if(f.coreTitle) html += '<div class="future-core__head">'+f.coreTitle+'</div>';
+  (f.nodes||[]).forEach((n, i)=>{
+    html += '<div class="future-core__row">';
+    html += '<div class="future-core__box">'+(n.sub ? n.text+'<span class="future-core__box-sub">'+n.sub+'</span>' : n.text)+'</div>';
+    if(n.note) html += '<div class="future-core__note">'+n.note+'</div>';
+    html += '</div>';
+    if(i < (f.nodes||[]).length - 1) html += '<div class="future-core__arrow">↓</div>';
   });
-  html += '</div>';
-  html += '<div class="future-node future-node--contract">'+f.contract+'</div>';
-  html += '<div class="future-node">'+f.tail+'</div>';
-  html += '</div>';
-  html += '<div class="future-concl">';
-  (f.conclusions||[]).forEach(cn=>{
-    html += '<div class="future-concl__item"><span class="future-concl__idx">'+cn.idx+'</span><div class="future-concl__body"><div class="future-concl__title">'+cn.title+'</div><div class="future-concl__desc">'+cn.d+'</div></div></div>';
-  });
+  if(f.foot) html += '<div class="future-core__foot">'+f.foot+'</div>';
   html += '</div>';
   body.innerHTML = html;
 }
