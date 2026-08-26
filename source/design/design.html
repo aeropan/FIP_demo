@@ -408,11 +408,19 @@ body{
 }
 .future-core__box--apricot{background:#FAF3EC;}
 .future-core__box--beige{background:#F4EDE6;}
+.future-core__box--core{
+  position:relative;border-top-left-radius:0;border-top-right-radius:0;
+}
+.future-core__box--core::before{
+  content:'';position:absolute;top:-1px;left:0;right:0;height:4px;
+  background:linear-gradient(90deg, var(--c-primary-500), var(--c-primary-700));
+  border-top-left-radius:8px;border-top-right-radius:8px;
+}
 .future-core__box-sub{font-size:12px;font-weight:400;color:var(--c-text-secondary);}
 .future-core__note{
   grid-column:3;justify-self:start;text-align:left;padding-left:var(--s3);
   font-size:11px;color:var(--c-primary-700);line-height:1.4;
-  align-self:center;transform:translateY(-50%);
+  align-self:end;
 }
 .future-core__arrow{text-align:center;color:var(--c-primary-500);font-size:16px;line-height:1;padding:2px 0;}
 .future-core__foot{
@@ -1293,7 +1301,7 @@ const MODULES = [
       nodes:[
         { text:"用户输入" },
         { text:"规则语义匹配", note:"← 接入点① 语义兜底（可插拔）", tone:"apricot" },
-        { text:"确定性推理主干", sub:"图谱查询 · 证据加工" },
+        { text:"确定性推理主干", sub:"图谱查询 · 证据加工", tone:"core" },
         { text:"模板输出", note:"← 接入点② 语言润色（可插拔）", tone:"beige" },
         { text:"统一数据结构" },
         { text:"回复生成" }
