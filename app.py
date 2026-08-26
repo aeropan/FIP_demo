@@ -306,19 +306,19 @@ HOMEPAGE_HTML = """
     <iframe class="design-expand-modal__frame" id="designExpandFrame" sandbox="allow-scripts allow-same-origin"></iframe>
   </div>
 </div>
+<!-- 图片放大灯箱（顶层覆盖层，z-index 高于弹窗，支持主文档与展开 iframe 图片） -->
+<div id="imgLightbox" class="img-lightbox" aria-hidden="true">
+  <div class="img-lightbox__overlay" data-close></div>
+  <button type="button" class="img-lightbox__close" data-close aria-label="关闭">&times;</button>
+  <img class="img-lightbox__img" alt="图片放大预览" />
+</div>
 """
 
 # Gradio 的 gr.HTML 中插入的 <script> 不会被执行，因此交互逻辑通过 Blocks 的 js 参数注入。
+# 说明：页面标题由 gr.Blocks(title=...) 设置；favicon 由 launch(favicon_path=...) 提供
+# （Gradio 6.x 的 favicon_path 是 launch() 的参数，不是 Blocks() 的），
+# 因此 JS_CODE 不再需要手写 title/favicon 注入。
 JS_CODE = """
-/* 设置浏览器标签页标题与 favicon（Gradio 6.x 的 title/favicon_path 参数不可用） */
-document.title = '潘的宠医助手 · FIP知识推理系统';
-(function(){
-  var link = document.createElement('link');
-  link.rel = 'icon';
-  link.type = 'image/svg+xml';
-  link.href = 'gradio_api/file=asset/favicon.svg';
-  document.head.appendChild(link);
-})();
 window.__GRAPH_HTML__=__GRAPH_HTML_JSON__;
 window.__DOCS_HTML__=__DOCS_HTML_JSON__;
 window.__DESIGN_HTML__=__DESIGN_HTML_JSON__;
@@ -461,7 +461,42 @@ window.__STYLE_DEMO_HTML__=__STYLE_DEMO_HTML_JSON__;
     });
     if(overlay) overlay.addEventListener('click', closeExpand);
     if(closeBtn) closeBtn.addEventListener('click', closeExpand);
-    document.addEventListener('keydown', function(e){ if(e.key === 'Escape' && modal.classList.contains('is-open')) closeExpand(); });
+    document.addEventListener('keydown', function(e){ if(e.key === 'Escape'){ var lb=document.getElementById('imgLightbox'); if(lb && lb.classList.contains('is-open')) return; if(modal.classList.contains('is-open')) closeExpand(); } });
+  })();
+  /* ====== 图片放大灯箱（顶层覆盖层，支持主文档与展开 iframe 图片；z-index 高于弹窗） ====== */
+  (function(){
+    var lb = document.getElementById('imgLightbox');
+    if(!lb) return;
+    var imgEl = lb.querySelector('.img-lightbox__img');
+    var overlay = lb.querySelector('.img-lightbox__overlay');
+    var closeBtn = lb.querySelector('.img-lightbox__close');
+    function isExpandOpen(){
+      var em = document.getElementById('designExpandModal');
+      return !!(em && em.classList.contains('is-open'));
+    }
+    function openZoom(src){
+      if(!src) return;
+      imgEl.src = src;
+      lb.classList.add('is-open');
+      lb.setAttribute('aria-hidden','false');
+      if(!isExpandOpen()) document.body.style.overflow = 'hidden';
+    }
+    function closeZoom(){
+      if(!lb.classList.contains('is-open')) return;
+      lb.classList.remove('is-open');
+      lb.setAttribute('aria-hidden','true');
+      imgEl.src = '';
+      if(!isExpandOpen()) document.body.style.overflow = '';
+    }
+    window.addEventListener('message', function(e){
+      if(!e.data || e.data.type !== 'img-zoom') return;
+      openZoom(e.data.src);
+    });
+    if(overlay) overlay.addEventListener('click', closeZoom);
+    if(closeBtn) closeBtn.addEventListener('click', closeZoom);
+    document.addEventListener('keydown', function(e){
+      if(e.key === 'Escape' && lb.classList.contains('is-open')) closeZoom();
+    });
   })();
 
   /* ====== Module 04 视觉设计 demo 弹窗（顶层模态框，监听 design.html 内按钮消息） ====== */
@@ -3075,7 +3110,10 @@ _ASSET_DIR = Path(__file__).resolve().parent / "asset"
 
 def _data_uri(name: str) -> str:
     data = (_ASSET_DIR / name).read_bytes()
-    return "data:image/jpeg;base64," + base64.b64encode(data).decode("ascii")
+    ext = name.rsplit('.', 1)[-1].lower() if '.' in name else ''
+    mime = {'jpg': 'image/jpeg', 'jpeg': 'image/jpeg', 'png': 'image/png',
+            'svg': 'image/svg+xml', 'gif': 'image/gif', 'webp': 'image/webp'}.get(ext, 'application/octet-stream')
+    return "data:" + mime + ";base64," + base64.b64encode(data).decode("ascii")
 
 
 _IMG_REPLACEMENTS = {
@@ -3083,6 +3121,8 @@ _IMG_REPLACEMENTS = {
     "file=asset/left_bottom.jpg": _data_uri("left_bottom.jpg"),
     "file=asset/middle.jpg": _data_uri("middle.jpg"),
     "file=asset/bot_avatar.jpg": _data_uri("bot_avatar.jpg"),
+    "file=asset/neo4j_demo_1.png": _data_uri("neo4j_demo_1.png"),
+    "file=asset/neo4j_demo_2.png": _data_uri("neo4j_demo_2.png"),
 }
 
 _HOME_HTML = HOMEPAGE_HTML
@@ -3102,6 +3142,9 @@ _JS_EXEC = _JS_EXEC.replace('__GRAPH_HTML_JSON__', _json.dumps(_GRAPH_PAGE_HTML)
 # 文献库 / 产品设计说明：独立空页面文件（后续填充内容只改对应文件，无需动 app.py）
 _DOCS_PAGE_HTML = open(os.path.join(os.path.dirname(__file__), 'source/design/docs.html'), encoding='utf-8').read()
 _DESIGN_PAGE_HTML = open(os.path.join(os.path.dirname(__file__), 'source/design/design.html'), encoding='utf-8').read()
+# design.html 内引用的 asset 图片需内嵌 base64（它在上面的 _IMG_REPLACEMENTS 循环之后才注入 _JS_EXEC，不会被自动替换）
+for _k, _v in _IMG_REPLACEMENTS.items():
+    _DESIGN_PAGE_HTML = _DESIGN_PAGE_HTML.replace(_k, _v)
 _JS_EXEC = _JS_EXEC.replace('__DOCS_HTML_JSON__', _json.dumps(_DOCS_PAGE_HTML).replace('</', '<\\/'))
 _JS_EXEC = _JS_EXEC.replace('__DESIGN_HTML_JSON__', _json.dumps(_DESIGN_PAGE_HTML).replace('</', '<\\/'))
 
@@ -3162,6 +3205,12 @@ _STYLE_HTML = (
     + "/* 打开弹窗时：侧边栏向右划出（300ms）+ 下方不可交互 */\n"
     + "body.style-demo-open #leftSidebar{position:absolute;top:0;left:0;bottom:0;transform:translateX(-100%);}\n"
     + "body.style-demo-open #pageDesign{pointer-events:none!important;}\n"
+    + ".img-lightbox{position:fixed;inset:0;z-index:4000;display:none;align-items:center;justify-content:center;padding:24px;}\n"
+    + ".img-lightbox.is-open{display:flex;animation:demoFadeIn 200ms cubic-bezier(0.4,0,0.2,1) both;}\n"
+    + ".img-lightbox__overlay{position:absolute;inset:0;background:rgba(42,38,36,.78);}\n"
+    + ".img-lightbox__img{position:relative;z-index:1;max-width:92vw;max-height:92vh;width:auto;height:auto;border-radius:12px;box-shadow:0 24px 60px rgba(0,0,0,.35);background:#fff;}\n"
+    + ".img-lightbox__close{position:absolute;top:18px;right:22px;z-index:2;display:flex;align-items:center;justify-content:center;width:36px;height:36px;padding:0!important;border:none!important;border-radius:999px;background:#FFFFFF!important;color:#3E3836!important;font-size:22px;line-height:1;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.25)!important;}\n"
+    + ".img-lightbox__close:hover{background:#FAF3EC!important;color:#3E3836!important;}\n"
     + "</style>"
 )
 
@@ -3247,4 +3296,7 @@ if __name__ == "__main__":
         inbrowser=False,
         quiet=False,
         allowed_paths=["source/literature", "asset"],
+        # favicon：Gradio 6.x 的 favicon_path 是 launch() 的参数。
+        # 设置后 /favicon.ico 直接返回该文件，标签页不再经历"默认图标→注入切换"的跳动。
+        favicon_path="asset/favicon.png",
     )

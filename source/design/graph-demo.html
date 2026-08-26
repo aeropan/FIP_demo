@@ -952,15 +952,22 @@ function init3D(){
   g3d.d3Force('link').distance(68);
   g3d.cameraPosition({ x:0, y:0, z:700 });
   render3dLegend();
-  // 渲染完成（力导向引擎停止）后隐藏加载提示；setTimeout 兜底（onEngineStop 为回调注册，不覆盖渲染循环，安全）
+  // 隐藏加载提示：onEngineTick（force 布局每次 tick 后触发）首次触发 = 图首次布局+渲染完成，
+  // 与"图出现"精确同步（≤1 帧窗口）；onEngineStop 与 setTimeout 仅作兜底
   const hideLoading = () => {
     const le = document.getElementById('graph3dLoading');
     if (le) le.style.display = 'none';
   };
   try {
+    if (typeof g3d.onEngineTick === 'function') {
+      let ticked = false;
+      g3d.onEngineTick(() => {
+        if (!ticked) { ticked = true; hideLoading(); }
+      });
+    }
     if (typeof g3d.onEngineStop === 'function') g3d.onEngineStop(hideLoading);
   } catch(e) {}
-  setTimeout(hideLoading, 6000);
+  setTimeout(hideLoading, 3000);
   // 继承 2D 的路径高亮
   if(pathMode && pathNodes.length >= 2){
     setTimeout(()=>{
