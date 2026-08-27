@@ -833,9 +833,12 @@ body{
 .eng-map__input{font-size:13px;color:var(--c-text-main);flex:1 1 auto;border-left:1px solid #E5DDD5;padding-left:var(--s3);}
 .eng-map__note{font-size:11px;color:var(--c-text-secondary);line-height:1.5;margin:2px 0 6px;}
 
-/* 02 调度 · 垂直列表：圆点标记 */
-.eng-dotlist{display:flex;flex-direction:column;gap:var(--s6);}
-.eng-dotlist__item{display:flex;gap:var(--s3);}
+/* 02 调度 · 圆点列表（去掉 wrapper，改为条目间距）+ 模块依赖胶囊链 */
+.eng-dotlist__item{display:flex;gap:var(--s3);margin-bottom:var(--s6);}
+.eng-sec > .eng-dotlist__item:last-child{margin-bottom:0;}
+.eng-dep{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:var(--s6);}
+.eng-dep__pill{display:inline-block;background:#FAF3EC;border:1px solid #E5DDD5;border-radius:999px;padding:5px 12px;font-size:13px;font-weight:600;color:#3E3836;white-space:nowrap;}
+.eng-dep__arrow{color:#C7A18E;font-weight:700;flex:0 0 auto;}
 .eng-dotlist__dot{flex:0 0 auto;width:6px;height:6px;border-radius:50%;background:var(--c-primary-500);margin-top:7px;}
 .eng-dotlist__body{display:flex;flex-direction:column;gap:2px;}
 .eng-dotlist__t{font-size:13px;font-weight:600;color:var(--c-text-main);}
@@ -1441,7 +1444,7 @@ const MODULES = [
         label:"02 调度",
         desc:"组织开发能力，规范开发流程",
         items:[
-          { t:"分模块推进", d:"按依赖关系将开发拆分为数据访问层 → 规则路由层 → Agent 层 → Pipeline → 前端集成，每层完成后再进入下一层。" },
+          { t:"分模块推进", d:"按依赖关系将开发拆分多个功能层级，每层完成后再进入下一层，确保开发进度有序推进。", chain:["数据访问层","规则路由层","Agent 层","Pipeline","前端集成"] },
           { t:"明确验收标准", d:"每完成一层立即验证，确认行为符合设计预期后再继续。" },
           { t:"即时测试反馈", d:"每层开发完成后进行自动化或手动测试，发现问题立即回溯，避免后期集中返工。" }
         ]
@@ -2145,13 +2148,20 @@ function renderEngSchedule(s){
   if(!s) return '';
   let h = '<div class="eng-sec reveal-item">';
   h += '<div class="eng-sec__label">'+s.label+'：'+s.desc+'</div>';
-  h += '<div class="eng-dotlist">';
   (s.items||[]).forEach(it=>{
     h += '<div class="eng-dotlist__item"><span class="eng-dotlist__dot"></span>'+
       '<div class="eng-dotlist__body"><span class="eng-dotlist__t">'+it.t+'</span>'+
       '<span class="eng-dotlist__d">'+it.d+'</span></div></div>';
+    if(it.chain && it.chain.length){
+      h += '<div class="eng-dep">';
+      it.chain.forEach((m,i)=>{
+        h += '<span class="eng-dep__pill">'+m+'</span>';
+        if(i < it.chain.length-1) h += '<span class="eng-dep__arrow">→</span>';
+      });
+      h += '</div>';
+    }
   });
-  h += '</div></div>';
+  h += '</div>';
   return h;
 }
 
