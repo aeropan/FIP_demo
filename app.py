@@ -3278,7 +3278,15 @@ def create_demo() -> gr.Blocks:
         # 样式经 head 注入；交互 JS 经 js_on_load 注入（Gradio 官方保证执行，
         # head 中的内联 <script> 可能被前端以 innerHTML 方式插入而不执行）
         # server_functions 把 respond 暴露给 JS：await server.respond(text)
-        gr.HTML(_HOME_HTML, head=_STYLE_HTML, js_on_load=_JS_EXEC, server_functions=[respond])
+        gr.HTML(
+            _HOME_HTML,
+            # _STYLE_HTML 注入全局 CSS；favicon <link> 一并注入 <head>，
+            # 指向已验证可用的文件 URL，确保标签页第一时间加载我们的图标。
+            head=_STYLE_HTML
+            + '<link rel="icon" type="image/png" href="/gradio_api/file=asset/favicon.png" />',
+            js_on_load=_JS_EXEC,
+            server_functions=[respond],
+        )
     return demo
 
 
@@ -3296,7 +3304,7 @@ if __name__ == "__main__":
         inbrowser=False,
         quiet=False,
         allowed_paths=["source/literature", "asset"],
-        # favicon：Gradio 6.x 的 favicon_path 是 launch() 的参数。
-        # 设置后 /favicon.ico 直接返回该文件，标签页不再经历"默认图标→注入切换"的跳动。
+        # favicon：Gradio 6.x 的 favicon_path 仅控制 /favicon.ico 路由返回的文件（前端不读取该值设置图标）。
+        # 真正让标签页显示图标的是 gr.HTML(head=...) 注入的 <link rel="icon">（见上方 gr.HTML 调用）。
         favicon_path="asset/favicon.png",
     )
