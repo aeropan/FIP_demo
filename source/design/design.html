@@ -2028,6 +2028,12 @@ function renderAgentFuture(body, mod){
 function renderEngineeringNarrative(mod){
   const eng = mod.eng || {};
 
+  // 第一部分主标题：PROCESS · 开发流程
+  const part1 = document.createElement('div');
+  part1.className = 'agent-section__label';
+  part1.textContent = 'PROCESS · 开发流程';
+  thinkingCol.appendChild(part1);
+
   // 01 实现 · 映射表（设计资产 → 开发输入）
   if(eng.implements){
     const sec = document.createElement('div');
@@ -2080,12 +2086,18 @@ function renderEngineeringNarrative(mod){
     thinkingCol.appendChild(sec);
   }
 
+  // 第二部分主标题：TECH STACK · 技术包选型
+  const part2 = document.createElement('div');
+  part2.className = 'agent-section__label';
+  part2.textContent = 'TECH STACK · 技术包选型';
+  thinkingCol.appendChild(part2);
+
   // 技术包选型
   if(eng.techpack){
     const tp = eng.techpack;
     const sec = document.createElement('div');
     sec.className = 'eng-sec eng-techpack reveal-item';
-    let h = '<div class="eng-sec__label">'+tp.label+'</div>';
+    let h = '';
     // 模型协作策略
     h += '<div class="eng-tp__group"><div class="eng-tp__gtitle">模型协作策略</div><div class="eng-tp__models">';
     (tp.models||[]).forEach(m=>{
