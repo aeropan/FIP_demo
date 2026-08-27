@@ -808,6 +808,7 @@ body{
 .m07-sec--apricot{background:#FAF3EC;}
 .m07-sec--white{background:#FFFFFF;}
 .m07-sec__title{font-size:14px;font-weight:600;color:#6B5045;letter-spacing:.5px;padding-bottom:10px;border-bottom:1px solid #E5DDD5;margin-bottom:16px;}
+.m07-sec__intro{font-size:13px;color:#3E3836;line-height:1.6;margin:0 0 16px;}
 
 /* 二级子区块：左缩进 + 左侧 2px 竖线 */
 .m07-sub{margin-left:16px;padding-left:16px;border-left:2px solid #E5DDD5;margin-top:28px;}
@@ -883,7 +884,7 @@ body{
 
 /* 部署与运维 · 微流水线 */
 .m07-pipe{display:flex;flex-wrap:wrap;align-items:stretch;gap:8px;}
-.m07-pipe__node{display:flex;flex-direction:column;gap:2px;background:#FFFFFF;border:1px solid #D7CFC7;border-radius:6px;padding:8px 12px;flex:0 1 auto;}
+.m07-pipe__node{display:flex;flex-direction:column;gap:2px;border:1px solid #D7CFC7;border-radius:6px;padding:8px 12px;flex:0 1 auto;}
 .m07-pipe__name{font-size:13px;font-weight:600;color:#3E3836;}
 .m07-pipe__d{font-size:11px;color:#6F6763;line-height:1.4;}
 .m07-pipe__arrow{color:#C7A18E;font-weight:700;align-self:center;}
@@ -1423,6 +1424,7 @@ const MODULES = [
     keyDecision:"Good implementation is not about generating more code. It’s about reducing uncertainty one layer at a time.",
     eng:{
       concept:"将设计资产转化为开发输入，通过有组织的过程管理和工程决策，贯通各模块成为完整可用的产品。",
+      techIntro:"选择AI大模型、开发工具与技术栈，构建“虚拟开发团队”。",
       implements:{
         label:"01 实现",
         desc:"从设计到开发输入的转化",
@@ -2096,38 +2098,32 @@ function renderEngineeringNarrative(mod){
       '<div class="m07-sub__body">'+body+'</div>'+
     '</div>';
   }
-
-  // 1. CONCEPT · 开发理念（仅保留段落文字，去掉标题与分割线）
-  if(eng.concept){
-    const p = document.createElement('p');
-    p.className = 'm07-concept';
-    p.textContent = eng.concept;
-    thinkingCol.appendChild(p);
+  function intro(text){
+    return text ? '<p class="m07-sec__intro">'+text+'</p>' : '';
   }
 
-  // 2. PROCESS · 开发流程（01/02/03 沿用修改前样式）
-  let pInner = '';
+  // 1. PROCESS · 开发流程（apricot 背景 + 引导段 + 01/02/03 修改前样式）
+  let pInner = intro(eng.concept);
   pInner += renderEngImplements(eng.implements);
   pInner += renderEngSchedule(eng.schedule);
   pInner += renderEngIntegrate(eng.integrate);
-  section('PROCESS · 开发流程','white', pInner);
+  section('PROCESS · 开发流程','apricot', pInner);
 
-  // 3. TECH STACK · 技术包选型（沿用当前子区块样式）
+  // 2. TECH STACK · 技术包选型（apricot 背景 + 引导段 + 子区块）
   const tp = eng.techpack || {};
-  let tInner = '';
+  let tInner = intro(eng.techIntro);
   tInner += sub('模型协作策略','', renderM07Models(tp.models));
   tInner += sub('核心技术栈','', renderM07Stack(tp.stack));
   tInner += sub('部署与运维','', renderM07Ops(tp.ops));
   section('TECH STACK · 技术包选型','apricot', tInner);
 
-  // 4. KEY INSIGHT 恢复默认 key-decision 渲染（已取消 engineering 跳过）
+  // 3. KEY INSIGHT 恢复默认 key-decision 渲染（已取消 engineering 跳过）
 }
 
 function renderEngImplements(im){
   if(!im) return '';
   let h = '<div class="eng-sec reveal-item">';
-  h += '<div class="eng-sec__label">'+im.label+'</div>';
-  h += '<div class="eng-sec__desc">'+im.desc+'</div>';
+  h += '<div class="eng-sec__label">'+im.label+'：'+im.desc+'</div>';
   h += '<div class="eng-map">';
   (im.rows||[]).forEach(r=>{
     h += '<div class="eng-map__row">'+
@@ -2143,8 +2139,7 @@ function renderEngImplements(im){
 function renderEngSchedule(s){
   if(!s) return '';
   let h = '<div class="eng-sec reveal-item">';
-  h += '<div class="eng-sec__label">'+s.label+'</div>';
-  h += '<div class="eng-sec__desc">'+s.desc+'</div>';
+  h += '<div class="eng-sec__label">'+s.label+'：'+s.desc+'</div>';
   h += '<div class="eng-dotlist">';
   (s.items||[]).forEach(it=>{
     h += '<div class="eng-dotlist__item"><span class="eng-dotlist__dot"></span>'+
@@ -2158,8 +2153,7 @@ function renderEngSchedule(s){
 function renderEngIntegrate(it){
   if(!it) return '';
   let h = '<div class="eng-sec reveal-item">';
-  h += '<div class="eng-sec__label">'+it.label+'</div>';
-  h += '<div class="eng-sec__desc">'+it.desc+'</div>';
+  h += '<div class="eng-sec__label">'+it.label+'：'+it.desc+'</div>';
   h += '<div class="eng-intg">';
   (it.items||[]).forEach(x=>{
     h += '<div class="eng-intg__item"><div class="eng-intg__t">'+x.t+'</div>'+
