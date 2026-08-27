@@ -3134,6 +3134,48 @@ _JS_EXEC = JS_CODE
 for _k, _v in _IMG_REPLACEMENTS.items():
     _JS_EXEC = _JS_EXEC.replace(_k, _v)
 
+# favicon 强制保持：Gradio 6.x 前端会在运行时用默认图标覆盖 <head> 中的 favicon，
+# 导致“favicon→默认→favicon”跳动。这里用 MutationObserver 持续保证我们的图标
+# 始终是唯一生效的图标链接，无论 Gradio 何时注入默认图标都能即时压回。
+_FAVICON_JS = (
+    "(function(){"
+    "var FAV=\"/gradio_api/file=asset/favicon.png\";"
+    "function enforceFavicon(){"
+    "var head=document.head||document.getElementsByTagName(\"head\")[0];"
+    "if(!head) return;"
+    "var links=head.querySelectorAll('link[rel=\"icon\"], link[rel=\"shortcut icon\"]');"
+    "var hasOurs=false;"
+    "for(var i=0;i<links.length;i++){"
+    "if(links[i].getAttribute(\"href\")===FAV){hasOurs=true;}"
+    "else{if(links[i].parentNode) links[i].parentNode.removeChild(links[i]);}"
+    "}"
+    "if(!hasOurs){"
+    "var nl=document.createElement(\"link\");"
+    "nl.rel=\"icon\"; nl.type=\"image/png\"; nl.href=FAV;"
+    "head.appendChild(nl);"
+    "}"
+    "}"
+    "enforceFavicon();"
+    "if(window.MutationObserver){"
+    "var obs=new MutationObserver(function(muts){"
+    "for(var i=0;i<muts.length;i++){"
+    "var added=muts[i].addedNodes;"
+    "for(var j=0;j<added.length;j++){"
+    "var n=added[j];"
+    "if(n.nodeType===1 && n.tagName===\"LINK\" && (n.rel===\"icon\"||n.rel===\"shortcut icon\") && n.getAttribute(\"href\")!==FAV){"
+    "enforceFavicon(); break;"
+    "}"
+    "}"
+    "}"
+    "});"
+    "obs.observe(document.head||document.documentElement,{childList:true,subtree:false});"
+    "}"
+    "/* 兜底：加载初期 Gradio 可能在 js_on_load 之前写入默认图标，短时轮询复核 */"
+    "var _t=0; var _iv=setInterval(function(){ enforceFavicon(); if(++_t>30){ clearInterval(_iv); } },100);"
+    "})();"
+)
+_JS_EXEC = _FAVICON_JS + _JS_EXEC
+
 # 注入图数据库页面 HTML（iframe srcdoc 懒加载）
 import json as _json
 _GRAPH_PAGE_HTML = open(os.path.join(os.path.dirname(__file__), 'source/design/graph-demo.html'), encoding='utf-8').read()
@@ -3280,10 +3322,10 @@ def create_demo() -> gr.Blocks:
         # server_functions 把 respond 暴露给 JS：await server.respond(text)
         gr.HTML(
             _HOME_HTML,
-            # _STYLE_HTML 注入全局 CSS；favicon <link> 一并注入 <head>，
-            # 指向已验证可用的文件 URL，确保标签页第一时间加载我们的图标。
-            head=_STYLE_HTML
-            + '<link rel="icon" type="image/png" href="/gradio_api/file=asset/favicon.png" />',
+            # 全局 CSS 经 gr.HTML 的 head 注入（Gradio 6.x 会把它渲染进组件 body，
+            # <style> 在 body 中同样生效）；favicon 不再放这里——body 里的
+            # <link rel="icon"> 浏览器忽略，需走 launch(head=...) 注入真实 <head>。
+            head=_STYLE_HTML,
             js_on_load=_JS_EXEC,
             server_functions=[respond],
         )
@@ -3304,7 +3346,10 @@ if __name__ == "__main__":
         inbrowser=False,
         quiet=False,
         allowed_paths=["source/literature", "asset"],
-        # favicon：Gradio 6.x 的 favicon_path 仅控制 /favicon.ico 路由返回的文件（前端不读取该值设置图标）。
-        # 真正让标签页显示图标的是 gr.HTML(head=...) 注入的 <link rel="icon">（见上方 gr.HTML 调用）。
+        # favicon 真正生效的三道保险：
+        # 1) launch(head=...) 把 <link rel="icon"> 注入真实 <head>（消除静态闪烁）；
+        # 2) favicon_path 让 /favicon.ico 路由返回我们的 png（浏览器兜底）；
+        # 3) js_on_load 中的强制保持逻辑（MutationObserver）压制 Gradio 运行时覆盖。
+        head='<link rel="icon" type="image/png" href="/gradio_api/file=asset/favicon.png" />',
         favicon_path="asset/favicon.png",
     )
