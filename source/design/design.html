@@ -804,11 +804,12 @@ body{
 
 /* ============ Module 07 · 左侧三级结构 ============ */
 /* 一级章节：标题带 + 交替背景 */
-.m07-sec{padding:22px 24px;}
-.m07-sec--apricot{background:#FAF3EC;}
-.m07-sec--white{background:#FFFFFF;}
-.m07-sec__title{font-size:14px;font-weight:600;color:#6B5045;letter-spacing:.5px;padding-bottom:10px;border-bottom:1px solid #E5DDD5;margin-bottom:16px;}
-.m07-sec__intro{font-size:13px;color:#3E3836;line-height:1.6;margin:0 0 16px;}
+.m07-sec__head{padding:20px 24px;border-bottom:1px solid #E5DDD5;}
+.m07-sec__head--apricot{background:#FAF3EC;}
+.m07-sec__title{font-size:14px;font-weight:600;color:#6B5045;letter-spacing:.5px;margin-bottom:10px;}
+.m07-sec__intro{font-size:13px;color:#3E3836;line-height:1.6;margin:0;}
+.m07-sec__body{padding:20px 24px;background:#FFFFFF;}
+.m07-sec__body > .m07-sub:first-child{margin-top:0;}
 
 /* 二级子区块：左缩进 + 左侧 2px 竖线 */
 .m07-sub{margin-left:16px;padding-left:16px;border-left:2px solid #E5DDD5;margin-top:28px;}
@@ -2085,10 +2086,15 @@ function renderAgentFuture(body, mod){
 function renderEngineeringNarrative(mod){
   const eng = mod.eng || {};
 
-  function section(title, bg, inner){
+  function section(title, headInner, bodyInner){
     const sec = document.createElement('section');
-    sec.className = 'm07-sec m07-sec--'+bg+' reveal-item';
-    sec.innerHTML = '<div class="m07-sec__title">'+title+'</div>'+inner;
+    sec.className = 'm07-sec reveal-item';
+    let h = '<div class="m07-sec__head m07-sec__head--apricot">';
+    h += '<div class="m07-sec__title">'+title+'</div>';
+    h += headInner;
+    h += '</div>';
+    h += '<div class="m07-sec__body">'+bodyInner+'</div>';
+    sec.innerHTML = h;
     thinkingCol.appendChild(sec);
   }
   function sub(label, desc, body){
@@ -2102,20 +2108,18 @@ function renderEngineeringNarrative(mod){
     return text ? '<p class="m07-sec__intro">'+text+'</p>' : '';
   }
 
-  // 1. PROCESS · 开发流程（apricot 背景 + 引导段 + 01/02/03 修改前样式）
-  let pInner = intro(eng.concept);
-  pInner += renderEngImplements(eng.implements);
-  pInner += renderEngSchedule(eng.schedule);
-  pInner += renderEngIntegrate(eng.integrate);
-  section('PROCESS · 开发流程','apricot', pInner);
+  // 1. PROCESS · 开发流程（标题+引导段=杏色带，01/02/03 内容=白色带）
+  const pBody = renderEngImplements(eng.implements)
+    + renderEngSchedule(eng.schedule)
+    + renderEngIntegrate(eng.integrate);
+  section('PROCESS · 开发流程', intro(eng.concept), pBody);
 
-  // 2. TECH STACK · 技术包选型（apricot 背景 + 引导段 + 子区块）
+  // 2. TECH STACK · 技术包选型（标题+引导段=杏色带，主内容=白色带）
   const tp = eng.techpack || {};
-  let tInner = intro(eng.techIntro);
-  tInner += sub('模型协作策略','', renderM07Models(tp.models));
-  tInner += sub('核心技术栈','', renderM07Stack(tp.stack));
-  tInner += sub('部署与运维','', renderM07Ops(tp.ops));
-  section('TECH STACK · 技术包选型','apricot', tInner);
+  const tBody = sub('模型协作策略','', renderM07Models(tp.models))
+    + sub('核心技术栈','', renderM07Stack(tp.stack))
+    + sub('部署与运维','', renderM07Ops(tp.ops));
+  section('TECH STACK · 技术包选型', intro(eng.techIntro), tBody);
 
   // 3. KEY INSIGHT 恢复默认 key-decision 渲染（已取消 engineering 跳过）
 }
