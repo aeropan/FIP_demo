@@ -818,6 +818,32 @@ body{
 /* CONCEPT · 开发理念 段落 */
 .m07-concept{font-size:13px;color:#3E3836;line-height:1.6;margin:0;}
 
+/* 01/02/03 · 修改前样式（实现 / 调度 / 贯通） */
+.eng-sec{margin-bottom:var(--s6);}
+.eng-sec__label{font-size:14px;font-weight:600;color:var(--c-primary-900);font-family:var(--f-mono),ui-monospace,monospace;letter-spacing:.5px;}
+.eng-sec__desc{font-size:13px;color:var(--c-text-secondary);margin-top:2px;margin-bottom:var(--s4);}
+
+/* 01 实现 · 映射表：无边框双列，细行线分隔 */
+.eng-map{display:flex;flex-direction:column;}
+.eng-map__row{display:flex;align-items:baseline;gap:var(--s3);padding:9px 0;border-bottom:1px solid #E5DDD5;}
+.eng-map__asset{font-size:13px;font-weight:600;color:var(--c-text-main);flex:0 0 auto;min-width:140px;padding-right:var(--s3);}
+.eng-map__input{font-size:13px;color:var(--c-text-main);flex:1 1 auto;border-left:1px solid #E5DDD5;padding-left:var(--s3);}
+.eng-map__note{font-size:11px;color:var(--c-text-secondary);line-height:1.5;margin:2px 0 6px;}
+
+/* 02 调度 · 垂直列表：圆点标记 */
+.eng-dotlist{display:flex;flex-direction:column;gap:var(--s6);}
+.eng-dotlist__item{display:flex;gap:var(--s3);}
+.eng-dotlist__dot{flex:0 0 auto;width:6px;height:6px;border-radius:50%;background:var(--c-primary-500);margin-top:7px;}
+.eng-dotlist__body{display:flex;flex-direction:column;gap:2px;}
+.eng-dotlist__t{font-size:13px;font-weight:600;color:var(--c-text-main);}
+.eng-dotlist__d{font-size:13px;color:var(--c-text-main);line-height:1.55;}
+
+/* 03 贯通 · 集成点 */
+.eng-intg{display:flex;flex-direction:column;gap:var(--s4);}
+.eng-intg__item{display:flex;flex-direction:column;gap:2px;}
+.eng-intg__t{font-size:13px;font-weight:600;color:var(--c-primary-700);}
+.eng-intg__d{font-size:12px;color:var(--c-text-secondary);line-height:1.55;}
+
 /* 01 实现 · 箭头列表 */
 .m07-arrowlist{display:flex;flex-direction:column;}
 .m07-arrowlist__row{display:flex;align-items:baseline;gap:10px;margin-bottom:16px;}
@@ -1394,36 +1420,36 @@ const MODULES = [
     thesis:"开发过程不是一次性生成完整系统，而是将复杂问题拆解为可验证的模块，逐层确认行为正确后再向上构建。",
     leftType:"engineering",
     keyLabel:"KEY INSIGHT",
-    keyDecision:"开发实现的关键，不是写了多少代码，而是如何用工程手段确保设计被忠实、稳定地落地。",
+    keyDecision:"Good implementation is not about generating more code. It’s about reducing uncertainty one layer at a time.",
     eng:{
       concept:"将设计资产转化为开发输入，通过有组织的过程管理和工程决策，贯通各模块成为完整可用的产品。",
       implements:{
         label:"01 实现",
         desc:"从设计到开发输入的转化",
         rows:[
-          { asset:"设计规范", input:"前端样式约束" },
-          { asset:"数据 Schema", input:"查询模板与数据结构" },
-          { asset:"Agent 职责", input:"模块划分依据" },
-          { asset:"页面原型", input:"布局与交互实现目标" }
+          { asset:"设计规范（HTML 片段）", input:"前端样式约束与组件基准", note:"避免开发时重复造轮子，确保页面风格与视觉设计一致。" },
+          { asset:"数据 Schema", input:"查询模板与数据结构定义", note:"保证图谱查询结果能被 Agent 直接使用，不产生二次转换。" },
+          { asset:"Agent 职责清单", input:"核心模块划分依据", note:"每个 Agent 对应独立代码模块，边界清晰，便于测试和维护。" },
+          { asset:"页面原型", input:"布局与交互实现目标", note:"三栏布局、推理链卡片、执行轨迹面板等原型，直接作为前端开发目标。" }
         ]
       },
       schedule:{
         label:"02 调度",
         desc:"组织开发能力，规范开发流程",
-        bullets:[
-          { t:"明确验收标准", d:"每完成一层立即验证。" },
-          { t:"即时测试反馈", d:"发现问题立即回溯。" }
-        ],
-        chain:["数据访问层","规则路由层","Agent 层","Pipeline","前端集成"]
+        items:[
+          { t:"分模块推进", d:"按依赖关系将开发拆分为数据访问层 → 规则路由层 → Agent 层 → Pipeline → 前端集成，每层完成后再进入下一层。" },
+          { t:"明确验收标准", d:"每完成一层立即验证，确认行为符合设计预期后再继续。" },
+          { t:"即时测试反馈", d:"每层开发完成后进行自动化或手动测试，发现问题立即回溯，避免后期集中返工。" }
+        ]
       },
       integrate:{
         label:"03 贯通",
         desc:"连接技术链路，形成系统化的产品",
-        cards:[
-          { t:"前端 × Pipeline", d:"回复渲染为对话卡片" },
-          { t:"执行轨迹分步", d:"走到哪一步亮哪一步" },
-          { t:"上下文继承", d:"多轮对话指代消解" },
-          { t:"图谱联动", d:"推理路径高亮" }
+        items:[
+          { t:"前端与 Pipeline 对接", d:"Gradio 事件回调触发核心处理链路，返回结果渲染为对话卡片。" },
+          { t:"执行轨迹分步展示", d:"后端逐步输出执行状态，前端同步点亮当前步骤，实现“走到哪一步亮哪一步”。" },
+          { t:"上下文继承前后端配合", d:"前端缓存最近实体，后端接收上下文参数，实现多轮对话指代消解。" },
+          { t:"图谱页与对话系统联动", d:"对话结果携带路径节点，图谱页据此高亮推理路径，形成完整可解释闭环。" }
         ]
       },
       techpack:{
@@ -1698,7 +1724,7 @@ function renderLeftContent(mod){
     'delivery': renderDeliveryNarrative
   };
   (renderers[mod.leftType] || renderNarrative)(mod);
-  if(mod.keyDecision && mod.leftType!=='engineering'){
+  if(mod.keyDecision){
     const kd = document.createElement('div');
     kd.className = 'key-decision reveal-item';
     const kLabel = mod.keyLabel || 'KEY DECISION';
@@ -2071,18 +2097,22 @@ function renderEngineeringNarrative(mod){
     '</div>';
   }
 
-  // 1. CONCEPT · 开发理念
-  section('CONCEPT · 开发理念','apricot',
-    '<p class="m07-concept">'+(eng.concept||'')+'</p>');
+  // 1. CONCEPT · 开发理念（仅保留段落文字，去掉标题与分割线）
+  if(eng.concept){
+    const p = document.createElement('p');
+    p.className = 'm07-concept';
+    p.textContent = eng.concept;
+    thinkingCol.appendChild(p);
+  }
 
-  // 2. PROCESS · 开发流程（含 01 / 02 / 03 二级子区块）
+  // 2. PROCESS · 开发流程（01/02/03 沿用修改前样式）
   let pInner = '';
-  pInner += sub('01 实现','从设计到开发输入的转化', renderM07Implements(eng.implements));
-  pInner += sub('02 调度','组织开发能力，规范开发流程', renderM07Schedule(eng.schedule));
-  pInner += sub('03 贯通','连接技术链路，形成系统化的产品', renderM07Integrate(eng.integrate));
+  pInner += renderEngImplements(eng.implements);
+  pInner += renderEngSchedule(eng.schedule);
+  pInner += renderEngIntegrate(eng.integrate);
   section('PROCESS · 开发流程','white', pInner);
 
-  // 3. TECH STACK · 技术包选型（含 模型协作策略 / 核心技术栈 / 部署与运维 二级子区块）
+  // 3. TECH STACK · 技术包选型（沿用当前子区块样式）
   const tp = eng.techpack || {};
   let tInner = '';
   tInner += sub('模型协作策略','', renderM07Models(tp.models));
@@ -2090,55 +2120,52 @@ function renderEngineeringNarrative(mod){
   tInner += sub('部署与运维','', renderM07Ops(tp.ops));
   section('TECH STACK · 技术包选型','apricot', tInner);
 
-  // 4. KEY INSIGHT
-  section('KEY INSIGHT','white',
-    '<div class="m07-ki"><div class="m07-ki__body">'+(mod.keyDecision||'')+'</div></div>');
+  // 4. KEY INSIGHT 恢复默认 key-decision 渲染（已取消 engineering 跳过）
 }
 
-function renderM07Implements(im){
+function renderEngImplements(im){
   if(!im) return '';
-  let h = '<div class="m07-arrowlist">';
+  let h = '<div class="eng-sec reveal-item">';
+  h += '<div class="eng-sec__label">'+im.label+'</div>';
+  h += '<div class="eng-sec__desc">'+im.desc+'</div>';
+  h += '<div class="eng-map">';
   (im.rows||[]).forEach(r=>{
-    h += '<div class="m07-arrowlist__row">'+
-      '<span class="m07-arrowlist__asset">'+r.asset+'</span>'+
-      '<span class="m07-arrowlist__arrow">→</span>'+
-      '<span class="m07-arrowlist__input">'+r.input+'</span></div>';
+    h += '<div class="eng-map__row">'+
+      '<div class="eng-map__asset">'+r.asset+'</div>'+
+      '<div class="eng-map__input">'+r.input+'</div>'+
+    '</div>';
+    if(r.note) h += '<div class="eng-map__note">'+r.note+'</div>';
   });
-  h += '</div>';
+  h += '</div></div>';
   return h;
 }
 
-function renderM07Schedule(s){
+function renderEngSchedule(s){
   if(!s) return '';
-  let h = '';
-  if(s.bullets && s.bullets.length){
-    h += '<div class="m07-dotlist">';
-    s.bullets.forEach(b=>{
-      h += '<div class="m07-dotlist__item"><span class="m07-dotlist__dot"></span>'+
-        '<div class="m07-dotlist__body"><span class="m07-dotlist__t">'+b.t+'</span>'+
-        '<span class="m07-dotlist__d">'+b.d+'</span></div></div>';
-    });
-    h += '</div>';
-  }
-  if(s.chain && s.chain.length){
-    h += '<div class="m07-chain">';
-    s.chain.forEach((m,i)=>{
-      h += '<div class="m07-chain__node">'+m+'</div>';
-      if(i < s.chain.length-1) h += '<div class="m07-chain__arrow">↓</div>';
-    });
-    h += '</div>';
-  }
+  let h = '<div class="eng-sec reveal-item">';
+  h += '<div class="eng-sec__label">'+s.label+'</div>';
+  h += '<div class="eng-sec__desc">'+s.desc+'</div>';
+  h += '<div class="eng-dotlist">';
+  (s.items||[]).forEach(it=>{
+    h += '<div class="eng-dotlist__item"><span class="eng-dotlist__dot"></span>'+
+      '<div class="eng-dotlist__body"><span class="eng-dotlist__t">'+it.t+'</span>'+
+      '<span class="eng-dotlist__d">'+it.d+'</span></div></div>';
+  });
+  h += '</div></div>';
   return h;
 }
 
-function renderM07Integrate(it){
+function renderEngIntegrate(it){
   if(!it) return '';
-  let h = '<div class="m07-cards">';
-  (it.cards||[]).forEach(c=>{
-    h += '<div class="m07-card"><div class="m07-card__t">'+c.t+'</div>'+
-      '<div class="m07-card__d">'+c.d+'</div></div>';
+  let h = '<div class="eng-sec reveal-item">';
+  h += '<div class="eng-sec__label">'+it.label+'</div>';
+  h += '<div class="eng-sec__desc">'+it.desc+'</div>';
+  h += '<div class="eng-intg">';
+  (it.items||[]).forEach(x=>{
+    h += '<div class="eng-intg__item"><div class="eng-intg__t">'+x.t+'</div>'+
+      '<div class="eng-intg__d">'+x.d+'</div></div>';
   });
-  h += '</div>';
+  h += '</div></div>';
   return h;
 }
 
