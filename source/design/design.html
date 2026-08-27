@@ -874,28 +874,23 @@ body{
 .m07-card__t{font-size:13px;font-weight:600;color:#3E3836;margin-bottom:4px;}
 .m07-card__d{font-size:11px;color:#6F6763;line-height:1.5;}
 
-/* 模型协作策略 · 三列表格 */
-.m07-table{display:flex;flex-direction:column;}
-.m07-table__row{display:grid;grid-template-columns:96px 132px 1fr;gap:10px;padding:12px 0;border-bottom:1px solid #EDE5DD;align-items:baseline;}
-.m07-table__role{font-size:13px;font-weight:600;color:#3E3836;}
-.m07-table__model{font-size:13px;color:#6B5045;}
-.m07-table__duty{font-size:12px;color:#6F6763;}
-
-/* 核心技术栈 · 标签列表 */
-.m07-tags{display:flex;flex-direction:column;gap:16px;}
-.m07-tag{display:flex;flex-direction:column;gap:2px;}
-.m07-tag__name{font-size:13px;font-weight:600;color:#3E3836;}
-.m07-tag__d{font-size:12px;color:#6F6763;line-height:1.5;}
-
-/* 部署与运维 · 微流水线 */
-.m07-pipe{display:flex;flex-wrap:wrap;align-items:stretch;gap:8px;}
-.m07-pipe__node{display:flex;flex-direction:column;gap:2px;border:1px solid #D7CFC7;border-radius:6px;padding:8px 12px;flex:0 1 auto;}
-.m07-pipe__name{font-size:13px;font-weight:600;color:#3E3836;}
-.m07-pipe__d{font-size:11px;color:#6F6763;line-height:1.4;}
-.m07-pipe__arrow{color:#C7A18E;font-weight:700;align-self:center;}
-.m07-pipe__aux{display:flex;align-items:flex-start;gap:10px;margin-top:16px;}
-.m07-pipe__aux-dash{flex:0 0 auto;width:36px;border-top:1px dashed #C7C0B8;margin-top:8px;}
-.m07-pipe__aux-text{font-size:11px;color:#6F6763;line-height:1.5;}
+/* 技术包选型 · 统一表格（子区块标题列 + 内容列，无竖线包裹） */
+.m07-ttable{display:flex;flex-direction:column;}
+.m07-ttable__row{display:grid;grid-template-columns:104px minmax(0,1fr) minmax(0,1.3fr) minmax(0,1fr);gap:10px;align-items:baseline;padding:12px 0;border-bottom:1px solid #EDE5DD;}
+.m07-ttable__row:last-child{border-bottom:none;}
+.m07-ttable__row--ops{align-items:center;}
+.m07-ttable__label{font-size:13px;font-weight:600;color:#6B5045;}
+.m07-ttable__strong{font-size:13px;font-weight:600;color:#3E3836;}
+.m07-ttable__model{font-size:13px;color:#6B5045;}
+.m07-ttable__sub{font-size:12px;color:#6F6763;line-height:1.5;}
+.m07-ttable__flow{display:flex;flex-wrap:wrap;align-items:center;gap:8px;grid-column:2 / -1;}
+.m07-ttable__box{display:flex;flex-direction:column;gap:2px;border:1px solid #D7CFC7;border-radius:6px;padding:8px 12px;}
+.m07-ttable__box-name{font-size:13px;font-weight:600;color:#3E3836;}
+.m07-ttable__box-d{font-size:11px;color:#6F6763;line-height:1.4;}
+.m07-ttable__arrow{color:#C7A18E;font-weight:700;}
+.m07-ttable__aux{display:flex;align-items:flex-start;gap:10px;margin-top:14px;}
+.m07-ttable__aux-dash{flex:0 0 auto;width:36px;border-top:1px dashed #C7C0B8;margin-top:8px;}
+.m07-ttable__aux-text{font-size:11px;color:#6F6763;line-height:1.5;}
 
 /* KEY INSIGHT 高亮块 */
 .m07-ki{background:#FAF3EC;border-left:4px solid #8C6B5D;border-radius:8px;padding:16px;}
@@ -2101,13 +2096,6 @@ function renderEngineeringNarrative(mod){
     sec.innerHTML = h;
     thinkingCol.appendChild(sec);
   }
-  function sub(label, desc, body){
-    return '<div class="m07-sub">'+
-      '<div class="m07-sub__title">'+label+'</div>'+
-      (desc?'<div class="m07-sub__desc">'+desc+'</div>':'')+
-      '<div class="m07-sub__body">'+body+'</div>'+
-    '</div>';
-  }
   function intro(text){
     return text ? '<p class="m07-sec__intro">'+text+'</p>' : '';
   }
@@ -2120,10 +2108,7 @@ function renderEngineeringNarrative(mod){
 
   // 2. TECH STACK · 技术包选型（标题+引导段=杏色带，主内容=白色带）
   const tp = eng.techpack || {};
-  const tBody = sub('模型协作策略','', renderM07Models(tp.models))
-    + sub('核心技术栈','', renderM07Stack(tp.stack))
-    + sub('部署与运维','', renderM07Ops(tp.ops));
-  section('TECH STACK · 技术包选型', intro(eng.techIntro), tBody);
+  section('TECH STACK · 技术包选型', intro(eng.techIntro), renderM07Techpack(tp));
 
   // 3. KEY INSIGHT 恢复默认 key-decision 渲染（已取消 engineering 跳过）
 }
@@ -2178,42 +2163,39 @@ function renderEngIntegrate(it){
   return h;
 }
 
-function renderM07Models(models){
-  if(!models) return '';
-  let h = '<div class="m07-table">';
-  (models||[]).forEach(m=>{
-    h += '<div class="m07-table__row">'+
-      '<span class="m07-table__role">'+m.role+'</span>'+
-      '<span class="m07-table__model">'+m.model+'</span>'+
-      '<span class="m07-table__duty">'+m.duty+'</span></div>';
+function renderM07Techpack(tp){
+  if(!tp) return '';
+  let h = '<div class="m07-ttable">';
+  // 模型协作策略 · 子区块 | 角色 | 模型 | 职责
+  (tp.models||[]).forEach((m,i)=>{
+    h += '<div class="m07-ttable__row">'+
+      '<span class="m07-ttable__label">'+(i===0?'模型协作策略':'')+'</span>'+
+      '<span class="m07-ttable__strong">'+m.role+'</span>'+
+      '<span class="m07-ttable__model">'+m.model+'</span>'+
+      '<span class="m07-ttable__sub">'+m.duty+'</span></div>';
   });
-  h += '</div>';
-  return h;
-}
-
-function renderM07Stack(stack){
-  if(!stack) return '';
-  let h = '<div class="m07-tags">';
-  (stack||[]).forEach(s=>{
-    h += '<div class="m07-tag"><span class="m07-tag__name">'+s.name+'</span>'+
-      '<span class="m07-tag__d">'+s.d+'</span></div>';
+  // 核心技术栈 · 子区块 | 名称 | 说明
+  (tp.stack||[]).forEach((s,i)=>{
+    h += '<div class="m07-ttable__row">'+
+      '<span class="m07-ttable__label">'+(i===0?'核心技术栈':'')+'</span>'+
+      '<span class="m07-ttable__strong">'+s.name+'</span>'+
+      '<span class="m07-ttable__sub">'+s.d+'</span></div>';
   });
-  h += '</div>';
-  return h;
-}
-
-function renderM07Ops(ops){
-  if(!ops) return '';
-  let h = '<div class="m07-pipe">';
+  // 部署与运维 · 子区块 | 方块→方块→方块
+  const ops = tp.ops || {};
+  h += '<div class="m07-ttable__row m07-ttable__row--ops">'+
+    '<span class="m07-ttable__label">部署与运维</span>'+
+    '<div class="m07-ttable__flow">';
   (ops.mainNodes||[]).forEach((n,i)=>{
-    h += '<div class="m07-pipe__node"><span class="m07-pipe__name">'+n.name+'</span>'+
-      '<span class="m07-pipe__d">'+n.d+'</span></div>';
-    if(i < ops.mainNodes.length-1) h += '<div class="m07-pipe__arrow">→</div>';
+    h += '<span class="m07-ttable__box"><span class="m07-ttable__box-name">'+n.name+'</span>'+
+      '<span class="m07-ttable__box-d">'+n.d+'</span></span>';
+    if(i < ops.mainNodes.length-1) h += '<span class="m07-ttable__arrow">→</span>';
   });
+  h += '</div></div>';
   h += '</div>';
   if(ops.aux){
-    h += '<div class="m07-pipe__aux"><div class="m07-pipe__aux-dash"></div>'+
-      '<span class="m07-pipe__aux-text">'+ops.aux.name+'：'+ops.aux.d+'</span></div>';
+    h += '<div class="m07-ttable__aux"><div class="m07-ttable__aux-dash"></div>'+
+      '<span class="m07-ttable__aux-text">'+ops.aux.name+'：'+ops.aux.d+'</span></div>';
   }
   return h;
 }
