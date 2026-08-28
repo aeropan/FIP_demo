@@ -951,7 +951,7 @@ body{
 .proof__sum-k{font-family:var(--f-mono);font-size:28px;color:var(--c-primary-900);line-height:1;}
 .proof__sum-d{font-size:12px;color:var(--c-text-secondary);margin-top:4px;}
 .proof__list{display:flex;flex-direction:column;gap:var(--s2);}
-.proof__row{display:flex;align-items:center;justify-content:space-between;gap:var(--s4);border:1px solid var(--c-border);border-radius:var(--r-md);padding:var(--s3) var(--s4);background:var(--c-card);transition:box-shadow .18s ease;}
+.proof__row{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:var(--s4);border:1px solid var(--c-border);border-radius:var(--r-md);padding:var(--s3) var(--s4);background:var(--c-card);transition:box-shadow .18s ease;}
 .proof__row--expandable{cursor:pointer;}
 .proof__row--expandable:hover{box-shadow:var(--sh-hover);}
 .proof__row--open{border-color:var(--c-primary-500);}
@@ -962,7 +962,7 @@ body{
 .proof__status--pass{color:var(--c-success-dark);background:var(--c-success-bg);border:1px solid var(--c-success-border);}
 .proof__status--info{color:var(--c-info-dark);background:var(--c-info-bg);border:1px solid var(--c-info-border);}
 .proof__status--warn{color:var(--c-warning-dark);background:var(--c-warning-bg);border:1px solid var(--c-warning-border);}
-.proof__acc{margin-top:var(--s3);padding-top:var(--s3);border-top:1px dashed var(--c-border);display:flex;flex-direction:column;gap:var(--s2);}
+.proof__acc{flex:0 0 100%;box-sizing:border-box;margin-top:var(--s3);padding-top:var(--s3);border-top:1px dashed var(--c-border);display:flex;flex-direction:column;gap:var(--s2);}
 .proof__acc-row{font-size:12px;color:var(--c-text-main);}
 .proof__acc-row span{display:inline-block;min-width:72px;color:var(--c-text-secondary);font-family:var(--f-mono);font-size:11px;}
 
@@ -3308,7 +3308,7 @@ function renderProof(body, a){
       row.classList.add('proof__row--expandable');
       row.addEventListener('click', ()=>{
         pauseAutoPlay();
-        acc.style.display = acc.style.display==='none' ? 'block' : 'none';
+        acc.style.display = acc.style.display==='none' ? 'flex' : 'none';
         row.classList.toggle('proof__row--open', acc.style.display==='block');
       });
     }
