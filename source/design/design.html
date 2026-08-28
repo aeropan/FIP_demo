@@ -246,7 +246,7 @@ body{
 .t-pRIORITY__seg.fill{background:var(--c-primary-700);}
 /* Module 02 v2 · 验证问题 / 发现需求 / 修正假设 */
 .t-block__en{font-size:11px;letter-spacing:1.5px;color:var(--c-text-secondary);margin-bottom:4px;}
-.t-block__subtitle{font-size:18px;font-weight:700;color:var(--c-primary-900);margin:0 0 var(--s3);}
+.t-block__subtitle{font-size:15px;font-weight:700;color:var(--c-primary-900);margin:0 0 var(--s3);}
 .t-question-list{margin:var(--s3) 0 0;padding-left:var(--s5);display:flex;flex-direction:column;gap:var(--s2);}
 .t-question-list li{font-size:14px;color:var(--c-text-main);}
 .t-signal-box{border:1px solid var(--c-border);border-radius:var(--r-md);padding:var(--s4);margin-top:var(--s6);background:var(--c-card);}
@@ -1298,7 +1298,7 @@ const MODULES = [
           { before:"风险提示属于辅助能力", after:"用户可以接受系统表达“不确定”，甚至更倾向于明确知道系统的知识边界。", decision:"将风险与不确定性表达提升为核心体验。" },
           { before:"知识边界可能降低问答体验", after:"用户更担心系统给出错误答案，而不是系统明确告诉自己“不知道”。", decision:"将知识边界设计为信任机制的一部分。" }
         ],
-        insight:"需求验证并不是证明原来的判断正确，而是让真实反馈重新塑造产品。" }
+        insight:"调研的真正价值，不在于验证“诊断与治疗是高频需求”，而在于发现“风险提示与知识边界”才是建立信任的核心。因此，将这两者从次要场景提升为产品核心设计点。" }
     ],
     artifact:{ type:"A", subtype:"noise-to-insight", name:"FROM NOISE TO INSIGHT", density:"fill",
       caption:"验证需求 → 理解用户 → 调整判断。",
@@ -2659,8 +2659,8 @@ function buildBlock(b){
       cases.appendChild(item);
     });
     const insight = document.createElement('div');
-    insight.className = 't-key-insight';
-    insight.textContent = b.insight;
+    insight.className = 'key-decision';
+    insight.innerHTML = '<strong>KEY DECISION</strong><br>'+b.insight;
     frag.append(idx, en, sub, body, cases, insight);
   }
   else if(b.kind==='principle'){
