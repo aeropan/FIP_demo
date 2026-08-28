@@ -997,8 +997,9 @@ body{
 
 /* ============ Module 09 · 部署与运维（左：部署方案/运维保障，右：部署架构） ============ */
 /* ---- 左侧：章节标题 ---- */
-.dep-title{position:relative;padding:0 0 10px 12px;margin-bottom:var(--s5);font-size:14px;font-weight:600;letter-spacing:.3px;color:#6B5045;border-bottom:1px solid #E5DDD5;}
-.dep-title::before{content:"";position:absolute;left:0;top:1px;bottom:11px;width:4px;border-radius:2px;background:#6B5045;}
+.dep-title{position:relative;margin-bottom:var(--s5);}
+.dep-title__eyebrow{display:inline-block;font-family:var(--f-mono);font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--c-primary-700);background:var(--c-primary-100);border:1px solid var(--c-border);padding:3px 10px;border-radius:var(--r-pill);margin-bottom:10px;}
+.dep-title__main{font-size:18px;font-weight:700;letter-spacing:.3px;color:var(--c-text-main);line-height:1.2;}
 /* ---- 左侧：子区块 ---- */
 .dep-sec{margin-bottom:var(--s5);}
 .dep-sec--ops{background:#FAF3EC;border-radius:8px;padding:12px 16px;}
@@ -2415,7 +2416,7 @@ function renderDeployOpsNarrative(mod){
   // 章节标题
   const title = document.createElement('div');
   title.className = 'dep-title reveal-item';
-  title.innerHTML = 'DEPLOYMENT · 部署与运维';
+  title.innerHTML = '<span class="dep-title__eyebrow">DEPLOYMENT</span><div class="dep-title__main">部署与运维</div>';
   thinkingCol.appendChild(title);
 
   // 子区块一：部署方案与架构
