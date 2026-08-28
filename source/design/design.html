@@ -862,6 +862,9 @@ body{
 .m07-sec__title{font-size:14px;font-weight:600;color:#8C6B5D;letter-spacing:.5px;margin-bottom:10px;}
 .m07-sec__intro{font-size:13px;color:#3E3836;line-height:1.6;margin:0;}
 .m07-sec{margin-bottom:18px;}
+/* M07 技术链路流程图区块：复制 Module 09 deployment 样式，与下方前端架构卡片在同一容器内，用分割线区分 */
+.m07-chain-label{font-size:12px;letter-spacing:1.5px;text-transform:uppercase;color:var(--c-primary-700);font-weight:600;margin-bottom:var(--s4);}
+.m07-chain-divider{height:0;border-top:1px solid var(--c-border);margin:var(--s6) 0;}
 .m07-sec__body{padding:20px 24px;background:#FFFFFF;}
 .m07-sec__body > .m07-sub:first-child{margin-top:0;}
 
@@ -1562,8 +1565,17 @@ const MODULES = [
           acts:["文献浏览与筛选","详情查看","与图谱关联"] },
         { name:"产品设计说明页", use:"产品设计规范的在线阅读与模块导航", src:"静态内容",
           comps:["章节导航","内容区","配图与跳转链接"],
-          acts:["目录跳转","模块切换","配图查看"] }
-      ] }
+          acts:["目录跳转","模块切换","配图查看"] },
+      ] ,
+    chain:{ nodes:[
+        { id:"visitor", label:"Visitor", sub:"用户浏览器" },
+        { id:"app", label:"Web Application", sub:"Gradio" },
+        { id:"core", label:"Python Core", sub:"Pipeline + Agents" },
+        { id:"neo4j", label:"Neo4j AuraDB", sub:"Knowledge Graph" }
+      ],
+      infra:{ id:"gha", label:"GitHub Actions", sub:"Daily Heartbeat" },
+      outcome:["Designed","Structured","Implemented","Tested"] }
+  },
   },
   {
     id:8, number:"08", title:"测试与验证", short:"测试验证", phase:"validation-delivery",
@@ -3257,6 +3269,18 @@ function renderRoadmap(body, a){
 
 /* ---------- Module 07 · Frontend Architecture ---------- */
 function renderFrontend(body, a){
+  // 技术链路流程图：复制 Module 09 的 deployment 样式（deploy__* 类），置于前端架构卡片上方；
+  // 两者在同一 artifact 容器内，中间用 .m07-chain-divider 视觉分割。
+  if(a.chain){
+    const chainLabel = document.createElement('div');
+    chainLabel.className = 'm07-chain-label';
+    chainLabel.textContent = '技术链路 · TECH CHAIN';
+    body.appendChild(chainLabel);
+    renderDeployment(body, a.chain);
+    const divider = document.createElement('div');
+    divider.className = 'm07-chain-divider';
+    body.appendChild(divider);
+  }
   const list = document.createElement('div');
   list.className = 'fea__list';
   (a.pages||[]).forEach(p=>{
@@ -3292,7 +3316,7 @@ function renderFrontend(body, a){
     list.appendChild(card);
   });
   body.appendChild(list);
-  revealSequence(body.querySelectorAll('.reveal-item'), 110, 450);
+  revealSequence(body.querySelectorAll('.fea__card'), 110, 450);
 }
 
 /* ---------- Module 08 · Proof Matrix ---------- */
