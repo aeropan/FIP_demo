@@ -35,3 +35,6 @@ uvicorn_test.py
 
 # Chrome headless 测试 profile（CDP 验证用）
 .workbuddy-chrome/
+
+# 字体样式排查文档（本地分析用，不入库）
+source/design/typography-audit.md
