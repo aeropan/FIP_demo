@@ -2546,6 +2546,9 @@ function buildBlock(b){
     frag.appendChild(kd);
   }
   else if(b.kind==='validate-problem'){
+    const idx = document.createElement('div');
+    idx.className = 't-start__idx';
+    idx.textContent = b.idx;
     const en = document.createElement('div');
     en.className = 't-block__en';
     en.textContent = b.en;
@@ -2592,9 +2595,12 @@ function buildBlock(b){
     signalNote.className = 't-signal-box__note';
     signalNote.textContent = b.signalNote;
     signalBox.appendChild(signalNote);
-    frag.append(en, sub, body, qs, signalBox);
+    frag.append(idx, en, sub, body, qs, signalBox);
   }
   else if(b.kind==='discover-need'){
+    const idx = document.createElement('div');
+    idx.className = 't-start__idx';
+    idx.textContent = b.idx;
     const en = document.createElement('div');
     en.className = 't-block__en';
     en.textContent = b.en;
@@ -2627,9 +2633,12 @@ function buildBlock(b){
         '<div class="t-quote-pair__need">'+p.need+'</div>';
       pairs.appendChild(item);
     });
-    frag.append(en, sub, body, flow, pairs);
+    frag.append(idx, en, sub, body, flow, pairs);
   }
   else if(b.kind==='recalibrate'){
+    const idx = document.createElement('div');
+    idx.className = 't-start__idx';
+    idx.textContent = b.idx;
     const en = document.createElement('div');
     en.className = 't-block__en';
     en.textContent = b.en;
@@ -2652,7 +2661,7 @@ function buildBlock(b){
     const insight = document.createElement('div');
     insight.className = 'key-decision';
     insight.innerHTML = '<strong>KEY DECISION</strong><br>'+b.insight;
-    frag.append(en, sub, body, cases, insight);
+    frag.append(idx, en, sub, body, cases, insight);
   }
   else if(b.kind==='principle'){
     const loop = document.createElement('div');
