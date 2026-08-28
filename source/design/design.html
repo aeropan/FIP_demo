@@ -1831,7 +1831,7 @@ function renderGalleryNarrative(mod){
     link.setAttribute('role','button');
     link.setAttribute('tabindex','0');
     link.setAttribute('aria-label', '点击查看 demo');
-    link.title = '点击查看 demo';
+    link.setAttribute('data-tooltip', '点击查看 demo');
     link.innerHTML = '<span>点击查看demo</span>'+
       '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 2h8l6 6v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M14 2v6h6" fill="none" stroke="currentColor" stroke-width="1.5"/><line x1="7" y1="13" x2="17" y2="13" stroke="currentColor" stroke-width="1.5"/><line x1="7" y1="16.5" x2="17" y2="16.5" stroke="currentColor" stroke-width="1.5"/><line x1="7" y1="20" x2="13" y2="20" stroke="currentColor" stroke-width="1.5"/></svg>';
     link.addEventListener('click', ()=>{
