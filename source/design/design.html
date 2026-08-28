@@ -177,6 +177,26 @@ body{
 .pf-frame .t-dim{display:flex;align-items:flex-start;gap:var(--s3);}
 .pf-frame .t-dim::before{content:"✓";flex:0 0 auto;color:var(--c-primary-700);font-weight:700;}
 
+/* M08 验证维度标题：与全局 12px 全大写小标签区分——左侧色条 + 更大字号，强调中文 */
+.pf-frame .t-block__title{
+  position:relative;
+  padding-left:14px;
+  font-size:14px;
+  letter-spacing:.4px;
+  text-transform:none;
+  color:var(--c-text-main);
+  font-weight:700;
+  margin:0 0 var(--s4);
+}
+.pf-frame .t-block__title::before{
+  content:"";
+  position:absolute;
+  left:0; top:2px; bottom:2px;
+  width:4px;
+  border-radius:2px;
+  background:var(--c-primary-700);
+}
+
 /* delivery (M09) · 交付清单（✓）+ 收束 */
 .dl-item{padding:var(--s3) 0;}
 .dl-item .t-deliv{display:flex;align-items:flex-start;gap:var(--s3);}
@@ -1553,7 +1573,7 @@ const MODULES = [
     keyLabel:"KEY INSIGHT",
     keyDecision:"AI完成基础功能的测试自循环，问答环节进行人工测试，测试各种边界触发条件和非常规内容。",
     thinking:[
-      { kind:"dimensions", title:"WHAT I TESTED · 验证维度",
+      { kind:"dimensions", title:"TESTED PLAN · 验证维度",
         items:[
           { idx:"01", tag:"意图识别", d:"能否正确理解用户的提问，并解析器意图吗？" },
           { idx:"02", tag:"实体解析", d:"能否识别实体，并支持重用正确的上下文吗？" },
