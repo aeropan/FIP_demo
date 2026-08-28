@@ -3337,6 +3337,10 @@ function renderProof(body, a){
     row.className = 'proof__row reveal-item';
     const sc = r.status==='pass' ? 'proof__status--pass' : r.status==='info' ? 'proof__status--info' : 'proof__status--warn';
     const st = r.status==='pass' ? '✓ Passed' : r.status==='info' ? 'Boundary Triggered' : 'Clarification';
+    const main = document.createElement('div');
+    main.className = 'proof__row-main';
+    main.innerHTML = '<div class="proof__row-s">'+r.s+'</div><div class="proof__row-input">'+r.input+'</div>';
+    row.appendChild(main);
     const right = document.createElement('div');
     right.className = 'proof__row-right';
     const status = document.createElement('div');
