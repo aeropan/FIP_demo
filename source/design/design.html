@@ -3270,7 +3270,7 @@ function renderFrontend(body, a){
   // 技术链路流程图：复制 Module 09 的 deployment 样式（deploy__* 类），置于前端架构卡片上方；
   // 两者在同一 artifact 容器内，中间用 .m07-chain-divider 视觉分割。
   if(a.chain){
-    renderDeployment(body, a.chain, { showBadge:false, showOutcome:false });
+    renderDeployment(body, a.chain, { showBadge:false, showOutcome:false, showFromTo:false });
     const divider = document.createElement('div');
     divider.className = 'm07-chain-divider';
     body.appendChild(divider);
@@ -3405,16 +3405,18 @@ function renderDeployment(body, a, opts){
     out.appendChild(done);
     body.appendChild(out);
   }
-  const ft = document.createElement('div');
-  ft.className = 'deploy__fromto';
-  ft.innerHTML = '<div><div class="deploy__ft-label">FROM</div><div class="deploy__ft-text">Local Prototype / Personal Environment / Static Demo</div></div>'+
-    '<div class="deploy__ft-arrow">↓</div>'+
-    '<div><div class="deploy__ft-label">TO</div><div class="deploy__ft-text">Live Application / Cloud Infrastructure / Independent Access</div></div>';
-  body.appendChild(ft);
-  const end = document.createElement('div');
-  end.className = 'deploy__end';
-  end.textContent = 'The journey ends here. The product starts here.';
-  body.appendChild(end);
+  if(opts.showFromTo !== false){
+    const ft = document.createElement('div');
+    ft.className = 'deploy__fromto';
+    ft.innerHTML = '<div><div class="deploy__ft-label">FROM</div><div class="deploy__ft-text">Local Prototype / Personal Environment / Static Demo</div></div>'+
+      '<div class="deploy__ft-arrow">↓</div>'+
+      '<div><div class="deploy__ft-label">TO</div><div class="deploy__ft-text">Live Application / Cloud Infrastructure / Independent Access</div></div>';
+    body.appendChild(ft);
+    const end = document.createElement('div');
+    end.className = 'deploy__end';
+    end.textContent = 'The journey ends here. The product starts here.';
+    body.appendChild(end);
+  }
   revealSequence(body.querySelectorAll('.reveal-item'), 130, 600);
 }
 
