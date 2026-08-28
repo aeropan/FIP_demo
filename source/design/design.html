@@ -174,13 +174,13 @@ body{
 
 /* proof (M08) · 验证框架（✓ 指示） */
 .pf-frame{padding:var(--s2) 0;}
-.pf-frame .t-dim{position:relative;padding-left:26px;}
-.pf-frame .t-dim::before{content:"✓";position:absolute;left:0;top:1px;color:var(--c-primary-700);font-weight:700;}
+.pf-frame .t-dim{display:flex;align-items:center;gap:var(--s3);}
+.pf-frame .t-dim::before{content:"✓";flex:0 0 auto;color:var(--c-primary-700);font-weight:700;}
 
 /* delivery (M09) · 交付清单（✓）+ 收束 */
 .dl-item{padding:var(--s3) 0;}
-.dl-item .t-deliv{position:relative;padding-left:26px;}
-.dl-item .t-deliv::before{content:"✓";position:absolute;left:0;top:1px;color:var(--c-primary-700);font-weight:700;}
+.dl-item .t-deliv{display:flex;align-items:center;gap:var(--s3);}
+.dl-item .t-deliv::before{content:"✓";flex:0 0 auto;color:var(--c-primary-700);font-weight:700;}
 .dl-close{margin-top:var(--s5);text-align:center;font-family:var(--f-mono);font-size:12px;letter-spacing:1px;color:var(--c-text-secondary);}
 .dl-close span{display:block;color:var(--c-primary-700);font-size:18px;margin:4px 0;}
 .t-block__title{font-size:12px;letter-spacing:1.5px;text-transform:uppercase;color:var(--c-primary-700);font-weight:600;margin:0 0 var(--s3);}
@@ -630,7 +630,7 @@ body{
 .t-page:last-child{border-bottom:none;}
 .t-dim{display:flex;gap:var(--s3);padding:var(--s3) 0;border-bottom:1px solid var(--c-border);}
 .t-dim:last-child{border-bottom:none;}
-.t-dim__idx{font-family:var(--f-mono);font-size:13px;color:var(--c-primary-500);font-weight:600;flex:0 0 auto;padding-top:2px;}
+.t-dim__idx{font-family:var(--f-mono);font-size:13px;color:var(--c-primary-500);font-weight:600;flex:0 0 auto;}
 .t-dim__tag{font-size:14px;font-weight:600;color:var(--c-text-main);}
 .t-dim__desc{font-size:13px;color:var(--c-text-secondary);margin-top:2px;}
 .t-deliv{display:flex;gap:var(--s3);padding:var(--s3) 0;border-bottom:1px solid var(--c-border);}
@@ -1148,8 +1148,8 @@ const MODULES = [
     thesis:"基于对本体与因果图谱的兴趣为出发点，不直接寻找技术应用场景，而是先寻找一个真正需要“解释”的场景。",
     leftType:"narrative",
     thinking:[
-      { kind:"start", idx:"01", title:"THE STARTING POINT",
-        text:"不直接定义场景，而是问一个更基础的问题 —— 能否用本体与图谱组织复杂知识，让系统不仅给出答案，还能解释答案从何而来。",
+      { kind:"start", idx:"本体论与知识图谱能干嘛？", title:"THE STARTING POINT",
+        text:"不直接定义场景，而是问一个更基础的问题 —— 能否用本体与图谱组织复杂知识打造一个高知识维度的系统，让系统不仅能给出答案，还能解释答案从何而来。",
         note:"与传统知识库、关键词检索或直接生成答案相比，更强调知识之间的三元组结构、因果关系以及推理路径。",
         accent:"本体论 + 因果图谱" },
       { kind:"noticed", title:"WHAT I NOTICED",
@@ -1165,7 +1165,7 @@ const MODULES = [
           { idx:"03", tag:"CAUSAL STRUCTURE", t:"天然具备因果链", d:"病因、症状、诊断、治疗与风险之间存在明确关联，适合图谱表达。" },
           { idx:"04", tag:"SMALL BUT COMPLETE", t:"小规模也能跑通完整闭环", d:"无需构建庞大医学知识库，也能验证：知识结构化 → 图谱查询 → 推理解释 → 前端呈现。" }
         ],
-        keyDecision:"不追求“覆盖所有宠物疾病”，而是选择一个足够聚焦、同时能完整体现产品核心能力的场景。" }
+        keyDecision:"选择有准确性、可解释性要求，最贴近本体与知识图谱的医疗行业。垂直聚焦细分赛道——宠物医疗，不追求“覆盖所有宠物疾病”，而是选择一个足够聚焦、同时能完整体现产品核心能力的场景。" }
     ],
     artifact:{ type:"A", subtype:"funnel", name:"Opportunity Evolution", density:"balanced",
       caption:"如何将兴趣演变为一个可验证的产品机会。",
@@ -1468,7 +1468,7 @@ const MODULES = [
   {
     id:7, number:"07", title:"开发实现", short:"开发实现", phase:"engineering-design",
     status:"ready", englishLabel:"FROM DESIGN TO RUNNING SYSTEM",
-    thesis:"开发过程不是一次性生成完整系统，而是将复杂问题拆解为可验证的模块，逐层确认行为正确后再向上构建。",
+    thesis:"不要求一次性生成完整系统，而是聚焦团队构建、功能拆解、技术包整合在内的资源调度，用规则让开发过程自然而然的推进。",
     leftType:"engineering",
     keyLabel:"KEY INSIGHT",
     keyDecision:"产品化开发不是要让产品成为专业的开发，而是有能力组建一支“算法 + 前端 + 后端”在内的多职能智能体团队来完成开发任务。而作为产品的职责是“统筹”、“调度”、“约束”与“验收”。",
@@ -1551,15 +1551,15 @@ const MODULES = [
     thesis:"对于知识型系统而言，真正重要的不只是“能否正确回答”，还包括“是否知道什么时候不应该回答”。",
     leftType:"proof",
     keyLabel:"KEY INSIGHT",
-    keyDecision:"The most important tests are often the cases where the system should not answer.",
+    keyDecision:"AI完成基础功能的测试自循环，问答环节进行人工测试，测试各种边界触发条件和非常规内容。",
     thinking:[
       { kind:"dimensions", title:"WHAT I TESTED · 验证维度",
         items:[
-          { idx:"01", tag:"INTENT RECOGNITION", d:"Does the system understand what the user asks?" },
-          { idx:"02", tag:"ENTITY RESOLUTION", d:"Can it identify and reuse the correct context?" },
-          { idx:"03", tag:"CLARIFICATION", d:"Does ambiguity trigger clarification instead of guessing?" },
-          { idx:"04", tag:"KNOWLEDGE BOUNDARY", d:"Can the system refuse unsupported knowledge safely?" },
-          { idx:"05", tag:"RECOVERY", d:"Can the system recover from connection interruptions?" }
+          { idx:"01", tag:"意图识别", d:"能否正确理解用户的提问，并解析器意图吗？" },
+          { idx:"02", tag:"实体解析", d:"能否识别实体，并支持重用正确的上下文吗？" },
+          { idx:"03", tag:"澄清机制", d:"语义歧义时是否会寻求澄清，而不是进行猜测或私自决策？" },
+          { idx:"04", tag:"知识边界", d:"能否识别并安全地拒绝回答边界外的知识？" },
+          { idx:"05", tag:"恢复机制", d:"能否应对异常中断？系统能否从连接中断中恢复？" }
         ] }
     ],
     artifact:{ type:"A", subtype:"proof", name:"Scenario Coverage Matrix", density:"dense",
@@ -1567,7 +1567,7 @@ const MODULES = [
       summary:{ tests:"7", scenarios:"8" },
       rows:[
         { s:"Diagnosis", input:"猫传腹如何诊断", status:"pass", result:"Matched expected" },
-        { s:"Knowledge Boundary", input:"猫发热怎么办", status:"info", result:"Boundary Triggered", detail:{ input:"猫发热怎么办？", expected:"Do not reuse previous FIP context", actual:"Knowledge boundary triggered", result:"✓ Matched Expected Behavior" } },
+        { s:"Knowledge Boundary", input:"被猫抓伤了怎么办", status:"info", result:"Boundary Triggered", detail:{ input:"被猫抓伤了怎么办？", expected:"Do not reuse previous FIP context", actual:"Knowledge boundary triggered", result:"✓ Matched Expected Behavior" } },
         { s:"Clarification", input:"441 安全吗？", status:"warn", result:"Clarification", detail:{ input:"441 安全吗？", expected:"Ask for clarification", actual:"Clarification prompt shown", result:"✓ Matched Expected Behavior" } },
         { s:"Context Inheritance", input:"什么是传腹 → 怎么治疗", status:"pass", result:"Passed" },
         { s:"Topic Switch", input:"今天天气怎么样", status:"pass", result:"Passed" },
