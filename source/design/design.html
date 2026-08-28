@@ -155,6 +155,7 @@ body{
 .ev-stage{padding:var(--s4) 0;}
 .ev-arrow{text-align:center;padding:var(--s1) 0;}
 .ev-arrow svg{display:inline-block;vertical-align:middle;}
+.ev-stage .t-block__body{font-size:16px;}
 
 /* gallery (M04) · 探索方向去卡，三列直接成主体 */
 .gl-block{padding:var(--s3) 0 var(--s5);}
@@ -211,7 +212,7 @@ body{
 .t-start__idx{font-family:var(--f-mono);font-size:13px;color:var(--c-primary-700);font-weight:600;}
 .t-start__idx--lg{font-size:18px;margin-bottom:calc(var(--s2) * 1.3);}
 .t-start__accent{color:var(--c-primary-900);font-size:16px;font-weight:600;margin-top:var(--s2);}
-.t-noticed__points{display:flex;flex-direction:column;gap:var(--s2);margin-top:var(--s3);}
+.t-noticed__points{display:flex;flex-direction:column;gap:0;margin-top:0;}
 .t-point{font-size:15px;color:var(--c-text-main);}
 .t-highlight{border-left:3px solid var(--c-primary-700);background:var(--c-primary-100);padding:var(--s4) var(--s5);border-radius:0 var(--r-sm) var(--r-sm) 0;font-size:15px;color:var(--c-text-main);margin-top:var(--s4);}
 .t-decision{display:flex;gap:var(--s3);padding:var(--s3) 0;border-bottom:1px solid var(--c-border);}
@@ -339,11 +340,11 @@ body{
 .agent-decision__idx{font-family:var(--f-mono),ui-monospace,monospace;font-size:13px;color:var(--c-primary-700);font-weight:600;flex:0 0 auto;padding-top:1px;}
 .agent-decision__body{flex:1 1 auto;min-width:0;}
 .agent-decision__tags{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;margin-bottom:4px;}
-.agent-decision__trigger{font-size:14px;font-weight:600;color:var(--c-text-main);}
+.agent-decision__trigger{font-size:16px;font-weight:600;color:var(--c-text-main);}
 .agent-decision__arrow{color:var(--c-primary-700);}
-.agent-decision__mech{font-size:16px;font-weight:600;color:var(--c-primary-700);background:var(--c-primary-100);padding:2px 8px;border-radius:999px;}
-.agent-decision__harness{font-size:16px;font-weight:600;color:var(--c-primary-700);border:1px solid var(--c-primary-500);border-radius:999px;padding:2px 8px;}
-.agent-decision__desc{font-size:14px;color:var(--c-text-secondary);line-height:1.55;}
+.agent-decision__mech{font-size:14px;font-weight:600;color:var(--c-primary-700);background:var(--c-primary-100);padding:2px 8px;border-radius:999px;}
+.agent-decision__harness{font-size:14px;font-weight:600;color:var(--c-primary-700);border:1px solid var(--c-primary-500);border-radius:999px;padding:2px 8px;}
+.agent-decision__desc{font-size:16px;color:var(--c-text-secondary);line-height:1.55;}
 
 /* 左侧：FUTURE EXTENSION · 扩展性设计（浅色虚线底框） */
 .agent-future{margin-top:var(--s6);}
@@ -352,14 +353,14 @@ body{
 .agent-future__points{display:flex;flex-direction:column;gap:10px;margin-top:12px;}
 .af-point{background:#FFFFFF;border:1px solid var(--c-border);border-radius:8px;padding:10px 12px;}
 .af-point__head{font-size:14px;font-weight:600;color:#3E3836;margin-bottom:6px;}
-.af-point__row{display:flex;gap:8px;font-size:16px;line-height:1.5;padding:2px 0;}
+.af-point__row{display:flex;gap:8px;font-size:16px;line-height:2.25;padding:2px 0;}
 .af-point__k{flex:0 0 34px;color:var(--c-primary-700);font-weight:600;}
 .af-point__v{flex:1 1 auto;color:var(--c-text-secondary);}
-.agent-future__reserve{margin-top:12px;}
-.agent-future__sub{font-size:14px;font-weight:600;color:var(--c-text-main);margin-bottom:6px;}
+.agent-future__reserve{margin-top:18px;}
+.agent-future__sub{font-size:16px;font-weight:600;color:var(--c-text-main);margin-bottom:9px;}
 .agent-future__pills{display:flex;flex-wrap:wrap;gap:6px;}
 .af-pill{font-size:14px;color:#FFFFFF;background:#C7A18E;border:1px solid #C7A18E;border-radius:999px;padding:2px 10px;white-space:nowrap;}
-.agent-future__note{font-size:16px;color:var(--c-text-secondary);line-height:1.55;margin-top:6px;}
+.agent-future__note{font-size:16px;color:var(--c-text-secondary);line-height:1.55;margin-top:9px;}
 .agent-future__principles{display:flex;gap:8px;margin-top:12px;}
 .af-principle{flex:1 1 0;background:#FFFFFF;border:1px solid var(--c-border);border-radius:8px;padding:8px 10px;}
 .af-principle__head{font-size:14px;font-weight:600;color:var(--c-text-main);display:flex;align-items:center;gap:4px;}
@@ -962,8 +963,8 @@ body{
 .m07-pipe{display:flex;flex-direction:column;align-items:flex-start;}
 .m07-pipe__node{display:flex;flex-direction:column;gap:2px;border:1px solid #D7CFC7;border-radius:6px;padding:8px 12px;}
 .m07-pipe__node--aux{background:#FAF3EC;border-style:dashed;}
-.m07-pipe__name{font-size:13px;font-weight:600;color:#3E3836;}
-.m07-pipe__d{font-size:11px;color:#6F6763;line-height:1.4;}
+.m07-pipe__name{font-size:15px;font-weight:600;color:#3E3836;}
+.m07-pipe__d{font-size:14px;color:#6F6763;line-height:1.4;}
 .m07-pipe__row{display:flex;align-items:center;gap:8px;}
 .m07-pipe__arrow{color:#C7A18E;font-weight:700;align-self:center;}
 .m07-pipe__vdown{color:#C7A18E;font-size:12px;line-height:1;margin:8px 0 8px 10px;}
@@ -1235,7 +1236,7 @@ const MODULES = [
   {
     id:1, number:"01", title:"产品与需求分析", short:"产品分析", phase:"product-design",
     status:"ready", englishLabel:"FROM INTEREST TO OPPORTUNITY",
-    thesis:"基于对本体与因果图谱的兴趣为出发点，不直接寻找技术应用场景，而是先寻找一个真正需要“解释”的场景。",
+    thesis:"从对本体与因果图谱的兴趣出发，先不寻找技术应用场景，而是寻找一个真正需要“解释”的场景。",
     leftType:"narrative",
     thinking:[
       { kind:"start", idx:"本体论与知识图谱能干嘛？", title:"THE STARTING POINT",
@@ -1475,9 +1476,9 @@ const MODULES = [
       ] } }
   },
   {
-    id:6, number:"06", title:"多 Agent 协同与确定性推理设计", short:"Agent 设计", phase:"engineering-design",
-    status:"ready", englishLabel:"AGENT DESIGN",
-    thesis:"agent各司其职，harness机制划定边界，保证协同的确定性、可解释性与可扩展性。。",
+    id:6, number:"06", title:"Agent 协同算法设计", short:"Agent 设计", phase:"engineering-design",
+    status:"ready", englishLabel:"FROM RULES TO HARNESSED AGENTS",
+    thesis:"Agent 各司其职，harness 划定边界，使协同确定、可解释、可扩展。",
     leftType:"agent",
     keyLabel:"KEY INSIGHT",
     keyDecision:"真正需要设计的不是“模型有多聪明”，而是系统如何管理不确定性。\nHarness 机制将“能否回答、为什么回答、证据是否可靠、何时停止”转化为边界明确、可执行的系统规则。",
@@ -1558,7 +1559,7 @@ const MODULES = [
   {
     id:7, number:"07", title:"开发实现", short:"开发实现", phase:"engineering-design",
     status:"ready", englishLabel:"FROM DESIGN TO RUNNING SYSTEM",
-    thesis:"不要求一次性生成完整系统，而是聚焦团队构建、功能拆解、技术包整合在内的资源调度，用规则让开发过程自然而然的推进。",
+    thesis:"聚焦职责调度、功能拆解、技术包整合在内的资源管理，用规则让开发过程自然而然的推进。",
     leftType:"engineering",
     keyLabel:"KEY INSIGHT",
     keyDecision:"产品化开发不是要让产品成为专业的开发，而是有能力组建一支“算法 + 前端 + 后端”在内的多职能智能体团队来完成开发任务。而作为产品的职责是“统筹”、“调度”、“约束”与“验收”。",
@@ -3001,16 +3002,16 @@ function renderMatrix(body, a){
 
 function renderBlueprint(body, a){
   const svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
-  svg.setAttribute('viewBox','0 0 520 500');
+  svg.setAttribute('viewBox','0 0 520 720');
   svg.setAttribute('class','blueprint');
   // node helper
   const nodes = [
-    { id:'q', x:185, y:10, w:150, h:78, cls:'bp-box--center', label:'用户提问', sub:'自然语言输入' },
-    { id:'c', x:178, y:100, w:165, h:78, cls:'bp-box--accent', label:'对话入口', sub:'自然交互' },
-    { id:'k', x:170, y:190, w:180, h:78, cls:'bp-box', label:'知识查询', sub:'语义路由' },
-    { id:'g', x:75, y:280, w:150, h:93, cls:'bp-box', label:'因果图', sub:'看见原因' },
-    { id:'e', x:295, y:280, w:150, h:93, cls:'bp-box', label:'证据库', sub:'追溯来源' },
-    { id:'a', x:163, y:392, w:195, h:96, cls:'bp-box--core', label:'可解释回答', sub:'可信回答', core:true }
+    { id:'q', x:185, y:10, w:150, h:117, cls:'bp-box--center', label:'用户提问', sub:'自然语言输入' },
+    { id:'c', x:178, y:142, w:165, h:117, cls:'bp-box--accent', label:'对话入口', sub:'自然交互' },
+    { id:'k', x:170, y:274, w:180, h:117, cls:'bp-box', label:'知识查询', sub:'语义路由' },
+    { id:'g', x:75, y:406, w:150, h:140, cls:'bp-box', label:'因果图', sub:'看见原因' },
+    { id:'e', x:295, y:406, w:150, h:140, cls:'bp-box', label:'证据库', sub:'追溯来源' },
+    { id:'a', x:163, y:560, w:195, h:144, cls:'bp-box--core', label:'可解释回答', sub:'可信回答', core:true }
   ];
   const links = [
     ['q','c'],['c','k'],['k','g'],['k','e'],['g','a'],['e','a']
@@ -3079,7 +3080,7 @@ function renderBlueprint(body, a){
       '<div class="ip-grid">'+
       '<div class="ip-col ip-col--nav">导航<br>· 首页<br>· 图库<br>· 文献</div>'+
       '<div class="ip-col ip-col--mid"><div class="ip-answer">回答</div>对话区承载任务与解释</div>'+
-      '<div class="ip-col ip-col--trace"><div class="ip-step">步骤 01</div><div class="ip-step">步骤 02</div><div class="ip-step">步骤 03</div></div>'+
+      '<div class="ip-col ip-col--trace"><div class="ip-step">Step 01</div><div class="ip-step">Step 02</div><div class="ip-step">Step 03</div></div>'+
       '</div>'+
       '<div class="ip-bottom">'+
       '<div class="ip-bottom__box">知识库 / 文献库</div>'+
