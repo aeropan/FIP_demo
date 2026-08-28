@@ -977,6 +977,9 @@ body{
 .proof__row--expandable{cursor:pointer;}
 .proof__row--expandable:hover{box-shadow:var(--sh-hover);}
 .proof__row--open{border-color:var(--c-primary-500);}
+.proof__row-right{display:flex;align-items:center;gap:var(--s3);flex:0 0 auto;}
+.proof__toggle{width:22px;height:22px;border-radius:50%;border:1px solid var(--c-border);background:var(--c-card);color:var(--c-text-secondary);font-size:16px;font-weight:600;line-height:1;font-family:inherit;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;transition:transform .25s ease,border-color .2s ease,color .2s ease,background .2s ease;}
+.proof__row--open .proof__toggle{transform:rotate(45deg);color:var(--c-primary-700);border-color:var(--c-primary-500);background:var(--c-primary-100);}
 .proof__row-main{min-width:0;}
 .proof__row-s{font-size:14px;font-weight:600;color:var(--c-text-main);}
 .proof__row-input{font-size:12px;color:var(--c-text-secondary);margin-top:2px;}
@@ -1595,15 +1598,15 @@ const MODULES = [
         ] }
     ],
     artifact:{ type:"A", subtype:"proof", name:"Scenario Coverage Matrix", density:"dense",
-      caption:"Design principles verified as behavior, not just code.",
+      caption:"确保核心功能——问答与解释——功能的完整性，测试尽可能多的问题边界。",
       summary:{ tests:"7", scenarios:"8" },
       rows:[
-        { s:"Diagnosis", input:"猫传腹如何诊断", status:"pass", result:"Matched expected" },
-        { s:"Knowledge Boundary", input:"被猫抓伤了怎么办", status:"info", result:"Boundary Triggered", detail:{ input:"被猫抓伤了怎么办？", expected:"Do not reuse previous FIP context", actual:"Knowledge boundary triggered", result:"✓ Matched Expected Behavior" } },
-        { s:"Clarification", input:"441 安全吗？", status:"warn", result:"Clarification", detail:{ input:"441 安全吗？", expected:"Ask for clarification", actual:"Clarification prompt shown", result:"✓ Matched Expected Behavior" } },
-        { s:"Context Inheritance", input:"什么是传腹 → 怎么治疗", status:"pass", result:"Passed" },
-        { s:"Topic Switch", input:"今天天气怎么样", status:"pass", result:"Passed" },
-        { s:"Recovery", input:"Idle DB connection", status:"pass", result:"Passed" }
+        { s:"诊断", input:"猫传腹如何诊断", status:"pass", result:"Matched expected" },
+        { s:"知识边界", input:"被猫抓伤了怎么办", status:"info", result:"Boundary Triggered", detail:{ input:"被猫抓伤了怎么办？", expected:"不重用先前的猫传腹相关上下文", actual:"触发知识边界，不回答", result:"✓ 符合预期结果" } },
+        { s:"澄清机制", input:"441 安全吗？", status:"warn", result:"Clarification", detail:{ input:"441 安全吗？", expected:"激活澄清机制", actual:"前端展示澄清/追问交互", result:"✓ 符合预期结果" } },
+        { s:"上下文继承", input:"什么是传腹 → 怎么治疗", status:"pass", result:"Passed" },
+        { s:"话题切换", input:"今天天气怎么样", status:"pass", result:"Passed" },
+        { s:"中断恢复", input:"数据库连接成功", status:"pass", result:"Passed" }
       ] }
   },
   {
@@ -3334,8 +3337,21 @@ function renderProof(body, a){
     row.className = 'proof__row reveal-item';
     const sc = r.status==='pass' ? 'proof__status--pass' : r.status==='info' ? 'proof__status--info' : 'proof__status--warn';
     const st = r.status==='pass' ? '✓ Passed' : r.status==='info' ? 'Boundary Triggered' : 'Clarification';
-    row.innerHTML = '<div class="proof__row-main"><div class="proof__row-s">'+r.s+'</div><div class="proof__row-input">'+r.input+'</div></div>'+
-      '<div class="proof__status '+sc+'">'+st+'</div>';
+    const right = document.createElement('div');
+    right.className = 'proof__row-right';
+    const status = document.createElement('div');
+    status.className = 'proof__status '+sc;
+    status.textContent = st;
+    right.appendChild(status);
+    if(r.detail){
+      const toggle = document.createElement('button');
+      toggle.type = 'button';
+      toggle.className = 'proof__toggle';
+      toggle.setAttribute('aria-label', '展开或收起详情');
+      toggle.textContent = '+';
+      right.appendChild(toggle);
+    }
+    row.appendChild(right);
     if(r.detail){
       const acc = document.createElement('div');
       acc.className = 'proof__acc';
@@ -3349,7 +3365,7 @@ function renderProof(body, a){
       row.addEventListener('click', ()=>{
         pauseAutoPlay();
         acc.style.display = acc.style.display==='none' ? 'flex' : 'none';
-        row.classList.toggle('proof__row--open', acc.style.display==='block');
+        row.classList.toggle('proof__row--open', acc.style.display==='flex');
       });
     }
     list.appendChild(row);
