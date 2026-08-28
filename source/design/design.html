@@ -280,6 +280,7 @@ body{
 .t-parts__tag{font-size:14px;font-weight:600;color:var(--c-text-main);}
 .t-parts__desc{font-size:14px;color:var(--c-text-secondary);margin-top:2px;}
 .t-note--loop{background:var(--c-primary-100);border-style:solid;border-color:var(--c-border);font-style:normal;white-space:pre-wrap;}
+.t-note--main{color:var(--c-text-main);}
 .t-decision-q{font-size:14px;font-weight:600;color:var(--c-primary-900);margin-top:var(--s3);}
 .t-decision-a{font-size:14px;color:var(--c-text-secondary);margin-top:2px;}
 
@@ -860,7 +861,7 @@ body{
 .m07-sec__head{padding:20px 24px;border-bottom:1px solid #E5DDD5;}
 .m07-sec__head--apricot{background:#FAF3EC;}
 .m07-sec__title{font-size:14px;font-weight:700;color:#8C6B5D;letter-spacing:.5px;margin-bottom:10px;}
-.m07-sec__intro{font-size:13px;color:#3E3836;line-height:1.6;margin:0;}
+.m07-sec__intro{font-size:13px;color:var(--c-text-main);line-height:1.6;margin:0;}
 .m07-sec{margin-bottom:18px;}
 /* M07 技术链路流程图区块：复制 Module 09 deployment 样式，与下方前端架构卡片在同一容器内，用分割线区分 */
 .m07-chain-divider{height:0;border-top:1px solid var(--c-border);margin:var(--s6) 0;}
@@ -1010,7 +1011,7 @@ body{
 .dep-table__step{flex:0 0 64px;font-size:13px;font-weight:600;color:var(--c-text-main);}
 .dep-table__plan{flex:1 1 auto;font-size:14px;color:var(--c-text-secondary);}
 /* 对比胶囊 */
-.dep-capsule-note{font-size:10px;color:var(--c-text-secondary);margin:10px 0 6px;}
+.dep-capsule-note{font-size:14px;color:var(--c-text-secondary);margin:10px 0 6px;}
 .dep-capsules{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
 .dep-capsule{font-size:12px;font-weight:600;padding:6px 12px;border-radius:6px;}
 .dep-capsule--biz{background:#FAF3EC;color:#6B5045;border:1px solid #E5DDD5;}
@@ -1022,7 +1023,7 @@ body{
 .dep-ops__dot{flex:0 0 auto;width:7px;height:7px;border-radius:50%;background:#8C6B5D;margin-top:5px;}
 .dep-ops__body{display:flex;flex-direction:column;}
 .dep-ops__t{font-size:13px;font-weight:600;color:var(--c-text-main);}
-.dep-ops__d{font-size:11px;color:var(--c-text-secondary);margin-top:1px;}
+.dep-ops__d{font-size:14px;color:var(--c-text-secondary);margin-top:1px;}
 .dep-divider{height:0;border-top:1px solid #E5DDD5;margin:var(--s5) 0;}
 
 /* ---- 右侧：部署架构图 ---- */
@@ -2824,7 +2825,7 @@ function buildBlock(b){
     });
     if(b.rel){
       const rel = document.createElement('div');
-      rel.className = 't-note t-note--loop';
+      rel.className = 't-note t-note--loop t-note--main';
       rel.textContent = b.rel;
       frag.appendChild(rel);
     }
