@@ -978,8 +978,12 @@ body{
 .proof__row--expandable:hover{box-shadow:var(--sh-hover);}
 .proof__row--open{border-color:var(--c-primary-500);}
 .proof__row-right{display:flex;align-items:center;gap:var(--s3);flex:0 0 auto;}
-.proof__toggle{width:22px;height:22px;border-radius:50%;border:1px solid var(--c-border);background:var(--c-card);color:var(--c-text-secondary);font-size:16px;font-weight:600;line-height:1;font-family:inherit;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;transition:transform .25s ease,border-color .2s ease,color .2s ease,background .2s ease;}
-.proof__row--open .proof__toggle{transform:rotate(45deg);color:var(--c-primary-700);border-color:var(--c-primary-500);background:var(--c-primary-100);}
+.proof__toggle{position:relative;width:22px;height:22px;border-radius:50%;border:1px solid var(--c-border);background:var(--c-card);flex:0 0 auto;cursor:pointer;padding:0;transition:transform .25s ease,border-color .2s ease,color .2s ease,background .2s ease;}
+.proof__toggle::before,.proof__toggle::after{content:"";position:absolute;top:50%;left:50%;background:var(--c-text-secondary);transition:background .2s ease;}
+.proof__toggle::before{width:10px;height:2px;transform:translate(-50%,-50%);}
+.proof__toggle::after{width:2px;height:10px;transform:translate(-50%,-50%);}
+.proof__row--open .proof__toggle{transform:rotate(45deg);border-color:var(--c-primary-500);background:var(--c-primary-100);}
+.proof__row--open .proof__toggle::before,.proof__row--open .proof__toggle::after{background:var(--c-primary-700);}
 .proof__row-main{min-width:0;}
 .proof__row-s{font-size:14px;font-weight:600;color:var(--c-text-main);}
 .proof__row-input{font-size:12px;color:var(--c-text-secondary);margin-top:2px;}
@@ -3352,7 +3356,6 @@ function renderProof(body, a){
       toggle.type = 'button';
       toggle.className = 'proof__toggle';
       toggle.setAttribute('aria-label', '展开或收起详情');
-      toggle.textContent = '+';
       right.appendChild(toggle);
     }
     row.appendChild(right);
