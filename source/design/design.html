@@ -995,6 +995,59 @@ body{
 .proof__acc-row{font-size:12px;color:var(--c-text-main);}
 .proof__acc-row span{display:inline-block;min-width:72px;color:var(--c-text-secondary);font-family:var(--f-mono);font-size:11px;}
 
+/* ============ Module 09 · 部署与运维（左：部署方案/运维保障，右：部署架构） ============ */
+/* ---- 左侧：章节标题 ---- */
+.dep-title{position:relative;padding:0 0 10px 12px;margin-bottom:var(--s5);font-size:14px;font-weight:600;letter-spacing:.3px;color:#6B5045;border-bottom:1px solid #E5DDD5;}
+.dep-title::before{content:"";position:absolute;left:0;top:1px;bottom:11px;width:4px;border-radius:2px;background:#6B5045;}
+/* ---- 左侧：子区块 ---- */
+.dep-sec{margin-bottom:var(--s5);}
+.dep-sec--ops{background:#FAF3EC;border-radius:8px;padding:12px 16px;}
+.dep-sub__title{font-size:13px;font-weight:600;color:var(--c-text-main);margin-bottom:var(--s3);}
+/* 映射表 */
+.dep-table{display:flex;flex-direction:column;}
+.dep-table__row{display:flex;gap:var(--s4);padding:7px 0;border-bottom:1px dashed #EDE5DD;}
+.dep-table__row:last-child{border-bottom:none;}
+.dep-table__step{flex:0 0 64px;font-size:13px;font-weight:600;color:var(--c-text-main);}
+.dep-table__plan{flex:1 1 auto;font-size:13px;color:var(--c-text-secondary);}
+/* 对比胶囊 */
+.dep-capsule-note{font-size:10px;color:#9A938E;margin:10px 0 6px;}
+.dep-capsules{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.dep-capsule{font-size:12px;font-weight:600;padding:6px 12px;border-radius:6px;}
+.dep-capsule--biz{background:#FAF3EC;color:#6B5045;border:1px solid #E5DDD5;}
+.dep-capsule--ops{background:#FFFFFF;color:#8C6B5D;border:1px dashed #C7A18E;}
+/* 运维保障清单 */
+.dep-ops{display:flex;flex-direction:column;}
+.dep-ops__item{display:flex;gap:10px;align-items:flex-start;margin-bottom:16px;}
+.dep-ops__item:last-child{margin-bottom:0;}
+.dep-ops__dot{flex:0 0 auto;width:7px;height:7px;border-radius:50%;background:#8C6B5D;margin-top:5px;}
+.dep-ops__body{display:flex;flex-direction:column;}
+.dep-ops__t{font-size:13px;font-weight:600;color:var(--c-text-main);}
+.dep-ops__d{font-size:11px;color:var(--c-text-secondary);margin-top:1px;}
+.dep-divider{height:0;border-top:1px solid #E5DDD5;margin:var(--s5) 0;}
+
+/* ---- 右侧：部署架构图 ---- */
+.da{background:#FFFFFF;border:1px solid #E5DDD5;border-radius:12px;padding:20px;display:flex;flex-direction:column;align-items:center;}
+.da-node{background:#FFFFFF;border:1px solid #D7CFC7;border-radius:6px;padding:8px 14px;text-align:center;min-width:150px;transition:background .15s ease;}
+.da-node:hover{background:#FAF3EC;}
+.da-node__label{font-size:12px;font-weight:600;color:var(--c-text-main);}
+.da-node__sub{font-size:11px;color:var(--c-text-secondary);margin-top:2px;}
+.da-node--dashed{border-style:dashed;border-color:#C7A18E;}
+.da-node--dashed .da-node__label{color:#8C6B5D;}
+.da-node__tag{font-size:10px;color:#C7A18E;margin-top:3px;}
+.da-arrow{width:0;height:16px;margin:5px auto;border-left:1.5px solid #C7A18E;position:relative;}
+.da-arrow::after{content:"";position:absolute;left:50%;bottom:-1px;transform:translateX(-50%);border-left:4px solid transparent;border-right:4px solid transparent;border-top:5px solid #C7A18E;}
+.da-arrow--dashed{border-left-style:dashed;}
+.da-branch{display:flex;gap:16px;justify-content:center;margin-top:2px;}
+.da-branch__col{display:flex;flex-direction:column;align-items:center;}
+.da-footnote{margin-top:12px;font-size:11px;color:var(--c-text-secondary);display:flex;flex-direction:column;gap:6px;}
+.da-fn__row{display:flex;align-items:center;gap:6px;}
+.da-fn__dot{flex:0 0 auto;width:8px;height:8px;border-radius:50%;}
+.da-fn__dot--solid{background:#8C6B5D;}
+.da-fn__dot--hollow{background:transparent;border:1.5px solid #C7A18E;}
+/* 右侧 artifact 头部：作为图表标题（14px/600/#6B5045）+ 分隔线 */
+.artifact--deploy-arch .artifact__name{font-size:14px;font-weight:600;letter-spacing:.3px;color:#6B5045;text-transform:none;}
+.artifact--deploy-arch .artifact__head{border-bottom:1px solid #E5DDD5;padding-bottom:10px;margin-bottom:var(--s5);}
+
 /* ============ Module 09 · Deployment Artifact ============ */
 .deploy__live{display:inline-block;font-size:11px;color:var(--c-success-dark);background:var(--c-success-bg);border:1px solid var(--c-success-border);border-radius:var(--r-pill);padding:2px var(--s3);margin-bottom:var(--s4);animation:breathe 3s ease-in-out infinite;}
 @keyframes breathe{0%,100%{opacity:1;}50%{opacity:.55;}}
@@ -1617,28 +1670,48 @@ const MODULES = [
     id:9, number:"09", title:"部署与收尾", short:"部署收尾", phase:"validation-delivery",
     status:"ready", englishLabel:"FROM LOCAL PROJECT TO LIVE PRODUCT",
     thesis:"原型证明想法是否成立，真正可访问的产品才让别人能够验证它。",
-    leftType:"delivery",
-    keyLabel:"KEY INSIGHT",
-    keyDecision:"A project is not complete until others can use it.",
-    thinking:[
-      { kind:"deliverables", title:"WHAT I DELIVERED · 交付清单",
+    leftType:"deploy-ops",
+    deployOps:{
+      plan:{
+        title:"部署方案",
+        table:[
+          { step:"前端托管", plan:"ModelScope 免费方案，国内可访问" },
+          { step:"代码管理", plan:"GitHub 仓库绑定，修改即更新" },
+          { step:"数据层", plan:"Neo4j AuraDB + MongoDB 独立解耦" }
+        ],
+        capsuleNote:"数据层解耦，运营数据不干扰知识推理",
+        capsuleLeft:{ label:"Neo4j AuraDB · 业务图谱" },
+        capsuleRight:{ label:"MongoDB · 监控与反馈" }
+      },
+      ops:{
+        title:"运维保障",
         items:[
-          { idx:"01", tag:"LIVE APPLICATION", d:"A browser-accessible product demo." },
-          { idx:"02", tag:"CLOUD KNOWLEDGE GRAPH", d:"A continuously available Neo4j instance." },
-          { idx:"03", tag:"AUTOMATED HEARTBEAT", d:"Scheduled checks to maintain availability." },
-          { idx:"04", tag:"PROJECT DOCUMENTATION", d:"A complete walkthrough of the design and implementation." }
-        ] }
-    ],
-    artifact:{ type:"A", subtype:"deployment", name:"Live Deployment Map", density:"balanced",
-      caption:"From local prototype to an experience others can verify.",
-      nodes:[
-        { id:"visitor", label:"Visitor", sub:"用户浏览器" },
-        { id:"app", label:"Web Application", sub:"Gradio" },
-        { id:"core", label:"Python Core", sub:"Pipeline + Agents" },
-        { id:"neo4j", label:"Neo4j AuraDB", sub:"Knowledge Graph" }
-      ],
-      infra:{ id:"gha", label:"GitHub Actions", sub:"Daily Heartbeat" },
-      outcome:["Designed","Structured","Implemented","Tested"] }
+          { title:"前端保活", d:"定时访问实例，处理冷启动" },
+          { title:"数据库心跳", d:"GitHub Actions 定时写入，防止 Neo4j 休眠" },
+          { title:"心跳告警", d:"心跳失败自动通知，异常可及时发现" },
+          { title:"数据解耦", d:"业务图谱与运营数据独立存储" },
+          { title:"降级策略", d:"异常时自动回退确定性路径，保证可用" }
+        ]
+      }
+    },
+    artifact:{ type:"A", subtype:"deploy-arch", name:"DEPLOYMENT ARCHITECTURE · 部署架构", density:"balanced",
+      caption:"用户浏览器 → 前端页面 → 核心逻辑 → 业务图谱 / 运营数据",
+      arch:{
+        nodes:[
+          { id:"browser", label:"用户浏览器" },
+          { id:"frontend", label:"前端页面", sub:"Gradio" },
+          { id:"core", label:"核心逻辑", sub:"Pipeline / Agents" }
+        ],
+        branches:[
+          { id:"neo4j", label:"Neo4j AuraDB", sub:"业务图谱", arrow:"solid" },
+          { id:"mongo", label:"MongoDB", sub:"监控与反馈", arrow:"dashed", tag:"运营数据", dashed:true }
+        ],
+        footnote:[
+          { dot:"solid", text:"心跳保活：GitHub Actions 定时访问页面与数据库" },
+          { dot:"hollow", text:"失败告警：心跳失败自动通知" }
+        ]
+      }
+    }
   }
 ];
 
@@ -1819,7 +1892,8 @@ function renderLeftContent(mod){
     'agent': renderAgentNarrative,
     'engineering': renderEngineeringNarrative,
     'proof': renderProofNarrative,
-    'delivery': renderDeliveryNarrative
+    'delivery': renderDeliveryNarrative,
+    'deploy-ops': renderDeployOpsNarrative
   };
   (renderers[mod.leftType] || renderNarrative)(mod);
   if(mod.keyDecision){
@@ -2335,6 +2409,53 @@ function renderDeliveryNarrative(mod){
   thinkingCol.appendChild(close);
 }
 
+/* ---------- Module 09 · 部署与运维 左侧 ---------- */
+function renderDeployOpsNarrative(mod){
+  const dep = mod.deployOps;
+  // 章节标题
+  const title = document.createElement('div');
+  title.className = 'dep-title reveal-item';
+  title.innerHTML = 'DEPLOYMENT · 部署与运维';
+  thinkingCol.appendChild(title);
+
+  // 子区块一：部署方案与架构
+  const sec1 = document.createElement('div');
+  sec1.className = 'dep-sec dep-sec--plan reveal-item';
+  let h1 = '<div class="dep-sub__title">部署方案</div>';
+  h1 += '<div class="dep-table">';
+  (dep.plan.table||[]).forEach(r=>{
+    h1 += '<div class="dep-table__row"><div class="dep-table__step">'+r.step+'</div>'+
+      '<div class="dep-table__plan">'+r.plan+'</div></div>';
+  });
+  h1 += '</div>';
+  h1 += '<div class="dep-capsule-note">'+dep.plan.capsuleNote+'</div>';
+  h1 += '<div class="dep-capsules">'+
+    '<div class="dep-capsule dep-capsule--biz">'+dep.plan.capsuleLeft.label+'</div>'+
+    '<div class="dep-capsule dep-capsule--ops">'+dep.plan.capsuleRight.label+'</div>'+
+    '</div>';
+  sec1.innerHTML = h1;
+  thinkingCol.appendChild(sec1);
+
+  // 分隔线
+  const divider = document.createElement('div');
+  divider.className = 'dep-divider reveal-item';
+  thinkingCol.appendChild(divider);
+
+  // 子区块二：稳定性与运维保障
+  const sec2 = document.createElement('div');
+  sec2.className = 'dep-sec dep-sec--ops reveal-item';
+  let h2 = '<div class="dep-sub__title">运维保障</div>';
+  h2 += '<div class="dep-ops">';
+  (dep.ops.items||[]).forEach(it=>{
+    h2 += '<div class="dep-ops__item"><span class="dep-ops__dot"></span>'+
+      '<div class="dep-ops__body"><span class="dep-ops__t">'+it.title+'</span>'+
+      '<span class="dep-ops__d">'+it.d+'</span></div></div>';
+  });
+  h2 += '</div>';
+  sec2.innerHTML = h2;
+  thinkingCol.appendChild(sec2);
+}
+
 function buildBlock(b){
   const frag = document.createDocumentFragment();
   const title = document.createElement('p');
@@ -2805,6 +2926,7 @@ function renderArtifact(mod){
   else if(a.subtype==='frontend') renderFrontend(body, a);
   else if(a.subtype==='proof') renderProof(body, a);
   else if(a.subtype==='deployment') renderDeployment(body, a);
+  else if(a.subtype==='deploy-arch') renderDeployArch(body, a);
   else if(a.subtype==='agent-flow') renderAgentFlow(body, a);
   else if(a.subtype==='noise-to-insight') renderNoiseToInsight(body, a, head.querySelector('.artifact__expand'));
 
@@ -3448,6 +3570,56 @@ function renderDeployment(body, a, opts){
     body.appendChild(end);
   }
   revealSequence(body.querySelectorAll('.reveal-item'), 130, 600);
+}
+
+/* ---------- Module 09 · 部署架构图（新） ---------- */
+function renderDeployArch(body, a){
+  const arch = a.arch;
+  const wrap = document.createElement('div');
+  wrap.className = 'da reveal-item';
+
+  // 主流程：用户浏览器 → 前端页面 → 核心逻辑
+  (arch.nodes||[]).forEach((n, i)=>{
+    wrap.appendChild(daNode(n));
+    if(i < arch.nodes.length-1) wrap.appendChild(daArrow('solid'));
+  });
+
+  // 核心逻辑分支到两个数据源
+  const branch = document.createElement('div');
+  branch.className = 'da-branch';
+  (arch.branches||[]).forEach(b=>{
+    const col = document.createElement('div');
+    col.className = 'da-branch__col';
+    col.appendChild(daArrow(b.arrow));
+    col.appendChild(daNode(b, b.tag));
+    branch.appendChild(col);
+  });
+  wrap.appendChild(branch);
+  body.appendChild(wrap);
+
+  // 心跳保活与告警脚注
+  if(arch.footnote && arch.footnote.length){
+    const fn = document.createElement('div');
+    fn.className = 'da-footnote reveal-item';
+    fn.innerHTML = (arch.footnote||[]).map(f=>
+      '<div class="da-fn__row"><span class="da-fn__dot da-fn__dot--'+f.dot+'"></span>'+f.text+'</div>'
+    ).join('');
+    body.appendChild(fn);
+  }
+  revealSequence(body.querySelectorAll('.reveal-item'), 130, 600);
+}
+function daNode(n, tag){
+  const el = document.createElement('div');
+  el.className = 'da-node' + (n.dashed ? ' da-node--dashed' : '') + (tag ? ' da-node--tag' : '');
+  el.innerHTML = '<div class="da-node__label">'+n.label+'</div>'+
+    (n.sub ? '<div class="da-node__sub">'+n.sub+'</div>' : '')+
+    (tag ? '<div class="da-node__tag">'+tag+'</div>' : '');
+  return el;
+}
+function daArrow(type){
+  const el = document.createElement('div');
+  el.className = 'da-arrow da-arrow--'+(type||'solid');
+  return el;
 }
 
 /* ---------- Module 02 · Step Switcher Artifact ---------- */
