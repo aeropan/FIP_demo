@@ -802,6 +802,39 @@ body{
 .sys__io-text{font-size:12px;color:var(--c-text-secondary);max-width:200px;margin-top:2px;}
 .sys__io-arrow{font-size:12px;color:var(--c-primary-700);font-weight:600;}
 
+/* ============ Module 07 · Development Roadmap（右栏） ============ */
+.rdm__head{padding-bottom:8px;border-bottom:1px solid var(--c-border);margin-bottom:var(--s4);}
+.rdm__title{font-size:14px;font-weight:600;color:#6B5045;}
+.rdm__main{display:flex;align-items:flex-start;gap:16px;overflow-x:auto;padding:2px 2px 8px;}
+.rdm__cell{flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:center;gap:10px;}
+.rdm__node{width:100%;max-width:120px;height:48px;display:flex;align-items:center;justify-content:center;background:#FFFFFF;border:1px solid #D7CFC7;border-radius:8px;padding:8px 12px;font-size:13px;font-weight:600;color:#3E3836;text-align:center;box-sizing:border-box;transition:border-color .2s ease, background .2s ease;}
+.rdm__arrow{flex:0 0 auto;align-self:flex-start;margin-top:17px;color:#C7A18E;font-size:15px;font-weight:700;line-height:1;}
+.rdm__outs{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;width:100%;}
+.rdm__pill{background:#FAF3EC;color:#6B5045;font-size:11px;border-radius:999px;padding:4px 10px;white-space:nowrap;transition:border-color .2s ease, background .2s ease;}
+.rdm__sub{display:flex;flex-direction:column;align-items:center;width:100%;}
+.rdm__sub-line{flex:0 0 auto;width:1px;height:14px;background:#E5DDD5;}
+.rdm__step{width:100%;max-width:160px;height:36px;display:flex;align-items:center;justify-content:center;background:#FFFFFF;border:1px solid #E5DDD5;border-radius:6px;padding:0 10px;font-size:12px;color:#3E3836;text-align:center;box-sizing:border-box;}
+.rdm__sub-v{flex:0 0 auto;color:#E5DDD5;font-size:12px;line-height:1;margin:6px 0;}
+.rdm__cell:hover .rdm__node{background:#FAF3EC;border-color:#8C6B5D;}
+.rdm__cell:hover .rdm__pill{background:#FFF;border:1px solid #C7A18E;}
+
+/* ============ Module 07 · Frontend Architecture（右栏） ============ */
+.fea__head{padding-bottom:8px;border-bottom:1px solid #E5DDD5;margin-bottom:12px;}
+.fea__title{font-size:14px;font-weight:600;color:#6B5045;}
+.fea__list{display:flex;flex-direction:column;gap:12px;}
+.fea__card{background:#FFFFFF;border:1px solid #E5DDD5;border-radius:8px;padding:12px 14px;transition:border-color .15s ease, box-shadow .15s ease;}
+.fea__card:hover{border-color:#D7CFC7;box-shadow:0 2px 6px rgba(62,56,54,0.04);}
+.fea__top{display:flex;flex-direction:column;gap:2px;}
+.fea__name{font-size:14px;font-weight:600;color:#3E3836;}
+.fea__use{font-size:12px;color:#6F6763;}
+.fea__comps{display:flex;flex-wrap:wrap;gap:4px 6px;margin-top:10px;padding-top:10px;border-top:1px solid #EDE5DD;}
+.fea__pill{background:#FAF3EC;color:#6B5045;font-size:11px;padding:3px 10px;border-radius:999px;white-space:nowrap;}
+.fea__notes{display:flex;flex-direction:column;gap:2px;margin-top:8px;padding-top:8px;border-top:1px solid #EDE5DD;}
+.fea__note{font-size:12px;color:#6F6763;line-height:16px;}
+.fea__note::before{content:"●";color:#C7A18E;margin-right:6px;font-size:9px;vertical-align:1px;}
+.fea__note--src{font-weight:600;}
+.fea__note--src::before{content:"▶";}
+
 /* ============ Module 07 · 左侧三级结构 ============ */
 /* 一级章节：标题带 + 交替背景 */
 .m07-sec__head{padding:20px 24px;border-bottom:1px solid #E5DDD5;}
@@ -818,6 +851,7 @@ body{
 .m07-sub__title{font-size:14px;font-weight:600;color:#3E3836;}
 .m07-sub__desc{font-size:12px;color:#6F6763;margin-top:2px;margin-bottom:14px;}
 .m07-sub__body{margin-top:12px;margin-left:7px;padding-left:16px;border-left:2px solid #E5DDD5;}
+.m07-sub--plain .m07-sub__body{margin-left:0;padding-left:0;border-left:none;}
 
 /* CONCEPT · 开发理念 段落 */
 .m07-concept{font-size:13px;color:#3E3836;line-height:1.6;margin:0;}
@@ -848,7 +882,8 @@ body{
 /* 03 贯通 · 集成点 */
 .eng-intg{display:flex;flex-direction:column;gap:var(--s4);}
 .eng-intg__item{display:flex;flex-direction:column;gap:2px;}
-.eng-intg__t{font-size:13px;font-weight:600;color:#3E3836;}
+.eng-intg__t{font-size:13px;font-weight:600;color:#3E3836;display:flex;align-items:center;gap:var(--s2);}
+.eng-intg__ico{flex:0 0 auto;fill:currentColor;}
 .eng-intg__d{font-size:12px;color:var(--c-text-secondary);line-height:1.55;}
 
 /* 01 实现 · 箭头列表 */
@@ -876,11 +911,20 @@ body{
 .m07-card__d{font-size:11px;color:#6F6763;line-height:1.5;}
 
 /* 模型协作策略 · 三列表格 */
-.m07-table{display:flex;flex-direction:column;width:90%;}
-.m07-table__row{display:grid;grid-template-columns:auto auto 1fr;gap:10px;padding:12px 0;border-bottom:1px solid #EDE5DD;align-items:baseline;}
-.m07-table__role{font-size:13px;font-weight:600;color:#3E3836;}
-.m07-table__model{font-size:13px;color:#6B5045;}
-.m07-table__duty{font-size:12px;color:#6F6763;}
+.m07-table{display:flex;flex-direction:column;width:100%;background:var(--c-card);border:1px solid var(--c-border);border-radius:var(--r-md);overflow:hidden;box-shadow:var(--sh-card);}
+.m07-table__row{display:grid;grid-template-columns:130px 190px 1fr;gap:0;align-items:stretch;border-bottom:1px solid var(--c-border);}
+.m07-table__row:last-child{border-bottom:none;}
+.m07-table__role,.m07-table__model,.m07-table__duty{padding:var(--s3) var(--s4);display:flex;align-items:center;flex-wrap:wrap;line-height:1.5;}
+.m07-table__role,.m07-table__model{border-right:1px solid var(--c-border);}
+.m07-table__role{font-size:13px;font-weight:600;color:var(--c-text-main);background:var(--c-primary-100);}
+.m07-table__model{font-size:13px;font-weight:500;color:var(--c-primary-900);}
+.m07-table__duty{font-size:12px;color:var(--c-text-secondary);}
+@media (max-width:640px){
+  .m07-table__row{grid-template-columns:1fr;gap:var(--s2);padding:var(--s3) var(--s4);}
+  .m07-table__role,.m07-table__model,.m07-table__duty{padding:var(--s1) 0;border-right:none;}
+  .m07-table__role{background:transparent;padding-top:0;}
+  .m07-table__duty{padding-bottom:0;}
+}
 
 /* 核心技术栈 · 标签列表 */
 .m07-tags{display:flex;flex-direction:column;gap:16px;}
@@ -888,15 +932,15 @@ body{
 .m07-tag__name{font-size:13px;font-weight:600;color:#3E3836;}
 .m07-tag__d{font-size:12px;color:#6F6763;line-height:1.5;}
 
-/* 部署与运维 · 微流水线 */
-.m07-pipe{display:flex;flex-wrap:wrap;align-items:stretch;gap:8px;}
-.m07-pipe__node{display:flex;flex-direction:column;gap:2px;border:1px solid #D7CFC7;border-radius:6px;padding:8px 12px;flex:0 1 auto;}
+/* 部署与运维 · 竖排流水线 */
+.m07-pipe{display:flex;flex-direction:column;align-items:flex-start;}
+.m07-pipe__node{display:flex;flex-direction:column;gap:2px;border:1px solid #D7CFC7;border-radius:6px;padding:8px 12px;}
+.m07-pipe__node--aux{background:#FAF3EC;border-style:dashed;}
 .m07-pipe__name{font-size:13px;font-weight:600;color:#3E3836;}
 .m07-pipe__d{font-size:11px;color:#6F6763;line-height:1.4;}
+.m07-pipe__row{display:flex;align-items:center;gap:8px;}
 .m07-pipe__arrow{color:#C7A18E;font-weight:700;align-self:center;}
-.m07-pipe__aux{display:flex;align-items:flex-start;gap:10px;margin-top:16px;}
-.m07-pipe__aux-dash{flex:0 0 auto;width:36px;border-top:1px dashed #C7C0B8;margin-top:8px;}
-.m07-pipe__aux-text{font-size:11px;color:#6F6763;line-height:1.5;}
+.m07-pipe__vdown{color:#C7A18E;font-size:12px;line-height:1;margin:8px 0 8px 10px;}
 
 /* KEY INSIGHT 高亮块 */
 .m07-ki{background:#FAF3EC;border-left:4px solid #8C6B5D;border-radius:8px;padding:16px;}
@@ -1484,14 +1528,21 @@ const MODULES = [
         }
       }
     },
-    artifact:{ type:"A", subtype:"system", name:"System Architecture", density:"compact",
-      caption:"Layered build, module by module, with continuous validation.",
-      layers:[
-        { name:"FRONTEND", sub:"Chat · Graph · Literature", cls:"card", files:"app.py / Gradio" },
-        { name:"PIPELINE", sub:"Semantic → Task → Query", cls:"accent", files:"core/pipeline.py" },
-        { name:"AGENT LAYER", sub:"Intent · Entity · Evidence", cls:"card", files:"core/agents/" },
-        { name:"DATA ACCESS", sub:"Query Templates · Dedup", cls:"surface", files:"core/db.py" },
-        { name:"NEO4J", sub:"Causal Knowledge Graph", cls:"card", files:"Neo4j AuraDB" }
+    artifact:{ type:"A", subtype:"frontend", name:"Frontend Architecture", density:"compact",
+      caption:"每一个页面都是拥有明确数据源和交互逻辑的模块。",
+      pages:[
+        { name:"对话页", use:"用户与系统进行多轮问答的核心入口", src:"Pipeline / Agent 协同",
+          comps:["聊天气泡","推理链卡片","澄清按钮组","执行轨迹面板"],
+          acts:["用户提问→系统回复","执行轨迹分步点亮","上下文继承与澄清 · 知识边界保护"] },
+        { name:"图谱页", use:"知识图谱的可视化浏览与推理路径追踪", src:"Neo4j 查询",
+          comps:["力导向图谱画布","节点/关系详情面板","图例与筛选"],
+          acts:["节点点击聚焦","推理路径高亮","与对话系统联动"] },
+        { name:"文献库页", use:"FIP 文献的检索、阅读与归档管理", src:"文献数据服务",
+          comps:["文献卡片","详情抽屉","筛选与排序"],
+          acts:["文献浏览与筛选","详情查看","与图谱关联"] },
+        { name:"产品设计说明页", use:"产品设计规范的在线阅读与模块导航", src:"静态内容",
+          comps:["章节导航","内容区","配图与跳转链接"],
+          acts:["目录跳转","模块切换","配图查看"] }
       ] }
   },
   {
@@ -2105,8 +2156,8 @@ function renderEngineeringNarrative(mod){
   function intro(text){
     return text ? '<p class="m07-sec__intro">'+text+'</p>' : '';
   }
-  function sub(label, desc, body){
-    return '<div class="m07-sub">'+
+  function sub(label, desc, body, plain){
+    return '<div class="m07-sub'+(plain?' m07-sub--plain':'')+'">'+
       '<div class="m07-sub__title">'+label+'</div>'+
       (desc?'<div class="m07-sub__desc">'+desc+'</div>':'')+
       '<div class="m07-sub__body">'+body+'</div>'+
@@ -2121,9 +2172,9 @@ function renderEngineeringNarrative(mod){
 
   // 2. TECH STACK · 技术包选型（标题+引导段=杏色带，主内容=白色带）
   const tp = eng.techpack || {};
-  const tBody = sub('模型协作策略','', renderM07Models(tp.models))
+  const tBody = sub('模型协作策略','', renderM07Models(tp.models), true)
     + sub('核心技术栈','', renderM07Stack(tp.stack))
-    + sub('部署与运维','', renderM07Ops(tp.ops));
+    + sub('部署与运维','', renderM07Ops(tp.ops), true);
   section('TECH STACK · 技术包选型', intro(eng.techIntro), tBody);
 
   // 3. KEY INSIGHT 恢复默认 key-decision 渲染（已取消 engineering 跳过）
@@ -2168,11 +2219,12 @@ function renderEngSchedule(s){
 
 function renderEngIntegrate(it){
   if(!it) return '';
+  const intgIco = '<svg class="eng-intg__ico" viewBox="0 0 1024 1024" width="16" height="16" aria-hidden="true"><path d="M172.9 536.9V201.8c0-16.5 13.5-29.9 30.2-29.9h448.8c16.7 0 30.2 13.4 30.2 29.9V537c0 16.5-13.5 29.9-30.2 29.9h-153c-15 0-27.2 12.2-27.2 27.2v5.5c0 15 12.2 27.2 27.2 27.2H682c33.3 0 60.4-26.8 60.4-59.9v-395c0-33.1-27-59.9-60.4-59.9H142.7c-16.7 0-30.2 13.4-30.2 29.9v424.9c0 33.1 27 59.9 60.4 59.9h30.2c15 0 27.2-12.2 27.2-27.2V594c0-15-12.2-27.2-27.2-27.2-16.7 0.1-30.2-13.3-30.2-29.9z" fill="currentColor"/><path d="M852.1 397.3h-30.2c-13.3 0-24.2 10.8-24.2 24.2V433c0 13.3 10.8 24.2 24.2 24.2 16.7 0 30.2 13.4 30.2 29.9v335.2c0 16.5-13.5 29.9-30.2 29.9H370.1c-16.7 0-30.2-13.4-30.2-29.9V487.1c0-16.5 13.5-29.9 30.2-29.9h159c13.3 0 24.2-10.8 24.2-24.2v-11.5c0-13.3-10.8-24.2-24.2-24.2H339.9c-33.3 0-60.4 26.8-60.4 59.9v395c0 33.1 27 59.9 60.4 59.9h512.2c33.3 0 60.4-26.8 60.4-59.9v-395c0-33.1-27-59.9-60.4-59.9z" fill="currentColor"/></svg>';
   let h = '<div class="eng-sec reveal-item">';
   h += '<div class="eng-sec__label">'+it.label+'：'+it.desc+'</div>';
   h += '<div class="eng-intg">';
   (it.items||[]).forEach(x=>{
-    h += '<div class="eng-intg__item"><div class="eng-intg__t">'+x.t+'</div>'+
+    h += '<div class="eng-intg__item"><div class="eng-intg__t">'+intgIco+x.t+'</div>'+
       '<div class="eng-intg__d">'+x.d+'</div></div>';
   });
   h += '</div></div>';
@@ -2205,17 +2257,22 @@ function renderM07Stack(stack){
 
 function renderM07Ops(ops){
   if(!ops) return '';
+  const card = (n, extra) => '<div class="m07-pipe__node'+(extra?' '+extra:'')+'">'+
+    '<span class="m07-pipe__name">'+n.name+'</span>'+
+    '<span class="m07-pipe__d">'+n.d+'</span></div>';
+  const vdown = '<div class="m07-pipe__vdown">↓</div>';
   let h = '<div class="m07-pipe">';
   (ops.mainNodes||[]).forEach((n,i)=>{
-    h += '<div class="m07-pipe__node"><span class="m07-pipe__name">'+n.name+'</span>'+
-      '<span class="m07-pipe__d">'+n.d+'</span></div>';
-    if(i < ops.mainNodes.length-1) h += '<div class="m07-pipe__arrow">→</div>';
+    if(i === 1 && ops.aux){
+      h += '<div class="m07-pipe__row">'+card(n)+
+        '<div class="m07-pipe__arrow">→</div>'+
+        card(ops.aux,'m07-pipe__node--aux')+'</div>';
+    } else {
+      h += card(n);
+    }
+    if(i < ops.mainNodes.length-1) h += vdown;
   });
   h += '</div>';
-  if(ops.aux){
-    h += '<div class="m07-pipe__aux"><div class="m07-pipe__aux-dash"></div>'+
-      '<span class="m07-pipe__aux-text">'+ops.aux.name+'：'+ops.aux.d+'</span></div>';
-  }
   return h;
 }
 function renderProofNarrative(mod){
@@ -2705,6 +2762,8 @@ function renderArtifact(mod){
   else if(a.subtype==='architecture') renderArchitecture(body, a);
   else if(a.subtype==='interface') renderInterface(body, a);
   else if(a.subtype==='system') renderSystem(body, a);
+  else if(a.subtype==='roadmap') renderRoadmap(body, a);
+  else if(a.subtype==='frontend') renderFrontend(body, a);
   else if(a.subtype==='proof') renderProof(body, a);
   else if(a.subtype==='deployment') renderDeployment(body, a);
   else if(a.subtype==='agent-flow') renderAgentFlow(body, a);
@@ -3117,6 +3176,103 @@ function renderSystem(body, a){
     '<div class="sys__io-col"><div class="sys__io-label">OUTPUT</div><div class="sys__io-text">A Working Knowledge System</div></div>';
   body.appendChild(io);
   revealSequence(body.querySelectorAll('.reveal-item'), 130, 600);
+}
+
+/* ---------- Module 07 · Development Roadmap ---------- */
+function renderRoadmap(body, a){
+  const head = document.createElement('div');
+  head.className = 'rdm__head';
+  head.innerHTML = '<span class="rdm__title">DEVELOPMENT ROADMAP · 开发路线图</span>';
+  body.appendChild(head);
+
+  const main = document.createElement('div');
+  main.className = 'rdm__main';
+  (a.chain||[]).forEach((n,i)=>{
+    const cell = document.createElement('div');
+    cell.className = 'rdm__cell';
+    const node = document.createElement('div');
+    node.className = 'rdm__node reveal-item';
+    node.textContent = n.name;
+    cell.appendChild(node);
+    const outs = document.createElement('div');
+    outs.className = 'rdm__outs';
+    (n.outs||[]).forEach(o=>{
+      const pill = document.createElement('span');
+      pill.className = 'rdm__pill';
+      pill.textContent = o;
+      outs.appendChild(pill);
+    });
+    cell.appendChild(outs);
+    if(n.sub && n.sub.length){
+      const sub = document.createElement('div');
+      sub.className = 'rdm__sub';
+      const line = document.createElement('div');
+      line.className = 'rdm__sub-line';
+      sub.appendChild(line);
+      n.sub.forEach((s,si)=>{
+        const step = document.createElement('div');
+        step.className = 'rdm__step reveal-item';
+        step.textContent = s;
+        sub.appendChild(step);
+        if(si < n.sub.length-1){
+          const sv = document.createElement('div');
+          sv.className = 'rdm__sub-v';
+          sv.textContent = '↓';
+          sub.appendChild(sv);
+        }
+      });
+      cell.appendChild(sub);
+    }
+    main.appendChild(cell);
+    if(i < a.chain.length-1){
+      const arrow = document.createElement('div');
+      arrow.className = 'rdm__arrow reveal-item';
+      arrow.textContent = '→';
+      main.appendChild(arrow);
+    }
+  });
+  body.appendChild(main);
+  revealSequence(body.querySelectorAll('.reveal-item'), 120, 500);
+}
+
+/* ---------- Module 07 · Frontend Architecture ---------- */
+function renderFrontend(body, a){
+  const list = document.createElement('div');
+  list.className = 'fea__list';
+  (a.pages||[]).forEach(p=>{
+    const card = document.createElement('div');
+    card.className = 'fea__card reveal-item';
+    const top = document.createElement('div');
+    top.className = 'fea__top';
+    top.innerHTML = '<div class="fea__name">'+p.name+'</div>'+
+      (p.use?'<div class="fea__use">'+p.use+'</div>':'');
+    card.appendChild(top);
+    const comps = document.createElement('div');
+    comps.className = 'fea__comps';
+    (p.comps||[]).forEach(c=>{
+      const pill = document.createElement('span');
+      pill.className = 'fea__pill';
+      pill.textContent = c;
+      comps.appendChild(pill);
+    });
+    card.appendChild(comps);
+    const notes = document.createElement('div');
+    notes.className = 'fea__notes';
+    const src = document.createElement('div');
+    src.className = 'fea__note fea__note--src';
+    src.textContent = '数据来源：'+p.src;
+    notes.appendChild(src);
+    (p.acts||[]).forEach(t=>{
+      const row = document.createElement('div');
+      row.className = 'fea__note';
+      row.textContent = t;
+      notes.appendChild(row);
+    });
+    card.appendChild(notes);
+    list.appendChild(card);
+  });
+  body.appendChild(list);
+  revealSequence(body.querySelectorAll('.reveal-item'), 110, 450);
 }
 
 /* ---------- Module 08 · Proof Matrix ---------- */
