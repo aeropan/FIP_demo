@@ -997,8 +997,8 @@ body{
 .deploy__node-label{font-size:14px;font-weight:600;color:var(--c-text-main);}
 .deploy__node-sub{font-size:12px;color:var(--c-text-secondary);margin-top:2px;}
 .deploy__conn{color:var(--c-primary-500);font-size:16px;line-height:1;padding:2px 0;}
-.deploy__conn--dash{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;color:var(--c-primary-500);margin:6px 0 2px;}
-.deploy__conn-svg{display:block;}
+.deploy__conn--dash{display:flex;justify-content:center;color:var(--c-primary-500);margin:0;padding:2px 0;}
+.deploy__conn--dash .deploy__conn-line{width:0;height:16px;border-left:2px dashed var(--c-primary-500);}
 .deploy__infra{display:flex;flex-direction:column;align-items:center;}
 .deploy__outcome{margin-top:var(--s6);border-top:1px solid var(--c-border);padding-top:var(--s4);}
 .deploy__out-title{font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--c-text-secondary);font-weight:600;margin-bottom:var(--s3);}
@@ -3388,7 +3388,7 @@ function renderDeployment(body, a, opts){
   // GitHub Actions 用虚线箭头指向上方的 Neo4j AuraDB（daily heartbeat 维持其可用性）
   const dashArrow = document.createElement('div');
   dashArrow.className = 'deploy__conn deploy__conn--dash reveal-item';
-  dashArrow.innerHTML = '<svg class="deploy__conn-svg" width="24" height="36" viewBox="0 0 24 36" fill="none" xmlns="http://www.w3.org/2000/svg"><line x1="12" y1="34" x2="12" y2="12" stroke="currentColor" stroke-width="2" stroke-dasharray="4 3" stroke-linecap="round"/><path d="M12 3 L6 12 L18 12 Z" stroke="currentColor" stroke-width="2" stroke-dasharray="3 2" stroke-linejoin="round" fill="none"/></svg>';
+  dashArrow.innerHTML = '<span class="deploy__conn-line"></span>';
   map.appendChild(dashArrow);
   map.appendChild(infra);
   body.appendChild(map);
