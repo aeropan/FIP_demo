@@ -863,7 +863,6 @@ body{
 .m07-sec__intro{font-size:13px;color:#3E3836;line-height:1.6;margin:0;}
 .m07-sec{margin-bottom:18px;}
 /* M07 技术链路流程图区块：复制 Module 09 deployment 样式，与下方前端架构卡片在同一容器内，用分割线区分 */
-.m07-chain-label{font-size:12px;letter-spacing:1.5px;text-transform:uppercase;color:var(--c-primary-700);font-weight:600;margin-bottom:var(--s4);}
 .m07-chain-divider{height:0;border-top:1px solid var(--c-border);margin:var(--s6) 0;}
 .m07-sec__body{padding:20px 24px;background:#FFFFFF;}
 .m07-sec__body > .m07-sub:first-child{margin-top:0;}
@@ -1573,8 +1572,7 @@ const MODULES = [
         { id:"core", label:"Python Core", sub:"Pipeline + Agents" },
         { id:"neo4j", label:"Neo4j AuraDB", sub:"Knowledge Graph" }
       ],
-      infra:{ id:"gha", label:"GitHub Actions", sub:"Daily Heartbeat" },
-      outcome:["Designed","Structured","Implemented","Tested"] }
+      infra:{ id:"gha", label:"GitHub Actions", sub:"Daily Heartbeat" } }
   },
   },
   {
@@ -3272,11 +3270,7 @@ function renderFrontend(body, a){
   // 技术链路流程图：复制 Module 09 的 deployment 样式（deploy__* 类），置于前端架构卡片上方；
   // 两者在同一 artifact 容器内，中间用 .m07-chain-divider 视觉分割。
   if(a.chain){
-    const chainLabel = document.createElement('div');
-    chainLabel.className = 'm07-chain-label';
-    chainLabel.textContent = '技术链路 · TECH CHAIN';
-    body.appendChild(chainLabel);
-    renderDeployment(body, a.chain);
+    renderDeployment(body, a.chain, { showBadge:false, showOutcome:false });
     const divider = document.createElement('div');
     divider.className = 'm07-chain-divider';
     body.appendChild(divider);
@@ -3363,11 +3357,14 @@ function renderProof(body, a){
 }
 
 /* ---------- Module 09 · Deployment ---------- */
-function renderDeployment(body, a){
-  const badge = document.createElement('div');
-  badge.className = 'deploy__live';
-  badge.textContent = '● LIVE';
-  body.appendChild(badge);
+function renderDeployment(body, a, opts){
+  opts = opts || {};
+  if(opts.showBadge !== false){
+    const badge = document.createElement('div');
+    badge.className = 'deploy__live';
+    badge.textContent = '● LIVE';
+    body.appendChild(badge);
+  }
   const map = document.createElement('div');
   map.className = 'deploy__map';
   a.nodes.forEach((n,i)=>{
@@ -3388,24 +3385,26 @@ function renderDeployment(body, a){
   infra.style.marginTop = 'var(--s4)';
   map.appendChild(infra);
   body.appendChild(map);
-  const out = document.createElement('div');
-  out.className = 'deploy__outcome';
-  out.innerHTML = '<div class="deploy__out-title">PROJECT OUTCOME</div>';
-  a.outcome.forEach(o=>{
-    const item = document.createElement('div');
-    item.className = 'deploy__out-item';
-    item.innerHTML = '<span class="deploy__check">✓</span>'+o;
-    out.appendChild(item);
-  });
-  const liveItem = document.createElement('div');
-  liveItem.className = 'deploy__out-item deploy__out-item--live';
-  liveItem.innerHTML = '<span class="deploy__dot">●</span>LIVE · Deployed';
-  out.appendChild(liveItem);
-  const done = document.createElement('div');
-  done.className = 'deploy__done';
-  done.textContent = 'A complete product journey.';
-  out.appendChild(done);
-  body.appendChild(out);
+  if(opts.showOutcome !== false){
+    const out = document.createElement('div');
+    out.className = 'deploy__outcome';
+    out.innerHTML = '<div class="deploy__out-title">PROJECT OUTCOME</div>';
+    a.outcome.forEach(o=>{
+      const item = document.createElement('div');
+      item.className = 'deploy__out-item';
+      item.innerHTML = '<span class="deploy__check">✓</span>'+o;
+      out.appendChild(item);
+    });
+    const liveItem = document.createElement('div');
+    liveItem.className = 'deploy__out-item deploy__out-item--live';
+    liveItem.innerHTML = '<span class="deploy__dot">●</span>LIVE · Deployed';
+    out.appendChild(liveItem);
+    const done = document.createElement('div');
+    done.className = 'deploy__done';
+    done.textContent = 'A complete product journey.';
+    out.appendChild(done);
+    body.appendChild(out);
+  }
   const ft = document.createElement('div');
   ft.className = 'deploy__fromto';
   ft.innerHTML = '<div><div class="deploy__ft-label">FROM</div><div class="deploy__ft-text">Local Prototype / Personal Environment / Static Demo</div></div>'+
