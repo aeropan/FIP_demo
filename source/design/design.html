@@ -978,7 +978,7 @@ body{
 .proof__sum-k{font-family:var(--f-mono);font-size:28px;color:var(--c-primary-900);line-height:1;}
 .proof__sum-k--tests{color:#6F8A6A;}
 .proof__sum-k--scenarios{color:#C38A35;}
-.proof__sum-d{font-size:12px;color:#F2F6F8;margin-top:4px;}
+.proof__sum-d{font-size:12px;color:var(--c-primary-700);margin-top:4px;}
 .proof__list{display:flex;flex-direction:column;gap:var(--s2);}
 .proof__row{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:var(--s4);border:1px solid var(--c-border);border-radius:var(--r-md);padding:var(--s3) var(--s4);background:var(--c-card);transition:box-shadow .18s ease;}
 .proof__row--expandable{cursor:pointer;}
@@ -4000,6 +4000,16 @@ function buildDetailDoc(contentNode){
   '      var isOpen = sec.classList.toggle("is-open");',
   '      var t = h.querySelector(".agent-sec__toggle");',
   '      if(t) t.textContent = isOpen ? "−" : "+";',
+  '    });',
+  '  });',
+  '  /* Module 08 · 放大面板内 proof 行展开（cloneNode 不复制监听器，原 renderProof 的 click 绑定随克隆丢失） */',
+  '  var proofRows = Array.from(document.querySelectorAll(".proof__row--expandable"));',
+  '  proofRows.forEach(function(row){',
+  '    row.addEventListener("click", function(){',
+  '      var acc = row.querySelector(".proof__acc");',
+  '      if(!acc) return;',
+  '      acc.style.display = acc.style.display==="none" ? "flex" : "none";',
+  '      row.classList.toggle("proof__row--open", acc.style.display==="flex");',
   '    });',
   '  });',
   '})();'
