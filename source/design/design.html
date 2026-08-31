@@ -1027,7 +1027,7 @@ body{
 .dep-capsule--biz-faded{background:#FAF3EC;color:rgba(107,80,69,.7);border:1px solid #E5DDD5;}
 .dep-capsule--ops-faded{background:#FFFFFF;color:rgba(140,107,93,.7);border:1px dashed #C7A18E;}
 .dep-capsule-group{margin-top:10px;}
-.dep-capsule-group--backup{margin-top:45px;}
+.dep-capsule-group--backup{margin-top:30px;}
 .dep-group-label{font-size:14px;font-weight:600;color:var(--c-primary-900);margin:0 0 8px;}
 .dep-group-label--backup{color:var(--c-text-secondary);}
 /* 运维保障清单 */
@@ -1057,6 +1057,8 @@ body{
 .da-block{position:relative;margin-top:6px;background:#FFF9F5;border:1px dashed #EDE5DD;border-radius:8px;padding:20px 14px 14px;}
 .da-block__label{position:absolute;top:6px;left:10px;font-size:12px;color:var(--c-text-secondary);}
 .da-block__inner{display:flex;gap:16px;justify-content:center;margin-top:12px;}
+.da-block-arrow{display:flex;justify-content:center;align-items:center;margin-top:6px;}
+.da-block-arrow svg{width:30px;height:30px;display:block;}
 .da-footnote{margin-top:12px;font-size:14px;color:var(--c-text-secondary);display:flex;flex-direction:column;gap:6px;}
 .da-fn__row{display:flex;align-items:center;gap:6px;}
 .da-fn__dot{flex:0 0 auto;width:8px;height:8px;border-radius:50%;}
@@ -3636,13 +3638,16 @@ function renderDeployArch(body, a){
     col.className = 'da-branch__col';
     col.appendChild(daArrow(b.arrow));
     col.appendChild(daNode(b, b.tag));
-    if(arch.backup) col.appendChild(daArrow('dashed')); // 主方案节点向下虚线箭头指向降级色块
     branch.appendChild(col);
   });
   wrap.appendChild(branch);
 
   // 降级方案色块（服务端降备方案）：Neo4j / MongoDB 各引虚线箭头落入
   if(arch.backup){
+    const blockArrow = document.createElement('div');
+    blockArrow.className = 'da-block-arrow';
+    blockArrow.innerHTML = '<svg t="1788145598289" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="20503" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M637.312 256a96 96 0 0 1 96 96v128a32 32 0 0 0 32 32h195.136a63.36 63.36 0 0 1 49.216 23.488 64.32 64.32 0 0 1-8.64 89.792L572.608 983.04c-35.2 29.44-86.08 29.44-121.216 0L22.976 625.28A64.192 64.192 0 0 1 63.552 512h195.136a32 32 0 0 0 32-32V352a96 96 0 0 1 96-96h250.624z m0 64H386.688a32 32 0 0 0-32 32v128l-0.448 9.216A96 96 0 0 1 258.688 576H64l428.416 357.952c11.392 9.536 27.776 9.536 39.168 0L960 576H765.312a96 96 0 0 1-96-96V352a32 32 0 0 0-32-32zM672 128a32 32 0 1 1 0 64H352a32 32 0 0 1 0-64h320z m0-128a32 32 0 1 1 0 64H352a32 32 0 0 1 0-64h320z" fill="#C7A18E" p-id="20504"></path></svg>';
+    wrap.appendChild(blockArrow);
     const block = document.createElement('div');
     block.className = 'da-block reveal-item';
     const blockLabel = document.createElement('div');
