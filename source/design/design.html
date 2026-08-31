@@ -3007,12 +3007,12 @@ function renderBlueprint(body, a){
   svg.setAttribute('class','blueprint');
   // node helper
   const nodes = [
-    { id:'q', x:185, y:10, w:150, h:117, cls:'bp-box--center', label:'用户提问', sub:'自然语言输入' },
-    { id:'c', x:178, y:142, w:165, h:117, cls:'bp-box--accent', label:'对话入口', sub:'自然交互' },
-    { id:'k', x:170, y:274, w:180, h:117, cls:'bp-box', label:'知识查询', sub:'语义路由' },
-    { id:'g', x:75, y:406, w:150, h:140, cls:'bp-box', label:'因果图', sub:'看见原因' },
-    { id:'e', x:295, y:406, w:150, h:140, cls:'bp-box', label:'证据库', sub:'追溯来源' },
-    { id:'a', x:163, y:560, w:195, h:144, cls:'bp-box--core', label:'可解释回答', sub:'可信回答', core:true }
+    { id:'q', x:185, y:61, w:150, h:93.6, cls:'bp-box--center', label:'用户提问', sub:'自然语言输入' },
+    { id:'c', x:178, y:177.1, w:165, h:93.6, cls:'bp-box--accent', label:'对话入口', sub:'自然交互' },
+    { id:'k', x:170, y:293.2, w:180, h:93.6, cls:'bp-box', label:'知识查询', sub:'语义路由' },
+    { id:'g', x:75, y:409.3, w:150, h:112, cls:'bp-box', label:'因果图', sub:'看见原因' },
+    { id:'e', x:295, y:409.3, w:150, h:112, cls:'bp-box', label:'证据库', sub:'追溯来源' },
+    { id:'a', x:163, y:543.8, w:195, h:115.2, cls:'bp-box--core', label:'可解释回答', sub:'可信回答', core:true }
   ];
   const links = [
     ['q','c'],['c','k'],['k','g'],['k','e'],['g','a'],['e','a']
