@@ -1024,6 +1024,12 @@ body{
 .dep-capsule{font-size:15px;font-weight:600;padding:6px 12px;border-radius:6px;}
 .dep-capsule--biz{background:#FAF3EC;color:#6B5045;border:1px solid #E5DDD5;}
 .dep-capsule--ops{background:#FFFFFF;color:#8C6B5D;border:1px dashed #C7A18E;}
+.dep-capsule--biz-faded{background:#FAF3EC;color:rgba(107,80,69,.7);border:1px solid #E5DDD5;}
+.dep-capsule--ops-faded{background:#FFFFFF;color:rgba(140,107,93,.7);border:1px dashed #C7A18E;}
+.dep-capsule-group{margin-top:10px;}
+.dep-capsule-group--backup{margin-top:45px;}
+.dep-group-label{font-size:14px;font-weight:600;color:var(--c-primary-900);margin:0 0 8px;}
+.dep-group-label--backup{color:var(--c-text-secondary);}
 /* 运维保障清单 */
 .dep-ops{display:flex;flex-direction:column;}
 .dep-ops__item{display:flex;gap:10px;align-items:flex-start;margin-bottom:16px;}
@@ -1048,6 +1054,9 @@ body{
 .da-arrow--dashed{border-left-style:dashed;}
 .da-branch{display:flex;gap:16px;justify-content:center;margin-top:2px;}
 .da-branch__col{display:flex;flex-direction:column;align-items:center;}
+.da-block{position:relative;margin-top:6px;background:#FFF9F5;border:1px dashed #EDE5DD;border-radius:8px;padding:20px 14px 14px;}
+.da-block__label{position:absolute;top:6px;left:10px;font-size:12px;color:var(--c-text-secondary);}
+.da-block__inner{display:flex;gap:16px;justify-content:center;margin-top:12px;}
 .da-footnote{margin-top:12px;font-size:14px;color:var(--c-text-secondary);display:flex;flex-direction:column;gap:6px;}
 .da-fn__row{display:flex;align-items:center;gap:6px;}
 .da-fn__dot{flex:0 0 auto;width:8px;height:8px;border-radius:50%;}
@@ -1690,8 +1699,16 @@ const MODULES = [
           { step:"数据层", plan:"Neo4j AuraDB + MongoDB 独立解耦" }
         ],
         capsuleNote:"数据层解耦，运营数据不干扰知识推理",
-        capsuleLeft:{ label:"Neo4j AuraDB · 业务图谱" },
-        capsuleRight:{ label:"MongoDB · 监控与反馈" }
+        primary:{
+          label:"[ 主方案 ] 云端数据库架构，真实生产环境使用：",
+          left:{ label:"Neo4j AuraDB · 业务图谱" },
+          right:{ label:"MongoDB · 监控与反馈" }
+        },
+        backup:{
+          label:"[ 降级方案 ] 本地轻量化架构，考虑国内访问需求：",
+          left:{ label:"NetworkX 内存图 · 业务图谱" },
+          right:{ label:"飞书文档 API · 监控与反馈" }
+        }
       },
       ops:{
         title:"运维保障",
@@ -1716,6 +1733,13 @@ const MODULES = [
           { id:"neo4j", label:"Neo4j AuraDB", sub:"业务图谱", arrow:"solid" },
           { id:"mongo", label:"MongoDB", sub:"监控与反馈", arrow:"dashed", tag:"运营数据", dashed:true }
         ],
+        backup:{
+          label:"服务端降备方案",
+          nodes:[
+            { id:"networkx", label:"NetworkX 内存图" },
+            { id:"feishu", label:"飞书文档 API", dashed:true }
+          ]
+        },
         footnote:[
           { dot:"solid", text:"心跳保活：GitHub Actions 定时访问页面与数据库" },
           { dot:"hollow", text:"失败告警：心跳失败自动通知" }
@@ -2439,10 +2463,20 @@ function renderDeployOpsNarrative(mod){
   });
   h1 += '</div>';
   h1 += '<div class="dep-capsule-note">'+dep.plan.capsuleNote+'</div>';
+  h1 += '<div class="dep-capsule-group">';
+  h1 += '<div class="dep-group-label">'+dep.plan.primary.label+'</div>';
   h1 += '<div class="dep-capsules">'+
-    '<div class="dep-capsule dep-capsule--biz">'+dep.plan.capsuleLeft.label+'</div>'+
-    '<div class="dep-capsule dep-capsule--ops">'+dep.plan.capsuleRight.label+'</div>'+
+    '<div class="dep-capsule dep-capsule--biz">'+dep.plan.primary.left.label+'</div>'+
+    '<div class="dep-capsule dep-capsule--ops">'+dep.plan.primary.right.label+'</div>'+
     '</div>';
+  h1 += '</div>';
+  h1 += '<div class="dep-capsule-group dep-capsule-group--backup">';
+  h1 += '<div class="dep-group-label dep-group-label--backup">'+dep.plan.backup.label+'</div>';
+  h1 += '<div class="dep-capsules">'+
+    '<div class="dep-capsule dep-capsule--biz-faded">'+dep.plan.backup.left.label+'</div>'+
+    '<div class="dep-capsule dep-capsule--ops-faded">'+dep.plan.backup.right.label+'</div>'+
+    '</div>';
+  h1 += '</div>';
   sec1.innerHTML = h1;
   thinkingCol.appendChild(sec1);
 
@@ -3602,9 +3636,25 @@ function renderDeployArch(body, a){
     col.className = 'da-branch__col';
     col.appendChild(daArrow(b.arrow));
     col.appendChild(daNode(b, b.tag));
+    if(arch.backup) col.appendChild(daArrow('dashed')); // 主方案节点向下虚线箭头指向降级色块
     branch.appendChild(col);
   });
   wrap.appendChild(branch);
+
+  // 降级方案色块（服务端降备方案）：Neo4j / MongoDB 各引虚线箭头落入
+  if(arch.backup){
+    const block = document.createElement('div');
+    block.className = 'da-block reveal-item';
+    const blockLabel = document.createElement('div');
+    blockLabel.className = 'da-block__label';
+    blockLabel.textContent = arch.backup.label;
+    block.appendChild(blockLabel);
+    const blockInner = document.createElement('div');
+    blockInner.className = 'da-block__inner';
+    (arch.backup.nodes||[]).forEach(n=> blockInner.appendChild(daNode(n)));
+    block.appendChild(blockInner);
+    wrap.appendChild(block);
+  }
   body.appendChild(wrap);
 
   // 心跳保活与告警脚注
