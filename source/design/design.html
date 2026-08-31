@@ -67,8 +67,8 @@ body{
 
 /* ===== 返回顶部按钮（全局单例，始终钉在视口右下角） ===== */
 .back-to-top{
-  position:fixed; right:24px; bottom:24px;
-  width:44px; height:44px; border-radius:50%;
+  position:fixed; right:14px; bottom:14px;
+  width:33px; height:33px; border-radius:50%;
   background:var(--c-primary-500);
   display:flex; align-items:center; justify-content:center;
   box-shadow:var(--sh-hover); z-index:90;
@@ -78,10 +78,10 @@ body{
 }
 .back-to-top.is-visible{opacity:1; visibility:visible; transform:none; pointer-events:auto;}
 .back-to-top:hover{filter:brightness(1.06);}
-.back-to-top svg{width:20px; height:20px; display:block;}
+.back-to-top svg{width:15px; height:15px; display:block;}
 @media (max-width:640px){
-  .back-to-top{right:16px; bottom:16px; width:40px; height:40px;}
-  .back-to-top svg{width:18px; height:18px;}
+  .back-to-top{right:14px; bottom:14px; width:30px; height:30px;}
+  .back-to-top svg{width:13px; height:13px;}
 }
 
 /* ============ 01 · Project Header ============ */
