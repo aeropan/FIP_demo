@@ -306,6 +306,9 @@ body{
 .artifact--compact .artifact__head{margin-bottom:var(--s5);}
 .artifact--fill{padding:var(--s8);}
 .artifact--fill .artifact__head{margin-bottom:var(--s8);}
+/* M03 · loop 类型单独收窄上下间距（基线 32px → 16px，仅作用于 M03 流程图） */
+.artifact--loop{padding:16px;}
+.artifact--loop .artifact__head{margin-bottom:16px;}
 .artifact--dense{padding:var(--s5);font-size:13px;}
 .artifact--dense .artifact__head{margin-bottom:var(--s5);}
 
@@ -1723,8 +1726,8 @@ const MODULES = [
         ]
       }
     },
-    artifact:{ type:"A", subtype:"deploy-arch", name:"DEPLOYMENT ARCHITECTURE · 部署架构", density:"balanced",
-      caption:"用户浏览器 → 前端页面 → 核心逻辑 → 业务图谱 / 运营数据",
+    artifact:{ type:"A", subtype:"deploy-arch", name:"DEPLOYMENT ARCHITECTURE", density:"balanced",
+      caption:"让项目真正可访问、可记录，项目 to 用户的最后一环",
       arch:{
         nodes:[
           { id:"browser", label:"用户浏览器" },
@@ -2940,7 +2943,7 @@ function renderArtifact(mod){
     return;
   }
   const a = mod.artifact;
-  artifactCol.className = 'artifact' + (a.density ? ' artifact--'+a.density : '') + (a.subtype==='noise-to-insight' ? ' artifact--stepped' : '') + (a.subtype==='agent-flow' ? ' artifact--agent' : '');
+  artifactCol.className = 'artifact' + (a.density ? ' artifact--'+a.density : '') + (a.subtype==='noise-to-insight' ? ' artifact--stepped' : '') + (a.subtype==='agent-flow' ? ' artifact--agent' : '') + (a.subtype==='loop' ? ' artifact--loop' : '');
   artifactCol.innerHTML = '';
   if(mod.status==='pending'){
     artifactCol.innerHTML = '<div class="pending-note">Artifact 开发中</div>';
@@ -3045,12 +3048,12 @@ function renderBlueprint(body, a){
   svg.setAttribute('class','blueprint');
   // node helper
   const nodes = [
-    { id:'q', x:185, y:61, w:150, h:93.6, cls:'bp-box--center', label:'用户提问', sub:'自然语言输入' },
-    { id:'c', x:178, y:177.1, w:165, h:93.6, cls:'bp-box--accent', label:'对话入口', sub:'自然交互' },
-    { id:'k', x:170, y:293.2, w:180, h:93.6, cls:'bp-box', label:'知识查询', sub:'语义路由' },
-    { id:'g', x:75, y:409.3, w:150, h:112, cls:'bp-box', label:'因果图', sub:'看见原因' },
-    { id:'e', x:295, y:409.3, w:150, h:112, cls:'bp-box', label:'证据库', sub:'追溯来源' },
-    { id:'a', x:163, y:543.8, w:195, h:115.2, cls:'bp-box--core', label:'可解释回答', sub:'可信回答', core:true }
+    { id:'q', x:185, y:76, w:150, h:93.6, cls:'bp-box--center', label:'用户提问', sub:'自然语言输入' },
+    { id:'c', x:178, y:194.6, w:165, h:93.6, cls:'bp-box--accent', label:'对话入口', sub:'自然交互' },
+    { id:'k', x:170, y:313.2, w:180, h:93.6, cls:'bp-box', label:'知识查询', sub:'语义路由' },
+    { id:'g', x:75, y:431.8, w:150, h:93.6, cls:'bp-box', label:'因果图', sub:'看见原因' },
+    { id:'e', x:295, y:431.8, w:150, h:93.6, cls:'bp-box', label:'证据库', sub:'追溯来源' },
+    { id:'a', x:163, y:550.4, w:195, h:93.6, cls:'bp-box--core', label:'可解释回答', sub:'可信回答', core:true }
   ];
   const links = [
     ['q','c'],['c','k'],['k','g'],['k','e'],['g','a'],['e','a']
