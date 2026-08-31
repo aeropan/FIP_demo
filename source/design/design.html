@@ -1038,7 +1038,7 @@ body{
 .dep-ops__body{display:flex;flex-direction:column;}
 .dep-ops__t{font-size:15px;font-weight:600;color:var(--c-text-main);}
 .dep-ops__d{font-size:15px;color:var(--c-text-secondary);margin-top:1px;}
-.dep-divider{height:0;border-top:1px solid #E5DDD5;margin:var(--s5) 0;}
+.dep-divider{height:0;border-top:1px solid #E5DDD5;margin:0 0 var(--s5);}
 
 /* ---- 右侧：部署架构图 ---- */
 .da{background:#FFFFFF;border:1px solid #E5DDD5;border-radius:12px;padding:20px;display:flex;flex-direction:column;align-items:center;}
@@ -1736,9 +1736,9 @@ const MODULES = [
           { id:"mongo", label:"MongoDB", sub:"监控与反馈", arrow:"dashed", tag:"运营数据", dashed:true }
         ],
         backup:{
-          label:"服务端降备方案",
+          label:"服务端降级方案",
           nodes:[
-            { id:"networkx", label:"NetworkX 内存图" },
+            { id:"networkx", label:"NetworkX 图" },
             { id:"feishu", label:"飞书文档 API", dashed:true }
           ]
         },
@@ -3642,7 +3642,7 @@ function renderDeployArch(body, a){
   });
   wrap.appendChild(branch);
 
-  // 降级方案色块（服务端降备方案）：Neo4j / MongoDB 各引虚线箭头落入
+  // 降级方案色块（服务端降级方案）：Neo4j / MongoDB 各引虚线箭头落入
   if(arch.backup){
     const blockArrow = document.createElement('div');
     blockArrow.className = 'da-block-arrow';
