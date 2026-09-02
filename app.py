@@ -409,11 +409,15 @@ function genVisitorId() {
   return 'visitor_' + date + '_' + time + '_' + rand;
 }
 var VISITOR_ID = genVisitorId();
+/* 行为类型常量（与 core.logging.feishu_logger 的 BEHAVIOR_* 对齐） */
+var BEHAVIOR_PAGE_VIEW = 'page_view';
+var BEHAVIOR_QUESTION = 'question';
+var BEHAVIOR_FEEDBACK = 'feedback';
 
 /* 行为日志：统一经 server.log_behavior / log_feedback 异步写入飞书，失败静默 */
 function logBehavior(type, value) {
   try {
-    if (window.server && server.log_behavior) {
+    if (server && server.log_behavior) {
       server.log_behavior({
         user_id: VISITOR_ID,
         behavior_type: type,
@@ -425,18 +429,19 @@ function logBehavior(type, value) {
 }
 function logFeedback(fb) {
   try {
-    if (window.server && server.log_feedback) {
+    if (server && server.log_feedback) {
       fb.user_id = VISITOR_ID;
-      server.log_feedback(fb).catch(function () {});
+      return server.log_feedback(fb).catch(function () {});
     }
   } catch (e) {}
+  return Promise.resolve();
 }
 /* 页面访问日志：server 就绪前重试，确保 page_view 不丢 */
 function logPageView() {
   var tries = 0;
   function attempt() {
-    if (window.server && server.log_behavior) {
-      logBehavior('page_view', '主页面');
+    if (server && server.log_behavior) {
+      logBehavior(BEHAVIOR_PAGE_VIEW, '主页面');
       return;
     }
     if (tries++ < 20) setTimeout(attempt, 300);
@@ -510,6 +515,9 @@ function logPageView() {
       if(pageDesign){ pageDesign.classList.remove('is-modal'); }
       document.body.style.overflow = '';
       var text=item.textContent;
+      /* 记录侧边栏页面访问行为（最小方案：点击即记，复用已验证的 fire-and-forget 日志；
+         子页面为纯前端 iframe 切换，无 Python 调用，故在此直接记 page_view） */
+      logBehavior(BEHAVIOR_PAGE_VIEW, text.trim());
       /* 每次重新查询 nav-items，防止 DOM 变化导致引用过期 */
       var navItems=document.querySelectorAll('.nav-menu .nav-item');
       navItems.forEach(function(n){n.classList.remove('active');});
@@ -1244,7 +1252,7 @@ function logPageView() {
       }
       const contextEntities = convo ? (convo.contextEntities || []) : [];
       const thinking = addThinkingMsg();
-      logBehavior('question', text);
+      logBehavior(BEHAVIOR_QUESTION, text);
       server.respond(text, contextEntities, window.currentBackend ? window.currentBackend() : 'local').then(function (result) {
         /* 若请求已被中断（用户点了停止 / 面板 X），直接丢弃该迟到结果 */
         if (reqId !== activeReqId) return;
@@ -2208,10 +2216,10 @@ function logPageView() {
             '</div>' +
             '<input type="hidden" id="fbSource" value="" />' +
             '<div class="fb-select__dropdown">' +
-              '<div class="fb-select__option" data-value="resume">简历链接</div>' +
-              '<div class="fb-select__option" data-value="referral">别人推荐</div>' +
-              '<div class="fb-select__option" data-value="search">搜索工具</div>' +
-              '<div class="fb-select__option" data-value="other">其他</div>' +
+              '<div class="fb-select__option" data-value="简历链接">简历链接</div>' +
+              '<div class="fb-select__option" data-value="他人推荐">他人推荐</div>' +
+              '<div class="fb-select__option" data-value="搜索">搜索</div>' +
+              '<div class="fb-select__option" data-value="其他">其他</div>' +
             '</div>' +
           '</div>' +
           '<div class="st-error" id="fbSourceErr">请选择了解方式</div>' +
@@ -2231,10 +2239,10 @@ function logPageView() {
               '</div>' +
               '<input type="hidden" id="fbContactType" value="" />' +
               '<div class="fb-select__dropdown">' +
-                '<div class="fb-select__option" data-value="wechat">微信</div>' +
-                '<div class="fb-select__option" data-value="phone">电话</div>' +
-                '<div class="fb-select__option" data-value="email">邮箱</div>' +
-                '<div class="fb-select__option" data-value="other">其他</div>' +
+                '<div class="fb-select__option" data-value="微信">微信</div>' +
+                '<div class="fb-select__option" data-value="电话">电话</div>' +
+                '<div class="fb-select__option" data-value="邮箱">邮箱</div>' +
+                '<div class="fb-select__option" data-value="其他">其他</div>' +
               '</div>' +
             '</div>' +
             '<input class="st-input fb-input fb-contact__input" id="fbContact" type="text" placeholder="请输入联系方式" />' +
@@ -2353,7 +2361,7 @@ function logPageView() {
     function checkValid() {
       if (!nameEl.value.trim()) return false;
       if (!sourceEl.value) return false;
-      if (sourceEl.value === 'other' && !sourceOther.value.trim()) return false;
+      if (sourceEl.value === '其他' && !sourceOther.value.trim()) return false;
       return true;
     }
     function refresh() { submitBtn.disabled = !checkValid(); }
@@ -2362,12 +2370,12 @@ function logPageView() {
       refresh();
     });
     sourceEl.addEventListener('change', function () {
-      sourceNest.style.display = (sourceEl.value === 'other') ? 'block' : 'none';
-      if (sourceEl.value !== 'other') { sourceOther.value = ''; clearError(sourceOther); }
+      sourceNest.style.display = (sourceEl.value === '其他') ? 'block' : 'none';
+      if (sourceEl.value !== '其他') { sourceOther.value = ''; clearError(sourceOther); }
       clearError(sourceEl);
       refresh();
     });
-    var PH = { email: '请输入邮箱地址', wechat: '请输入微信号', phone: '请输入电话号码', other: '请输入联系方式，并注明平台' };
+    var PH = { '邮箱': '请输入邮箱地址', '微信': '请输入微信号', '电话': '请输入电话号码', '其他': '请输入联系方式，并注明平台' };
     contactType.addEventListener('change', function () {
       contactInput.placeholder = PH[contactType.value] || '请输入联系方式';
       refresh();
@@ -2383,17 +2391,21 @@ function logPageView() {
       var firstBad = null;
       if (!nameEl.value.trim()) { setError(nameEl, 'fbNameErr'); if (!firstBad) firstBad = nameEl; }
       if (!sourceEl.value) { setError(sourceEl, 'fbSourceErr'); if (!firstBad) firstBad = sourceEl; }
-      if (sourceEl.value === 'other' && !sourceOther.value.trim()) { setError(sourceOther, 'fbSourceOtherErr'); if (!firstBad) firstBad = sourceOther; }
+      if (sourceEl.value === '其他' && !sourceOther.value.trim()) { setError(sourceOther, 'fbSourceOtherErr'); if (!firstBad) firstBad = sourceOther; }
       if (firstBad) { firstBad.scrollIntoView({ behavior: 'smooth', block: 'center' }); return; }
       submitBtn.disabled = true;
       submitBtn.textContent = '提交中…';
-      var fbSourceVal = sourceEl.value === 'other' ? (sourceOther.value.trim() || 'other') : sourceEl.value;
+      var fbSourceVal = sourceEl.value === '其他' ? ('其他：' + sourceOther.value.trim()) : sourceEl.value;
       logFeedback({
         name: nameEl.value.trim(),
         source: fbSourceVal,
-        contact_type: contactType.value || '',
+        contact_type: contactType.value === '其他' ? ('其他：' + contactInput.value.trim()) : contactType.value,
         contact: contactInput.value.trim() || '',
         content: opinion.value.trim() || ''
+      }).then(function () {
+        if (server && server.log_feedback_behavior) {
+          server.log_feedback_behavior({ user_id: VISITOR_ID }).catch(function () {});
+        }
       });
       setTimeout(function () { modal.classList.add('is-success'); }, 500);
     });
@@ -2403,6 +2415,7 @@ function logPageView() {
     refresh();
   }
   function feedbackAction() {
+    logBehavior(BEHAVIOR_FEEDBACK, '打开问卷');
     closePanel(true);
     openModal({
       returnToPanel: false,
@@ -4375,6 +4388,20 @@ def log_feedback(payload: dict, request: gr.Request = None):
     ).start()
 
 
+def log_feedback_behavior(payload: dict, request: gr.Request = None):
+    """由前端调用：反馈提交成功后，在行为流水表写入一条 feedback 行为。"""
+    data = _coerce_payload(payload)
+    user_id = str(data.get("user_id", ""))
+    ip_address, req_ua = _extract_request_meta(request)
+    user_agent = req_ua or str(data.get("user_agent", ""))
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    threading.Thread(
+        target=logger.log_feedback_behavior,
+        args=(user_id, ip_address, user_agent, timestamp),
+        daemon=True,
+    ).start()
+
+
 def create_demo() -> gr.Blocks:
     """构建 Gradio 应用实例。"""
     with gr.Blocks(
@@ -4391,7 +4418,7 @@ def create_demo() -> gr.Blocks:
             # <link rel="icon"> 浏览器忽略，需走 launch(head=...) 注入真实 <head>。
             head=_STYLE_HTML,
             js_on_load=_JS_EXEC,
-            server_functions=[respond, log_behavior, log_feedback],
+            server_functions=[respond, log_behavior, log_feedback, log_feedback_behavior],
         )
     return demo
 

@@ -35,6 +35,11 @@ _FEISHU_TOKEN_URL = "https://open.feishu.cn/open-apis/auth/v3/tenant_access_toke
 _FEISHU_BITERABLE_BASE = "https://open.feishu.cn/open-apis/bitable/v1/apps"
 _BEHAVIOR_VALUE_MAX = 2000
 
+# 行为类型常量（与 app.py 注入 JS 中镜像定义保持一致）
+BEHAVIOR_PAGE_VIEW = "page_view"
+BEHAVIOR_QUESTION = "question"
+BEHAVIOR_FEEDBACK = "feedback"
+
 
 class FeishuLogger:
     """封装飞书多维表格写入逻辑（线程安全，失败静默）。"""
@@ -148,7 +153,7 @@ class FeishuLogger:
         content: str,
         timestamp: str,
     ) -> None:
-        """写入反馈表一条记录，并同时在行为流水表写入一条 feedback 行为。"""
+        """写入反馈表一条记录（行为流水记录交由 log_feedback_behavior 统一写入）。"""
         if not self._enabled:
             return
         feedback_fields = {
@@ -157,29 +162,26 @@ class FeishuLogger:
             "获取方式": source or "",
             "联系类型": contact_type or "",
             "联系方式": contact or "",
-            "意见内容": content or "",
+            "建议": content or "",
             "提交时间": timestamp or "",
         }
         self._create_record(FEISHU_FEEDBACK_TABLE_ID, feedback_fields)
-        # 同时在行为流水表写入一条 feedback 行为，便于统一查看
-        self.log_behavior(
-            user_id=user_id,
-            behavior_type="feedback",
-            behavior_value="提交反馈",
-            ip_address="",
-            user_agent="",
-            timestamp=timestamp,
-        )
 
-    def log_feedback_behavior(self, user_id: str, timestamp: str) -> None:
-        """可选：仅在行为表写入一条 feedback 行为（不写反馈表）。"""
+    def log_feedback_behavior(
+        self,
+        user_id: str,
+        ip_address: str = "",
+        user_agent: str = "",
+        timestamp: str = "",
+    ) -> None:
+        """在行为流水表写入一条 feedback 行为（行为值固定为"成功提交反馈"）。失败静默。"""
         if not self._enabled:
             return
         self.log_behavior(
             user_id=user_id,
-            behavior_type="feedback",
-            behavior_value="提交反馈",
-            ip_address="",
-            user_agent="",
+            behavior_type=BEHAVIOR_FEEDBACK,
+            behavior_value="成功提交反馈",
+            ip_address=ip_address,
+            user_agent=user_agent,
             timestamp=timestamp,
         )
