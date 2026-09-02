@@ -19,13 +19,15 @@ from typing import Any
 
 
 class Intent(str, Enum):
-    """系统支持的五类意图。"""
+    """系统支持的六类意图。"""
 
     CONCEPT = "concept"
     DIAGNOSIS = "diagnosis"
     TREATMENT = "treatment"
     RISK = "risk"
     GENERAL = "general"
+    META = "meta"  # 新增：系统自我认知 / 使用引导 / 问候等意图
+    EMERGENCY = "emergency"  # 新增：紧急求助意图（最高优先级，直接返回就医提示）
 
 
 class ResponseStatus(str, Enum):
@@ -72,6 +74,10 @@ class IntentResult:
     need_clarify: bool = False
     candidates: list[Intent] = field(default_factory=list)
     scores: dict[str, int] = field(default_factory=dict)
+
+    # 当 intent 为 META 时，记录具体子场景类型：
+    # identity / capability / usage / greeting
+    meta_subtype: str | None = None
 
 
 @dataclass
@@ -131,6 +137,7 @@ class AgentResponse:
     risks: list[RiskFlag] = field(default_factory=list)
     entities: list[str] = field(default_factory=list)        # 回显解析出的实体
     intent: Intent | None = None
+    meta_subtype: str | None = None  # 新增：meta 意图时返回子场景类型
     boundary_reason: BoundaryReason | None = None
     boundary_hint: str | None = None                         # 边界话术
     clarify_options: list[ClarificationOption] = field(default_factory=list)

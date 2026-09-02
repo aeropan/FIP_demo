@@ -15,11 +15,17 @@ from __future__ import annotations
 
 import base64
 import os
+import threading
+from datetime import datetime
 from pathlib import Path
 
 import gradio as gr
 
+from core.logging import FeishuLogger
 from core.pipeline import Pipeline
+
+# 飞书日志（访问行为 / 用户反馈）。配置缺失时内部自动 no-op，不阻塞主流程。
+logger = FeishuLogger()
 
 
 # ---------------------------------------------------------------------------
@@ -100,9 +106,10 @@ HOMEPAGE_HTML = """
         </ul>
       </div>
 
-      <!-- 底部装饰 -->
+      <!-- 底部装饰（测试：视频/图片二选一，由 JS 常量 LEFT_BOTTOM_MEDIA 控制，便于回退） -->
       <div class="left-footer">
-        <img src="file=asset/left_bottom.jpg" alt="装饰" />
+        <img class="lf-img" src="file=asset/left_bottom.jpg" alt="装饰" />
+        <video class="lf-video" src="/gradio_api/file=asset/left_bottom_end.mp4" autoplay muted loop playsinline></video>
       </div>
     </div>
 
@@ -285,6 +292,72 @@ HOMEPAGE_HTML = """
   <!-- 产品设计说明页面（空页面占位） -->
   <iframe id="pageDesign" class="page-design" hidden title="产品设计说明"></iframe>
 </div>
+<!-- 设置功能：设置面板 / 通用 Modal / Toast 栈（顶层浮层，位于 app-shell 外部） -->
+<div id="stSettings" class="st-settings" role="dialog" aria-label="设置" aria-hidden="true">
+  <div class="st-settings__head">
+    <div class="st-settings__title-group">
+      <span class="st-settings__gear" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      </span>
+      <span class="st-settings__title">设置</span>
+      <span class="st-settings__subtitle">SETTINGS</span>
+    </div>
+    <div class="st-settings__close" data-st-settings-close role="button" tabindex="0" aria-label="关闭">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </div>
+  </div>
+  <div class="st-divider st-divider--head"></div>
+  <div class="st-settings__body">
+    <div class="st-feedback-card" data-st-action="feedback" role="button" tabindex="0" aria-label="给我反馈">
+      <video class="st-feedback-card__video" src="/gradio_api/file=asset/questionnaire.mp4" autoplay muted loop playsinline aria-hidden="true"></video>
+      <div class="st-feedback-card__body">
+        <div class="st-feedback-card__desc">期待您的意见与建议</div>
+        <div class="st-feedback-card__cta">给"我"反馈 →</div>
+      </div>
+      <div class="st-feedback-card__art" aria-hidden="true">
+        <svg viewBox="0 0 44 44" fill="none">
+          <circle cx="22" cy="21" r="13" stroke="#C7A18E" stroke-width="1.6"/>
+          <circle cx="22" cy="21" r="5.5" fill="#E7C9B8"/>
+          <path d="M16.5 21.5l3.5 3.5 7.5-8" stroke="#C7A18E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+    </div>
+    <div class="st-divider"></div>
+    <div class="st-group">
+      <div class="st-group__label">系统配置</div>
+      <div class="st-setting">
+        <div class="st-setting__label">服务端桥接方案</div>
+        <div class="st-bridge" id="stBridge">
+          <button class="st-bridge__seg" data-st-bridge="networkx" type="button">NetworkX · 本地</button>
+          <button class="st-bridge__seg" data-st-bridge="neo4j" type="button">Neo4j · 联网</button>
+        </div>
+      </div>
+    </div>
+    <div class="st-divider"></div>
+    <div class="st-group">
+      <div class="st-group__label">系统操作</div>
+      <button class="st-item" data-st-action="reset">
+        <span class="st-item__label">恢复默认对话</span>
+        <span class="st-item__arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+      </button>
+      <button class="st-item" data-st-action="unwatermark">
+        <span class="st-item__label">去水印</span>
+        <span class="st-item__arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+      </button>
+      <button class="st-item" data-st-action="logs">
+        <span class="st-item__label">运行日志</span>
+        <span class="st-item__arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+      </button>
+    </div>
+  </div>
+</div>
+<div id="stModal" class="st-modal" role="dialog" aria-modal="true" aria-hidden="true">
+  <div class="st-modal__overlay" data-st-overlay></div>
+  <div class="st-modal__box" id="stModalBox">
+    <div class="st-modal__content" id="stModalContent"></div>
+  </div>
+</div>
+<div id="stToastStack" class="st-toast-stack" aria-live="polite"></div>
 <div id="styleDemoModal" class="style-demo-modal" aria-hidden="true">
   <div class="style-demo-modal__overlay" data-close></div>
   <div class="style-demo-modal__content">
@@ -323,6 +396,53 @@ window.__GRAPH_HTML__=__GRAPH_HTML_JSON__;
 window.__DOCS_HTML__=__DOCS_HTML_JSON__;
 window.__DESIGN_HTML__=__DESIGN_HTML_JSON__;
 window.__STYLE_DEMO_HTML__=__STYLE_DEMO_HTML_JSON__;
+
+/* ====== 访客标识与飞书行为日志 ====== */
+/* 访客标识：每次页面加载生成，刷新后重建（会话级，非持久化） */
+function genVisitorId() {
+  var d = new Date();
+  function p(n) { return (n < 10 ? '0' : '') + n; }
+  var date = '' + d.getFullYear() + p(d.getMonth() + 1) + p(d.getDate());
+  var time = '' + p(d.getHours()) + p(d.getMinutes()) + p(d.getSeconds());
+  var rand = '';
+  for (var i = 0; i < 4; i++) { rand += Math.floor(Math.random() * 10); }
+  return 'visitor_' + date + '_' + time + '_' + rand;
+}
+var VISITOR_ID = genVisitorId();
+
+/* 行为日志：统一经 server.log_behavior / log_feedback 异步写入飞书，失败静默 */
+function logBehavior(type, value) {
+  try {
+    if (window.server && server.log_behavior) {
+      server.log_behavior({
+        user_id: VISITOR_ID,
+        behavior_type: type,
+        behavior_value: value || '',
+        user_agent: navigator.userAgent || ''
+      }).catch(function () {});
+    }
+  } catch (e) {}
+}
+function logFeedback(fb) {
+  try {
+    if (window.server && server.log_feedback) {
+      fb.user_id = VISITOR_ID;
+      server.log_feedback(fb).catch(function () {});
+    }
+  } catch (e) {}
+}
+/* 页面访问日志：server 就绪前重试，确保 page_view 不丢 */
+function logPageView() {
+  var tries = 0;
+  function attempt() {
+    if (window.server && server.log_behavior) {
+      logBehavior('page_view', '主页面');
+      return;
+    }
+    if (tries++ < 20) setTimeout(attempt, 300);
+  }
+  attempt();
+}
 
 /* ====== 全局自定义 tooltip（替代原生 title 黑底白字） ====== */
 (function(){
@@ -595,6 +715,7 @@ window.__STYLE_DEMO_HTML__=__STYLE_DEMO_HTML_JSON__;
     });
 
     bindChat();
+    logPageView();
   }
 
   /* 详情区向上展开 / 向下收起：展开时隐藏 Timeline，让详情填满 Header 以下区域 */
@@ -812,6 +933,7 @@ window.__STYLE_DEMO_HTML__=__STYLE_DEMO_HTML_JSON__;
         } else if (m.role === 'bot' && m.text) {
           const row = addBotMsg();
           row.querySelector('.bubble-body').textContent = m.text;
+          addIntentChip(row, m.intent);
         }
       });
       scrollChatBottom();
@@ -1090,6 +1212,17 @@ window.__STYLE_DEMO_HTML__=__STYLE_DEMO_HTML_JSON__;
       }, 28);
     }
 
+    /* 意图标签：仅在 meta / emergency 等高优先级意图时显示暖杏风 chip（其余意图不显） */
+    function addIntentChip(row, intent) {
+      if (!row || !intent || !INTENT_CHIP_INTENTS[intent]) return;
+      const header = row.querySelector('.bubble-header');
+      if (!header) return;
+      const chip = document.createElement('span');
+      chip.className = 'bubble-intent ' + INTENT_CHIP_INTENTS[intent];
+      chip.textContent = INTENT_LABELS[intent] || intent;
+      header.appendChild(chip);
+    }
+
     /* ===== 后端推理调用与结果渲染 ===== */
 
     /* 在途请求跟踪：reqSeq 自增生成唯一 id，activeReqId 指向当前进行中的请求。
@@ -1111,7 +1244,8 @@ window.__STYLE_DEMO_HTML__=__STYLE_DEMO_HTML_JSON__;
       }
       const contextEntities = convo ? (convo.contextEntities || []) : [];
       const thinking = addThinkingMsg();
-      server.respond(text, contextEntities).then(function (result) {
+      logBehavior('question', text);
+      server.respond(text, contextEntities, window.currentBackend ? window.currentBackend() : 'local').then(function (result) {
         /* 若请求已被中断（用户点了停止 / 面板 X），直接丢弃该迟到结果 */
         if (reqId !== activeReqId) return;
         activeReqId = null;
@@ -1131,7 +1265,7 @@ window.__STYLE_DEMO_HTML__=__STYLE_DEMO_HTML_JSON__;
           } else {
             /* 已澄清/已解答：清除待澄清状态，并写入 bot 回复 */
             convo.pendingClarify = null;
-            convo.msgs.push({ role: 'bot', text: result.summary || result.boundary_hint || '' });
+            convo.msgs.push({ role: 'bot', text: result.summary || result.boundary_hint || '', intent: result.intent || null });
           }
         }
         saveHistory();
@@ -1152,12 +1286,17 @@ window.__STYLE_DEMO_HTML__=__STYLE_DEMO_HTML_JSON__;
     }
 
     function renderResult(result) {
+      let row = null;
       if (result.status === 'ok') {
-        typeText(addBotMsg(), result.summary);
+        row = addBotMsg();
+        typeText(row, result.summary);
+        addIntentChip(row, result.intent);
       } else if (result.status === 'clarify') {
         addClarifyMsg(result.clarify_options);
       } else if (result.status === 'boundary') {
-        typeText(addBotMsg(), result.boundary_hint || '当前知识库暂无该路径，建议咨询兽医。');
+        row = addBotMsg();
+        typeText(row, result.boundary_hint || '当前知识库暂无该路径，建议咨询兽医。');
+        addIntentChip(row, result.intent);
       } else if (result.status === 'error') {
         typeText(addBotMsg(), '抱歉，查询时出现异常：' + (result.error_message || '未知错误'));
       }
@@ -1279,6 +1418,12 @@ window.__STYLE_DEMO_HTML__=__STYLE_DEMO_HTML_JSON__;
     const POLARITY_LABELS = { Positive: '正面', Negative: '负面', Neutral: '中性' };
     const CONFIDENCE_LABELS = { High: '高', Medium: '中', Low: '低' };
     const KIND_LABELS = { low_confidence: '低置信度' };
+    /* 意图标签（仅 meta/emergency 在气泡内显示，其余意图不显以保持简洁）；颜色走暖杏风 */
+    const INTENT_LABELS = {
+      concept: '概念科普', diagnosis: '诊断判断', treatment: '治疗与预后',
+      risk: '药物风险', general: '综合问答', meta: '系统引导', emergency: '紧急提示'
+    };
+    const INTENT_CHIP_INTENTS = { meta: 'intent-meta', emergency: 'intent-emergency' };
     const TRACE_STEP_INTERVAL = 400;  // 每步点亮间隔（毫秒）
 
     const analysisState = {
@@ -1842,6 +1987,603 @@ window.__STYLE_DEMO_HTML__=__STYLE_DEMO_HTML_JSON__;
   }
 
 })();
+
+/* ===== 设置功能：面板 / Modal / Password / Toast（前端壳，真实参数待补） ===== */
+(function () {
+  if (typeof document === 'undefined') return;
+  var $ = function (id) { return document.getElementById(id); };
+  var settingsEl = $('stSettings');
+  var modalEl = $('stModal');
+  var modalBox = $('stModalBox');
+  var modalContent = $('stModalContent');
+  var toastStack = $('stToastStack');
+  var bridgeEl = $('stBridge');
+  if (!settingsEl || !modalEl) return;
+
+  /* 密码校验：仅保存「盐 + 密码」的 SHA-256 摘要，不再出现明文密码（本地软性门禁，非强安全）。
+     支持多密码白名单：把每个允许密码用相同 salt 重算后的摘要追加到 ST_PWD_HASHES 数组即可。
+       python -c "import hashlib;print(hashlib.sha256(('aeropan-fip-gate-v1'+'YOUR_PWD').encode()).hexdigest())"
+     注意：crypto.subtle 需安全上下文（https 或 localhost）；非安全 http 环境下校验将直接失败（安全兜底）。
+     当前有效密码（仅存摘要）：069473doublE / 20130506 */
+  var ST_PWD_SALT = 'aeropan-fip-gate-v1';
+  var ST_PWD_HASHES = [
+    '277d6be779d1d6ce60e34d2835576f0e9defd8de119b7fc39597764968bb6a08',
+    '6735a98cfc8f114cb2cf9b5e41d6ff70883f505c85114cfc80f7203ec5666e35'
+  ];
+  function bufToHex(buf) {
+    return Array.prototype.map.call(new Uint8Array(buf), function (b) {
+      return ('0' + b.toString(16)).slice(-2);
+    }).join('');
+  }
+  function hashPwdEquals(pwd) {
+    var data = new TextEncoder().encode(ST_PWD_SALT + pwd);
+    if (window.crypto && window.crypto.subtle && window.crypto.subtle.digest) {
+      return window.crypto.subtle.digest('SHA-256', data).then(function (buf) {
+        return ST_PWD_HASHES.indexOf(bufToHex(buf)) !== -1;
+      });
+    }
+    return Promise.resolve(false);
+  }
+
+  var ICONS = {
+    success: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>',
+    info: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><line x1="12" y1="11" x2="12" y2="16"/><line x1="12" y1="8" x2="12" y2="8.01"/></svg>',
+    warning: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9 16H3z"/><line x1="12" y1="9" x2="12" y2="14"/><line x1="12" y1="17" x2="12" y2="17.01"/></svg>',
+    error: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>',
+    eye: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>',
+    eyeOff: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>'
+  };
+
+  var st = { panelOpen: false, modalOpen: false, modalReturnToPanel: false, bridgeMode: 'networkx', pwdAction: null };
+
+  /* ---------- 设置面板 ---------- */
+  function getAnchor() {
+    var sidebar = document.querySelector('.left-sidebar');
+    if (sidebar && sidebar.classList.contains('collapsed')) return sidebar;
+    return document.querySelector('.left-footer') || sidebar;
+  }
+  function positionPanel() {
+    var anchor = getAnchor();
+    if (!anchor) return;
+    var r = anchor.getBoundingClientRect();
+    var left = r.left;
+    if (left < 12) left = 12;
+    settingsEl.style.left = left + 'px';
+    settingsEl.style.bottom = '24px';
+  }
+  window.addEventListener('resize', function () { if (st.panelOpen) positionPanel(); });
+  function renderBridge() {
+    if (!bridgeEl) return;
+    var segN = bridgeEl.querySelector('[data-st-bridge="networkx"]');
+    var segJ = bridgeEl.querySelector('[data-st-bridge="neo4j"]');
+    if (st.bridgeMode === 'neo4j') {
+      if (segN) segN.classList.remove('is-active');
+      if (segJ) segJ.classList.add('is-active');
+    } else {
+      if (segJ) segJ.classList.remove('is-active');
+      if (segN) segN.classList.add('is-active');
+    }
+  }
+  function currentBackend() {
+    return st.bridgeMode === 'neo4j' ? 'neo4j' : 'local';
+  }
+  window.currentBackend = currentBackend;
+  function openPanel() {
+    if (st.panelOpen) return;
+    renderBridge();
+    positionPanel();
+    settingsEl.classList.remove('is-closing');
+    settingsEl.classList.add('is-open');
+    settingsEl.setAttribute('aria-hidden', 'false');
+    st.panelOpen = true;
+  }
+  function closePanel(immediate) {
+    if (!st.panelOpen) return;
+    if (immediate) {
+      settingsEl.classList.remove('is-open', 'is-closing');
+      settingsEl.setAttribute('aria-hidden', 'true');
+      st.panelOpen = false;
+      return;
+    }
+    settingsEl.classList.add('is-closing');
+    settingsEl.classList.remove('is-open');
+    setTimeout(function () {
+      settingsEl.classList.remove('is-closing');
+      settingsEl.setAttribute('aria-hidden', 'true');
+      st.panelOpen = false;
+    }, 140);
+  }
+
+  /* ---------- Modal ---------- */
+  function openModal(opts) {
+    st.modalReturnToPanel = !!opts.returnToPanel;
+    modalContent.innerHTML = opts.html;
+    modalBox.className = 'st-modal__box' + (opts.boxClass ? ' ' + opts.boxClass : '');
+    modalContent.style.animation = 'none';
+    modalEl.classList.remove('is-closing');
+    modalEl.classList.add('is-open');
+    modalEl.setAttribute('aria-hidden', 'false');
+    st.modalOpen = true;
+    if (opts.onMount) opts.onMount(modalContent);
+  }
+  function closeModal(noReturn) {
+    if (!st.modalOpen) return;
+    if (window.__fbOpenSelect) window.__fbOpenSelect.__close();
+    if (noReturn) st.modalReturnToPanel = false;
+    modalEl.classList.add('is-closing');
+    modalEl.classList.remove('is-open');
+    var returnToPanel = st.modalReturnToPanel;
+    setTimeout(function () {
+      modalEl.classList.remove('is-closing');
+      modalEl.setAttribute('aria-hidden', 'true');
+      modalContent.innerHTML = '';
+      st.modalOpen = false;
+      if (returnToPanel) openPanel();
+    }, 180);
+  }
+  function replaceModalContent(html, onMount) {
+    var box = modalBox;
+    var h0 = box.offsetHeight;
+    modalContent.style.animation = 'stContentOut 150ms var(--ease) both';
+    setTimeout(function () {
+      modalContent.innerHTML = html;
+      if (onMount) onMount(modalContent);
+      var h1 = box.offsetHeight;
+      if (h1 !== h0) {
+        box.style.transition = 'none';
+        box.style.height = h0 + 'px';
+        void box.offsetHeight;
+        box.style.transition = 'height 160ms var(--ease)';
+        box.style.height = h1 + 'px';
+        setTimeout(function () {
+          box.style.transition = '';
+          box.style.height = 'auto';
+        }, 220);
+      }
+      modalContent.style.animation = 'stContentIn 150ms var(--ease) both';
+    }, 150);
+  }
+  function confirmHtml(title, desc, okText, desc2) {
+    return '<div class="st-modal__pane">' +
+      '<div class="st-modal__title">' + title + '</div>' +
+      '<div class="st-modal__desc">' + desc + (desc2 ? '<br><span class="st-modal__desc2">' + desc2 + '</span>' : '') + '</div>' +
+      '<div class="st-modal__actions">' +
+      '<button class="st-btn st-btn--cancel" data-st-x>取消</button>' +
+      '<button class="st-btn st-btn--primary" data-st-ok>' + (okText || '确认') + '</button>' +
+      '</div></div>';
+  }
+  function passwordHtml(desc) {
+    return '<div class="st-modal__pane">' +
+      '<div class="st-modal__title">身份验证</div>' +
+      '<div class="st-modal__desc" id="stPwdDesc">' + desc + '</div>' +
+      '<label class="st-field__label" for="stPwdInput">密码<span class="st-field__hint">（密码提示：8位数字，晴天的生日）</span></label>' +
+      '<div class="st-input-wrap">' +
+      '<input class="st-input" id="stPwdInput" type="password" placeholder="请输入密码" autocomplete="off" />' +
+      '<button class="st-eye" id="stPwdEye" type="button" aria-label="显示密码">' + ICONS.eye + '</button>' +
+      '</div>' +
+      '<div class="st-error" id="stPwdError">密码输入不正确，请重新输入。</div>' +
+      '<div class="st-modal__actions">' +
+      '<button class="st-btn st-btn--cancel" id="stPwdCancel">取消</button>' +
+      '<button class="st-btn st-btn--primary" id="stPwdContinue" disabled>继续</button>' +
+      '</div></div>';
+  }
+
+  /* ---------- Toast ---------- */
+  function showToast(message, type) {
+    type = type || 'success';
+    var color = ({ success: '#6F8A6A', info: '#6D8795', warning: '#C38A35', error: '#B86B5B' })[type] || '#6F8A6A';
+    var toast = document.createElement('div');
+    toast.className = 'st-toast';
+    toast.innerHTML = '<span class="st-toast__icon" style="color:' + color + '">' + (ICONS[type] || ICONS.success) + '</span><div class="st-toast__msg">' + message + '</div>';
+    toastStack.appendChild(toast);
+    setTimeout(function () {
+      toast.classList.add('is-closing');
+      setTimeout(function () { if (toast.parentNode) toast.parentNode.removeChild(toast); }, 160);
+    }, 3000);
+  }
+
+  /* ---------- 各功能 ---------- */
+  function feedbackFormHtml() {
+    return '' +
+    '<div class="fb-modal" id="fbModal">' +
+      '<div class="fb-modal__head">' +
+        '<div class="fb-modal__titles">' +
+          '<div class="fb-modal__title">意见反馈</div>' +
+          '<div class="fb-modal__sub">感谢你愿意分享你的想法，你的反馈将帮助我们持续改进。</div>' +
+        '</div>' +
+        '<button class="fb-modal__close" data-st-x type="button" aria-label="关闭"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>' +
+      '</div>' +
+      '<div class="fb-modal__body">' +
+        '<div class="fb-field">' +
+          '<label class="fb-label" for="fbName">如何称呼您<span class="fb-req">*</span></label>' +
+          '<input class="st-input fb-input" id="fbName" type="text" placeholder="请输入您的称呼" />' +
+          '<div class="st-error" id="fbNameErr">请输入您的称呼</div>' +
+        '</div>' +
+        '<div class="fb-field">' +
+          '<label class="fb-label" for="fbSource">您是通过什么方式了解到这个项目的？<span class="fb-req">*</span></label>' +
+          '<div class="fb-select" data-fb-select>' +
+            '<div class="fb-select__trigger" tabindex="0">' +
+              '<span class="fb-select__value is-placeholder">请选择</span>' +
+              '<span class="fb-select__arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>' +
+            '</div>' +
+            '<input type="hidden" id="fbSource" value="" />' +
+            '<div class="fb-select__dropdown">' +
+              '<div class="fb-select__option" data-value="resume">简历链接</div>' +
+              '<div class="fb-select__option" data-value="referral">别人推荐</div>' +
+              '<div class="fb-select__option" data-value="search">搜索工具</div>' +
+              '<div class="fb-select__option" data-value="other">其他</div>' +
+            '</div>' +
+          '</div>' +
+          '<div class="st-error" id="fbSourceErr">请选择了解方式</div>' +
+          '<div class="fb-nest" id="fbSourceNest" style="display:none">' +
+            '<label class="fb-label fb-nest__label" for="fbSourceOther">请简单说明<span class="fb-req">*</span></label>' +
+            '<input class="st-input fb-input" id="fbSourceOther" type="text" placeholder="请输入您了解到该项目的方式" />' +
+            '<div class="st-error" id="fbSourceOtherErr">请填写说明</div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="fb-field">' +
+          '<label class="fb-label">如何联系您<span class="fb-opt">(选填)</span></label>' +
+          '<div class="fb-contact">' +
+            '<div class="fb-select fb-contact__type" data-fb-select>' +
+              '<div class="fb-select__trigger" tabindex="0">' +
+                '<span class="fb-select__value is-placeholder">选择类型</span>' +
+                '<span class="fb-select__arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>' +
+              '</div>' +
+              '<input type="hidden" id="fbContactType" value="" />' +
+              '<div class="fb-select__dropdown">' +
+                '<div class="fb-select__option" data-value="wechat">微信</div>' +
+                '<div class="fb-select__option" data-value="phone">电话</div>' +
+                '<div class="fb-select__option" data-value="email">邮箱</div>' +
+                '<div class="fb-select__option" data-value="other">其他</div>' +
+              '</div>' +
+            '</div>' +
+            '<input class="st-input fb-input fb-contact__input" id="fbContact" type="text" placeholder="请输入联系方式" />' +
+          '</div>' +
+        '</div>' +
+        '<div class="fb-field">' +
+          '<label class="fb-label" for="fbOpinion">您的意见或建议<span class="fb-opt">(选填)</span></label>' +
+          '<div class="fb-textarea-wrap">' +
+            '<textarea class="st-input fb-textarea" id="fbOpinion" maxlength="1000" placeholder="欢迎告诉我们你的使用感受、遇到的问题，或任何希望改进的地方。"></textarea>' +
+            '<span class="fb-count" id="fbCount">0 / 1000</span>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="fb-modal__foot">' +
+        '<button class="st-btn st-btn--cancel" data-st-x type="button">取消</button>' +
+        '<button class="st-btn st-btn--primary" id="fbSubmit" type="button" disabled>提交反馈</button>' +
+      '</div>' +
+      '<div class="fb-success">' +
+        '<div class="fb-success__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div>' +
+        '<div class="fb-success__title">感谢你的反馈</div>' +
+        '<div class="fb-success__desc">我们已经收到你的意见与建议，会认真阅读每一条反馈。</div>' +
+        '<button class="fb-success__btn" id="fbDone" type="button">完成</button>' +
+      '</div>' +
+    '</div>';
+  }
+  function initCustomSelect(wrap, onChange) {
+    var trigger = wrap.querySelector('.fb-select__trigger');
+    var valueEl = wrap.querySelector('.fb-select__value');
+    var dropdown = wrap.querySelector('.fb-select__dropdown');
+    var hidden = wrap.querySelector('input[type=hidden]');
+    var options = Array.prototype.slice.call(wrap.querySelectorAll('.fb-select__option'));
+    var savedParent = null, savedNext = null;
+    function restoreDropdown() {
+      if (!savedParent || dropdown.parentNode === savedParent) return;
+      if (savedNext && savedNext.parentNode === savedParent) {
+        savedParent.insertBefore(dropdown, savedNext);
+      } else {
+        savedParent.appendChild(dropdown);
+      }
+    }
+    function close() {
+      wrap.classList.remove('is-open');
+      dropdown.classList.remove('is-open');
+      dropdown.style.top = ''; dropdown.style.left = ''; dropdown.style.width = '';
+      restoreDropdown();
+      if (window.__fbOpenSelect === wrap) window.__fbOpenSelect = null;
+    }
+    function position() {
+      var r = trigger.getBoundingClientRect();
+      dropdown.style.width = r.width + 'px';
+      dropdown.style.left = r.left + 'px';
+      var dh = dropdown.offsetHeight || 0;
+      if (r.bottom + 8 + dh > window.innerHeight && r.top - 8 - dh > 0) {
+        dropdown.style.top = (r.top - dh - 4) + 'px';
+      } else {
+        dropdown.style.top = (r.bottom + 4) + 'px';
+      }
+    }
+    function open() {
+      if (wrap.classList.contains('is-open')) { close(); return; }
+      if (window.__fbOpenSelect && window.__fbOpenSelect !== wrap) window.__fbOpenSelect.__close();
+      savedParent = dropdown.parentNode;
+      savedNext = dropdown.nextSibling;
+      document.body.appendChild(dropdown);
+      wrap.classList.add('is-open');
+      dropdown.classList.add('is-open');
+      window.__fbOpenSelect = wrap;
+      position();
+    }
+    wrap.__close = close;
+    trigger.addEventListener('click', function (e) { e.stopPropagation(); open(); });
+    options.forEach(function (opt) {
+      opt.addEventListener('click', function (e) {
+        e.stopPropagation();
+        var val = opt.getAttribute('data-value');
+        hidden.value = val;
+        valueEl.textContent = opt.textContent;
+        valueEl.classList.remove('is-placeholder');
+        options.forEach(function (o) { o.classList.remove('is-selected'); });
+        opt.classList.add('is-selected');
+        close();
+        if (onChange) onChange(val);
+        hidden.dispatchEvent(new Event('change'));
+      });
+    });
+    document.addEventListener('click', function (e) {
+      if (!wrap.classList.contains('is-open')) return;
+      if (wrap.contains(e.target) || dropdown.contains(e.target)) return;
+      close();
+    });
+    var body = document.querySelector('.fb-modal__body');
+    if (body) body.addEventListener('scroll', function () { if (wrap.classList.contains('is-open')) close(); }, true);
+    window.addEventListener('resize', function () { if (wrap.classList.contains('is-open')) close(); });
+  }
+  function bindFeedbackForm(root) {
+    var nameEl = root.querySelector('#fbName');
+    var sourceEl = root.querySelector('#fbSource');
+    var sourceNest = root.querySelector('#fbSourceNest');
+    var sourceOther = root.querySelector('#fbSourceOther');
+    var contactType = root.querySelector('#fbContactType');
+    var contactInput = root.querySelector('#fbContact');
+    var opinion = root.querySelector('#fbOpinion');
+    var count = root.querySelector('#fbCount');
+    var submitBtn = root.querySelector('#fbSubmit');
+    var modal = root.querySelector('#fbModal');
+    function clearError(el) {
+      el.classList.remove('is-error');
+      var f = el.closest('.fb-field');
+      if (f) f.querySelectorAll('.st-error').forEach(function (e) { e.classList.remove('is-show'); });
+    }
+    function setError(el, errId) {
+      el.classList.add('is-error');
+      var e = root.querySelector('#' + errId);
+      if (e) e.classList.add('is-show');
+    }
+    function checkValid() {
+      if (!nameEl.value.trim()) return false;
+      if (!sourceEl.value) return false;
+      if (sourceEl.value === 'other' && !sourceOther.value.trim()) return false;
+      return true;
+    }
+    function refresh() { submitBtn.disabled = !checkValid(); }
+    opinion.addEventListener('input', function () {
+      count.textContent = opinion.value.length + ' / 1000';
+      refresh();
+    });
+    sourceEl.addEventListener('change', function () {
+      sourceNest.style.display = (sourceEl.value === 'other') ? 'block' : 'none';
+      if (sourceEl.value !== 'other') { sourceOther.value = ''; clearError(sourceOther); }
+      clearError(sourceEl);
+      refresh();
+    });
+    var PH = { email: '请输入邮箱地址', wechat: '请输入微信号', phone: '请输入电话号码', other: '请输入联系方式，并注明平台' };
+    contactType.addEventListener('change', function () {
+      contactInput.placeholder = PH[contactType.value] || '请输入联系方式';
+      refresh();
+    });
+    [nameEl, sourceOther, contactInput].forEach(function (el) {
+      el.addEventListener('input', function () { clearError(el); refresh(); });
+    });
+    root.querySelectorAll('[data-st-x]').forEach(function (b) {
+      b.addEventListener('click', function () { closeModal(); });
+    });
+    submitBtn.addEventListener('click', function () {
+      if (submitBtn.disabled) return;
+      var firstBad = null;
+      if (!nameEl.value.trim()) { setError(nameEl, 'fbNameErr'); if (!firstBad) firstBad = nameEl; }
+      if (!sourceEl.value) { setError(sourceEl, 'fbSourceErr'); if (!firstBad) firstBad = sourceEl; }
+      if (sourceEl.value === 'other' && !sourceOther.value.trim()) { setError(sourceOther, 'fbSourceOtherErr'); if (!firstBad) firstBad = sourceOther; }
+      if (firstBad) { firstBad.scrollIntoView({ behavior: 'smooth', block: 'center' }); return; }
+      submitBtn.disabled = true;
+      submitBtn.textContent = '提交中…';
+      var fbSourceVal = sourceEl.value === 'other' ? (sourceOther.value.trim() || 'other') : sourceEl.value;
+      logFeedback({
+        name: nameEl.value.trim(),
+        source: fbSourceVal,
+        contact_type: contactType.value || '',
+        contact: contactInput.value.trim() || '',
+        content: opinion.value.trim() || ''
+      });
+      setTimeout(function () { modal.classList.add('is-success'); }, 500);
+    });
+    var doneBtn = root.querySelector('#fbDone');
+    if (doneBtn) doneBtn.addEventListener('click', function () { closeModal(true); });
+    root.querySelectorAll('.fb-select').forEach(function (w) { initCustomSelect(w, null); });
+    refresh();
+  }
+  function feedbackAction() {
+    closePanel(true);
+    openModal({
+      returnToPanel: false,
+      boxClass: 'st-modal__box--feedback',
+      html: feedbackFormHtml(),
+      onMount: bindFeedbackForm
+    });
+  }
+  function bridgeAction(target) {
+    if (target === st.bridgeMode) return;
+    var fromLabel = st.bridgeMode === 'neo4j' ? 'Neo4j·联网' : 'NetworkX·本地';
+    var toLabel = target === 'neo4j' ? 'Neo4j·联网' : 'NetworkX·本地';
+    closePanel(true);
+    openModal({
+      returnToPanel: true,
+      html: confirmHtml('切换服务端桥接方案？', '当前：' + fromLabel + '　→　目标：' + toLabel, '确认切换', 'Neo4j·联网模式下的数据更新更及时，但需要VPN环境'),
+      onMount: function (root) {
+        root.querySelector('[data-st-x]').addEventListener('click', closeModal);
+        root.querySelector('[data-st-ok]').addEventListener('click', function () {
+          st.bridgeMode = target;
+          window.dispatchEvent(new CustomEvent('backendchange'));
+          renderBridge();
+          closeModal(true);
+          showToast('已切换至 ' + toLabel, 'success');
+        });
+      }
+    });
+  }
+  function resetAction() {
+    closePanel(true);
+    openModal({
+      returnToPanel: true,
+      html: confirmHtml('恢复默认对话？', '将对话历史恢复至默认状态，此操作无法撤销。', '确认恢复'),
+      onMount: function (root) {
+        root.querySelector('[data-st-x]').addEventListener('click', closeModal);
+        root.querySelector('[data-st-ok]').addEventListener('click', function () {
+          closeModal(true);
+          showToast('已恢复默认对话', 'success');
+        });
+      }
+    });
+  }
+  function passwordAction(action, desc) {
+    st.pwdAction = action;
+    closePanel(true);
+    openModal({
+      returnToPanel: true,
+      boxClass: 'st-modal__box--password',
+      html: passwordHtml(desc),
+      onMount: function (root) {
+        var input = root.querySelector('#stPwdInput');
+        var eye = root.querySelector('#stPwdEye');
+        var err = root.querySelector('#stPwdError');
+        var cont = root.querySelector('#stPwdContinue');
+        var cancel = root.querySelector('#stPwdCancel');
+        if (input) input.focus();
+        input.addEventListener('input', function () {
+          cont.disabled = input.value.length === 0;
+          err.classList.remove('is-show');
+          input.classList.remove('is-error');
+        });
+        eye.addEventListener('click', function () {
+          var show = input.type === 'password';
+          input.type = show ? 'text' : 'password';
+          eye.innerHTML = show ? ICONS.eyeOff : ICONS.eye;
+          input.focus();
+        });
+        cancel.addEventListener('click', closeModal);
+        cont.addEventListener('click', function () {
+          var raw = input.value;
+          if (!raw) return;
+          cont.disabled = true;
+          err.classList.remove('is-show');
+          input.classList.remove('is-error');
+          hashPwdEquals(raw).then(function (ok) {
+            cont.disabled = false;
+            if (!ok) {
+              err.classList.add('is-show');
+              input.classList.add('is-error');
+              return;
+            }
+            if (action === 'unwatermark') {
+            replaceModalContent(
+              confirmHtml('确认去除水印？', '操作后将移除页面水印，此操作无法撤销。', '确认去水印'),
+              function (r2) {
+                r2.querySelector('[data-st-x]').addEventListener('click', closeModal);
+                r2.querySelector('[data-st-ok]').addEventListener('click', function () {
+                  closeModal(true);
+                  showToast('已去除水印', 'success');
+                });
+              }
+            );
+          } else if (action === 'logs') {
+            closeModal(true);
+            window.open('about:blank', '_blank');
+          }
+          });
+        });
+      }
+    });
+  }
+
+  /* ---------- 绑定 ---------- */
+  function bindSettings() {
+    /* 左下角媒体：'video' 测试用（left_bottom_end.mp4）/ 'image' 回退图片（left_bottom.jpg）。改这一个常量即可切换。 */
+    var LEFT_BOTTOM_MEDIA = 'video';
+    var lfEl = document.querySelector('.left-footer');
+    if (lfEl) lfEl.classList.add(LEFT_BOTTOM_MEDIA === 'image' ? 'media-image' : 'media-video');
+    var trig = document.querySelector('.left-footer');
+    if (trig) trig.addEventListener('click', openPanel);
+
+    settingsEl.addEventListener('click', function (e) {
+      if (e.target.closest('[data-st-settings-close]')) { closePanel(); return; }
+      var item = e.target.closest('[data-st-action]');
+      if (!item) return;
+      var action = item.getAttribute('data-st-action');
+      if (action === 'feedback') feedbackAction();
+      else if (action === 'reset') resetAction();
+      else if (action === 'unwatermark') passwordAction('unwatermark', '此操作需要验证身份，请输入密码后继续。');
+      else if (action === 'logs') passwordAction('logs', '查看运行日志需要进行身份验证。');
+    });
+    var fbCard = settingsEl.querySelector('.st-feedback-card');
+    if (fbCard) {
+      fbCard.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); feedbackAction(); }
+      });
+    }
+
+    if (bridgeEl) {
+      bridgeEl.addEventListener('click', function (e) {
+        var opt = e.target.closest('[data-st-bridge]');
+        if (!opt) return;
+        bridgeAction(opt.getAttribute('data-st-bridge'));
+      });
+    }
+
+    modalEl.addEventListener('click', function (e) {
+      if (e.target.closest('[data-st-overlay]')) closeModal();
+    });
+
+    document.addEventListener('click', function (e) {
+      if (!st.panelOpen) return;
+      if (e.target.closest && e.target.closest('.st-settings')) return;
+      if (e.target.closest && e.target.closest('.st-modal')) return;
+      if (e.target.closest && e.target.closest('.left-footer')) return;
+      closePanel();
+    });
+
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' || e.keyCode === 27) {
+        if (st.modalOpen) closeModal();
+        else if (st.panelOpen) closePanel();
+      }
+    });
+
+    /* iframe 内点击无法冒泡到父 document，故需在 iframe 内部挂监听以关闭面板 */
+    function attachIframeClose(iframe) {
+      if (!iframe) return;
+      function wire() {
+        try {
+          var idoc = iframe.contentDocument;
+          if (!idoc || idoc.__stCloseWired) return;
+          idoc.__stCloseWired = true;
+          idoc.addEventListener('click', function () {
+            if (st.panelOpen) closePanel();
+          });
+        } catch (err) {}
+      }
+      if (iframe.contentDocument && iframe.contentDocument.readyState === 'complete') wire();
+      iframe.addEventListener('load', wire);
+    }
+    ['pageGraph', 'pageDocs', 'pageDesign'].forEach(function (id) {
+      attachIframeClose(document.getElementById(id));
+    });
+
+    window.addEventListener('resize', function () { if (st.panelOpen) positionPanel(); });
+    renderBridge();
+  }
+
+  bindSettings();
+})();
 """
 
 _GRADIO_CSS = """/* ============================================================
@@ -1890,6 +2632,34 @@ div:has(> .app-shell) { padding: 0 !important; margin: 0 !important; background:
   --r-lg: 16px;
   --r-pill: 999px;
   --ease: cubic-bezier(0.4, 0, 0.2, 1);
+  /* 设置功能设计令牌（作用域为顶层浮层，不依赖 .app-shell） */
+  --st-surface: #FFFFFF;
+  --st-border: #EDE5DD;
+  --st-hover: #FAF3EC;
+  --st-text: #3E3836;
+  --st-text2: #6F6763;
+  --st-primary: #8C6B5D;
+  --st-primary-hover: #6B5045;
+  --st-focus: #8C6B5D;
+  --st-error: #B86B5B;
+  --st-error-hover: #9C5547;
+  --st-disabled-bg: #EDE5DD;
+  --st-disabled-text: #A9A19C;
+  --st-page: #FDFBF7;
+  --st-success: #6F8A6A;
+  --st-info: #6D8795;
+  --st-warning: #C38A35;
+  --st-shadow-panel: 0 8px 24px rgba(62,56,54,0.10);
+  --st-shadow-modal: 0 12px 32px rgba(62,56,54,0.14);
+  --st-group: #8B817C;
+  --st-seg-hover: #F5E9DF;
+  --st-modal-bg: #FFFEFC;
+  --st-success-bg: #F4F7F1;
+  --st-select-active: #F4E7DD;
+  --st-input-hover-border: #DCC9BC;
+  --st-placeholder: #9A918C;
+  --st-input-focus: #C7A18E;
+  --st-nest-line: #F1E3D9;
 }
 
 .app-shell {
@@ -2051,6 +2821,9 @@ div:has(> .app-shell) { padding: 0 !important; margin: 0 !important; background:
   flex: 1 1 auto;
   min-height: 0;
   overflow-y: auto;
+  /* 底部羽化：聊天条目接近装饰图时淡出，避免硬切 */
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 calc(100% - 16px), transparent 100%);
+          mask-image: linear-gradient(to bottom, #000 0%, #000 calc(100% - 16px), transparent 100%);
   /* Firefox：默认 20% 不透明，悬停侧边栏时提升为 50%（与中间区域一致） */
   scrollbar-width: thin;
   scrollbar-color: rgba(111, 103, 99, 0.2) transparent;
@@ -2098,7 +2871,7 @@ div:has(> .app-shell) { padding: 0 !important; margin: 0 !important; background:
 
 /* 底部装饰图：完整显示 */
 .left-footer {
-  padding: 12px 4px 14px;
+  padding: 12px 4px 6px;
   text-align: left;
   flex-shrink: 0;
 }
@@ -2108,6 +2881,22 @@ div:has(> .app-shell) { padding: 0 !important; margin: 0 !important; background:
   object-fit: contain;
   object-position: left bottom;
   display: block;
+  /* 顶部羽化：让图片上边缘柔和过渡到透明，避免硬切 */
+  -webkit-mask-image: linear-gradient(to top, #000 100%, transparent 100%);
+          mask-image: linear-gradient(to top, #000 100%, transparent 100%);
+}
+/* 左下角媒体：测试期在 video / image 间切换（由 JS 常量 LEFT_BOTTOM_MEDIA 控制 class） */
+.left-footer .lf-img { display: none !important; }
+.left-footer.media-image .lf-img { display: block !important; }
+.left-footer.media-image .lf-video { display: none !important; }
+.left-footer video {
+  width: 100% !important;
+  max-height: 108px !important;
+  object-fit: contain !important;
+  object-position: left bottom !important;
+  display: block !important;
+  -webkit-mask-image: linear-gradient(to top, #000 100%, transparent 100%) !important;
+          mask-image: linear-gradient(to top, #000 100%, transparent 100%) !important;
 }
 
 /* 缩略态 */
@@ -2394,7 +3183,24 @@ div:has(> .app-shell) { padding: 0 !important; margin: 0 !important; background:
 .bubble-header { display: flex; align-items: center; gap: 4px; margin-bottom: 3px; }
 .bubble-name { font-size: 13px; font-weight: 400; color: #6B5045; line-height: 1.3; }
 .bubble-paw { font-size: 12px; }
-.bubble-body { white-space: normal; word-break: break-word; min-width: 0; }
+.bubble-body { white-space: pre-wrap; word-break: break-word; min-width: 0; }
+/* 意图标签（暖杏风）：仅 meta/emergency 等高优先级意图显示，普通医学回复不显以保持简洁 */
+.app-shell .bubble-intent {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: 6px;
+  padding: 1px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.6;
+  border: 1px solid #EDE5DD;
+  background: #FAF3EC;
+  color: #8C6B5D;
+}
+.app-shell .bubble-intent.intent-meta { background: #F3EDE6; color: #8C6B5D; border-color: #E3D8CD; }
+.app-shell .bubble-intent.intent-emergency { background: #F6E4DC; color: #B37560; border-color: #E8C7B8; }
 .bubble-time { font-size: 10px; font-weight: 500; color: #A89F93 !important; line-height: 1.4; margin-top: 4px; }
 /* 思考中气泡：不设独立样式，完全复用 .bubble-bot（白底 + 实线边框），仅以「思考中」文案与跳动点区分状态 */
 .thinking-dots { display: inline-flex; gap: 3px; margin-left: 5px; vertical-align: middle; }
@@ -2947,7 +3753,7 @@ details[open] .chevron { transform: rotate(180deg); }
 .detail-section { margin-bottom: 14px; }
 .detail-section:last-child { margin-bottom: 0; }
 .detail-label { font-size: 12px; font-weight: 600; color: #6B5045; margin-bottom: 6px; }
-.detail-text { font-size: 13px; color: #3E3836; line-height: 1.7; word-break: break-all; }
+.detail-text { font-size: 13px; color: #3E3836; line-height: 1.7; word-break: break-word; white-space: pre-wrap; }
 .detail-kv { display: flex; gap: 6px; font-size: 13px; line-height: 1.6; margin-bottom: 4px; }
 .detail-kv .dk-label { color: #6F6763; flex-shrink: 0; }
 .detail-kv .dk-value { color: #3E3836; word-break: break-all; }
@@ -3253,6 +4059,171 @@ _STYLE_HTML = (
     + ".img-lightbox__img{position:relative;z-index:1;max-width:92vw;max-height:92vh;width:auto;height:auto;border-radius:12px;box-shadow:0 24px 60px rgba(0,0,0,.35);background:#fff;}\n"
     + ".img-lightbox__close{position:absolute;top:18px;right:22px;z-index:2;display:flex;align-items:center;justify-content:center;width:36px;height:36px;padding:0!important;border:none!important;border-radius:999px;background:#FFFFFF!important;color:#3E3836!important;font-size:22px;line-height:1;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.25)!important;}\n"
     + ".img-lightbox__close:hover{background:#FAF3EC!important;color:#3E3836!important;}\n"
+    + "/* ===== 设置功能：面板 / Modal / Password / Toast（body 作用域 .st-*，顶层浮层） ===== */\n"
+    + "/* 设置面板（锚定左下角的轻量 Popover，无遮罩，点外部关闭） */\n"
+    + "body .st-settings{position:fixed!important;z-index:3900!important;display:none!important;width:288px;max-width:calc(100vw - 24px);max-height:calc(100vh - 32px);background:var(--st-surface);border:1px solid var(--st-border);border-radius:12px;box-shadow:var(--st-shadow-panel);overflow:hidden;transform-origin:bottom left;}\n"
+    + "body .st-settings.is-open{display:flex!important;flex-direction:column!important;animation:stPanelIn 180ms var(--ease) both;}\n"
+    + "body .st-settings.is-closing{display:flex!important;flex-direction:column!important;animation:stPanelOut 140ms var(--ease) both;}\n"
+    + "body .st-settings__head{display:flex!important;align-items:center!important;justify-content:space-between!important;padding:14px 12px 10px 16px!important;}\n"
+    + "body .st-settings__title-group{display:flex!important;align-items:center!important;gap:8px!important;}\n"
+    + "body .st-settings__gear{display:inline-flex!important;align-items:center!important;justify-content:center!important;color:var(--st-text2)!important;}\n"
+    + "body .st-settings__gear svg{width:18px!important;height:18px!important;display:block!important;}\n"
+    + "body .st-settings__title{font-size:16px!important;font-weight:600!important;color:var(--st-text)!important;}\n"
+    + "body .st-settings__subtitle{font-size:11px!important;font-weight:600!important;letter-spacing:.08em!important;color:var(--st-primary)!important;}\n"
+    + "body .st-settings__close{display:flex!important;align-items:center!important;justify-content:center!important;width:28px!important;height:28px!important;border:none!important;box-shadow:none!important;outline:none!important;border-radius:6px!important;background:transparent!important;color:var(--st-text2)!important;cursor:pointer!important;font-size:18px!important;line-height:1!important;}\n"
+    + "body .st-settings__close svg{width:16px!important;height:16px!important;display:block!important;}\n"
+    + "body .st-settings__close:hover{background:var(--st-hover)!important;color:var(--st-primary-hover)!important;}\n"
+    + "body .st-settings__body{padding:4px 12px 14px!important;flex:1 1 auto!important;min-height:0!important;overflow-y:auto!important;scrollbar-width:thin!important;scrollbar-color:rgba(111,103,99,0.2) transparent!important;transition:scrollbar-color 150ms var(--ease)!important;}\n"
+    + "body .st-settings__body::-webkit-scrollbar{width:8px!important;}\n"
+    + "body .st-settings__body::-webkit-scrollbar-track{background:transparent!important;}\n"
+    + "body .st-settings__body::-webkit-scrollbar-thumb{background:rgba(111,103,99,0.2)!important;border-radius:4px!important;}\n"
+    + "body .st-settings__body::-webkit-scrollbar-thumb:hover{background:#6F6763!important;}\n"
+    + "body .st-settings:hover .st-settings__body::-webkit-scrollbar-thumb{background:rgba(111,103,99,0.5)!important;}\n"
+    + "body .st-settings:hover .st-settings__body{scrollbar-color:rgba(111,103,99,0.5) transparent!important;}\n"
+    + "body .st-group{margin-top:6px!important;}\n"
+    + "body .st-group__label{font-size:12px!important;font-weight:500!important;color:var(--st-group)!important;padding:10px 4px 6px!important;letter-spacing:.02em!important;}\n"
+    + "body .st-divider{height:1px!important;background:var(--st-border)!important;margin:12px 4px!important;}\n"
+    + "body .st-divider--head{margin:4px 4px 0!important;}\n"
+    + "body .st-item{display:flex!important;align-items:center!important;justify-content:space-between!important;width:100%!important;height:38px!important;padding:0 14px!important;margin:2px 0!important;border:none!important;box-shadow:none!important;outline:none!important;border-radius:8px!important;background:transparent!important;color:var(--st-text)!important;font-size:14px!important;font-weight:500!important;cursor:pointer!important;text-align:left!important;transition:background 150ms var(--ease)!important;}\n"
+    + "body .st-item:hover{background:var(--st-hover)!important;color:var(--st-text)!important;}\n"
+    + "body .st-item__label{color:var(--st-text)!important;}\n"
+    + "body .st-item__arrow{display:inline-flex!important;align-items:center!important;justify-content:center!important;color:var(--st-text2)!important;opacity:.7!important;transition:color 150ms var(--ease),opacity 150ms var(--ease),transform 150ms var(--ease)!important;}\n"
+    + "body .st-item__arrow svg{width:18px!important;height:18px!important;display:block!important;}\n"
+    + "body .st-item:hover .st-item__arrow{color:var(--st-primary)!important;opacity:1!important;transform:translateX(2px)!important;}\n"
+    + "/* 轻量反馈 CTA Card：顶部独立模块，替代原「给我反馈」菜单行 */\n"
+    + "body .st-feedback-card{display:flex!important;align-items:center!important;gap:10px!important;width:100%!important;height:84px!important;padding:12px!important;margin:12px 0!important;box-sizing:border-box!important;border:1px solid #E8D8CC!important;border-radius:12px!important;background:#FAF3EC!important;color:var(--st-text)!important;cursor:pointer!important;text-align:left!important;transition:background 150ms var(--ease),box-shadow 150ms var(--ease)!important;}\n"
+    + "body .st-feedback-card:hover{background:#F2E4D7!important;box-shadow:0 2px 10px rgba(111,103,99,0.10)!important;}\n"
+    + "body .st-feedback-card + .st-divider{margin-top:4px!important;}\n"
+    + "body .st-feedback-card:focus-visible{outline:2px solid var(--st-focus)!important;outline-offset:2px!important;}\n"
+    + "body .st-feedback-card__video{width:56px!important;height:60px!important;max-width:56px!important;max-height:60px!important;flex:0 0 auto!important;object-fit:cover!important;border-radius:8px!important;display:block!important;background:#EDE5DD!important;}\n"
+    + "body .st-feedback-card__body{flex:1 1 auto!important;min-width:0!important;display:flex!important;flex-direction:column!important;gap:3px!important;margin-left:8px!important;}\n"
+    + "body .st-feedback-card__title{font-size:16px!important;font-weight:600!important;color:#6B5045!important;line-height:1.2!important;margin:0!important;}\n"
+    + "body .st-feedback-card__desc{font-size:12px!important;font-weight:400!important;color:#6F6763!important;line-height:1.3!important;margin:0!important;}\n"
+    + "body .st-feedback-card__cta{font-size:12px!important;font-weight:600!important;color:var(--st-primary)!important;transition:transform 150ms var(--ease)!important;}\n"
+    + "body .st-feedback-card:hover .st-feedback-card__cta{transform:translateX(3px)!important;}\n"
+    + "body .st-feedback-card__art{flex:0 0 auto!important;width:40px!important;height:40px!important;display:flex!important;align-items:center!important;justify-content:center!important;}\n"
+    + "body .st-feedback-card__art svg{width:40px!important;height:40px!important;display:block!important;}\n"
+    + "/* 服务端桥接方案：传统 50% / 50% 等宽分段选择器（暖杏奶油规范） */\n"
+    + "body .st-setting{margin:6px 0 0!important;padding:0 14px!important;}\n"
+    + "body .st-setting__label{font-size:15px!important;font-weight:500!important;color:var(--st-text)!important;margin:0 0 8px!important;}\n"
+    + "body .st-bridge{display:flex!important;width:100%!important;box-sizing:border-box!important;background:var(--st-hover)!important;border:1px solid var(--st-border)!important;border-radius:12px!important;padding:4px!important;gap:4px!important;}\n"
+    + "body .st-bridge__seg{flex:1 1 0!important;width:50%!important;min-width:0!important;height:28px!important;display:flex!important;align-items:center!important;justify-content:center!important;padding:0 6px!important;border:none!important;outline:none!important;box-shadow:none!important;border-radius:10px!important;background:transparent!important;color:var(--st-text2)!important;font-size:13px!important;font-weight:500!important;cursor:pointer!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;transition:background 150ms var(--ease),color 150ms var(--ease)!important;}\n"
+    + "body .st-bridge__seg:hover{background:var(--st-seg-hover)!important;}\n"
+    + "body .st-bridge__seg.is-active{background:var(--st-primary)!important;color:#FFFFFF!important;}\n"
+    + "/* 通用 Modal（居中浮层，共用暖灰遮罩） */\n"
+    + "body .st-modal{position:fixed!important;inset:0!important;z-index:4100!important;display:none!important;align-items:center!important;justify-content:center!important;padding:24px!important;}\n"
+    + "body .st-modal.is-open{display:flex!important;animation:stFadeIn 180ms var(--ease) both;}\n"
+    + "body .st-modal.is-closing{display:flex!important;animation:stFadeOut 160ms var(--ease) both;}\n"
+    + "body .st-modal__overlay{position:absolute!important;inset:0!important;background:rgba(62,56,54,0.32)!important;opacity:0!important;transition:opacity 180ms var(--ease)!important;}\n"
+    + "body .st-modal.is-open .st-modal__overlay{opacity:1!important;}\n"
+    + "body .st-modal.is-closing .st-modal__overlay{opacity:0!important;}\n"
+    + "body .st-modal__box{position:relative!important;z-index:1!important;width:440px!important;max-width:100%!important;background:var(--st-surface)!important;border:1px solid var(--st-border)!important;border-radius:12px!important;box-shadow:var(--st-shadow-modal)!important;overflow:hidden!important;animation:stModalIn 220ms var(--ease) both;}\n"
+    + "body .st-modal.is-closing .st-modal__box{animation:stModalOut 160ms var(--ease) both;}\n"
+    + "body .st-modal__box--password{width:400px!important;}\n"
+    + "body .st-modal__pane{padding:22px 22px 18px!important;}\n"
+    + "body .st-modal__title{font-size:18px!important;font-weight:600!important;color:var(--st-text)!important;}\n"
+    + "body .st-modal__desc{font-size:14px!important;line-height:2.0!important;color:var(--st-text2)!important;margin-top:10px!important;}\n"
+    + "body .st-modal__desc2{color:var(--st-text2)!important;}\n"
+    + "body .st-modal__actions{display:flex!important;justify-content:flex-end!important;gap:10px!important;margin-top:20px!important;}\n"
+    + "/* 表单 */\n"
+    + "body .st-field__label{display:block!important;font-size:13px!important;font-weight:500!important;color:var(--st-text)!important;margin:16px 0 6px!important;}\n"
+    + "body .st-field__hint{color:var(--st-text2)!important;font-size:12px!important;font-weight:400!important;margin-left:6px!important;}\n"
+    + "body .st-input-wrap{position:relative!important;display:flex!important;align-items:center!important;}\n"
+    + "body .st-input{width:100%!important;height:40px!important;padding:0 40px 0 12px!important;border:1px solid var(--st-border)!important;border-radius:8px!important;background:var(--st-surface)!important;color:var(--st-text)!important;font-size:14px!important;outline:none!important;transition:border-color 150ms var(--ease)!important,box-shadow 150ms var(--ease)!important;}\n"
+    + "body .st-input::placeholder{color:var(--st-disabled-text)!important;}\n"
+    + "body .st-input:focus{border-color:var(--st-focus)!important;box-shadow:0 0 0 3px rgba(140,107,93,0.10)!important;}\n"
+    + "body .st-input.is-error{border-color:var(--st-error)!important;}\n"
+    + "body .st-eye{position:absolute!important;right:4px!important;display:flex!important;align-items:center!important;justify-content:center!important;width:32px!important;height:32px!important;border:none!important;box-shadow:none!important;background:transparent!important;color:var(--st-text2)!important;cursor:pointer!important;border-radius:6px!important;}\n"
+    + "body .st-eye:hover{background:var(--st-hover)!important;color:var(--st-primary)!important;}\n"
+    + "body .st-eye svg{width:18px!important;height:18px!important;display:block!important;}\n"
+    + "body .st-error{display:none!important;color:var(--st-error)!important;font-size:12px!important;line-height:18px!important;margin-top:8px!important;}\n"
+    + "body .st-error.is-show{display:block!important;}\n"
+    + "/* 按钮 */\n"
+    + "body .st-btn{height:36px!important;padding:0 16px!important;border-radius:8px!important;font-size:14px!important;cursor:pointer!important;border:1px solid transparent!important;transition:background 150ms var(--ease)!important,border-color 150ms var(--ease)!important,color 150ms var(--ease)!important;}\n"
+    + "body .st-btn--cancel{background:var(--st-surface)!important;border-color:var(--st-border)!important;color:var(--st-text2)!important;}\n"
+    + "body .st-btn--cancel:hover{background:var(--st-hover)!important;border-color:#C7A18E!important;color:var(--st-text)!important;}\n"
+    + "body .st-btn--primary{background:var(--st-primary)!important;color:#FFFFFF!important;border-color:var(--st-primary)!important;}\n"
+    + "body .st-btn--primary:hover{background:var(--st-primary-hover)!important;border-color:var(--st-primary-hover)!important;}\n"
+    + "body .st-btn--primary:disabled,body .st-btn--primary[disabled]{background:var(--st-disabled-bg)!important;color:var(--st-disabled-text)!important;cursor:not-allowed!important;border-color:var(--st-disabled-bg)!important;}\n"
+    + "body .st-btn--danger{background:var(--st-error)!important;border-color:var(--st-error)!important;color:#FFFFFF!important;}\n"
+    + "body .st-btn--danger:hover{background:var(--st-error-hover)!important;border-color:var(--st-error-hover)!important;}\n"
+    + "/* Toast（右上角堆叠） */\n"
+    + "body .st-toast-stack{position:fixed!important;top:24px!important;right:24px!important;z-index:5000!important;display:flex!important;flex-direction:column!important;gap:10px!important;align-items:flex-end!important;pointer-events:none!important;}\n"
+    + "body .st-toast{display:flex!important;align-items:flex-start!important;gap:10px!important;min-width:240px!important;max-width:360px!important;padding:12px 14px!important;background:var(--st-surface)!important;border:1px solid var(--st-border)!important;border-radius:8px!important;box-shadow:0 6px 20px rgba(62,56,54,0.12)!important;color:var(--st-text)!important;font-size:14px!important;line-height:20px!important;animation:stToastIn 180ms var(--ease) both;transition:transform 160ms var(--ease)!important,margin 160ms var(--ease)!important;}\n"
+    + "body .st-toast.is-closing{animation:stToastOut 160ms var(--ease) both;}\n"
+    + "body .st-toast__icon{flex-shrink:0!important;width:18px!important;height:18px!important;margin-top:1px!important;}\n"
+    + "body .st-toast__icon svg{width:18px!important;height:18px!important;display:block!important;}\n"
+    + "body .st-toast__msg{flex:1!important;}\n"
+    + "/* keyframes */\n"
+    + "@keyframes stFadeIn{from{opacity:0}to{opacity:1}}\n"
+    + "@keyframes stFadeOut{from{opacity:1}to{opacity:0}}\n"
+    + "@keyframes stModalIn{from{opacity:0;transform:translateY(12px) scale(0.985)}to{opacity:1;transform:translateY(0) scale(1)}}\n"
+    + "@keyframes stModalOut{from{opacity:1;transform:translateY(0) scale(1)}to{opacity:0;transform:translateY(8px) scale(0.99)}}\n"
+    + "/* 反馈问卷 Modal */\n"
+    + "body .st-modal__box--feedback{width:560px!important;max-width:calc(100vw - 48px)!important;max-height:calc(80vh - 48px)!important;background:var(--st-modal-bg)!important;border:1px solid var(--st-border)!important;border-radius:16px!important;box-shadow:0 16px 48px rgba(107,80,69,0.12)!important;}\n"
+    + "body .fb-modal{display:flex!important;flex-direction:column!important;width:100%!important;max-height:calc(80vh - 48px)!important;}\n"
+    + "body .fb-modal__head{display:flex!important;align-items:flex-start!important;justify-content:space-between!important;gap:12px!important;padding:24px 28px 20px!important;}\n"
+    + "body .fb-modal__title{font-size:20px!important;font-weight:600!important;line-height:28px!important;color:var(--st-text)!important;}\n"
+    + "body .fb-modal__sub{margin-top:6px!important;font-size:13px!important;font-weight:400!important;line-height:20px!important;color:var(--st-text2)!important;}\n"
+    + "body .fb-modal__close{display:flex!important;align-items:center!important;justify-content:center!important;width:32px!important;height:32px!important;flex-shrink:0!important;border:none!important;background:transparent!important;color:var(--st-text2)!important;border-radius:8px!important;cursor:pointer!important;transition:background 150ms var(--ease),color 150ms var(--ease)!important;}\n"
+    + "body .fb-modal__close:hover{background:var(--st-hover)!important;color:var(--st-text)!important;}\n"
+    + "body .fb-modal__close svg{width:16px!important;height:16px!important;display:block!important;}\n"
+    + "body .fb-modal__body{flex:1 1 auto!important;min-height:0!important;overflow-y:auto!important;padding:4px 28px 24px!important;}\n"
+    + "body .fb-modal__foot{display:flex!important;justify-content:flex-end!important;gap:10px!important;padding:18px 28px 20px!important;border-top:1px solid var(--st-border)!important;}\n"
+    + "body .fb-field{margin-bottom:20px!important;}\n"
+    + "body .fb-field:last-child{margin-bottom:0!important;}\n"
+    + "body .fb-label{display:block!important;font-size:14px!important;font-weight:500!important;color:var(--st-text)!important;margin:0 0 8px!important;}\n"
+    + "body .fb-req{color:var(--st-error)!important;margin-left:4px!important;font-weight:500!important;}\n"
+    + "body .fb-opt{color:var(--st-group)!important;font-weight:400!important;margin-left:4px!important;}\n"
+    + "body .fb-modal .st-input{height:44px!important;border-radius:10px!important;background:var(--st-surface)!important;border:1px solid var(--st-border)!important;color:var(--st-text)!important;padding:0 14px!important;font-size:14px!important;transition:border-color 150ms var(--ease),box-shadow 150ms var(--ease),background 150ms var(--ease)!important;}\n"
+    + "body .fb-modal .st-input:hover{border-color:var(--st-input-hover-border)!important;background:#FFFCF9!important;}\n"
+    + "body .fb-modal .st-input:focus{border-color:var(--st-input-focus)!important;box-shadow:0 0 0 3px rgba(199,161,142,0.15)!important;background:var(--st-surface)!important;}\n"
+    + "body .fb-modal .st-input::placeholder{color:var(--st-placeholder)!important;}\n"
+    + "body .fb-modal .st-input.is-error{border-color:var(--st-error)!important;}\n"
+    + "/* 自定义下拉（替代原生 select） */\n"
+    + "body .fb-modal .fb-select{position:relative!important;width:100%!important;}\n"
+    + "body .fb-modal .fb-select.fb-contact__type{width:132px!important;flex:0 0 132px!important;}\n"
+    + "body .fb-modal .fb-select__trigger{display:flex!important;align-items:center!important;justify-content:space-between!important;height:44px!important;border-radius:10px!important;background:var(--st-surface)!important;border:1px solid var(--st-border)!important;color:var(--st-text)!important;padding:0 14px!important;font-size:14px!important;cursor:pointer!important;transition:border-color 150ms var(--ease),box-shadow 150ms var(--ease),background 150ms var(--ease)!important;}\n"
+    + "body .fb-modal .fb-select__trigger:hover{border-color:var(--st-input-hover-border)!important;background:#FFFCF9!important;}\n"
+    + "body .fb-modal .fb-select.is-open .fb-select__trigger,body .fb-modal .fb-select__trigger:focus{border-color:var(--st-input-focus)!important;box-shadow:0 0 0 3px rgba(199,161,142,0.15)!important;background:var(--st-surface)!important;outline:none!important;}\n"
+    + "body .fb-modal .fb-select__value{overflow:hidden!important;white-space:nowrap!important;text-overflow:ellipsis!important;}\n"
+    + "body .fb-modal .fb-select__value.is-placeholder{color:var(--st-placeholder)!important;}\n"
+    + "body .fb-modal .fb-select__arrow{display:inline-flex!important;align-items:center!important;justify-content:center!important;color:var(--st-text2)!important;margin-left:8px!important;flex:0 0 auto!important;}\n"
+    + "body .fb-modal .fb-select__arrow svg{width:16px!important;height:16px!important;display:block!important;}\n"
+    + "body .fb-select__dropdown{display:none!important;position:fixed!important;z-index:5000!important;box-sizing:border-box!important;background:var(--st-modal-bg)!important;border:1px solid var(--st-border)!important;border-radius:10px!important;box-shadow:0 8px 24px rgba(107,80,69,0.10)!important;padding:8px!important;max-height:240px!important;overflow-y:auto!important;}\n"
+    + "body .fb-select__dropdown.is-open{display:block!important;}\n"
+    + "body .fb-select__option{display:flex!important;align-items:center!important;justify-content:space-between!important;height:40px!important;padding:0 18px!important;border-radius:8px!important;color:var(--st-text)!important;font-size:14px!important;cursor:pointer!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;transition:background 150ms var(--ease)!important;}\n"
+    + "body .fb-select__option:hover{background:var(--st-hover)!important;}\n"
+    + "body .fb-select__option.is-selected{background:var(--st-select-active)!important;color:#6B5045!important;font-weight:500!important;}\n"
+    + "body .fb-select__option.is-selected::after{content:\"\\2713\"!important;margin-left:8px!important;color:#6B5045!important;font-weight:600!important;}\n"
+    + "body .fb-modal textarea.st-input{padding:12px 14px!important;line-height:22px!important;}\n"
+    + "body .fb-nest{margin-top:12px!important;padding-left:12px!important;border-left:2px solid var(--st-nest-line)!important;}\n"
+    + "body .fb-nest__label{margin-top:0!important;}\n"
+    + "body .fb-contact{display:flex!important;gap:8px!important;}\n"
+    + "body .fb-contact__type{width:132px!important;flex:0 0 132px!important;}\n"
+    + "body .fb-contact__input{flex:1 1 auto!important;min-width:0!important;}\n"
+    + "body .fb-textarea-wrap{position:relative!important;}\n"
+    + "body .fb-modal textarea.st-input{height:auto!important;min-height:128px!important;max-height:160px!important;resize:none!important;overflow-y:auto!important;}\n"
+    + "body .fb-count{position:absolute!important;right:12px!important;bottom:10px!important;font-size:12px!important;color:var(--st-placeholder)!important;pointer-events:none!important;}\n"
+    + "body .fb-modal__foot .st-btn{height:40px!important;border-radius:10px!important;font-size:14px!important;}\n"
+    + "body .fb-modal__foot .st-btn--cancel{background:transparent!important;color:var(--st-text2)!important;border:1px solid transparent!important;}\n"
+    + "body .fb-modal__foot .st-btn--cancel:hover{background:var(--st-hover)!important;color:var(--st-text)!important;}\n"
+    + "body .fb-modal__foot .st-btn--primary:disabled,body .fb-modal__foot .st-btn--primary[disabled]{background:var(--st-disabled-bg)!important;color:#A59B95!important;cursor:not-allowed!important;border-color:var(--st-disabled-bg)!important;}\n"
+    + "body .fb-modal.is-success .fb-modal__head,body .fb-modal.is-success .fb-modal__body,body .fb-modal.is-success .fb-modal__foot{display:none!important;}\n"
+    + "body .fb-success{display:none!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;text-align:center!important;padding:40px 28px!important;min-height:280px!important;gap:14px!important;}\n"
+    + "body .fb-modal.is-success .fb-success{display:flex!important;}\n"
+    + "body .fb-success__icon{display:flex!important;align-items:center!important;justify-content:center!important;width:48px!important;height:48px!important;border-radius:50%!important;background:var(--st-success-bg)!important;color:var(--st-success)!important;}\n"
+    + "body .fb-success__icon svg{width:24px!important;height:24px!important;display:block!important;}\n"
+    + "body .fb-success__title{font-size:20px!important;font-weight:600!important;color:var(--st-text)!important;}\n"
+    + "body .fb-success__desc{font-size:14px!important;line-height:22px!important;color:var(--st-text2)!important;max-width:360px!important;}\n"
+    + "body .fb-success__btn{margin-top:6px!important;height:40px!important;border-radius:10px!important;padding:0 20px!important;background:var(--st-primary)!important;color:#FFFFFF!important;border:1px solid var(--st-primary)!important;font-size:14px!important;cursor:pointer!important;transition:background 150ms var(--ease)!important;}\n"
+    + "body .fb-success__btn:hover{background:var(--st-primary-hover)!important;border-color:var(--st-primary-hover)!important;}\n"
+    + "@keyframes stPanelIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}\n"
+    + "@keyframes stPanelOut{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(6px)}}\n"
+    + "@keyframes stToastIn{from{opacity:0;transform:translateX(16px) translateY(4px)}to{opacity:1;transform:translateX(0) translateY(0)}}\n"
+    + "@keyframes stToastOut{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(-6px)}}\n"
+    + "@keyframes stContentOut{from{opacity:1;transform:translateX(0)}to{opacity:0;transform:translateX(-10px)}}\n"
+    + "@keyframes stContentIn{from{opacity:0;transform:translateX(10px)}to{opacity:1;transform:translateX(0)}}\n"
     + "</style>"
 )
 
@@ -3263,24 +4234,31 @@ _STYLE_HTML = (
 _pipeline = Pipeline()
 
 
-def respond(user_input: str, context_entities: list[str] | None = None) -> dict:
+def respond(
+    user_input: str,
+    context_entities: list[str] | None = None,
+    backend: str = "local",
+) -> dict:
     """执行一次推理，返回 JSON 友好的结果（含执行轨迹）。
 
     该函数通过 server_functions=[respond] 暴露给前端，JS 中以
-    `await server.respond(text, contextEntities)` 调用。
+    `await server.respond(text, contextEntities, backend)` 调用。
     context_entities 为上一轮成功解析的实体（上下文），供连续对话实体继承。
+    backend 为本次查询使用的数据源（"local" / "neo4j"），默认本地；
+    仅影响本次调用，不修改全局 GRAPH_BACKEND 配置。
 
     注意：Gradio 的 server_functions 在多参数调用时会把参数序列化为数组
-    data=[user_input, context_entities]，但后端 component_server 不展开该数组，
+    data=[user_input, context_entities, backend]，但后端 component_server 不展开该数组，
     导致第一个参数收到整个 list。这里手动拆分以兼容多参数调用。
     返回值必须是可 JSON 序列化的纯 dict。
     """
     if isinstance(user_input, list):
-        user_input, context_entities = (
-            user_input[0],
-            user_input[1] if len(user_input) > 1 else None,
-        )
-    response, trace = _pipeline.run_with_trace(user_input, context_entities)
+        # 多参数调用被压成单个数组，这里手动展开（用临时变量避免名称遮蔽导致索引错位）
+        _args = user_input
+        user_input = _args[0] if _args else user_input
+        context_entities = _args[1] if len(_args) > 1 else None
+        backend = _args[2] if len(_args) > 2 else "local"
+    response, trace = _pipeline.run_with_trace(user_input, context_entities, backend=backend)
     return {
         "status": response.status.value,
         "summary": response.summary,
@@ -3311,6 +4289,92 @@ def respond(user_input: str, context_entities: list[str] | None = None) -> dict:
     }
 
 
+# ---------------------------------------------------------------------------
+# 飞书日志 server_functions
+#
+# 由前端（_JS_EXEC 内 JS）通过 server.log_behavior / server.log_feedback 调用。
+# 设计要点：
+# - 前端只传一个 dict（规避 Gradio server_functions 多参数被压平的坑）；
+#   IP / User-Agent 由 gr.Request 在服务端提取（优先 X-Forwarded-For / X-Real-IP），
+#   不在前端传值，故即使 request 注入不可用也不抛异常（降级为空）。
+# - 时间戳在服务端生成，确保同一事件（如反馈）的行为表与反馈表时间一致。
+# - 写入在守护线程中异步进行（fire-and-forget），不阻塞主流程；
+#   异常已在 FeishuLogger 内静默处理。
+# ---------------------------------------------------------------------------
+def _coerce_payload(payload):
+    """server_functions 多参数调用时 Gradio 会把参数压成列表，这里统一规整为 dict。"""
+    if isinstance(payload, list):
+        if len(payload) == 1 and isinstance(payload[0], dict):
+            payload = payload[0]
+        else:
+            return {}
+    if not isinstance(payload, dict):
+        return {}
+    return payload
+
+
+def _extract_request_meta(request):
+    """从 gr.Request 提取客户端 IP 与 User-Agent；失败时返回空字符串（不抛异常）。"""
+    ip_address = ""
+    user_agent = ""
+    if request is None:
+        return ip_address, user_agent
+    try:
+        headers = getattr(request, "headers", None) or {}
+        # 优先取代理透传的真实客户端 IP（反向代理 / ModelScope 网关场景）
+        xff = headers.get("x-forwarded-for") or headers.get("X-Forwarded-For")
+        if xff:
+            ip_address = str(xff).split(",")[0].strip()
+        if not ip_address:
+            xri = headers.get("x-real-ip") or headers.get("X-Real-IP")
+            if xri:
+                ip_address = str(xri).strip()
+        if not ip_address:
+            client = getattr(request, "client", None)
+            if client is not None:
+                ip_address = getattr(client, "host", "") or ""
+        user_agent = headers.get("user-agent") or headers.get("User-Agent") or ""
+        if isinstance(user_agent, bytes):
+            user_agent = user_agent.decode("utf-8", "ignore")
+    except Exception:  # noqa: BLE001
+        pass
+    return ip_address, user_agent
+
+
+def log_behavior(payload: dict, request: gr.Request = None):
+    """由前端调用：记录一次用户行为（page_view / question / feedback 等）。"""
+    data = _coerce_payload(payload)
+    user_id = str(data.get("user_id", ""))
+    behavior_type = str(data.get("behavior_type", ""))
+    behavior_value = str(data.get("behavior_value", ""))
+    # 优先用服务端从 request 提取的 UA，前端可附带 navigator.userAgent 作为兜底
+    ip_address, req_ua = _extract_request_meta(request)
+    user_agent = req_ua or str(data.get("user_agent", ""))
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    threading.Thread(
+        target=logger.log_behavior,
+        args=(user_id, behavior_type, behavior_value, ip_address, user_agent, timestamp),
+        daemon=True,
+    ).start()
+
+
+def log_feedback(payload: dict, request: gr.Request = None):
+    """由前端调用：记录一次用户反馈（同时写入反馈表与行为流水表）。"""
+    data = _coerce_payload(payload)
+    user_id = str(data.get("user_id", ""))
+    name = str(data.get("name", ""))
+    source = str(data.get("source", ""))
+    contact_type = str(data.get("contact_type", ""))
+    contact = str(data.get("contact", ""))
+    content = str(data.get("content", ""))
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    threading.Thread(
+        target=logger.log_feedback,
+        args=(user_id, name, source, contact_type, contact, content, timestamp),
+        daemon=True,
+    ).start()
+
+
 def create_demo() -> gr.Blocks:
     """构建 Gradio 应用实例。"""
     with gr.Blocks(
@@ -3327,7 +4391,7 @@ def create_demo() -> gr.Blocks:
             # <link rel="icon"> 浏览器忽略，需走 launch(head=...) 注入真实 <head>。
             head=_STYLE_HTML,
             js_on_load=_JS_EXEC,
-            server_functions=[respond],
+            server_functions=[respond, log_behavior, log_feedback],
         )
     return demo
 

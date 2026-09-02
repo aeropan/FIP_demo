@@ -12,6 +12,7 @@ from core.agents import (
     ResponseAgent,
     RiskAgent,
 )
+from core.providers.factory import create_provider, get_graph_provider
 from core.schemas import (
     AgentResponse,
     Intent,
@@ -70,6 +71,8 @@ class Pipeline:
     - 实体解析结果为空 → 若意图明确（非 general）且传入上下文实体则继承，否则返回边界话术；
     - 意图不明确 → 返回澄清候选（选项 value 编码实体，点击后可恢复上下文）；
     - 输入为复合格式（intent:...|entities:...）→ 跳过实体/意图解析直接执行；
+    - 识别为 meta 意图（系统自身意图）→ 跳过实体解析与图查询，直接返回预设回复，
+      trace 中实体解析 / 图查询标记为 skipped（不触发边界处理）；
     - 图谱无路径 → 返回边界话术；
     - 查询异常 → 返回 error。
     """
@@ -83,22 +86,36 @@ class Pipeline:
         self.risk_agent = RiskAgent()
         self.response_agent = ResponseAgent()
         self.boundary_agent = BoundaryAgent()
+        # 图数据提供者：根据 GRAPH_BACKEND 选择本地 NetworkX 或 Neo4j 后端，
+        # 供 GraphQueryAgent 调用（默认 local，无需连接 Neo4j）。
+        self.graph_provider = get_graph_provider()
 
-    def run(self, user_input: str, context_entities: list[str] | None = None) -> AgentResponse:
+    def run(
+        self,
+        user_input: str,
+        context_entities: list[str] | None = None,
+        backend: str = "local",
+    ) -> AgentResponse:
         """执行一次完整推理，返回统一响应结构（不携带 trace）。
 
         context_entities 为上一轮成功解析的实体（上下文），本轮实体解析为空时用于继承。
+        backend 为本次查询使用的数据源（"local" / "neo4j"），默认本地；
+        仅影响本次调用，不修改全局 GRAPH_BACKEND 配置。
         """
-        response, _ = self.run_with_trace(user_input, context_entities)
+        response, _ = self.run_with_trace(user_input, context_entities, backend=backend)
         return response
 
     def run_with_trace(
-        self, user_input: str, context_entities: list[str] | None = None
+        self,
+        user_input: str,
+        context_entities: list[str] | None = None,
+        backend: str = "local",
     ) -> tuple[AgentResponse, PipelineTrace]:
         """执行一次完整推理，同时返回统一响应与执行轨迹。
 
         context_entities 为上一轮成功解析的实体（上下文）；本轮实体解析为空且
         意图明确（非 general）时继承该上下文，实现连续对话的实体省略补全。
+        backend 为本次查询使用的数据源（"local" / "neo4j"），默认本地。
         """
         trace = PipelineTrace(user_input=user_input, input_type="普通文本")
         context_entities = context_entities or []
@@ -130,13 +147,120 @@ class Pipeline:
                     skip_reason=f"复合澄清输入已指定意图：{intent.value}",
                 )
             )
-            return self._run_with_intent(intent, entities, trace)
+            return self._run_with_intent(intent, entities, trace, backend=backend)
 
-        # 1. 实体解析
-        entities = self.entity_agent.run(user_input)
-
-        # 2. 意图识别（实体为空也识别，用于判断是否继承上下文）
+        # 1. 意图识别（优先执行，用于 emergency / meta 意图短路判断）
         intent_result = self.intent_agent.run(user_input)
+
+        # --- emergency 意图短路（最高优先级）：跳过实体解析与图查询，直接返回就医提示 ---
+        if intent_result.intent == Intent.EMERGENCY:
+            trace.steps.append(
+                TraceStep(
+                    step_id=2,
+                    step_name="意图识别",
+                    agent="IntentAgent",
+                    status="success",
+                    input_summary=f"用户输入：{user_input}",
+                    output_summary="识别为紧急求助",
+                    detail={"scores": intent_result.scores},
+                )
+            )
+            trace.steps.append(
+                TraceStep(
+                    step_id=1,
+                    step_name="实体解析",
+                    agent="EntityAgent",
+                    status="skipped",
+                    input_summary=f"用户输入：{user_input}",
+                    output_summary="",
+                    skip_reason="紧急场景，直接返回就医提示",
+                )
+            )
+            trace.steps.append(
+                TraceStep(
+                    step_id=4,
+                    step_name="图查询",
+                    agent="GraphQueryAgent",
+                    status="skipped",
+                    input_summary="",
+                    output_summary="",
+                    skip_reason="紧急场景，直接返回就医提示",
+                )
+            )
+            response = self.response_agent.generate_emergency_response()
+            trace.steps.append(
+                TraceStep(
+                    step_id=7,
+                    step_name="响应生成",
+                    agent="ResponseAgent",
+                    status="success",
+                    input_summary="紧急求助",
+                    output_summary="返回立即就医提示",
+                    detail={"summary": response.summary},
+                )
+            )
+            return response, trace
+
+        # --- meta 意图短路：跳过实体解析与图查询，直接生成预设回复 ---
+        if intent_result.intent == Intent.META:
+            trace.steps.append(
+                TraceStep(
+                    step_id=2,
+                    step_name="意图识别",
+                    agent="IntentAgent",
+                    status="success",
+                    input_summary=f"用户输入：{user_input}",
+                    output_summary="识别为 meta 意图",
+                    detail={
+                        "scores": intent_result.scores,
+                        "meta_subtype": intent_result.meta_subtype,
+                    },
+                )
+            )
+            trace.steps.append(
+                TraceStep(
+                    step_id=1,
+                    step_name="实体解析",
+                    agent="EntityAgent",
+                    status="skipped",
+                    input_summary=f"用户输入：{user_input}",
+                    output_summary="",
+                    skip_reason="meta 意图无需实体解析",
+                )
+            )
+            trace.steps.append(
+                TraceStep(
+                    step_id=4,
+                    step_name="图查询",
+                    agent="GraphQueryAgent",
+                    status="skipped",
+                    input_summary="",
+                    output_summary="",
+                    skip_reason="meta 意图无需图查询",
+                )
+            )
+            response = self.response_agent.generate_meta_response(intent_result.meta_subtype)
+            meta_label = {
+                "identity": "返回系统自我介绍",
+                "capability": "返回能力说明",
+                "usage": "返回使用引导",
+                "greeting": "返回问候引导",
+            }.get(intent_result.meta_subtype or "", "返回问候引导")
+            trace.steps.append(
+                TraceStep(
+                    step_id=7,
+                    step_name="响应生成",
+                    agent="ResponseAgent",
+                    status="success",
+                    input_summary=f"meta 子场景：{intent_result.meta_subtype or '（未识别）'}",
+                    output_summary=meta_label,
+                    detail={"summary": response.summary, "meta_subtype": response.meta_subtype},
+                )
+            )
+            return response, trace
+
+        # 2. 实体解析（meta 已短路返回，以下仅非 meta 流程，保持原逻辑不变）
+        entities = self.entity_agent.run(user_input)
 
         # 3. 实体为空 → 判断是否继承上一轮上下文实体
         if not entities:
@@ -198,10 +322,10 @@ class Pipeline:
         intent = intent_result.intent
         assert intent is not None  # need_clarify=False 时 intent 必非 None
 
-        return self._run_with_intent(intent, entities, trace)
+        return self._run_with_intent(intent, entities, trace, backend=backend)
 
     def _run_with_intent(
-        self, intent: Intent, entities: list[str], trace: PipelineTrace
+        self, intent: Intent, entities: list[str], trace: PipelineTrace, backend: str = "local"
     ) -> tuple[AgentResponse, PipelineTrace]:
         """从已知意图 + 实体继续执行：任务分配 → 决策 → 证据加工 → 输出。"""
         # 3. 任务分配：选模板 + 实体兜底
@@ -218,9 +342,12 @@ class Pipeline:
             )
         )
 
-        # 4. 图查询：执行 Cypher 查询（失败则记 failed 并返回 error）
+        # 4. 图查询：按本次 backend 创建 Provider 实例并执行（失败则记 failed 并返回 error）
+        # 使用 create_provider(backend) 而非 self.graph_provider，确保会话内可自由切换数据源，
+        # 且不修改全局 GRAPH_BACKEND 配置；meta / emergency 等已在前面短路，不会到达此处。
         try:
-            steps = self.graph_agent.run(context)
+            provider = create_provider(backend)
+            steps = self.graph_agent.run(provider, context)
         except Exception as exc:  # noqa: BLE001
             error_msg = str(exc)
             trace.steps.append(
@@ -229,7 +356,7 @@ class Pipeline:
                     step_name="图查询",
                     agent="GraphQueryAgent",
                     status="failed",
-                    input_summary=f"执行 Cypher 查询（实体：{', '.join(context.entities) if context.entities else '（无）'}）",
+                    input_summary=f"执行图查询（实体：{', '.join(context.entities) if context.entities else '（无）'}）",
                     output_summary=f"查询异常：{error_msg}",
                     detail={"error": error_msg},
                 )
@@ -249,7 +376,7 @@ class Pipeline:
                 step_name="图查询",
                 agent="GraphQueryAgent",
                 status="success",
-                input_summary=f"执行 Cypher 查询（实体：{', '.join(context.entities) if context.entities else '（无）'}）",
+                input_summary=f"执行图查询（实体：{', '.join(context.entities) if context.entities else '（无）'}）",
                 output_summary=f"命中 {len(steps)} 条关系",
                 detail={"steps": [self._step_to_dict(s) for s in steps]},
             )

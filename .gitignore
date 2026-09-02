@@ -38,3 +38,14 @@ uvicorn_test.py
 
 # 字体样式排查文档（本地分析用，不入库）
 source/design/typography-audit.md
+
+# 设置功能规划文档（本地规划用，不入库）
+.plan/
+
+# 调试 / 临时文件（CDP 抓包、G6 本地副本、坐标调试、临时测试页，均不入库）
+source/design/_cdp_*
+source/design/_g6_local.min.js
+source/design/_graph_coords.js
+source/design/_matched_coords.json
+source/design/_test_g6_local.html
+source/design/_test_mode_graph.html

@@ -42,6 +42,95 @@ class ResponseAgent(Agent):
         )
 
     # ------------------------------------------------------------------
+    # meta 意图：预设回复（不依赖图谱查询）
+    # ------------------------------------------------------------------
+    def generate_meta_response(self, meta_subtype: str | None) -> AgentResponse:
+        """生成 meta 意图的预设回复。
+
+        meta 意图不依赖图谱查询，直接根据子场景类型返回固定文案。
+        子场景类型包括：
+            identity   身份介绍
+            capability 能力说明
+            usage      使用引导
+            greeting   问候响应
+        """
+        from core.schemas import ResponseStatus
+
+        responses = {
+            "identity": (
+                "我是猫传腹知识推理助手，一个不依赖大模型的确定性问答系统。\n"
+                "我会通过知识图谱展示完整的推理链，让每一步都有依据可查。"
+            ),
+            "capability": (
+                "我可以回答猫传腹相关的问题，例如：\n"
+                "· 猫传腹如何诊断？\n"
+                "· 湿性FIP怎么治疗？\n"
+                "· GS-441524有副作用吗？\n"
+                "· 什么是猫传腹？\n"
+                "并且会展示完整的推理路径、证据来源和置信度。"
+            ),
+            "usage": (
+                "你可以直接在下方输入猫传腹相关问题，例如：\n"
+                "“猫传腹如何诊断？”\n"
+                "“湿性FIP怎么治？”\n"
+                "我会给出回答，并展示推理链与执行轨迹。"
+            ),
+            "greeting": (
+                "你好，我在这里。\n"
+                "你可以尝试问我：\n"
+                "“猫传腹如何诊断？”\n"
+                "“湿性FIP怎么治疗？”\n"
+                "我会展示完整的推理过程。"
+            ),
+            "farewell": "不客气，祝你和猫咪健康。如果还有其他问题，随时可以问我。",
+        }
+
+        summary = responses.get(
+            meta_subtype or "",
+            responses["greeting"],
+        )
+
+        return AgentResponse(
+            status=ResponseStatus.OK,
+            summary=summary,
+            groups=[],
+            cards=[],
+            risks=[],
+            entities=[],
+            intent=Intent.META,
+            meta_subtype=meta_subtype,
+            boundary_reason=None,
+            boundary_hint=None,
+            clarify_options=[],
+            error_message="",
+        )
+
+    # ------------------------------------------------------------------
+    # 紧急求助：预设回复（不依赖图谱查询，最高优先级）
+    # ------------------------------------------------------------------
+    def generate_emergency_response(self) -> AgentResponse:
+        """生成 emergency 意图的预设回复。
+
+        emergency 意图不依赖图谱查询，直接返回立即就医提示。
+        """
+        return AgentResponse(
+            status=ResponseStatus.OK,
+            summary=(
+                "请立即联系附近的兽医或前往最近的宠物医院。\n"
+                "如果猫咪正在抽搐、呼吸困难、无法站立或已经失去意识，请不要等待。"
+            ),
+            groups=[],
+            cards=[],
+            risks=[],
+            entities=[],
+            intent=Intent.EMERGENCY,
+            boundary_reason=None,
+            boundary_hint=None,
+            clarify_options=[],
+            error_message="",
+        )
+
+    # ------------------------------------------------------------------
     # 自然语言摘要（意图分派 + 规则模板）
     # ------------------------------------------------------------------
     def _build_summary(

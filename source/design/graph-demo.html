@@ -86,14 +86,16 @@ body{
   padding:16px 24px;gap:16px;flex:none;
 }
 .graph-title{font-size:20px;font-weight:600;color:var(--color-text-main);white-space:nowrap;}
+.graph-title-wrap,.graph-3d-title-wrap{display:flex;flex-direction:row;align-items:center;gap:8px;}
+.backend-status{font-size:10px;color:var(--color-text-secondary);line-height:1.3;}
 /* 图例：画布横向精确居中 */
 .legend{
-  position:absolute;left:50%;transform:translateX(-50%);
+  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
   display:flex;align-items:center;gap:16px;flex-wrap:wrap;flex:none;
 }
 .legend-item{display:flex;align-items:center;gap:6px;height:20px;font-size:12px;color:var(--color-text-secondary);}
 .legend-dot{width:10px;height:10px;border-radius:50%;flex:none;}
-.header-actions{display:flex;align-items:center;gap:6px;margin-left:auto;}
+.header-actions{display:flex;align-items:center;gap:6px;margin-left:auto;transform:translateY(2px);}
 .ghost-btn{
   display:flex;align-items:center;gap:6px;height:36px;padding:0 12px;line-height:1;border:none;background:transparent;
   color:var(--color-text-secondary);font-size:13px;border-radius:var(--radius-sm);cursor:pointer;
@@ -123,7 +125,7 @@ body{
 /* 视口窗口框：覆盖 G6 默认蓝色 outline 为暖灰 #6F6763 */
 .g6-minimap-viewport{outline:2px solid #6F6763!important;}
 .path-banner{
-  position:absolute;top:14px;left:50%;transform:translateX(-50%);
+  position:absolute;top:14px;right:24px;left:auto;transform:none;
   display:none;align-items:center;gap:10px;
   background:var(--color-card);border:1px solid var(--color-border);
   border-radius:var(--radius-pill);padding:6px 8px 6px 14px;
@@ -131,8 +133,7 @@ body{
 }
 .path-banner.show{display:flex;}
 .path-banner .path-tag{
-  font-size:12px;color:var(--color-primary-900);background:var(--color-primary-100);
-  padding:2px 8px;border-radius:var(--radius-pill);font-weight:500;
+  font-size:12px;color:#6B5045;font-weight:600;
 }
 .path-banner .path-info{font-size:12px;color:var(--color-text-secondary);}
 .path-banner button{
@@ -256,11 +257,11 @@ body{
 .graph-3d-title{font-size:20px;font-weight:600;color:var(--color-text-main);}
 /* 图例：画布横向精确居中（与 2D 一致） */
 .graph-3d-legend{
-  position:absolute;left:50%;transform:translateX(-50%);
+  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
   display:flex;align-items:center;gap:16px;flex-wrap:wrap;flex:none;   /* gap 与 2D legend 一致 */
 }
 /* 返回 2D 按钮：与 2D 的 ghost-btn（3D/演示路径）样式一致，无边框透明底 */
-.graph-3d-exit{color:var(--color-text-secondary);}
+.graph-3d-exit{color:var(--color-text-secondary);transform:translateY(2px);}
 .graph-3d-exit:hover{background:var(--color-primary-100);color:var(--color-primary-900);}
 #graph3d-container{flex:1;width:100%;height:100%;}
 /* 只隐藏 three-forcegraph 库的英文操作提示（navInfo 有固定 class scene-nav-info）；
@@ -298,7 +299,10 @@ body{
   <!-- 中间图谱 -->
   <main class="graph-main" id="graphMain">
     <header class="graph-header">
-      <div class="graph-title">猫传腹因果图谱</div>
+      <div class="graph-title-wrap">
+        <div class="graph-title">猫传腹因果图谱</div>
+        <div class="backend-status" id="backendStatus">本地图谱</div>
+      </div>
       <div class="legend" id="typeLegend"></div>
       <div class="header-actions">
         <button class="ghost-btn" id="demoPathBtn">◈ 演示路径</button>
@@ -308,7 +312,7 @@ body{
     <div class="graph-canvas" id="graphCanvas">
       <div id="graph-container"></div>
       <div class="path-banner" id="pathBanner">
-        <span class="path-tag">推理链高亮</span>
+        <span class="path-tag">推理链高亮： </span>
         <span class="path-info" id="pathInfo"></span>
         <button id="exitPathBtn">退出高亮</button>
       </div>
@@ -322,7 +326,10 @@ body{
 <!-- 3D 全屏覆盖层 -->
 <div class="graph-3d-overlay" id="graph3dOverlay">
   <div class="graph-3d-toolbar">
-    <div class="graph-3d-title">猫传腹因果图谱</div>
+    <div class="graph-3d-title-wrap">
+      <div class="graph-3d-title">猫传腹因果图谱</div>
+      <div class="backend-status" id="backendStatus3d">本地图谱</div>
+    </div>
     <div class="graph-3d-legend" id="graph3dLegend"></div>
     <button class="ghost-btn graph-3d-exit" id="btn3dExit">
       <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
@@ -1052,6 +1059,29 @@ document.addEventListener('keydown', e => {
 /* ============ 初始化 ============ */
 renderTypeLegend();
 readUrlPath();
+
+/* ============ 数据源状态指示（仅前端，读 parent.currentBackend） ============ */
+(function(){
+  function applyBackendStatus(mode){
+    var text = (mode === 'neo4j') ? 'Neo4j 云端图谱' : '本地图谱';
+    var el2d = document.getElementById('backendStatus');
+    var el3d = document.getElementById('backendStatus3d');
+    if (el2d) el2d.textContent = text;
+    if (el3d) el3d.textContent = text;
+  }
+  var mode = 'local';
+  try { if (window.parent && typeof window.parent.currentBackend === 'function') mode = window.parent.currentBackend(); } catch(e) {}
+  applyBackendStatus(mode);
+  try {
+    if (window.parent && window.parent.addEventListener) {
+      window.parent.addEventListener('backendchange', function(){
+        var m = 'local';
+        try { if (typeof window.parent.currentBackend === 'function') m = window.parent.currentBackend(); } catch(e) {}
+        applyBackendStatus(m);
+      });
+    }
+  } catch(e) {}
+})();
 
 /* 全局自定义 tooltip（替代 title） */
 (function(){

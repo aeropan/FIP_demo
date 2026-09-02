@@ -3,17 +3,38 @@ core.config —— 集中配置与规则数据。
 
 本模块是纯数据层，集中存放：
 1. 实体别名映射表（口语 → 图谱标准实体名）
-2. 意图关键词表与打分参数
+2. 意图关键词表与打分参数（含 meta 系统自身意图）
 3. 澄清候选的意图 → 中文标签映射
 4. 查询兜底（risk 默认药物）
 5. 极性 / 置信度 → 语义颜色映射（设计原则：绿/红/灰标注正负向）
 6. 边界 / 风险话术常量
 
 约定：本模块中意图相关字典的键（"concept" / "diagnosis" / "treatment" /
-"risk" / "general"）与 core.schemas.Intent 的 value 一一对应。
+"risk" / "general" / "meta"）与意图识别各层一一对应；其中前五个为医学意图，
+与 core.schemas.Intent 的 value 对应，meta 为系统自身意图（身份/能力/使用/
+问候），不参与医学推理路径。
 """
 
 from __future__ import annotations
+
+import os
+from pathlib import Path
+
+from dotenv import load_dotenv
+
+# 提前加载 .env，确保本模块通过 os.getenv 读取飞书配置前环境变量已就绪。
+# （core/db.py 也会加载，这里提前以消除导入顺序隐患）
+load_dotenv(Path(__file__).resolve().parent.parent / ".env")
+
+# ---------------------------------------------------------------------------
+# 0. 图数据后端选择（local / neo4j）
+#
+# 默认 "local"：使用本地 NetworkX 内存图（data/knowledge_graph.json），
+# 无需连接 Neo4j，适合国内部署 / ModelScope 等无外网环境。
+# 设为 "neo4j" 时切换为云端图数据库（需配置 NEO4J_URI / NEO4J_USERNAME / NEO4J_PASSWORD）。
+# Pipeline 通过 core.providers.factory.get_graph_provider() 读取该配置。
+# ---------------------------------------------------------------------------
+GRAPH_BACKEND = os.getenv("GRAPH_BACKEND", "local")  # local / neo4j
 
 # ---------------------------------------------------------------------------
 # 1. 实体别名映射表
@@ -63,6 +84,13 @@ ALIASES_BY_LENGTH_DESC: list[str] = sorted(ALIAS_MAP.keys(), key=len, reverse=Tr
 # ---------------------------------------------------------------------------
 # 2. 意图识别：关键词表与打分参数
 # ---------------------------------------------------------------------------
+# 紧急求助意图关键词（独立意图，最高权重，排序时优先于一切其他意图）
+EMERGENCY_KEYWORDS: list[str] = [
+    "快不行了", "快死了", "不行了", "快不行",
+    "很危险", "紧急", "救救它", "救命",
+    "呼吸微弱", "没反应了", "抽搐不止",
+]
+
 INTENT_KEYWORDS: dict[str, list[str]] = {
     "diagnosis": [
         "诊断", "确诊", "判断", "筛查", "金标准",
@@ -80,10 +108,18 @@ INTENT_KEYWORDS: dict[str, list[str]] = {
         "是什么", "机制", "原理", "病因", "区别", "怎么导致",
         "什么是", "咋回事", "为什么得", "怎么会得", "原因", "传染吗",
     ],
+    "meta": [
+        "你是谁", "你是什么", "介绍一下你自己",
+        "你能干什么", "你会什么", "有什么功能",
+        "怎么用", "如何使用", "怎么使用", "帮助",
+        "你好", "在吗", "hello", "测试", "谢谢", "感谢", "再见", "拜拜", "好的",
+    ],
+    "emergency": EMERGENCY_KEYWORDS,
 }
 
 # 每组关键词按长度从长到短排序，供意图识别实现"最长关键词优先"，
 # 避免短关键词重复命中长关键词内部子串（如 "安全" vs "安全吗"）。
+# 注意：该派生字典由 INTENT_KEYWORDS 生成，新增 "meta" 键后会自动纳入。
 INTENT_KEYWORDS_BY_LENGTH_DESC: dict[str, list[str]] = {
     intent: sorted(keywords, key=len, reverse=True)
     for intent, keywords in INTENT_KEYWORDS.items()
@@ -92,8 +128,23 @@ INTENT_KEYWORDS_BY_LENGTH_DESC: dict[str, list[str]] = {
 # 每个关键词的权重（统一为 10）
 INTENT_KEYWORD_WEIGHT = 10
 
+# meta 意图使用较低权重，确保医学意图优先
+META_KEYWORD_WEIGHT = 5
+
+# 紧急求助意图使用最高权重，排序时优先于一切其他意图
+EMERGENCY_KEYWORD_WEIGHT = 20
+
 # 最高分与次高分差值小于等于该阈值时，判定意图不明确，需要澄清
 CLARIFY_THRESHOLD = 2
+
+# meta 意图内部的子场景关键词映射
+META_SUBTYPE_KEYWORDS: dict[str, list[str]] = {
+    "identity": ["你是谁", "你是什么", "介绍一下你自己"],
+    "capability": ["你能干什么", "你会什么", "有什么功能"],
+    "usage": ["怎么用", "如何使用", "怎么使用", "帮助"],
+    "greeting": ["你好", "在吗", "hello", "测试"],
+    "farewell": ["谢谢", "感谢", "再见", "拜拜", "好的"],
+}
 
 
 # ---------------------------------------------------------------------------
@@ -142,3 +193,17 @@ BOUNDARY_MESSAGE = "当前知识库暂无该路径，建议咨询兽医。"
 
 # 低置信度 / 争议关系附注（设计原则：证据有限，仅供参考）
 LOW_CONFIDENCE_NOTE = "证据有限，仅供参考。"
+
+# ---------------------------------------------------------------------------
+# 7. 飞书多维表格日志配置
+#
+# 用于把访问行为与用户反馈写入飞书多维表格（国内可直连，不依赖外部数据库）。
+# 所有值从环境变量读取，默认空字符串；APP_ID / APP_SECRET 任一为空时，
+# FeishuLogger 整体 no-op，不影响主流程。
+# 列名必须与用户在飞书多维表格实际创建的列名完全一致（已确认为中文文本列）。
+# ---------------------------------------------------------------------------
+FEISHU_APP_ID = os.getenv("FEISHU_APP_ID", "")
+FEISHU_APP_SECRET = os.getenv("FEISHU_APP_SECRET", "")
+FEISHU_APP_TOKEN = os.getenv("FEISHU_APP_TOKEN", "")            # 多维表格 app_token
+FEISHU_BEHAVIOR_TABLE_ID = os.getenv("FEISHU_BEHAVIOR_TABLE_ID", "")    # 运行日志表
+FEISHU_FEEDBACK_TABLE_ID = os.getenv("FEISHU_FEEDBACK_TABLE_ID", "")   # 用户反馈表
