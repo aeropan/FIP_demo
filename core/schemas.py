@@ -29,6 +29,14 @@ class Intent(str, Enum):
     META = "meta"  # 新增：系统自我认知 / 使用引导 / 问候等意图
     EMERGENCY = "emergency"  # 新增：紧急求助意图（最高优先级，直接返回就医提示）
 
+    # —— 细分意图（精准度优化：提升问答针对性）——
+    DIAGNOSIS_INQUIRY = "diagnosis_inquiry"       # 症状可能性判断
+    SYMPTOM_FEATURE = "symptom_feature"           # 症状/指标特征确认
+    DIAGNOSTIC_TEST = "diagnostic_test"           # 检查指标解读
+    RISK_FACTORS = "risk_factors"                 # 风险因素查询
+    DIFFERENTIAL_DIAGNOSIS = "differential_diagnosis"  # 鉴别诊断
+    DRUG_INFO = "drug_info"                       # 药物关联信息
+
 
 class ResponseStatus(str, Enum):
     """Pipeline 最终响应的状态。"""

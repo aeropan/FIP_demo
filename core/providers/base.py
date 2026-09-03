@@ -91,6 +91,118 @@ class GraphProvider(ABC):
         raise NotImplementedError
 
     @abstractmethod
+    def query_diagnosis_inquiry(self, entities: list[str]) -> list[ReasoningStep]:
+        """查询症状 / 体征指向疑似 FIP 的表现关系，用于症状可能性判断。
+
+        围绕给定实体，返回「实体 --[表现为]--> 疑似*」以及「实体直接指向确诊
+        FIP（湿性 / 干性）的 表现为 / 诊断于」关系，帮助回答「该症状是否可能
+        是传腹」这类判断性问题。
+
+        Args:
+            entities: 用户问题中解析到的症状 / 体征实体名列表。
+
+        Returns:
+            list[ReasoningStep]: 症状可能性判断所需的推理关系列表。
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def query_symptom_feature(self, entities: list[str]) -> list[ReasoningStep]:
+        """查询指定症状 / 指标与 FIP 之间的表现为 / 诊断于关系，用于特征确认。
+
+        围绕给定实体，返回「实体 --[表现为|诊断于]--> 确诊 FIP 或 疑似*」关系，
+        帮助回答「腹水是不是传腹的特征」这类特征确认问题。
+
+        Args:
+            entities: 用户问题中解析到的症状 / 指标实体名列表。
+
+        Returns:
+            list[ReasoningStep]: 特征确认所需的推理关系列表。
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def query_diagnostic_test(self, entities: list[str]) -> list[ReasoningStep]:
+        """查询检查指标与疑似 / 确诊 FIP 之间的诊断关系，用于指标解读。
+
+        围绕给定实体，返回「指标 --[诊断于]--> 疑似* 或 确诊 FIP」关系，帮助
+        回答「白球比 0.5 是不是传腹」这类指标解读问题。
+
+        Args:
+            entities: 用户问题中解析到的检验 / 检查指标实体名列表。
+
+        Returns:
+            list[ReasoningStep]: 指标解读所需的推理关系列表。
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def query_risk_factors(self, entities: list[str]) -> list[ReasoningStep]:
+        """查询影响康复 / 复发的风险因素关系。
+
+        返回关系类型为 影响 / 导致，且目标为预后节点（康复 / 死亡 / 复发）或
+        源为风险因素节点（体重增加 / 血脑屏障 / 病毒载量 / 长期免疫抑制 / 耐药性变异
+        等）的边。entities 非空时优先返回与这些实体相关的风险边；为空时返回全量。
+
+        Args:
+            entities: 用户问题中解析到的实体名列表；为空表示返回全量风险因素。
+
+        Returns:
+            list[ReasoningStep]: 风险因素所需的推理关系列表。
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def query_differential_diagnosis(self, entities: list[str]) -> list[ReasoningStep]:
+        """查询疑似 FIP 需要排除的其他疾病关系。
+
+        返回源为疑似*节点、关系为 影响、目标以「排除」开头的边（即鉴别诊断中
+        需排除的其他疾病）。本方法不依赖具体实体，可直接全量查询。
+
+        Args:
+            entities: 当前预留参数（本方法按全量鉴别诊断关系返回，不按实体过滤）。
+
+        Returns:
+            list[ReasoningStep]: 鉴别诊断所需的排除关系列表。
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def query_drug_info(self, entities: list[str]) -> list[ReasoningStep]:
+        """查询药物与 FIP 之间的治疗关系，用于药物关联信息。
+
+        围绕给定实体：若实体为药物名（如 GS-441524），返回其出向 治疗于 边；
+        若实体为疾病名，返回以该疾病为目标节点的 治疗于 边（对应药物）。
+
+        Args:
+            entities: 用户问题中解析到的实体名列表（可能为药物名或疾病名）。
+
+        Returns:
+            list[ReasoningStep]: 药物关联信息所需的推理关系列表。
+        """
+        raise NotImplementedError
+
+    def query_multihop_path(
+        self, source: str, target: str, max_hops: int = 3
+    ) -> list[ReasoningStep]:
+        """查询 source 到 target 的多跳间接关联路径（默认空实现）。
+
+        仅 LocalGraphProvider 实现了基于 NetworkX 简单路径 + 传递规则
+        （core.config.TRANSITIVE_RULES / ALLOWED_PATH_RELATION_TYPES）的多跳推理；
+        抽象基类提供默认空实现，便于其它后端（如 Neo4j）在尚未实现时调用不报错，
+        调用方应将其作为「尽力而为」的间接推理补充，命中为空时回退到边界逻辑。
+
+        Args:
+            source: 起始实体名。
+            target: 目标实体名。
+            max_hops: 最大跳数，默认 3。
+
+        Returns:
+            list[ReasoningStep]: 多跳路径上的有序关系；默认实现返回空列表。
+        """
+        return []
+
+    @abstractmethod
     def get_full_graph(self) -> dict[str, Any]:
         """返回全量图谱数据。
 

@@ -2042,7 +2042,7 @@ function logPageView() {
     eyeOff: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>'
   };
 
-  var st = { panelOpen: false, modalOpen: false, modalReturnToPanel: false, bridgeMode: 'networkx', pwdAction: null };
+  var st = { panelOpen: false, modalOpen: false, modalReturnToPanel: false, bridgeMode: 'networkx', pwdAction: null, watermarked: true };
 
   /* ---------- 设置面板 ---------- */
   function getAnchor() {
@@ -2499,11 +2499,12 @@ function logPageView() {
             }
             if (action === 'unwatermark') {
             replaceModalContent(
-              confirmHtml('确认去除水印？', '操作后将移除页面水印，此操作无法撤销。', '确认去水印'),
+              confirmHtml('确认去除水印？', '操作后将移除页面水印，并解除图数据库 / 文献库 / 设计说明的复制限制，此操作无法撤销。', '确认去水印'),
               function (r2) {
                 r2.querySelector('[data-st-x]').addEventListener('click', closeModal);
                 r2.querySelector('[data-st-ok]').addEventListener('click', function () {
                   closeModal(true);
+                  setWatermarked(false);
                   showToast('已去除水印', 'success');
                 });
               }
@@ -2516,6 +2517,114 @@ function logPageView() {
         });
       }
     });
+  }
+
+  /* ===== 隐私保护：默认水印 + iframe 禁复制（主页/对话始终可复制；去水印为一次性密码操作） ===== */
+  var WM_TEXT = '潘页冰 个人MVP项目';
+  var PRIVACY_KEY = 'fip_privacy';
+  var wmEl = null;
+
+  function buildWatermarkBg() {
+    var svg = "<svg xmlns='http://www.w3.org/2000/svg' width='260' height='150'>" +
+      "<text x='8' y='82' font-family='sans-serif' font-size='15' fill='rgba(62,56,54,0.10)' transform='rotate(-28 130 75)'>" +
+      WM_TEXT + "</text></svg>";
+    return 'url("data:image/svg+xml,' + encodeURIComponent(svg) + '")';
+  }
+
+  function setWatermark(on) {
+    if (on) {
+      if (!wmEl) {
+        wmEl = document.createElement('div');
+        wmEl.className = 'st-watermark';
+        wmEl.style.backgroundImage = buildWatermarkBg();
+        document.body.appendChild(wmEl);
+      }
+    } else if (wmEl) {
+      wmEl.remove();
+      wmEl = null;
+    }
+  }
+
+  function guardHandler(e) {
+    var t = e.target;
+    if (t && t.closest && t.closest('input,textarea')) return; /* 放行输入控件 */
+    e.preventDefault();
+  }
+
+  /* iframe 内注入/撤销禁复制：iframe 不继承父 CSS，必须 JS 直接设 inline style + 事件监听（同源 srcdoc 可访问 contentDocument） */
+  function attachIframeGuard(iframe) {
+    if (!iframe) return;
+    function apply(on) {
+      try {
+        var idoc = iframe.contentDocument;
+        if (!idoc) return;
+        var ib = idoc.body;
+        if (!ib) return;
+        if (on) {
+          if (idoc.__stGuardWired) return;
+          idoc.__stGuardWired = true;
+          ib.style.userSelect = 'none';
+          ib.style.webkitUserSelect = 'none';
+          ib.addEventListener('copy', guardHandler);
+          ib.addEventListener('cut', guardHandler);
+          ib.addEventListener('contextmenu', guardHandler);
+          ib.addEventListener('selectstart', guardHandler);
+        } else {
+          if (!idoc.__stGuardWired) return;
+          idoc.__stGuardWired = false;
+          ib.style.userSelect = '';
+          ib.style.webkitUserSelect = '';
+          ib.removeEventListener('copy', guardHandler);
+          ib.removeEventListener('cut', guardHandler);
+          ib.removeEventListener('contextmenu', guardHandler);
+          ib.removeEventListener('selectstart', guardHandler);
+        }
+      } catch (err) {}
+    }
+    if (iframe.__stGuardAttached) { apply(st.watermarked); return; }
+    iframe.__stGuardAttached = true;
+    if (iframe.contentDocument && iframe.contentDocument.readyState === 'complete') apply(st.watermarked);
+    iframe.addEventListener('load', function () { apply(st.watermarked); });
+  }
+
+  function savePrivacy() {
+    try {
+      localStorage.setItem(PRIVACY_KEY, JSON.stringify({ watermarked: st.watermarked }));
+    } catch (e) {}
+  }
+
+  /* 水印 + iframe 禁复制 统一开关（一次性去水印：on=false 后持久化并隐藏去水印按钮，无恢复入口） */
+  function setWatermarked(on) {
+    st.watermarked = on;
+    setWatermark(on);
+    ['pageGraph', 'pageDocs', 'pageDesign', 'styleDemoFrame', 'designExpandFrame'].forEach(function (id) {
+      var f = document.getElementById(id);
+      if (f) attachIframeGuard(f);
+    });
+    savePrivacy();
+    if (!on) {
+      var uw = settingsEl.querySelector('[data-st-action="unwatermark"]');
+      if (uw) uw.style.display = 'none';
+    }
+  }
+
+  function loadPrivacy() {
+    try {
+      var raw = localStorage.getItem(PRIVACY_KEY);
+      if (raw) {
+        var s = JSON.parse(raw);
+        if (typeof s.watermarked === 'boolean') st.watermarked = s.watermarked;
+      }
+    } catch (e) {}
+    setWatermark(st.watermarked);
+    ['pageGraph', 'pageDocs', 'pageDesign', 'styleDemoFrame', 'designExpandFrame'].forEach(function (id) {
+      var f = document.getElementById(id);
+      if (f) attachIframeGuard(f);
+    });
+    if (!st.watermarked) {
+      var uw = settingsEl.querySelector('[data-st-action="unwatermark"]');
+      if (uw) uw.style.display = 'none';
+    }
   }
 
   /* ---------- 绑定 ---------- */
@@ -2593,6 +2702,7 @@ function logPageView() {
 
     window.addEventListener('resize', function () { if (st.panelOpen) positionPanel(); });
     renderBridge();
+    loadPrivacy(); /* 应用持久化的隐私保护状态（水印 + 禁复制 + iframe 注入） */
   }
 
   bindSettings();
@@ -4124,6 +4234,15 @@ _STYLE_HTML = (
     + "body .st-bridge__seg{flex:1 1 0!important;width:50%!important;min-width:0!important;height:28px!important;display:flex!important;align-items:center!important;justify-content:center!important;padding:0 6px!important;border:none!important;outline:none!important;box-shadow:none!important;border-radius:10px!important;background:transparent!important;color:var(--st-text2)!important;font-size:13px!important;font-weight:500!important;cursor:pointer!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;transition:background 150ms var(--ease),color 150ms var(--ease)!important;}\n"
     + "body .st-bridge__seg:hover{background:var(--st-seg-hover)!important;}\n"
     + "body .st-bridge__seg.is-active{background:var(--st-primary)!important;color:#FFFFFF!important;}\n"
+    + "/* 隐私保护：全屏水印遮罩（z-index 6000 全局最高；pointer-events:none 不挡操作与阅读） */\n"
+    + "body .st-watermark{position:fixed!important;inset:0!important;z-index:6000!important;pointer-events:none!important;background-repeat:repeat!important;}\n"
+    + "/* 设置面板：隐私保护开关 */\n"
+    + "body .st-privacy-row{display:flex!important;align-items:center!important;justify-content:space-between!important;}\n"
+    + "body .st-privacy-row .st-setting__label{margin:0!important;}\n"
+    + "body .st-switch{position:relative!important;display:inline-flex!important;align-items:center!important;width:40px!important;height:22px!important;border-radius:999px!important;background:var(--st-border)!important;cursor:pointer!important;transition:background 150ms var(--ease)!important;flex:0 0 auto!important;}\n"
+    + "body .st-switch.is-on{background:var(--st-primary)!important;}\n"
+    + "body .st-switch__knob{position:absolute!important;top:2px!important;left:2px!important;width:18px!important;height:18px!important;border-radius:999px!important;background:#fff!important;box-shadow:0 1px 3px rgba(62,56,54,0.25)!important;transition:transform 150ms var(--ease)!important;}\n"
+    + "body .st-switch.is-on .st-switch__knob{transform:translateX(18px)!important;}\n"
     + "/* 通用 Modal（居中浮层，共用暖灰遮罩） */\n"
     + "body .st-modal{position:fixed!important;inset:0!important;z-index:4100!important;display:none!important;align-items:center!important;justify-content:center!important;padding:24px!important;}\n"
     + "body .st-modal.is-open{display:flex!important;animation:stFadeIn 180ms var(--ease) both;}\n"

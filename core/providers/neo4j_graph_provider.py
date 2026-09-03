@@ -18,6 +18,15 @@ from core.providers.base import GraphProvider
 from core.schemas import ReasoningStep
 from core import db
 from core import queries
+# 复用 LocalGraphProvider 中定义的意图边匹配规则，确保两种数据源返回一致
+from core.providers.local_graph_provider import (
+    _match_diagnosis_inquiry,
+    _match_symptom_feature,
+    _match_diagnostic_test,
+    _match_risk_factors,
+    _match_differential_diagnosis,
+    _match_drug_info,
+)
 
 # ---------------------------------------------------------------------------
 # 全量图谱查询模板（不修改 core.queries，定义于本文件内）
@@ -97,6 +106,86 @@ class Neo4jGraphProvider(GraphProvider):
     def query_general(self, entities: list[str]) -> list[ReasoningStep]:
         """查询指定实体的一跳关联关系（复用 GENERAL_QUERY）。"""
         return db.run_query(queries.GENERAL_QUERY, list(entities))
+
+    # ------------------------------------------------------------------
+    # 细分意图查询方法
+    #
+    # 策略：复用 FULL_GRAPH_QUERY 获取全量关系（数据量小，无需维护多个 Cypher），
+    # 再在 Python 中套用与 LocalGraphProvider 完全相同的 _match_* 规则过滤，
+    # 保证两种数据源返回结构一致。ReasoningStep 已按 (source,rel,target) 去重。
+    # ------------------------------------------------------------------
+    def _fetch_all_steps(self) -> list[ReasoningStep]:
+        """获取全量关系（已按 (source,rel,target) 去重）。"""
+        return db.run_query(FULL_GRAPH_QUERY, [])
+
+    @staticmethod
+    def _dedupe(steps: list[ReasoningStep]) -> list[ReasoningStep]:
+        """按 (source, rel, target) 去重，与 LocalGraphProvider._deduplicate 一致。"""
+        seen: set[tuple[str, str, str]] = set()
+        result: list[ReasoningStep] = []
+        for s in steps:
+            key = (s.source, s.rel, s.target)
+            if key in seen:
+                continue
+            seen.add(key)
+            result.append(s)
+        return result
+
+    def query_diagnosis_inquiry(self, entities: list[str]) -> list[ReasoningStep]:
+        """症状可能性判断：症状 --[表现为]--> 疑似* 或 --[表现为|诊断于]--> 确诊FIP。"""
+        entity_set = set(entities)
+        return [
+            s for s in self._fetch_all_steps()
+            if s.source in entity_set
+            and _match_diagnosis_inquiry(s.source, s.rel, s.target)
+        ]
+
+    def query_symptom_feature(self, entities: list[str]) -> list[ReasoningStep]:
+        """特征确认：实体 --[表现为|诊断于]--> 确诊FIP / 疑似*。"""
+        entity_set = set(entities)
+        return [
+            s for s in self._fetch_all_steps()
+            if s.source in entity_set
+            and _match_symptom_feature(s.source, s.rel, s.target)
+        ]
+
+    def query_diagnostic_test(self, entities: list[str]) -> list[ReasoningStep]:
+        """指标解读：指标 --[诊断于]--> 确诊FIP / 疑似*。"""
+        entity_set = set(entities)
+        return [
+            s for s in self._fetch_all_steps()
+            if s.source in entity_set
+            and _match_diagnostic_test(s.source, s.rel, s.target)
+        ]
+
+    def query_risk_factors(self, entities: list[str]) -> list[ReasoningStep]:
+        """风险因素：影响/导致 且 目标预后 或 源风险源；entities 非空时按实体过滤。"""
+        entity_set = set(entities)
+        out: list[ReasoningStep] = []
+        for s in self._fetch_all_steps():
+            if not _match_risk_factors(s.source, s.rel, s.target):
+                continue
+            if entity_set and (s.source not in entity_set and s.target not in entity_set):
+                continue
+            out.append(s)
+        return out
+
+    def query_differential_diagnosis(self, entities: list[str]) -> list[ReasoningStep]:
+        """鉴别诊断：疑似* --[影响]--> 排除*（不依赖具体实体，直接全量返回）。"""
+        return [
+            s for s in self._fetch_all_steps()
+            if _match_differential_diagnosis(s.source, s.rel, s.target)
+        ]
+
+    def query_drug_info(self, entities: list[str]) -> list[ReasoningStep]:
+        """药物关联：实体参与 治疗于 边（药物→疾病 或 疾病→药物 均覆盖）。"""
+        entity_set = set(entities)
+        out: list[ReasoningStep] = []
+        for entity in entity_set:
+            for s in self._fetch_all_steps():
+                if _match_drug_info(s.source, s.rel, s.target, entity):
+                    out.append(s)
+        return self._dedupe(out)
 
     def get_full_graph(self) -> dict[str, Any]:
         """返回全量图谱数据（nodes / edges）。

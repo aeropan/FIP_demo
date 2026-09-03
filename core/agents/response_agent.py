@@ -12,6 +12,17 @@ from core.schemas import (
     RiskFlag,
 )
 
+# 确诊 FIP 节点集合（与 core.providers.local_graph_provider._FIP_CONFIRMED 保持一致，
+# 用于 diagnosis_inquiry 在命中"疑似"步骤之外的兜底判断）。
+_FIP_CONFIRMED = {
+    "湿性猫传染性腹膜炎（湿性FIP）",
+    "干性猫传染性腹膜炎（干性FIP）",
+    "复发性猫传染性腹膜炎",
+}
+
+# 置信度展示排序权重（High > Medium > Low），用于"选置信度最高一条"。
+_CONFIDENCE_RANK = {"High": 3, "Medium": 2, "Low": 1}
+
 
 class ResponseAgent(Agent):
     """生成自然语言摘要与推理链卡片，组装最终 AgentResponse。
@@ -124,6 +135,302 @@ class ResponseAgent(Agent):
             risks=[],
             entities=[],
             intent=Intent.EMERGENCY,
+            boundary_reason=None,
+            boundary_hint=None,
+            clarify_options=[],
+            error_message="",
+        )
+
+    # ------------------------------------------------------------------
+    # 细分意图：结论式回复（不依赖图谱分组，直接从 ReasoningStep 抽取）
+    #
+    # 以下六个方法接收 Provider 专用查询方法返回的 list[ReasoningStep]，
+    # 基于规则生成具有明确结论的回答（不调用大模型）。回复中的关系类型与实体
+    # 名称均来自图谱数据，不编造。
+    # ------------------------------------------------------------------
+    @staticmethod
+    def _confidence_rank(step) -> int:
+        """置信度展示排序权重（High > Medium > Low）。"""
+        return _CONFIDENCE_RANK.get(getattr(step, "confidence", ""), 0)
+
+    @staticmethod
+    def _steps_to_cards(steps: list) -> list[dict]:
+        """把 list[ReasoningStep] 渲染为与现有 _build_cards 一致的卡片结构。"""
+        step_dicts = []
+        for s in steps:
+            step_dicts.append(
+                {
+                    "source": s.source,
+                    "rel": s.rel,
+                    "target": s.target,
+                    "polarity": s.polarity,
+                    "polarity_color": config.POLARITY_COLOR.get(s.polarity, "gray"),
+                    "confidence": s.confidence,
+                    "confidence_color": config.CONFIDENCE_COLOR.get(s.confidence, "gray"),
+                    "evidence": s.evidence,
+                    "flagged": False,
+                }
+            )
+        return [{"key": "reasoning", "label": "推理链路", "steps": step_dicts}]
+
+    def generate_diagnosis_inquiry_response(
+        self, steps: list, entities: list[str]
+    ) -> AgentResponse:
+        """症状可能性判断：从步骤中找 表现为→疑似*，给出"可能"/"确诊"结论。"""
+        suspected = [s for s in steps if s.rel == "表现为" and s.target.startswith("疑似")]
+        if suspected:
+            symptoms = self._dedup([s.source for s in suspected])
+            types = self._dedup([s.target for s in suspected])
+            detail = "；".join(f"{s.source}表现为{s.target}" for s in suspected)
+            summary = (
+                f"你提到的{'、'.join(symptoms)}，在现有知识图谱中与猫传腹"
+                f"（尤其是{'、'.join(types)}）有关联。\n其中，{detail}。"
+                f"\n建议进一步结合白球比、Rivalta试验等指标确诊。"
+            )
+        elif steps:
+            # 命中确诊 FIP 直接关联（表现为 / 诊断于 → 确诊FIP）
+            symptoms = self._dedup([s.source for s in steps])
+            types = self._dedup([s.target for s in steps])
+            summary = (
+                f"你提到的{'、'.join(symptoms)}，在现有知识图谱中直接表现为"
+                f"{'、'.join(types)}。\n建议结合白球比、Rivalta试验等进一步确诊。"
+            )
+        else:
+            summary = (
+                "根据当前知识库，你描述的症状暂未直接对应猫传腹的典型表现。"
+                "建议咨询兽医进行完整检查。"
+            )
+        return AgentResponse(
+            status=ResponseStatus.OK,
+            summary=summary,
+            groups=[],
+            cards=self._steps_to_cards(steps),
+            risks=[],
+            entities=list(entities),
+            intent=Intent.DIAGNOSIS_INQUIRY,
+            boundary_reason=None,
+            boundary_hint=None,
+            clarify_options=[],
+            error_message="",
+        )
+
+    def generate_symptom_feature_response(self, steps: list) -> AgentResponse:
+        """特征确认：选择置信度最高的一条 表现为/诊断于→确诊FIP/疑似*。"""
+        if steps:
+            best = max(steps, key=self._confidence_rank)
+            summary = f"是的，{best.source}是{best.target}的典型{best.rel}。\n依据：{best.evidence}"
+            if best.confidence in ("Medium", "Low"):
+                summary += "\n证据有限，仅供参考。"
+        else:
+            summary = "当前知识库未显示该症状/指标与猫传腹存在直接特征关联。"
+        return AgentResponse(
+            status=ResponseStatus.OK,
+            summary=summary,
+            groups=[],
+            cards=self._steps_to_cards(steps),
+            risks=[],
+            entities=[],
+            intent=Intent.SYMPTOM_FEATURE,
+            boundary_reason=None,
+            boundary_hint=None,
+            clarify_options=[],
+            error_message="",
+        )
+
+    def generate_diagnostic_test_response(self, steps: list) -> AgentResponse:
+        """指标解读：提取 诊断于→确诊FIP/疑似* 的指标与依据。"""
+        matched = [s for s in steps if s.rel == "诊断于"]
+        if matched:
+            best = max(matched, key=self._confidence_rank)
+            summary = f"{best.source}在现有知识图谱中与{best.target}相关。\n依据：{best.evidence}"
+            if best.target.startswith("疑似"):
+                summary += "\n建议结合其他检查进一步确诊。"
+        else:
+            summary = "当前知识库未收录该指标的诊断信息，建议咨询兽医。"
+        return AgentResponse(
+            status=ResponseStatus.OK,
+            summary=summary,
+            groups=[],
+            cards=self._steps_to_cards(steps),
+            risks=[],
+            entities=[],
+            intent=Intent.DIAGNOSTIC_TEST,
+            boundary_reason=None,
+            boundary_hint=None,
+            clarify_options=[],
+            error_message="",
+        )
+
+    def generate_risk_factors_response(self, steps: list) -> AgentResponse:
+        """风险因素：按目标（结局）分组，列出 因素→结果（证据）。
+
+        过滤掉"源实体为确诊FIP疾病节点"的步骤（如 湿性FIP→导致死亡），
+        这类描述的是疾病自身预后，并非外部风险因素，避免误导用户。
+        """
+        if not steps:
+            summary = "当前知识库暂无相关风险因素信息。"
+        else:
+            # 仅保留外部风险因素（源实体不是确诊FIP疾病节点）
+            factor_steps = [s for s in steps if s.source not in _FIP_CONFIRMED]
+            groups_map: dict[str, list] = {}
+            for s in factor_steps:
+                groups_map.setdefault(s.target, []).append(s)
+            # 不利结局优先展示，康复置后
+            priority = ["复发", "死亡", "复发风险", "血药浓度", "药物渗透", "康复"]
+            ordered = sorted(
+                groups_map.keys(),
+                key=lambda t: next((i for i, p in enumerate(priority) if p in t), len(priority)),
+            )
+            lines = []
+            for t in ordered:
+                for s in groups_map[t]:
+                    lines.append(f"· {s.source} → {s.rel}{t}（证据：{s.evidence}）")
+            if lines:
+                summary = (
+                    "根据知识图谱，以下因素可能影响猫传腹的康复或复发：\n"
+                    + "\n".join(lines)
+                )
+            else:
+                summary = "当前知识库暂无相关风险因素信息。"
+        return AgentResponse(
+            status=ResponseStatus.OK,
+            summary=summary,
+            groups=[],
+            cards=self._steps_to_cards(steps),
+            risks=[],
+            entities=[],
+            intent=Intent.RISK_FACTORS,
+            boundary_reason=None,
+            boundary_hint=None,
+            clarify_options=[],
+            error_message="",
+        )
+
+    def generate_differential_diagnosis_response(self, steps: list) -> AgentResponse:
+        """鉴别诊断：提取 疑似*→影响→排除* 的排除疾病列表。"""
+        matched = [
+            s for s in steps
+            if s.source.startswith("疑似") and s.rel == "影响" and s.target.startswith("排除")
+        ]
+        if matched:
+            diseases = self._dedup([s.target[len("排除"):] for s in matched])
+            summary = (
+                "猫传腹在诊断时需要与其他疾病进行鉴别，包括："
+                + "、".join(diseases) + "。"
+            )
+        else:
+            summary = "当前知识库暂无鉴别诊断信息。"
+        return AgentResponse(
+            status=ResponseStatus.OK,
+            summary=summary,
+            groups=[],
+            cards=self._steps_to_cards(steps),
+            risks=[],
+            entities=[],
+            intent=Intent.DIFFERENTIAL_DIAGNOSIS,
+            boundary_reason=None,
+            boundary_hint=None,
+            clarify_options=[],
+            error_message="",
+        )
+
+    def generate_drug_info_response(self, steps: list) -> AgentResponse:
+        """药物关联：提取 治疗于 边，按药物聚合适应症。"""
+        matched = [s for s in steps if s.rel == "治疗于"]
+        if matched:
+            by_drug: dict[str, list[str]] = {}
+            for s in matched:
+                by_drug.setdefault(s.source, []).append(s.target)
+            lines = [
+                f"· {drug}：治疗{'、'.join(self._dedup(diseases))}"
+                for drug, diseases in by_drug.items()
+            ]
+            summary = (
+                "根据知识图谱，以下药物可用于治疗猫传腹：\n" + "\n".join(lines)
+            )
+        else:
+            summary = "当前知识库暂无相关药物信息。"
+        return AgentResponse(
+            status=ResponseStatus.OK,
+            summary=summary,
+            groups=[],
+            cards=self._steps_to_cards(steps),
+            risks=[],
+            entities=[],
+            intent=Intent.DRUG_INFO,
+            boundary_reason=None,
+            boundary_hint=None,
+            clarify_options=[],
+            error_message="",
+        )
+
+    # ------------------------------------------------------------------
+    # 多跳推理：间接关联回复（不依赖分组，直接从有序 ReasoningStep 抽取）
+    #
+    # 用于直接查询失败、转多跳路径命中后的结论式回复。source 为用户询问的
+    # 起始实体，target 为用户想确认关联的目标实体，steps 为路径上的有序边。
+    # 文案基于 steps 真实数据，不编造节点或关系；置信度提示从路径关系数据提取。
+    # intent 可选：第四步接入分流时传入真实意图；缺省为 GENERAL。
+    # ------------------------------------------------------------------
+    def generate_multihop_response(
+        self,
+        source: str,
+        target: str,
+        steps: list,
+        intent: Intent | None = None,
+    ) -> AgentResponse:
+        """多跳/直接路径的结论式回复，展示完整推理链与依据。"""
+        resolved_intent = intent if intent is not None else Intent.GENERAL
+
+        # steps 为空：未找到直接或间接关联，返回边界提示
+        if not steps:
+            return AgentResponse(
+                status=ResponseStatus.BOUNDARY,
+                summary=(
+                    f"当前知识库未显示{source}与{target}存在直接或间接关联。"
+                ),
+                groups=[],
+                cards=[],
+                risks=[],
+                entities=[source, target],
+                intent=resolved_intent,
+                boundary_reason="no_multihop_path",
+                boundary_hint="建议咨询兽医或进行进一步检查。",
+                clarify_options=[],
+                error_message="",
+            )
+
+        # 路径文本：A → B → C → ...（按 steps 顺序拼接节点）
+        path_nodes = [steps[0].source] + [s.target for s in steps]
+        path_text = " → ".join(path_nodes)
+        # 关系描述：A rel B；B rel C；...
+        rel_desc = "；".join(f"{s.source}{s.rel}{s.target}" for s in steps)
+
+        if len(steps) == 1:
+            # 单条边：直接关系
+            summary = (
+                f"{source}与{target}存在直接关联。\n依据：{rel_desc}。"
+            )
+        else:
+            # 多条边：间接关联
+            summary = (
+                f"{source}与{target}存在间接关联。\n"
+                f"推理链：{path_text}\n"
+                f"依据：{rel_desc}。"
+            )
+
+        # 路径上存在低置信度关系时追加提示（证据有限，仅供参考）
+        if any(getattr(s, "confidence", "") == "Low" for s in steps):
+            summary += f"\n{config.LOW_CONFIDENCE_NOTE}"
+
+        return AgentResponse(
+            status=ResponseStatus.OK,
+            summary=summary,
+            groups=[],
+            cards=self._steps_to_cards(steps),
+            risks=[],
+            entities=[source, target],
+            intent=resolved_intent,
             boundary_reason=None,
             boundary_hint=None,
             clarify_options=[],

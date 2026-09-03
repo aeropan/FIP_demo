@@ -23,6 +23,7 @@ from typing import Any
 
 import networkx as nx
 
+from core import config
 from core.providers.base import GraphProvider
 from core.schemas import ReasoningStep
 
@@ -77,6 +78,72 @@ _TREATMENT_RISK_FACTORS = {
     ("耐药性变异", "死亡"),
     ("病毒载量", "康复"),
 }
+
+# ---------------------------------------------------------------------------
+# 细分意图查询：固定集合与边匹配规则
+#
+# 以下常量与 _match_* 函数为 Local / Neo4j 两套 Provider 共用的"结构过滤规则"，
+# 确保同一意图在两种数据源下返回一致的关系集合（仅数据来源不同）。
+# 节点名以知识图谱 data/knowledge_graph.json 中的实际命名为准：
+#   - "疑似*" 节点：疑似猫传染性腹膜炎 / 疑似湿性猫传染性腹膜炎 / 疑似干性猫传染性腹膜炎
+#   - 确诊 FIP：湿性猫传染性腹膜炎（湿性FIP）/ 干性猫传染性腹膜炎（干性FIP）/ 复发性猫传染性腹膜炎
+#   - 预后节点：康复 / 死亡 / 复发 / 复发风险
+# ---------------------------------------------------------------------------
+_FIP_CONFIRMED = {
+    "湿性猫传染性腹膜炎（湿性FIP）",
+    "干性猫传染性腹膜炎（干性FIP）",
+    "复发性猫传染性腹膜炎",
+}
+_PROGNOSTIC_OUTCOMES = {"康复", "死亡", "复发", "复发风险"}
+# 影响康复 / 复发的风险因素源节点
+_RISK_FACTOR_SOURCES = {
+    "体重增加", "血脑屏障", "病毒载量", "长期免疫抑制", "耐药性变异", "病毒清除不全",
+}
+# 已知药物实体（用于 drug_info 判断实体是药物还是疾病）
+_DRUG_NAMES = {"GS-441524", "GC376", "瑞德西韦", "莫努匹拉韦"}
+
+# 置信度排序权重（用于多跳路径择优：跳数相同时总分高优先）
+_CONF_RANK = {"High": 3, "Medium": 2, "Low": 1}
+
+
+def _match_diagnosis_inquiry(source: str, rel: str, target: str) -> bool:
+    """症状可能性判断：实体 --[表现为]--> 疑似*，或实体 --[表现为|诊断于]--> 确诊FIP。"""
+    if rel == "表现为" and target.startswith("疑似"):
+        return True
+    if rel in ("表现为", "诊断于") and target in _FIP_CONFIRMED:
+        return True
+    return False
+
+
+def _match_symptom_feature(source: str, rel: str, target: str) -> bool:
+    """特征确认：实体 --[表现为|诊断于]--> 确诊FIP 或 疑似*。"""
+    return rel in ("表现为", "诊断于") and (
+        target in _FIP_CONFIRMED or target.startswith("疑似")
+    )
+
+
+def _match_diagnostic_test(source: str, rel: str, target: str) -> bool:
+    """指标解读：指标 --[诊断于]--> 确诊FIP 或 疑似*。"""
+    return rel == "诊断于" and (target in _FIP_CONFIRMED or target.startswith("疑似"))
+
+
+def _match_risk_factors(source: str, rel: str, target: str) -> bool:
+    """风险因素：影响/导致 且 目标为预后节点 或 源为风险源节点。"""
+    if rel not in ("影响", "导致"):
+        return False
+    return target in _PROGNOSTIC_OUTCOMES or source in _RISK_FACTOR_SOURCES
+
+
+def _match_differential_diagnosis(source: str, rel: str, target: str) -> bool:
+    """鉴别诊断：疑似* --[影响]--> 排除*。"""
+    return source.startswith("疑似") and rel == "影响" and target.startswith("排除")
+
+
+def _match_drug_info(source: str, rel: str, target: str, entity: str) -> bool:
+    """药物关联：实体参与 治疗于 边（实体为药物或疾病均覆盖）。"""
+    if rel != "治疗于":
+        return False
+    return source == entity or target == entity
 
 
 class LocalGraphProvider(GraphProvider):
@@ -276,6 +343,145 @@ class LocalGraphProvider(GraphProvider):
             # 入向边
             for u, _, d in self.graph.in_edges(entity, data=True):
                 steps.append(self._edge_to_step(u, entity, d))
+        return self._deduplicate(steps)
+
+    # ------------------------------------------------------------------
+    # 多跳推理查询方法
+    # ------------------------------------------------------------------
+    def query_multihop_path(
+        self, source: str, target: str, max_hops: int = 3
+    ) -> list[ReasoningStep]:
+        """多跳推理：直接关系不存在时，查找符合传递规则的多跳路径。
+
+        仅读取本地图数据，不修改任何现有逻辑。返回从 source 到 target 的合法
+        路径上的所有 ReasoningStep（有序）。找不到合法路径则返回空列表。
+
+        规则（来自 core.config）：
+          - 路径每一步的关系类型须在 ALLOWED_PATH_RELATION_TYPES 中；
+          - 每对连续关系 (rel_i, rel_{i+1}) 须在 TRANSITIVE_RULES 中且 allowed=True。
+        多条合法路径时：跳数最少优先；跳数相同则关系置信度总和最高优先。
+        """
+        if not (self.graph.has_node(source) and self.graph.has_node(target)):
+            return []
+
+        # 1) 直接边：存在则直接返回（不受多跳白名单限制）
+        if self.graph.has_edge(source, target):
+            return [self._edge_to_step(source, target, self.graph[source][target])]
+
+        # 2) 查找所有简单路径（跳数 <= max_hops）
+        try:
+            all_paths = list(
+                nx.all_simple_paths(
+                    self.graph, source=source, target=target, cutoff=max_hops
+                )
+            )
+        except nx.NodeNotFound:
+            return []
+
+        valid_paths: list[list[str]] = []
+        for path in all_paths:
+            rels = [
+                self.graph[path[i]][path[i + 1]].get("rel", "?")
+                for i in range(len(path) - 1)
+            ]
+            # 每步关系类型必须在白名单内
+            if not all(rel in config.ALLOWED_PATH_RELATION_TYPES for rel in rels):
+                continue
+            # 每对连续关系必须可传递
+            if len(rels) >= 2 and not all(
+                config.TRANSITIVE_RULES.get((rels[i], rels[i + 1]), {}).get(
+                    "allowed", False
+                )
+                for i in range(len(rels) - 1)
+            ):
+                continue
+            valid_paths.append(path)
+
+        if not valid_paths:
+            return []
+
+        # 3) 选最优：跳数最少 → 关系置信度总和最高
+        def _path_score(path: list[str]) -> tuple[int, int]:
+            total = 0
+            for i in range(len(path) - 1):
+                d = self.graph[path[i]][path[i + 1]]
+                total += _CONF_RANK.get(d.get("confidence", "Medium"), 2)
+            return (len(path), -total)  # 跳数少优先；同跳数总分高优先
+
+        best = min(valid_paths, key=_path_score)
+
+        steps: list[ReasoningStep] = []
+        for i in range(len(best) - 1):
+            u, v = best[i], best[i + 1]
+            steps.append(self._edge_to_step(u, v, self.graph[u][v]))
+        return steps
+
+    # ------------------------------------------------------------------
+    # 细分意图查询方法
+    # ------------------------------------------------------------------
+    def query_diagnosis_inquiry(self, entities: list[str]) -> list[ReasoningStep]:
+        """症状可能性判断：症状 --[表现为]--> 疑似* 或 --[表现为|诊断于]--> 确诊FIP。"""
+        entity_set = set(entities)
+        steps: list[ReasoningStep] = []
+        for u, v, d in self.graph.edges(data=True):
+            if u in entity_set and _match_diagnosis_inquiry(u, d.get("rel"), v):
+                steps.append(self._edge_to_step(u, v, d))
+        return self._deduplicate(steps)
+
+    def query_symptom_feature(self, entities: list[str]) -> list[ReasoningStep]:
+        """特征确认：实体 --[表现为|诊断于]--> 确诊FIP / 疑似*。"""
+        entity_set = set(entities)
+        steps: list[ReasoningStep] = []
+        for u, v, d in self.graph.edges(data=True):
+            if u in entity_set and _match_symptom_feature(u, d.get("rel"), v):
+                steps.append(self._edge_to_step(u, v, d))
+        return self._deduplicate(steps)
+
+    def query_diagnostic_test(self, entities: list[str]) -> list[ReasoningStep]:
+        """指标解读：指标 --[诊断于]--> 确诊FIP / 疑似*。"""
+        entity_set = set(entities)
+        steps: list[ReasoningStep] = []
+        for u, v, d in self.graph.edges(data=True):
+            if u in entity_set and _match_diagnostic_test(u, d.get("rel"), v):
+                steps.append(self._edge_to_step(u, v, d))
+        return self._deduplicate(steps)
+
+    def query_risk_factors(self, entities: list[str]) -> list[ReasoningStep]:
+        """风险因素：影响/导致 且 目标预后 或 源风险源；entities 非空时按实体过滤。"""
+        entity_set = set(entities)
+        steps: list[ReasoningStep] = []
+        for u, v, d in self.graph.edges(data=True):
+            if not _match_risk_factors(u, d.get("rel"), v):
+                continue
+            # entities 非空时，仅保留与该实体相关的风险边（源或目标命中）
+            if entity_set and (u not in entity_set and v not in entity_set):
+                continue
+            steps.append(self._edge_to_step(u, v, d))
+        return self._deduplicate(steps)
+
+    def query_differential_diagnosis(self, entities: list[str]) -> list[ReasoningStep]:
+        """鉴别诊断：疑似* --[影响]--> 排除*（不依赖具体实体，直接全量返回）。"""
+        steps: list[ReasoningStep] = []
+        for u, v, d in self.graph.edges(data=True):
+            if _match_differential_diagnosis(u, d.get("rel"), v):
+                steps.append(self._edge_to_step(u, v, d))
+        return self._deduplicate(steps)
+
+    def query_drug_info(self, entities: list[str]) -> list[ReasoningStep]:
+        """药物关联：实体参与 治疗于 边（药物→疾病 或 疾病→药物 均覆盖）。"""
+        entity_set = set(entities)
+        steps: list[ReasoningStep] = []
+        for entity in entity_set:
+            if not self.graph.has_node(entity):
+                continue
+            # 实体为药物：出向 治疗于
+            for _, v, d in self.graph.out_edges(entity, data=True):
+                if _match_drug_info(entity, d.get("rel"), v, entity):
+                    steps.append(self._edge_to_step(entity, v, d))
+            # 实体为疾病：入向 治疗于
+            for u, _, d in self.graph.in_edges(entity, data=True):
+                if _match_drug_info(u, d.get("rel"), entity, entity):
+                    steps.append(self._edge_to_step(u, entity, d))
         return self._deduplicate(steps)
 
     # ------------------------------------------------------------------

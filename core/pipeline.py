@@ -17,6 +17,7 @@ from core.schemas import (
     AgentResponse,
     Intent,
     PipelineTrace,
+    ReasoningGroup,
     ResponseStatus,
     TraceStep,
 )
@@ -31,6 +32,27 @@ _PIPELINE_STAGES = [
     (6, "风险标记", "RiskAgent"),
     (7, "响应生成", "ResponseAgent"),
 ]
+
+# 细分意图（精准度优化）：识别到这些意图时，绕过通用模板，直接调用 Provider
+# 专用查询方法 + ResponseAgent 专用结论式回复，而非走 EvidenceAgent 分组路径。
+_SPECIAL_INTENTS = {
+    Intent.DIAGNOSIS_INQUIRY,
+    Intent.SYMPTOM_FEATURE,
+    Intent.DIAGNOSTIC_TEST,
+    Intent.RISK_FACTORS,
+    Intent.DIFFERENTIAL_DIAGNOSIS,
+    Intent.DRUG_INFO,
+}
+
+# 细分意图 → 轨迹面板中文名称（意图识别 / 响应生成步骤显示用）
+_INTENT_DISPLAY_NAME = {
+    Intent.DIAGNOSIS_INQUIRY: "诊断可能性判断",
+    Intent.SYMPTOM_FEATURE: "特征确认",
+    Intent.DIAGNOSTIC_TEST: "指标解读",
+    Intent.RISK_FACTORS: "风险因素查询",
+    Intent.DIFFERENTIAL_DIAGNOSIS: "鉴别诊断",
+    Intent.DRUG_INFO: "药物关联查询",
+}
 
 
 def _parse_composite_input(user_input: str) -> tuple[Intent, list[str]] | None:
@@ -296,7 +318,9 @@ class Pipeline:
                 status="success",
                 input_summary=f"用户输入：{user_input}",
                 output_summary=(
-                    f"识别意图：{intent_result.intent.value}"
+                    f"识别为{_INTENT_DISPLAY_NAME[intent_result.intent]}（{intent_result.intent.value}）"
+                    if intent_result.intent in _SPECIAL_INTENTS
+                    else f"识别意图：{intent_result.intent.value}"
                     if intent_result.intent
                     else "意图不明确，需澄清"
                 ),
@@ -321,6 +345,10 @@ class Pipeline:
 
         intent = intent_result.intent
         assert intent is not None  # need_clarify=False 时 intent 必非 None
+
+        # 细分意图：专用查询 + 专用结论式回复（绕过通用模板与证据分组）
+        if intent in _SPECIAL_INTENTS:
+            return self._run_with_special_intent(intent, entities, trace, backend=backend)
 
         return self._run_with_intent(intent, entities, trace, backend=backend)
 
@@ -436,6 +464,216 @@ class Pipeline:
         )
 
         return response, trace
+
+    def _run_with_special_intent(
+        self, intent: Intent, entities: list[str], trace: PipelineTrace, backend: str = "local"
+    ) -> tuple[AgentResponse, PipelineTrace]:
+        """细分意图专用路径：Provider 专用查询 + ResponseAgent 结论式回复。
+
+        与 _run_with_intent 的区别：
+        - 跳过 Orchestrator 通用模板与 EvidenceAgent 分组，直接调用 Provider 的
+          专用查询方法（query_<intent>）获取 ReasoningStep 列表；
+        - 直接调用 ResponseAgent 对应的 generate_<intent>_response 组装结论式回复；
+        - 风险因素（risk_factors）为全局查询，不按实体过滤（传 []），
+          以返回全部影响康复/复发的因素。
+        """
+        # 3. 任务分配：专用意图绕过通用模板，直接调用 Provider 专用查询方法
+        trace.steps.append(
+            TraceStep(
+                step_id=3,
+                step_name="任务分配",
+                agent="Orchestrator",
+                status="success",
+                input_summary=f"意图：{intent.value}；实体：{', '.join(entities) if entities else '（无）'}",
+                output_summary=f"选择查询方法：query_{intent.value}",
+                detail={"intent": intent.value, "entities": list(entities), "mode": "specialized"},
+            )
+        )
+
+        # 4. 图查询：调用对应专用查询方法
+        try:
+            provider = create_provider(backend)
+            if intent == Intent.DIAGNOSIS_INQUIRY:
+                steps = provider.query_diagnosis_inquiry(entities)
+            elif intent == Intent.SYMPTOM_FEATURE:
+                steps = provider.query_symptom_feature(entities)
+            elif intent == Intent.DIAGNOSTIC_TEST:
+                steps = provider.query_diagnostic_test(entities)
+            elif intent == Intent.RISK_FACTORS:
+                # 全局风险因素查询：不按实体过滤，返回全部影响因素
+                steps = provider.query_risk_factors([])
+            elif intent == Intent.DIFFERENTIAL_DIAGNOSIS:
+                steps = provider.query_differential_diagnosis(entities)
+            elif intent == Intent.DRUG_INFO:
+                steps = provider.query_drug_info(entities)
+            else:  # pragma: no cover - 调用方已用 _SPECIAL_INTENTS 过滤
+                steps = []
+        except Exception as exc:  # noqa: BLE001
+            error_msg = str(exc)
+            trace.steps.append(
+                TraceStep(
+                    step_id=4,
+                    step_name="图查询",
+                    agent="GraphQueryAgent",
+                    status="failed",
+                    input_summary=f"执行专用查询（实体：{', '.join(entities) if entities else '（无）'}）",
+                    output_summary=f"查询异常：{error_msg}",
+                    detail={"error": error_msg},
+                )
+            )
+            self._add_skipped(trace, 5, 7, "图查询失败")
+            response = AgentResponse(
+                status=ResponseStatus.ERROR,
+                error_message=error_msg,
+                entities=list(entities),
+                intent=intent,
+            )
+            return response, trace
+
+        # 多跳推理分流：仅 symptom_feature / diagnosis_inquiry，直接查询为空时，
+        # 尝试通过多跳路径（A→B→C）间接推理（A 为症状/指标实体，C 为 FIP 实体）。
+        multihop = None  # (steps, source, target) 或 None
+        if not steps and intent in (Intent.SYMPTOM_FEATURE, Intent.DIAGNOSIS_INQUIRY):
+            multihop = self._resolve_multihop(provider, entities)
+
+        trace.steps.append(
+            TraceStep(
+                step_id=4,
+                step_name="图查询",
+                agent="GraphQueryAgent",
+                status="success",
+                input_summary=f"执行专用查询（实体：{', '.join(entities) if entities else '（无）'}）",
+                output_summary=(
+                    f"直接查询无结果，尝试多跳路径，命中 {len(multihop[0])} 条"
+                    if multihop is not None
+                    else f"命中 {len(steps)} 条关系"
+                ),
+                detail={
+                    "steps": [
+                        self._step_to_dict(s) for s in (multihop[0] if multihop is not None else steps)
+                    ]
+                },
+            )
+        )
+
+        # 直接查询与多跳均无结果 → 边界兜底
+        if not steps and multihop is None:
+            self._add_skipped(trace, 5, 7, "图查询未命中路径（含多跳）")
+            self._add_boundary(trace, "图查询命中 0 条", "未找到相关路径，返回边界提示", "no_path")
+            return self.boundary_agent.no_path(entities, intent), trace
+
+        # 实际用于后续风险标记 / 回复生成的步骤：多跳命中时用多跳路径，否则用直接查询
+        use_steps = multihop[0] if multihop is not None else steps
+
+        # 5. 证据加工：专用意图由 ResponseAgent 直接组装结论，无需证据分组
+        trace.steps.append(
+            TraceStep(
+                step_id=5,
+                step_name="证据加工",
+                agent="EvidenceAgent",
+                status="skipped",
+                input_summary="",
+                output_summary="",
+                skip_reason="该意图无需证据分组",
+            )
+        )
+
+        # 6. 风险标记：保持原逻辑，检查返回步骤中的低置信度关系
+        risk_group = ReasoningGroup(key="specialized", label="专用结论", steps=use_steps)
+        risks = self.risk_agent.run([risk_group])
+        if risks:
+            trace.steps.append(
+                TraceStep(
+                    step_id=6,
+                    step_name="风险标记",
+                    agent="RiskAgent",
+                    status="success",
+                    input_summary=f"{len(use_steps)} 条关系",
+                    output_summary=f"识别到 {len(risks)} 个风险标记",
+                    detail={
+                        "risks": [
+                            {"kind": r.kind.value, "group_key": r.group_key, "step_index": r.step_index, "note": r.note}
+                            for r in risks
+                        ]
+                    },
+                )
+            )
+        else:
+            trace.steps.append(
+                TraceStep(
+                    step_id=6,
+                    step_name="风险标记",
+                    agent="RiskAgent",
+                    status="skipped",
+                    input_summary=f"{len(use_steps)} 条关系",
+                    output_summary="",
+                    skip_reason="无风险标记",
+                )
+            )
+
+        # 7. 响应生成：调用对应专用结论式回复（多跳命中时生成间接关联回复）
+        if multihop is not None:
+            mh_source, mh_target = multihop[1], multihop[2]
+            response = self.response_agent.generate_multihop_response(
+                mh_source, mh_target, use_steps, intent=intent
+            )
+            response_action = "生成间接关联回复"
+        elif intent == Intent.DIAGNOSIS_INQUIRY:
+            response = self.response_agent.generate_diagnosis_inquiry_response(use_steps, entities)
+            response_action = f"生成{_INTENT_DISPLAY_NAME[intent]}回复"
+        elif intent == Intent.SYMPTOM_FEATURE:
+            response = self.response_agent.generate_symptom_feature_response(use_steps)
+            response_action = f"生成{_INTENT_DISPLAY_NAME[intent]}回复"
+        elif intent == Intent.DIAGNOSTIC_TEST:
+            response = self.response_agent.generate_diagnostic_test_response(use_steps)
+            response_action = f"生成{_INTENT_DISPLAY_NAME[intent]}回复"
+        elif intent == Intent.RISK_FACTORS:
+            response = self.response_agent.generate_risk_factors_response(use_steps)
+            response_action = f"生成{_INTENT_DISPLAY_NAME[intent]}回复"
+        elif intent == Intent.DIFFERENTIAL_DIAGNOSIS:
+            response = self.response_agent.generate_differential_diagnosis_response(use_steps)
+            response_action = f"生成{_INTENT_DISPLAY_NAME[intent]}回复"
+        else:  # DRUG_INFO
+            response = self.response_agent.generate_drug_info_response(use_steps)
+            response_action = f"生成{_INTENT_DISPLAY_NAME[intent]}回复"
+
+        # 统一回显实体（专用回复方法内部 entities 可能为空）
+        response.entities = list(entities)
+
+        trace.steps.append(
+            TraceStep(
+                step_id=7,
+                step_name="响应生成",
+                agent="ResponseAgent",
+                status="success",
+                input_summary=f"{len(use_steps)} 条关系",
+                output_summary=response_action,
+                detail={"summary": response.summary, "cards": response.cards},
+            )
+        )
+
+        return response, trace
+
+    @staticmethod
+    def _resolve_multihop(
+        provider, entities: list[str]
+    ) -> tuple[list, str, str] | None:
+        """尝试从已解析实体中找出「症状源 → FIP 目标」的多跳间接路径。
+
+        仅当实体同时包含「非 FIP 实体（症状 / 指标源）」与「FIP 实体（目标）」时尝试；
+        逐对 (source, target) 调用 provider.query_multihop_path，返回第一条命中的路径
+        （steps, source, target）。无命中返回 None，交由上层回退到边界逻辑。
+        """
+        fip_entities = [e for e in entities if ("猫传染性腹膜炎" in e) or ("FIP" in e)]
+        source_candidates = [e for e in entities if e not in fip_entities]
+        if not fip_entities or not source_candidates:
+            return None
+        for source in source_candidates:
+            for target in fip_entities:
+                path = provider.query_multihop_path(source, target, max_hops=3)
+                if path:
+                    return path, source, target
+        return None
 
     @staticmethod
     def _add_skipped(

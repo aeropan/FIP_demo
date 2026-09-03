@@ -37,8 +37,9 @@ class PipelineTest(unittest.TestCase):
         self.assertEqual(r.intent, Intent.RISK)
 
     def test_boundary_no_entities(self) -> None:
-        # 实体解析为空 → 直接边界，跳过意图识别
-        r = self.pipeline.run("猫发热怎么办")
+        # 实体解析为空 → 直接边界（用无医学实体的句子；
+        # 注：「猫发热怎么办」会因别名扩展命中「发热→持续性发热」而不再走边界）
+        r = self.pipeline.run("今天天气怎么样")
         self.assertEqual(r.status, ResponseStatus.BOUNDARY)
         self.assertEqual(r.boundary_reason, BoundaryReason.NO_ENTITIES)
 
@@ -105,7 +106,8 @@ class PipelineTraceTest(unittest.TestCase):
         self.assertTrue(all(s.status == "success" for s in trace.steps))
 
     def test_boundary_short_circuit(self) -> None:
-        resp, trace = self.pipeline.run_with_trace("猫发热怎么办")
+        # 用无医学实体的句子（「猫发热怎么办」现已命中发热别名，不再走边界）
+        resp, trace = self.pipeline.run_with_trace("今天天气怎么样")
         self.assertEqual(resp.status, ResponseStatus.BOUNDARY)
         self.assertEqual(self._status_by_name(trace, "实体解析"), "success")
         # 实体为空也执行意图识别（用于判断是否继承上下文），识别为 general
@@ -155,6 +157,269 @@ class PipelineTraceTest(unittest.TestCase):
         r2, _ = self.pipeline.run_with_trace("441有什么副作用？")
         self.assertEqual(r1.status, r2.status)
         self.assertEqual(r1.intent, r2.intent)
+
+
+def _local_backend_available() -> bool:
+    """本地 NetworkX 图谱是否可用（构造即构建图，无需 Neo4j）。"""
+    try:
+        from core.providers.factory import create_provider
+
+        create_provider("local")
+        return True
+    except Exception:  # noqa: BLE001
+        return False
+
+
+# 六类细分意图：输入 / 期望意图 / 轨迹中文名 / 摘要关键子串 / 是否预期有风险标记
+_SPECIAL_CASES = [
+    {
+        "input": "我的猫肚子大，可能是传腹吗？",
+        "intent": Intent.DIAGNOSIS_INQUIRY,
+        "display": "诊断可能性判断",
+        "summary_sub": ["腹围增大", "疑似", "确诊"],
+        "expect_risk": False,
+    },
+    {
+        "input": "腹水是传腹的特征吗？",
+        "intent": Intent.SYMPTOM_FEATURE,
+        "display": "特征确认",
+        "summary_sub": ["腹水", "依据"],
+        "expect_risk": False,
+    },
+    {
+        "input": "白球比0.5是传腹吗？",
+        "intent": Intent.DIAGNOSTIC_TEST,
+        "display": "指标解读",
+        "summary_sub": ["白球比", "依据"],
+        "expect_risk": False,
+    },
+    {
+        "input": "什么会影响传腹康复？",
+        "intent": Intent.RISK_FACTORS,
+        "display": "风险因素查询",
+        "summary_sub": ["病毒载量", "体重增加"],
+        "expect_risk": True,
+    },
+    {
+        "input": "传腹要和哪些病区分？",
+        "intent": Intent.DIFFERENTIAL_DIAGNOSIS,
+        "display": "鉴别诊断",
+        "summary_sub": ["淋巴瘤", "细菌性腹膜炎"],
+        "expect_risk": False,
+    },
+    {
+        "input": "有什么药能治传腹？",
+        "intent": Intent.DRUG_INFO,
+        "display": "药物关联查询",
+        "summary_sub": ["GS-441524", "瑞德西韦"],
+        "expect_risk": False,
+    },
+]
+
+# 原有四类医学意图（回归）：确认未被误送入细分意图轨迹格式
+_REGRESSION_CASES = [
+    {"input": "什么是猫传腹", "intent": Intent.CONCEPT},
+    {"input": "湿性FIP怎么治疗", "intent": Intent.TREATMENT},
+    {"input": "GS-441524有什么风险", "intent": Intent.RISK},
+    {"input": "猫传腹怎么诊断？", "intent": Intent.DIAGNOSIS},
+]
+
+
+@unittest.skipUnless(_local_backend_available(), "本地 NetworkX 图谱不可用，跳过（需 networkx + data/knowledge_graph.json）")
+class SpecialIntentTest(unittest.TestCase):
+    """六类细分意图 + 原四类医学意图回归：响应层 + 轨迹面板适配。
+
+    使用本地 NetworkX 后端（backend="local"），不依赖 Neo4j 连接。
+    """
+
+    def setUp(self) -> None:
+        self.pipeline = Pipeline()
+
+    def _steps_by_name(self, trace) -> dict:
+        return {s.step_name: s for s in trace.steps}
+
+    def test_special_intents_end_to_end(self) -> None:
+        """六类新意图：响应结论正确 + 右侧轨迹七步显示符合适配规则。"""
+        for case in _SPECIAL_CASES:
+            with self.subTest(input=case["input"]):
+                resp, trace = self.pipeline.run_with_trace(case["input"], backend="local")
+
+                # —— 响应层 ——
+                self.assertEqual(resp.status, ResponseStatus.OK)
+                self.assertEqual(resp.intent, case["intent"])
+                self.assertTrue(resp.summary, "摘要不应为空")
+                for sub in case["summary_sub"]:
+                    self.assertIn(sub, resp.summary, f"摘要应含关键内容：{sub}")
+
+                # —— 轨迹层（保持七步，无边界处理第 8 步）——
+                self.assertEqual(len(trace.steps), 7)
+                steps = self._steps_by_name(trace)
+
+                # 意图识别
+                self.assertEqual(steps["意图识别"].status, "success")
+                self.assertEqual(
+                    steps["意图识别"].output_summary,
+                    f"识别为{case['display']}（{case['intent'].value}）",
+                )
+                # 任务分配
+                self.assertEqual(steps["任务分配"].status, "success")
+                self.assertEqual(
+                    steps["任务分配"].output_summary,
+                    f"选择查询方法：query_{case['intent'].value}",
+                )
+                # 图查询（N=0 亦为 success）
+                self.assertEqual(steps["图查询"].status, "success")
+                self.assertRegex(steps["图查询"].output_summary, r"^命中 \d+ 条关系$")
+                # 证据加工（专用意图无需分组）
+                self.assertEqual(steps["证据加工"].status, "skipped")
+                self.assertEqual(steps["证据加工"].skip_reason, "该意图无需证据分组")
+                # 风险标记（保持原逻辑）
+                risk = steps["风险标记"]
+                if case["expect_risk"]:
+                    self.assertEqual(risk.status, "success")
+                    self.assertRegex(risk.output_summary, r"^识别到 \d+ 个风险标记$")
+                else:
+                    self.assertEqual(risk.status, "skipped")
+                    self.assertEqual(risk.skip_reason, "无风险标记")
+                # 响应生成
+                self.assertEqual(steps["响应生成"].status, "success")
+                self.assertEqual(steps["响应生成"].output_summary, f"生成{case['display']}回复")
+
+    def test_original_intents_regression(self) -> None:
+        """原四类医学意图：轨迹格式未被细分意图改造影响。"""
+        for case in _REGRESSION_CASES:
+            with self.subTest(input=case["input"]):
+                resp, trace = self.pipeline.run_with_trace(case["input"], backend="local")
+
+                self.assertEqual(resp.status, ResponseStatus.OK)
+                self.assertEqual(resp.intent, case["intent"])
+                self.assertTrue(resp.summary, "摘要不应为空")
+
+                steps = self._steps_by_name(trace)
+                # 意图识别仍走旧格式（非「识别为…（xxx）」）
+                self.assertEqual(
+                    steps["意图识别"].output_summary,
+                    f"识别意图：{case['intent'].value}",
+                )
+                # 任务分配仍走通用模板
+                self.assertTrue(steps["任务分配"].output_summary.startswith("选定查询模板："))
+                # 原意图仍走证据分组（status=success，区别于细分意图的 skipped）
+                self.assertEqual(steps["证据加工"].status, "success")
+                # 响应生成成功
+                self.assertEqual(steps["响应生成"].status, "success")
+
+
+def _steps_by_name(trace) -> dict:
+    """把轨迹步骤按中文名映射到步骤对象。"""
+    return {s.step_name: s for s in trace.steps}
+
+
+# 多跳推理场景：输入 / 期望意图（可为 None 表示仅验证间接关联文案）/ 起点 / 路径关键子串
+_MULTIHOP_CASES = [
+    {
+        "input": "血管通透性增加是传腹的特征吗？",
+        "intent": Intent.SYMPTOM_FEATURE,
+        "path_sub": ["血管通透性 → 腹水 →", "湿性FIP"],
+    },
+    {
+        "input": "内皮损伤是传腹的特征吗？",
+        "intent": Intent.SYMPTOM_FEATURE,
+        "path_sub": ["内皮损伤 → 血管通透性 → 腹水 →", "湿性FIP"],
+    },
+    {
+        "input": "内皮损伤可能是传腹吗？",
+        "intent": Intent.DIAGNOSIS_INQUIRY,
+        "path_sub": ["内皮损伤 → 血管通透性 → 腹水 →", "湿性FIP"],
+    },
+]
+
+# 原有核心意图回归（本地后端）：输入 / 期望意图 / 是否完整七步
+# meta / emergency 为短路意图，仅 4 步（实体解析、图查询均 skipped），其余完整七步
+_CORE_REGRESSION_CASES = [
+    {"input": "湿性FIP怎么治？", "intent": Intent.TREATMENT, "full": True},
+    {"input": "GS-441524有副作用吗？", "intent": Intent.RISK, "full": True},
+    {"input": "什么是猫传腹？", "intent": Intent.CONCEPT, "full": True},
+    {"input": "你是谁？", "intent": Intent.META, "full": False},
+    {"input": "谢谢", "intent": Intent.META, "full": False},
+    {"input": "猫快不行了怎么办？", "intent": Intent.EMERGENCY, "full": False},
+]
+
+
+@unittest.skipUnless(_local_backend_available(), "本地 NetworkX 图谱不可用，跳过（需 networkx + data/knowledge_graph.json）")
+class MultihopTest(unittest.TestCase):
+    """多跳推理：直接查询为空时，通过 A→B→C 返回间接关联结论 + 轨迹适配。"""
+
+    def setUp(self) -> None:
+        self.pipeline = Pipeline()
+
+    def test_multihop_indirect_association(self) -> None:
+        """多跳场景：返回间接关联回复，摘要含完整推理链。"""
+        for case in _MULTIHOP_CASES:
+            with self.subTest(input=case["input"]):
+                resp, trace = self.pipeline.run_with_trace(case["input"], backend="local")
+                self.assertEqual(resp.status, ResponseStatus.OK)
+                if case["intent"] is not None:
+                    self.assertEqual(resp.intent, case["intent"])
+                # 间接关联结论
+                self.assertIn("间接关联", resp.summary)
+                for sub in case["path_sub"]:
+                    self.assertIn(sub, resp.summary, f"推理链应含：{sub}")
+
+    def test_multihop_trace_adapts(self) -> None:
+        """多跳发生时：图查询步骤显示「尝试多跳路径」，响应生成显示「生成间接关联回复」。"""
+        resp, trace = self.pipeline.run_with_trace(
+            "血管通透性增加是传腹的特征吗？", backend="local"
+        )
+        self.assertEqual(resp.status, ResponseStatus.OK)
+        # 仍保持七步，无边界处理第 8 步
+        self.assertEqual(len(trace.steps), 7)
+        steps = _steps_by_name(trace)
+        self.assertEqual(
+            steps["图查询"].output_summary,
+            "直接查询无结果，尝试多跳路径，命中 2 条",
+        )
+        self.assertEqual(steps["响应生成"].output_summary, "生成间接关联回复")
+        # 证据加工仍 skipped（专用意图无需分组）
+        self.assertEqual(steps["证据加工"].status, "skipped")
+        self.assertEqual(steps["证据加工"].skip_reason, "该意图无需证据分组")
+
+    def test_direct_query_no_multihop(self) -> None:
+        """直接关系命中时：不走多跳，返回直接结论，轨迹显示「命中 N 条关系」。"""
+        resp, trace = self.pipeline.run_with_trace("腹水是传腹的特征吗？", backend="local")
+        self.assertEqual(resp.status, ResponseStatus.OK)
+        self.assertEqual(resp.intent, Intent.SYMPTOM_FEATURE)
+        steps = _steps_by_name(trace)
+        # 直接命中 1 条，文案不含「多跳」
+        self.assertEqual(steps["图查询"].output_summary, "命中 1 条关系")
+        self.assertEqual(steps["响应生成"].output_summary, "生成特征确认回复")
+        self.assertNotIn("间接关联", resp.summary)
+        self.assertIn("是", resp.summary)
+
+    def test_general_handles_unclassified_gracefully(self) -> None:
+        """未归类为细分意图（如「会导致传腹吗」落 GENERAL）时，走通用查询、不报错、不误判多跳。"""
+        resp, trace = self.pipeline.run_with_trace("内皮损伤会导致传腹吗？", backend="local")
+        self.assertEqual(resp.status, ResponseStatus.OK)
+        self.assertEqual(resp.intent, Intent.GENERAL)
+        steps = _steps_by_name(trace)
+        self.assertNotIn("尝试多跳路径", steps["图查询"].output_summary)
+
+
+@unittest.skipUnless(_local_backend_available(), "本地 NetworkX 图谱不可用，跳过（需 networkx + data/knowledge_graph.json）")
+class CoreIntentRegressionTest(unittest.TestCase):
+    """原有核心意图回归：本地后端下意图识别与正常流程不受影响。"""
+
+    def setUp(self) -> None:
+        self.pipeline = Pipeline()
+
+    def test_core_intents(self) -> None:
+        for case in _CORE_REGRESSION_CASES:
+            with self.subTest(input=case["input"]):
+                resp, trace = self.pipeline.run_with_trace(case["input"], backend="local")
+                self.assertEqual(resp.status, ResponseStatus.OK)
+                self.assertEqual(resp.intent, case["intent"])
+                # 完整意图七步；meta/emergency 为短路意图，仅 4 步
+                self.assertEqual(len(trace.steps), 7 if case["full"] else 4)
+                self.assertTrue(resp.summary, "摘要不应为空")
 
 
 if __name__ == "__main__":

@@ -14,6 +14,7 @@ class IntentAgent(Agent):
     1. 输入转小写，统计每个意图命中的关键词并累加权重。
        - 医学意图使用 INTENT_KEYWORD_WEIGHT（10）。
        - meta 意图使用 META_KEYWORD_WEIGHT（5），确保医学意图优先。
+       - risk_factors 使用 RISK_FACTORS_WEIGHT（13），压过 treatment 的「康复」重叠。
        匹配采用"最长关键词优先 + 覆盖"：长关键词命中后覆盖该区间，
        避免短关键词重复命中长关键词内部子串（如 "安全" vs "安全吗"）。
     2. 最高分为 0 → 返回 general。
@@ -31,6 +32,8 @@ class IntentAgent(Agent):
                 weight = config.EMERGENCY_KEYWORD_WEIGHT
             elif intent_key == "meta":
                 weight = config.META_KEYWORD_WEIGHT
+            elif intent_key == "risk_factors":
+                weight = config.RISK_FACTORS_WEIGHT
             else:
                 weight = config.INTENT_KEYWORD_WEIGHT
 
