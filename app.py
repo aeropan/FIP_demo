@@ -238,7 +238,7 @@ HOMEPAGE_HTML = """
     </div>
 
     <!-- 免责声明：始终固定在屏幕底部 -->
-    <div class="disclaimer">内容由 AI 生成，仅供参考，不能代替兽医诊断</div>
+    <div class="disclaimer">内容由 AI 生成，仅供参考，不能代替兽医诊断&nbsp;&nbsp;|&nbsp;&nbsp;联系我&nbsp;潘页冰&nbsp;&nbsp;TEL/微信：13564037937</div>
 
   </main>
 
@@ -2510,7 +2510,7 @@ function logPageView() {
             );
           } else if (action === 'logs') {
             closeModal(true);
-            window.open('about:blank', '_blank');
+            window.open('https://my.feishu.cn/base/ZTt8blhVXa5ea3sjOvecpPc7nQg?table=tbl2CVrC6jQiNAWa&view=vewUMsj5mX', '_blank');
           }
           });
         });
@@ -3479,6 +3479,7 @@ div:has(> .app-shell) { padding: 0 !important; margin: 0 !important; background:
   bottom: 12px;
   z-index: 20; /* 高于输入区及其底部遮罩（z-index:10），确保不被遮罩盖住 */
   text-align: center;
+  padding: 0 16px;
   font-size: 12px;
   font-weight: 500;
   color: rgba(168, 159, 147, 0.85);
