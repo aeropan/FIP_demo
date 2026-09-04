@@ -282,16 +282,52 @@ META_SUBTYPE_KEYWORDS: dict[str, list[str]] = {
     "farewell": ["谢谢", "感谢", "再见", "拜拜", "好的"],
 }
 
+# 特殊短语加成：对精确短语给予额外加权，使更具体的细分意图在典型问法下
+# 得分高于较泛化的意图（如 concept / diagnosis / treatment），减少误澄清。
+# 规则：每个意图最多加一次分（命中其任一短语即 +SPECIAL_PATTERN_BONUS）；
+# 匹配为大小写不敏感的子串包含判断。仅作用于六个细分意图，不影响
+# meta / emergency 权重逻辑，也不改变 scores 字典的基本打分方式。
+SPECIAL_PATTERN_BONUS = 5
 
-# ---------------------------------------------------------------------------
-# 3. 澄清候选：意图 → 中文按钮标签
-# ---------------------------------------------------------------------------
+SPECIAL_PATTERNS: dict[str, list[str]] = {
+    "symptom_feature": [
+        "特征是什么", "表现是什么", "症状是什么",
+        "有哪些表现", "什么表现", "什么症状",
+    ],
+    "diagnosis_inquiry": [
+        "可能是", "会不会是", "是不是得了", "像不像",
+        "可能吗", "会得吗", "是不是传腹",
+    ],
+    "diagnostic_test": [
+        "白球比低", "Rivalta阳性", "SAA高",
+        "指标", "检测值", "阳性", "阴性",
+    ],
+    "risk_factors": [
+        "影响康复", "导致复发", "复发因素",
+        "什么影响", "危险因素", "不利因素",
+    ],
+    "drug_info": [
+        "什么药", "用什么药", "治疗药物",
+        "药物有哪些", "吃什么药",
+    ],
+    "differential_diagnosis": [
+        "和什么区别", "鉴别诊断", "排除哪些",
+        "容易混淆", "区分",
+    ],
+}
 CLARIFICATION_LABELS: dict[str, str] = {
     "treatment": "治疗与预后",
     "risk": "药物风险与副作用",
     "concept": "发病机制与原因",
     "diagnosis": "诊断方法与流程",
     "general": "综合查询",
+    # —— 细分意图中文标签（精准度优化）：缺失会导致澄清列表单一 / 空白 ——
+    "diagnosis_inquiry": "症状可能性判断",
+    "symptom_feature": "症状特征确认",
+    "diagnostic_test": "检查指标解读",
+    "risk_factors": "康复风险因素",
+    "differential_diagnosis": "鉴别诊断",
+    "drug_info": "药物关联信息",
 }
 
 

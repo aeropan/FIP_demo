@@ -133,6 +133,9 @@ HOMEPAGE_HTML = """
           <line x1="21" y1="21" x2="16.65" y2="16.65" />
         </svg>
       </button>
+      <button class="collapsed-tool" id="collapsedSettingsBtn" data-tooltip="设置" aria-label="设置">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#6F6763" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      </button>
     </div>
   </aside>
 
@@ -214,7 +217,7 @@ HOMEPAGE_HTML = """
 <svg viewBox="0 0 1024 1024" width="22" height="22" aria-hidden="true"><path d="M386.304 217.728C457.002667 95.274667 613.546667 53.333333 736 124.010667c122.453333 70.698667 164.394667 227.264 93.696 349.717333l-192 332.544C567.04 928.725333 410.453333 970.666667 288 899.989333c-122.453333-70.698667-164.394667-227.264-93.696-349.717333l192-332.544zM693.333333 197.930667a170.666667 170.666667 0 0 0-233.130666 62.464l-192 332.544a170.666667 170.666667 0 0 0 295.594666 170.666666l192-332.544A170.666667 170.666667 0 0 0 693.333333 197.930667z" fill="#8C6B5D" p-id="15695"></path><path d="M693.909333 666.282667l-406.464-234.666667 42.666667-73.898667 406.464 234.666667-42.666667 73.898667zM653.525333 224.213333l18.474667 10.666667a128 128 0 0 1 46.869333 174.848l-32 55.424-73.92-42.666667 32-55.424a42.666667 42.666667 0 0 0-15.616-58.282666l-18.474666-10.666667 42.666666-73.898667z" fill="#8C6B5D" p-id="15696"></path></svg>
           </div>
           <div class="feature-text">
-            <div class="feature-name">常见的治疗方法</div>
+            <div class="feature-name">传腹的治疗方法</div>
           </div>
         </div>
         <div class="feature-card">
@@ -835,6 +838,19 @@ function logPageView() {
     const sendBtn = document.querySelector('.send-btn');
     const chatList = document.querySelector('.chat-list');
     const sectionCount = document.querySelector('.section-count');
+    /* 启动时一次性捕获「最近对话」列表项的默认图标 SVG（取自静态占位项）。
+       后续 addConversationItem 不再从会被清空的 chatList 克隆图标，
+       避免「清除站点数据（Cookie）→ localStorage 清空 → 无数据分支清空占位项 → 图标丢失」的问题。 */
+    const DEFAULT_CHAT_ICO = (chatList && chatList.querySelector('.chat-ico'))
+      ? chatList.querySelector('.chat-ico').innerHTML
+      : '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#8C6B5D" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.5 8.5 8.5 0 0 1-3.8-.9L3 21l1.9-5.7a8.5 8.5 0 0 1-.9-3.8A8.38 8.38 0 0 1 12.5 3 8.38 8.38 0 0 1 21 11.5z"/></svg>';
+    /* 无历史时的引导示例（单一数据源在 JS，不再依赖 HTML 静态占位项结构；
+       点击进入空态对话，不与真实历史混淆） */
+    const PLACEHOLDER_CONVOS = [
+      { id: 'c_demo_0', title: '猫咪频繁打喷嚏怎么办？', time: '10:32', msgs: [] },
+      { id: 'c_demo_1', title: '幼猫呕吐拉稀是什么原因？', time: '昨天', msgs: [] },
+      { id: 'c_demo_2', title: '猫咪皮肤红肿掉毛怎么处理', time: '昨天', msgs: [] }
+    ];
     const chatMask = document.getElementById('chatMask');
     const rightPanel = document.getElementById('rightSidebar');
     const openRightBtn = document.getElementById('openRightBtn');
@@ -935,13 +951,17 @@ function logPageView() {
     /* 渲染某个会话的全部消息到聊天区（user 直接气泡，bot 填文本不打字机） */
     function renderConvo(convo) {
       chatArea.innerHTML = '';
-      (convo.msgs || []).forEach(function (m) {
+      clearTraceSelection();
+      (convo.msgs || []).forEach(function (m, idx) {
         if (m.role === 'user') {
           addUserMsg(m.text);
         } else if (m.role === 'bot' && m.text) {
           const row = addBotMsg();
           row.querySelector('.bubble-body').textContent = m.text;
           addIntentChip(row, m.intent);
+          /* 历史 bot 消息挂「查看执行轨迹」图标（无 trace 字段时点击显示占位，兼容旧数据） */
+          attachTraceIcon(row, m.trace || null);
+          row.dataset.mid = String(idx);
         }
       });
       scrollChatBottom();
@@ -992,22 +1012,15 @@ function logPageView() {
         saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
       } catch (e) { saved = null; }
       if (!saved || !Array.isArray(saved.conversations) || !saved.conversations.length) {
-        /* 无历史数据：把静态占位「最近对话」条目初始化为可跳转的空会话（带 data-cid），
-           否则委托点击无法读取 dataset.cid 导致跳转失效 */
-        const ph = document.querySelectorAll('.chat-list .chat-item');
-        if (ph.length) {
-          conversations = [].slice.call(ph).map(function (li, idx) {
-            return {
-              id: 'c_ph_' + idx,
-              title: ((li.querySelector('.chat-title') || {}).textContent || '').trim() || '历史对话',
-              time: (li.querySelector('.chat-time') || {}).textContent || '',
-              messages: []
-            };
-          });
-          chatList.innerHTML = '';
-          conversations.forEach(function (c) { addConversationItem(c); });
-          updateConvoCount();
-        }
+        /* 无历史数据：用 JS 常量 PLACEHOLDER_CONVOS 填充「最近对话」（单一数据源，
+           不再依赖 HTML 静态占位项的 .chat-title/.chat-time 结构，避免模板变动导致文案退化）。
+           这些示例为可点击的空会话（稳定 id），点击进入空态对话。 */
+        conversations = PLACEHOLDER_CONVOS.map(function (c) {
+          return { id: c.id, title: c.title, time: c.time, msgs: [] };
+        });
+        chatList.innerHTML = '';
+        conversations.forEach(function (c) { addConversationItem(c); });
+        updateConvoCount();
         return;
       }
 
@@ -1015,6 +1028,8 @@ function logPageView() {
       /* 默认进入「新任务对话」空态首页，不自动恢复到最后一次会话 */
       currentConvoId = null;
 
+      /* 清空静态占位项（避免与真实历史重复），随后重建列表 */
+      chatList.innerHTML = '';
       /* 重建「最近对话」列表（倒序插入，保持最新在前） */
       for (var i = conversations.length - 1; i >= 0; i--) {
         addConversationItem(conversations[i]);
@@ -1039,9 +1054,8 @@ function logPageView() {
 
     /* 创建「最近对话」列表条目（含点击切换绑定），插入列表最前 */
     function addConversationItem(convo) {
-      const iconHTML = chatList
-        ? (chatList.querySelector('.chat-item .chat-ico') || {}).innerHTML || ''
-        : '';
+      /* 图标始终使用启动捕获的默认 SVG，不再依赖可能已被清空的 DOM 克隆 */
+      const iconHTML = DEFAULT_CHAT_ICO;
       const li = document.createElement('li');
       li.className = 'chat-item chat-item-new';
       li.dataset.cid = convo.id;
@@ -1078,6 +1092,27 @@ function logPageView() {
       }
       return null;
     }
+
+    /* 点击聊天区交互逻辑：
+       - 点 bot 气泡（任意位置，含图标）：右侧切换为该轮历史轨迹并高亮；若该轮无轨迹则恢复最新。
+       - 点用户气泡或聊天区空白：清除高亮并恢复最新轨迹。 */
+    chatArea.addEventListener('click', function (e) {
+      const msg = e.target.closest('.message.message-bot');
+      if (msg) {
+        if (msg._traceData) {
+          selectTrace(msg, msg._traceData);
+        } else {
+          clearTraceSelection();
+          const c = getCurrentConvo();
+          renderTrace(c && c.lastTrace ? c.lastTrace : null, true);
+        }
+        return;
+      }
+      if (!currentTraceMsgEl) return;   // 当前已是最新轨迹，无需处理
+      clearTraceSelection();
+      const c = getCurrentConvo();
+      renderTrace(c && c.lastTrace ? c.lastTrace : null, true);
+    });
 
     /* 新建任务：结束当前会话，回到空态首页。之后的首次发送会新建会话条目，
        这样同一页面内可积累多个会话（「最近对话」条目变多后支持内部滚动） */
@@ -1178,11 +1213,13 @@ function logPageView() {
       const convo = getCurrentConvo();
       if (convo) {
         convo.pendingClarify = null;
-        convo.msgs.push({ role: 'bot', text: '回答已中断' });
+        convo.msgs.push({ role: 'bot', text: '回答已中断', trace: null });
         saveHistory();
       }
       if (convo && currentConvoId === convo.id) {
-        typeText(addBotMsg(), '回答已中断');
+        const r2 = addBotMsg();
+        typeText(r2, '回答已中断');
+        attachTraceIcon(r2, null);
       }
       /* 恢复发送按钮为默认发送态（无文字时为灰色禁用） */
       setSendMode('idle');
@@ -1273,7 +1310,7 @@ function logPageView() {
           } else {
             /* 已澄清/已解答：清除待澄清状态，并写入 bot 回复 */
             convo.pendingClarify = null;
-            convo.msgs.push({ role: 'bot', text: result.summary || result.boundary_hint || '', intent: result.intent || null });
+            convo.msgs.push({ role: 'bot', text: result.summary || result.boundary_hint || '', intent: result.intent || null, trace: result.trace || null });
           }
         }
         saveHistory();
@@ -1294,19 +1331,25 @@ function logPageView() {
     }
 
     function renderResult(result) {
+      /* 新回复渲染前，清除任何历史轨迹高亮（右侧面板将显示最新轨迹） */
+      clearTraceSelection();
       let row = null;
       if (result.status === 'ok') {
         row = addBotMsg();
         typeText(row, result.summary);
         addIntentChip(row, result.intent);
+        attachTraceIcon(row, result.trace);
       } else if (result.status === 'clarify') {
         addClarifyMsg(result.clarify_options);
       } else if (result.status === 'boundary') {
         row = addBotMsg();
         typeText(row, result.boundary_hint || '当前知识库暂无该路径，建议咨询兽医。');
         addIntentChip(row, result.intent);
+        attachTraceIcon(row, result.trace);
       } else if (result.status === 'error') {
-        typeText(addBotMsg(), '抱歉，查询时出现异常：' + (result.error_message || '未知错误'));
+        row = addBotMsg();
+        typeText(row, '抱歉，查询时出现异常：' + (result.error_message || '未知错误'));
+        attachTraceIcon(row, null);
       }
       renderTrace(result.trace);
     }
@@ -1461,7 +1504,23 @@ function logPageView() {
     function renderTrace(trace, instant) {
       const timeline = document.getElementById('traceTimeline');
       const detail = document.getElementById('traceDetail');
-      if (!timeline || !detail || !trace) return;
+      if (!timeline || !detail) return;
+      /* 空轨迹（历史消息无 trace 字段 / 无步骤）：清空面板并显示占位提示，
+         避免沿用上一轮内容；兼容旧版 localStorage 数据（无 trace 字段不报错）。 */
+      if (!trace || !trace.steps || !trace.steps.length) {
+        analysisState.playToken++;
+        analysisState.steps = [];
+        analysisState.selectedStepId = null;
+        analysisState.isUserSelected = false;
+        setDetailExpanded(false);
+        const status = document.getElementById('analysisStatus');
+        if (status) status.innerHTML = '';
+        const input = document.getElementById('analysisInput');
+        if (input) input.innerHTML = '';
+        timeline.innerHTML = '<div class="trace-empty">该轮暂无执行轨迹</div>';
+        renderDetailEmpty();
+        return;
+      }
 
       const token = ++analysisState.playToken;
       analysisState.selectedStepId = null;
@@ -1497,6 +1556,40 @@ function logPageView() {
       } else {
         playSteps(token);
       }
+    }
+
+    /* ===== 历史回答「查看执行轨迹」交互 ===== */
+    var currentTraceMsgEl = null;     // 当前高亮的历史气泡 DOM 引用（对应规格 currentTraceMessageId）
+    var currentTraceMessageId = null; // 当前选中的消息标识（convoId:mid），供状态记录
+
+    /* 在 bot 气泡右上角挂一个轻量「查看执行轨迹」图标（整段气泡均可点击查看，图标仅为视觉提示） */
+    function attachTraceIcon(row, trace) {
+      const bubble = row.querySelector('.bubble-bot');
+      if (!bubble) return;
+      row._traceData = trace;   // 把该轮轨迹挂到整段消息 row 上，供气泡任意位置点击复用
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'trace-view-btn';
+      btn.setAttribute('data-tooltip', '查看执行轨迹');   // 复用通用白色浮窗（替代原生 title 黑底）
+      btn.setAttribute('aria-label', '查看执行轨迹');
+      btn.innerHTML = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h11M4 18h14"/></svg>';
+      bubble.appendChild(btn);
+    }
+
+    /* 选中某条历史轨迹：高亮该气泡 + 右侧面板切换为该轮（instant 不重播动画） */
+    function selectTrace(row, trace) {
+      clearTraceSelection();
+      row.classList.add('trace-active');
+      currentTraceMsgEl = row;
+      currentTraceMessageId = (getCurrentConvo() ? getCurrentConvo().id : '') + ':' + (row.dataset.mid || 'live');
+      renderTrace(trace, true);
+    }
+
+    /* 清除气泡高亮并复位选中状态（用于：点空白区域 / 新对话 / 切换会话） */
+    function clearTraceSelection() {
+      if (currentTraceMsgEl) currentTraceMsgEl.classList.remove('trace-active');
+      currentTraceMsgEl = null;
+      currentTraceMessageId = null;
     }
 
     /* Header 输入摘要（类型标签 + 用户输入，最多两行） */
@@ -2635,6 +2728,9 @@ function logPageView() {
     if (lfEl) lfEl.classList.add(LEFT_BOTTOM_MEDIA === 'image' ? 'media-image' : 'media-video');
     var trig = document.querySelector('.left-footer');
     if (trig) trig.addEventListener('click', openPanel);
+    /* 收起态左下角设置入口：点击展开设置面板（面板定位已自动锚定到收起侧栏） */
+    var collapsedSettingsBtn = document.getElementById('collapsedSettingsBtn');
+    if (collapsedSettingsBtn) collapsedSettingsBtn.addEventListener('click', openPanel);
 
     settingsEl.addEventListener('click', function (e) {
       if (e.target.closest('[data-st-settings-close]')) { closePanel(); return; }
@@ -2670,6 +2766,7 @@ function logPageView() {
       if (e.target.closest && e.target.closest('.st-settings')) return;
       if (e.target.closest && e.target.closest('.st-modal')) return;
       if (e.target.closest && e.target.closest('.left-footer')) return;
+      if (e.target.closest && e.target.closest('#collapsedSettingsBtn')) return;
       closePanel();
     });
 
@@ -3089,6 +3186,12 @@ div:has(> .app-shell) { padding: 0 !important; margin: 0 !important; background:
 }
 .collapsed-tool:hover { background: #FFFFFF !important; color: #6B5045; }
 .collapsed-plus { font-size: 18px; line-height: 1; }
+/* 收起态左下角设置入口：推到底部并与 logo 左对齐，形成「左下角」固定入口 */
+#collapsedSettingsBtn {
+  align-self: flex-start;
+  margin-left: 14px;
+  margin-top: auto;
+}
 
 /* ============================================================
    中间主区域
@@ -3307,6 +3410,36 @@ div:has(> .app-shell) { padding: 0 !important; margin: 0 !important; background:
 .bubble-name { font-size: 13px; font-weight: 400; color: #6B5045; line-height: 1.3; }
 .bubble-paw { font-size: 12px; }
 .bubble-body { white-space: pre-wrap; word-break: break-word; min-width: 0; }
+/* 历史回答「查看执行轨迹」图标：气泡右上角，轻量暖杏风，独立按钮不挡文本选择/点击 */
+.app-shell .trace-view-btn {
+  position: absolute !important;
+  top: 8px !important;
+  right: 8px !important;
+  width: 24px !important;
+  height: 24px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 !important;
+  border: none !important;
+  background: transparent !important;
+  border-radius: 6px !important;
+  color: #C7A18E !important;
+  cursor: pointer !important;
+  opacity: 0.6;
+  z-index: 2 !important;
+  transition: background 150ms var(--ease), color 150ms var(--ease), opacity 150ms var(--ease) !important;
+}
+.app-shell .trace-view-btn:hover { background: #FAF3EC !important; color: #8C6B5D !important; opacity: 1; }
+/* 有图标时给气泡右侧留白，避免文本压到图标 */
+.app-shell .bubble-bot:has(.trace-view-btn) { padding-right: 30px !important; }
+/* 被选中的历史气泡高亮（浅杏底 + 暖棕描边，清晰但不刺眼，符合暖杏奶油风）。
+   高亮类加在 .message（row）上，故用后代选择器命中 .bubble-bot */
+.app-shell .message.trace-active .bubble-bot {
+  background: #FDFBF7 !important;
+  border-color: #E8D8CC !important;
+  box-shadow: 0 0 0 3px rgba(199, 161, 142, 0.18) !important;
+}
 /* 意图标签（暖杏风）：仅 meta/emergency 等高优先级意图显示，普通医学回复不显以保持简洁 */
 .app-shell .bubble-intent {
   display: inline-flex;

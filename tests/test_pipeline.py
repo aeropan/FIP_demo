@@ -4,7 +4,8 @@ from __future__ import annotations
 
 import unittest
 
-from core import db
+from core import config, db
+from core.agents.intent_agent import IntentAgent
 from core.pipeline import Pipeline
 from core.schemas import BoundaryReason, Intent, ResponseStatus
 
@@ -420,6 +421,64 @@ class CoreIntentRegressionTest(unittest.TestCase):
                 # 完整意图七步；meta/emergency 为短路意图，仅 4 步
                 self.assertEqual(len(trace.steps), 7 if case["full"] else 4)
                 self.assertTrue(resp.summary, "摘要不应为空")
+
+
+class IntentClarifyFixTest(unittest.TestCase):
+    """澄清修复回归：细分意图与泛化意图得分接近不再误澄清。
+
+    覆盖精准度优化 Step1 引入的 6 个细分意图与 concept/diagnosis/treatment
+    之间的典型冲突问法。本地后端即可运行，不依赖 Neo4j。
+    """
+
+    def setUp(self) -> None:
+        self.agent = IntentAgent()
+
+    def _classify(self, text: str):
+        r = self.agent.run(text)
+        return (r.intent.value if r.intent else None), r.need_clarify
+
+    def test_special_intent_cases(self) -> None:
+        # (输入, 期望意图, 是否触发澄清)
+        cases = [
+            ("腹水的特征是什么", "symptom_feature", False),
+            ("腹水是传腹的特征吗", "symptom_feature", False),
+            ("什么是猫传腹", "concept", False),
+            ("猫可能是传腹吗", "diagnosis_inquiry", False),
+            ("猫传腹怎么诊断", "diagnosis", False),
+            ("白球比0.5是传腹吗", "diagnostic_test", False),
+            ("什么会影响传腹康复", "risk_factors", False),
+            ("传腹要和哪些病区分", "differential_diagnosis", False),
+            ("有什么药能治传腹", "drug_info", False),
+            ("湿性FIP怎么治", "treatment", False),
+        ]
+        for text, exp_intent, exp_clarify in cases:
+            with self.subTest(input=text):
+                intent, clarify = self._classify(text)
+                self.assertEqual(intent, exp_intent)
+                self.assertEqual(clarify, exp_clarify)
+
+    def test_clarification_labels_complete(self) -> None:
+        # 全部意图（含 6 个细分意图）都应有中文标签，避免澄清时单一/空白选项
+        for intent in [
+            "treatment", "risk", "concept", "diagnosis", "general",
+            "diagnosis_inquiry", "symptom_feature", "diagnostic_test",
+            "risk_factors", "differential_diagnosis", "drug_info",
+        ]:
+            with self.subTest(intent=intent):
+                self.assertIn(intent, config.CLARIFICATION_LABELS)
+                self.assertTrue(config.CLARIFICATION_LABELS[intent])
+
+    def test_clarify_still_complete_when_tied(self) -> None:
+        # 真正歧义（概念 vs 特征问法）仍会澄清，但两意图均有标签 → 选项≥2 且不空白
+        intent, clarify = self._classify("猫传腹的特征和区别")
+        self.assertTrue(clarify)
+        self.assertIsNone(intent)
+        # 通过 Pipeline 走边界，确认澄清候选标签完整（修复前 symptom_feature 无标签会单一化）
+        resp, _ = Pipeline().run_with_trace("猫传腹的特征和区别", backend="local")
+        self.assertEqual(resp.status, ResponseStatus.CLARIFY)
+        self.assertTrue(len(resp.clarify_options) >= 2)
+        for opt in resp.clarify_options:
+            self.assertTrue(opt.label, "澄清选项标签不应为空")
 
 
 if __name__ == "__main__":

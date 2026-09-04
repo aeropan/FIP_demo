@@ -17,6 +17,8 @@ class IntentAgent(Agent):
        - risk_factors 使用 RISK_FACTORS_WEIGHT（13），压过 treatment 的「康复」重叠。
        匹配采用"最长关键词优先 + 覆盖"：长关键词命中后覆盖该区间，
        避免短关键词重复命中长关键词内部子串（如 "安全" vs "安全吗"）。
+    1.5 基础打分后应用 SPECIAL_PATTERNS 精确短语加成（每细分意图最多 +5 一次），
+       使具体意图在典型问法下压过泛化意图（概念/诊断/治疗等），减少误澄清。
     2. 最高分为 0 → 返回 general。
     3. 最高分与次高分差值 ≤ 阈值 → 意图不明确，返回候选意图。
     4. 否则返回最高分意图。若为 meta，则进一步匹配子场景。
@@ -48,6 +50,13 @@ class IntentAgent(Agent):
                     score += weight
                     idx = work.find(kw)
             scores[intent_key] = score
+
+        # 特殊短语加成：在基础打分之后、排序之前，对命中精确短语的细分意图
+        # 追加一次加权（每意图最多 +SPECIAL_PATTERN_BONUS 一次），使具体意图
+        # 在典型问法下压过较泛化的意图，减少误澄清。不影响 meta / emergency。
+        for sp_intent, phrases in config.SPECIAL_PATTERNS.items():
+            if scores.get(sp_intent, 0) > 0 and any(p in text for p in phrases):
+                scores[sp_intent] += config.SPECIAL_PATTERN_BONUS
 
         # 按得分降序排列；同分时非 meta 意图优先
         ranked = sorted(
