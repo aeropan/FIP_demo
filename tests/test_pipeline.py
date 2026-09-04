@@ -704,5 +704,54 @@ class EmptyEntityAndGuidanceTest(unittest.TestCase):
         self.assertEqual(resp.boundary_reason, BoundaryReason.NO_ENTITIES)
 
 
+class NonFelineInterceptionTest(unittest.TestCase):
+    """非猫科动物主体越界拦截（用户需求：狗/人/兔子 + FIP 实体 → BOUNDARY 仅覆盖猫）。
+
+    纯非猫科问题（无 FIP 实体）、正常猫 FIP 问题、空实体问题均不受影响。
+    """
+
+    def setUp(self) -> None:
+        self.pipeline = Pipeline()
+
+    def _run(self, q: str):
+        return self.pipeline.run_with_trace(q, backend="local")
+
+    def test_dog_with_fip_intercepted(self) -> None:
+        resp, _ = self._run("狗会得传腹吗？")
+        self.assertEqual(resp.status, ResponseStatus.BOUNDARY)
+        self.assertIn("仅覆盖猫", resp.summary)
+
+    def test_human_with_fip_intercepted(self) -> None:
+        resp, _ = self._run("人会得猫传腹吗？")
+        self.assertEqual(resp.status, ResponseStatus.BOUNDARY)
+        self.assertIn("仅覆盖猫", resp.summary)
+
+    def test_rabbit_with_fip_intercepted(self) -> None:
+        resp, _ = self._run("兔子会得传腹吗？")
+        self.assertEqual(resp.status, ResponseStatus.BOUNDARY)
+        self.assertIn("仅覆盖猫", resp.summary)
+
+    def test_cat_fip_diagnosis_unaffected(self) -> None:
+        resp, _ = self._run("猫传腹怎么诊断？")
+        self.assertEqual(resp.status, ResponseStatus.OK)
+        self.assertEqual(resp.intent, Intent.DIAGNOSIS)
+
+    def test_dog_cold_not_intercepted(self) -> None:
+        # 无 FIP 实体 → 走正常空实体边界（通用提示），不被越界逻辑拦截
+        resp, _ = self._run("狗感冒怎么办？")
+        self.assertEqual(resp.status, ResponseStatus.BOUNDARY)
+        self.assertNotIn("仅覆盖猫", resp.summary)
+
+    def test_cat_abdomen_possible_fip_unaffected(self) -> None:
+        resp, _ = self._run("猫肚子大，可能是传腹吗？")
+        self.assertEqual(resp.status, ResponseStatus.OK)
+        self.assertEqual(resp.intent, Intent.DIAGNOSIS_INQUIRY)
+
+    def test_weather_not_intercepted(self) -> None:
+        resp, _ = self._run("今天天气怎么样？")
+        self.assertEqual(resp.status, ResponseStatus.BOUNDARY)
+        self.assertNotIn("仅覆盖猫", resp.summary)
+
+
 if __name__ == "__main__":
     unittest.main()

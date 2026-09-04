@@ -13,8 +13,10 @@ from core.agents import (
     RiskAgent,
 )
 from core.providers.factory import create_provider, get_graph_provider
+from core.config import FIP_ENTITIES, NON_FELINE_ENTITIES
 from core.schemas import (
     AgentResponse,
+    BoundaryReason,
     Intent,
     PipelineTrace,
     ReasoningGroup,
@@ -64,15 +66,8 @@ ALLOWED_EMPTY_ENTITY_INTENTS = {
     Intent.DIFFERENTIAL_DIAGNOSIS,
 }
 
-# 疾病实体集合：用于判断 diagnosis_inquiry 是否「仅含疾病实体、缺少症状/体征实体」。
-# 仅含疾病实体时无法定位症状源，返回引导性回复而非空查询边界。
-FIP_ENTITIES = {
-    "湿性猫传染性腹膜炎（湿性FIP）",
-    "干性猫传染性腹膜炎（干性FIP）",
-    "疑似猫传染性腹膜炎",
-    "疑似湿性猫传染性腹膜炎",
-    "疑似干性猫传染性腹膜炎",
-}
+# 疾病实体集合 FIP_ENTITIES 已迁移至 core.config（单一来源），
+# 供 diagnosis_inquiry「仅含疾病实体 → 引导」判断与越界拦截复用。
 
 
 def _parse_composite_input(user_input: str) -> tuple[Intent, list[str]] | None:
@@ -349,6 +344,29 @@ class Pipeline:
                 detail=entity_detail,
             )
         )
+
+        # 2.5 非猫科动物主体越界拦截：实体解析步骤已如实记录（status=success）。
+        # 若同时命中「FIP 相关实体」与「非猫科动物词（原始输入文本包含）」，说明
+        # 问题主体不在本知识库覆盖范围内（仅覆盖猫的 FIP），直接返回知识边界，
+        # 避免硬答。意图识别 ~ 响应生成全部 skipped，边界处理 success。
+        if entities and any(e in FIP_ENTITIES for e in entities) and any(
+            w in user_input.lower() for w in NON_FELINE_ENTITIES
+        ):
+            self._add_skipped(trace, 2, 7, "检测到非猫科动物主体，已拦截")
+            hint = (
+                "当前知识库仅覆盖猫的猫传染性腹膜炎（FIP），"
+                "暂未收录其他动物是否患此病的信息。建议咨询兽医。"
+            )
+            self._add_boundary(trace, "检测到非猫科动物主体", hint, "no_entities")
+            return AgentResponse(
+                status=ResponseStatus.BOUNDARY,
+                summary=hint,
+                boundary_reason=BoundaryReason.NO_ENTITIES,
+                boundary_hint=hint,
+                entities=list(entities),
+                intent=intent_result.intent,
+            ), trace
+
         trace.steps.append(
             TraceStep(
                 step_id=2,
