@@ -36,6 +36,7 @@ class Intent(str, Enum):
     RISK_FACTORS = "risk_factors"                 # 风险因素查询
     DIFFERENTIAL_DIAGNOSIS = "differential_diagnosis"  # 鉴别诊断
     DRUG_INFO = "drug_info"                       # 药物关联信息
+    DISEASE_FEATURES = "disease_features"         # 疾病特征列举
 
 
 class ResponseStatus(str, Enum):

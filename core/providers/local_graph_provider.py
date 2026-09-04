@@ -484,6 +484,19 @@ class LocalGraphProvider(GraphProvider):
                     steps.append(self._edge_to_step(u, entity, d))
         return self._deduplicate(steps)
 
+    def query_disease_features(self, entities: list[str]) -> list[ReasoningStep]:
+        """疾病特征列举：疾病 --[表现为|诊断于]--> 特征/症状/指标（入向边）。
+
+        围绕给定疾病实体，返回目标节点为该疾病、关系为 表现为/诊断于 的边，
+        源节点即该疾病的特征/表现。与 query_symptom_feature 方向相反。
+        """
+        entity_set = set(entities)
+        steps: list[ReasoningStep] = []
+        for u, v, d in self.graph.edges(data=True):
+            if v in entity_set and d.get("rel") in ("表现为", "诊断于"):
+                steps.append(self._edge_to_step(u, v, d))
+        return self._deduplicate(steps)
+
     # ------------------------------------------------------------------
     # 全量图谱（供 2D/3D 图谱视图）
     # ------------------------------------------------------------------

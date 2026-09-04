@@ -364,6 +364,40 @@ class ResponseAgent(Agent):
             error_message="",
         )
 
+    def generate_disease_features_response(self, steps: list, entities: list[str]) -> AgentResponse:
+        """疾病特征列举：从 steps 提取源节点（特征），按目标 FIP 类型分组列举。
+
+        steps 为 query_disease_features 返回的入向边（特征 --[表现为|诊断于]--> 疾病），
+        源节点即疾病特征/表现。按目标 FIP 节点（湿性/干性）分组，便于用户区分。
+        """
+        if not steps:
+            summary = "当前知识库暂未收录该疾病的特征信息。"
+        else:
+            by_target: dict[str, list[str]] = {}
+            for s in steps:
+                by_target.setdefault(s.target, []).append(s.source)
+            lines = [
+                f"· {target}：{'、'.join(self._dedup(sources))}"
+                for target, sources in by_target.items()
+            ]
+            summary = (
+                "根据知识图谱，猫传腹（FIP）的常见特征/表现包括：\n"
+                + "\n".join(lines)
+            )
+        return AgentResponse(
+            status=ResponseStatus.OK,
+            summary=summary,
+            groups=[],
+            cards=self._steps_to_cards(steps),
+            risks=[],
+            entities=list(entities),
+            intent=Intent.DISEASE_FEATURES,
+            boundary_reason=None,
+            boundary_hint=None,
+            clarify_options=[],
+            error_message="",
+        )
+
     # ------------------------------------------------------------------
     # 多跳推理：间接关联回复（不依赖分组，直接从有序 ReasoningStep 抽取）
     #

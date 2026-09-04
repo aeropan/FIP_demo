@@ -246,6 +246,13 @@ INTENT_KEYWORDS: dict[str, list[str]] = {
     "drug_info": [
         "什么药", "用什么药", "药物", "治疗药物", "能治吗", "吃什么药", "打什么针",
     ],
+    # —— 疾病特征列举（方向修复）：处理「疾病有哪些特征/表现/症状」类问题，
+    # 查询方向为 疾病 → 特征（反向于 symptom_feature 的 症状 → 疾病）。
+    "disease_features": [
+        "特征是什么", "有哪些特征", "症状是什么", "有哪些症状",
+        "表现是什么", "有哪些表现", "什么症状", "什么表现",
+        "什么特征", "特征有哪些", "症状有哪些", "表现有哪些",
+    ],
 }
 
 # 每组关键词按长度从长到短排序，供意图识别实现"最长关键词优先"，
@@ -290,9 +297,16 @@ META_SUBTYPE_KEYWORDS: dict[str, list[str]] = {
 SPECIAL_PATTERN_BONUS = 5
 
 SPECIAL_PATTERNS: dict[str, list[str]] = {
+    # symptom_feature 仅保留「确认方向」短语（X 是传腹的特征吗）；
+    # 「特征是什么/有哪些特征/症状是什么」等方向性短语已移至 disease_features，
+    # 否则「传腹的特征是什么」会被误判为 symptom_feature（症状→疾病）导致查询落空。
     "symptom_feature": [
-        "特征是什么", "表现是什么", "症状是什么",
-        "有哪些表现", "什么表现", "什么症状",
+        "是特征吗", "是表现吗", "算症状吗", "是症状吗",
+        "是不是特征", "是否属于", "算不算",
+    ],
+    "disease_features": [
+        "特征是什么", "有哪些特征", "症状是什么", "有哪些症状",
+        "表现是什么", "有哪些表现", "什么症状", "什么表现",
     ],
     "diagnosis_inquiry": [
         "可能是", "会不会是", "是不是得了", "像不像",
@@ -328,6 +342,7 @@ CLARIFICATION_LABELS: dict[str, str] = {
     "risk_factors": "康复风险因素",
     "differential_diagnosis": "鉴别诊断",
     "drug_info": "药物关联信息",
+    "disease_features": "疾病特征列举",
 }
 
 

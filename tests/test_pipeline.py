@@ -440,7 +440,7 @@ class IntentClarifyFixTest(unittest.TestCase):
     def test_special_intent_cases(self) -> None:
         # (输入, 期望意图, 是否触发澄清)
         cases = [
-            ("腹水的特征是什么", "symptom_feature", False),
+            ("腹水的特征是什么", "disease_features", False),
             ("腹水是传腹的特征吗", "symptom_feature", False),
             ("什么是猫传腹", "concept", False),
             ("猫可能是传腹吗", "diagnosis_inquiry", False),
@@ -479,6 +479,73 @@ class IntentClarifyFixTest(unittest.TestCase):
         self.assertTrue(len(resp.clarify_options) >= 2)
         for opt in resp.clarify_options:
             self.assertTrue(opt.label, "澄清选项标签不应为空")
+
+
+@unittest.skipUnless(_local_backend_available(), "本地 NetworkX 图谱不可用，跳过（需 networkx + data/knowledge_graph.json）")
+class DiseaseFeaturesTest(unittest.TestCase):
+    """新增 disease_features 意图：疾病→特征方向列举，修复「传腹的特征是什么」方向性错误。
+
+    关键约束：
+    - 「传腹的特征是什么」（疾病主语）→ disease_features，列举 腹水/肉芽肿 等特征；
+    - 「腹水的特征是什么」（症状主语）→ 智能改派回 symptom_feature，仍得有效回答；
+    - 「腹水是传腹的特征吗」等确认式问法仍归 symptom_feature。
+    """
+
+    def setUp(self) -> None:
+        self.pipeline = Pipeline()
+        self.agent = IntentAgent()
+
+    def test_disease_features_intent(self) -> None:
+        # 「传腹的特征是什么」意图层应识别为 disease_features
+        r = self.agent.run("传腹的特征是什么")
+        self.assertEqual(r.intent, Intent.DISEASE_FEATURES)
+        self.assertFalse(r.need_clarify)
+
+    def test_disease_features_lists_features(self) -> None:
+        # 端到端：列出 腹水、肉芽肿 等疾病特征，不触发边界
+        resp, trace = self.pipeline.run_with_trace("传腹的特征是什么", backend="local")
+        self.assertEqual(resp.status, ResponseStatus.OK)
+        self.assertEqual(resp.intent, Intent.DISEASE_FEATURES)
+        self.assertIn("腹水", resp.summary)
+        self.assertIn("肉芽肿", resp.summary)
+        # 七步轨迹完整，响应生成为「生成疾病特征列举回复」
+        self.assertEqual(len(trace.steps), 7)
+        steps = _steps_by_name(trace)
+        self.assertEqual(steps["响应生成"].output_summary, "生成疾病特征列举回复")
+
+    def test_disease_features_symptoms(self) -> None:
+        # 「猫传腹有哪些症状」同样归 disease_features 并列举特征
+        resp, _ = self.pipeline.run_with_trace("猫传腹有哪些症状", backend="local")
+        self.assertEqual(resp.status, ResponseStatus.OK)
+        self.assertEqual(resp.intent, Intent.DISEASE_FEATURES)
+        self.assertIn("腹水", resp.summary)
+
+    def test_symptom_feature_confirmation_intact(self) -> None:
+        # 「腹水是传腹的特征吗」仍归 symptom_feature 并明确回答「是」
+        resp, _ = self.pipeline.run_with_trace("腹水是传腹的特征吗", backend="local")
+        self.assertEqual(resp.status, ResponseStatus.OK)
+        self.assertEqual(resp.intent, Intent.SYMPTOM_FEATURE)
+        self.assertIn("是", resp.summary)
+
+    def test_reroute_symptom_subject(self) -> None:
+        # 「腹水的特征是什么」主语是症状，端到端智能改派回 symptom_feature，得到有效回答
+        resp, _ = self.pipeline.run_with_trace("腹水的特征是什么", backend="local")
+        self.assertEqual(resp.status, ResponseStatus.OK)
+        self.assertEqual(resp.intent, Intent.SYMPTOM_FEATURE)
+        self.assertIn("是", resp.summary)
+
+    def test_original_intents_unaffected(self) -> None:
+        # 原有核心意图不受影响
+        cases = [
+            ("什么是猫传腹", Intent.CONCEPT),
+            ("猫传腹怎么诊断", Intent.DIAGNOSIS),
+            ("湿性FIP怎么治", Intent.TREATMENT),
+        ]
+        for text, exp in cases:
+            with self.subTest(input=text):
+                resp, _ = self.pipeline.run_with_trace(text, backend="local")
+                self.assertEqual(resp.status, ResponseStatus.OK)
+                self.assertEqual(resp.intent, exp)
 
 
 if __name__ == "__main__":

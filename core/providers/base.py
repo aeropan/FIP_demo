@@ -182,6 +182,21 @@ class GraphProvider(ABC):
         """
         raise NotImplementedError
 
+    @abstractmethod
+    def query_disease_features(self, entities: list[str]) -> list[ReasoningStep]:
+        """查询疾病有哪些特征/表现，方向为疾病 → 特征（反向查询 表现为/诊断于）。
+
+        围绕给定疾病实体，返回「特征/症状/指标 --[表现为|诊断于]--> 该疾病」的入向边，
+        帮助回答「传腹有哪些特征/表现/症状」这类疾病特征列举问题。
+
+        Args:
+            entities: 用户问题中解析到的疾病实体名列表。
+
+        Returns:
+            list[ReasoningStep]: 疾病特征列举所需的推理关系列表。
+        """
+        raise NotImplementedError
+
     def query_multihop_path(
         self, source: str, target: str, max_hops: int = 3
     ) -> list[ReasoningStep]:

@@ -42,6 +42,7 @@ _SPECIAL_INTENTS = {
     Intent.RISK_FACTORS,
     Intent.DIFFERENTIAL_DIAGNOSIS,
     Intent.DRUG_INFO,
+    Intent.DISEASE_FEATURES,
 }
 
 # 细分意图 → 轨迹面板中文名称（意图识别 / 响应生成步骤显示用）
@@ -52,6 +53,7 @@ _INTENT_DISPLAY_NAME = {
     Intent.RISK_FACTORS: "风险因素查询",
     Intent.DIFFERENTIAL_DIAGNOSIS: "鉴别诊断",
     Intent.DRUG_INFO: "药物关联查询",
+    Intent.DISEASE_FEATURES: "疾病特征列举",
 }
 
 
@@ -299,6 +301,20 @@ class Pipeline:
             entity_output = f"解析到实体：{', '.join(entities)}"
             entity_detail = {"entities": list(entities)}
 
+        # 疾病特征列举的「主语歧义」智能改派：意图识别在实体解析之前、纯关键词
+        # 无法区分「疾病主语」（传腹的特征是什么）与「症状主语」（腹水的特征是什么），
+        # 两者都含「特征是什么」。若识别为 disease_features 但解析到的实体均非 FIP
+        # 疾病节点（即主语其实是症状/指标），则改派回 symptom_feature，避免反向查询
+        # 落空返回边界话术。
+        if (
+            intent_result.intent == Intent.DISEASE_FEATURES
+            and entities
+            and not any(
+                ("猫传染性腹膜炎" in e) or ("FIP" in e) for e in entities
+            )
+        ):
+            intent_result.intent = Intent.SYMPTOM_FEATURE
+
         trace.steps.append(
             TraceStep(
                 step_id=1,
@@ -506,6 +522,8 @@ class Pipeline:
                 steps = provider.query_differential_diagnosis(entities)
             elif intent == Intent.DRUG_INFO:
                 steps = provider.query_drug_info(entities)
+            elif intent == Intent.DISEASE_FEATURES:
+                steps = provider.query_disease_features(entities)
             else:  # pragma: no cover - 调用方已用 _SPECIAL_INTENTS 过滤
                 steps = []
         except Exception as exc:  # noqa: BLE001
@@ -632,6 +650,9 @@ class Pipeline:
             response_action = f"生成{_INTENT_DISPLAY_NAME[intent]}回复"
         elif intent == Intent.DIFFERENTIAL_DIAGNOSIS:
             response = self.response_agent.generate_differential_diagnosis_response(use_steps)
+            response_action = f"生成{_INTENT_DISPLAY_NAME[intent]}回复"
+        elif intent == Intent.DISEASE_FEATURES:
+            response = self.response_agent.generate_disease_features_response(use_steps, entities)
             response_action = f"生成{_INTENT_DISPLAY_NAME[intent]}回复"
         else:  # DRUG_INFO
             response = self.response_agent.generate_drug_info_response(use_steps)

@@ -187,6 +187,14 @@ class Neo4jGraphProvider(GraphProvider):
                     out.append(s)
         return self._dedupe(out)
 
+    def query_disease_features(self, entities: list[str]) -> list[ReasoningStep]:
+        """疾病特征列举：疾病 --[表现为|诊断于]--> 特征/症状/指标（入向边）。"""
+        entity_set = set(entities)
+        return [
+            s for s in self._fetch_all_steps()
+            if s.target in entity_set and s.rel in ("表现为", "诊断于")
+        ]
+
     def get_full_graph(self) -> dict[str, Any]:
         """返回全量图谱数据（nodes / edges）。
 
