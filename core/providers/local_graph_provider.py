@@ -123,8 +123,12 @@ def _match_symptom_feature(source: str, rel: str, target: str) -> bool:
 
 
 def _match_diagnostic_test(source: str, rel: str, target: str) -> bool:
-    """指标解读：指标 --[诊断于]--> 确诊FIP 或 疑似*。"""
-    return rel == "诊断于" and (target in _FIP_CONFIRMED or target.startswith("疑似"))
+    """指标解读：指标 --[诊断于|表现为]--> 确诊FIP 或 疑似*。
+
+    部分指标（如 Rivalta试验阳性）以 表现为 直接连到确诊FIP，放宽关系类型
+    以覆盖此类边，避免「Rivalta阳性代表什么」误走边界。
+    """
+    return rel in ("诊断于", "表现为") and (target in _FIP_CONFIRMED or target.startswith("疑似"))
 
 
 def _match_risk_factors(source: str, rel: str, target: str) -> bool:
@@ -494,6 +498,19 @@ class LocalGraphProvider(GraphProvider):
         steps: list[ReasoningStep] = []
         for u, v, d in self.graph.edges(data=True):
             if v in entity_set and d.get("rel") in ("表现为", "诊断于"):
+                steps.append(self._edge_to_step(u, v, d))
+        return self._deduplicate(steps)
+
+    def query_disease_indicators(self, entities: list[str]) -> list[ReasoningStep]:
+        """疾病指标异常列举：疾病 --[诊断于]--> 指标（入向边，反向于 query_diagnostic_test）。
+
+        围绕给定疾病实体，返回目标节点为该疾病、关系为 诊断于 的边，
+        源节点即该疾病的异常指标。用于「传腹有哪些指标异常」这类反向指标查询。
+        """
+        entity_set = set(entities)
+        steps: list[ReasoningStep] = []
+        for u, v, d in self.graph.edges(data=True):
+            if v in entity_set and d.get("rel") == "诊断于":
                 steps.append(self._edge_to_step(u, v, d))
         return self._deduplicate(steps)
 

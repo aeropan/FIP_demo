@@ -58,10 +58,17 @@ class IntentAgent(Agent):
             if scores.get(sp_intent, 0) > 0 and any(p in text for p in phrases):
                 scores[sp_intent] += config.SPECIAL_PATTERN_BONUS
 
-        # 按得分降序排列；同分时非 meta 意图优先
+        # 按得分降序排列；同分时按 INTENT_PRIORITY 优先（更具体的细分意图靠前），
+        # 并保障 emergency 优先、meta 置后。
+        _priority_map = {k: i for i, k in enumerate(config.INTENT_PRIORITY)}
         ranked = sorted(
             scores.items(),
-            key=lambda kv: (-kv[1], kv[0] != "emergency", kv[0] == "meta"),
+            key=lambda kv: (
+                -kv[1],
+                kv[0] != "emergency",
+                _priority_map.get(kv[0], 100),
+                kv[0] == "meta",
+            ),
         )
         top_key, top_score = ranked[0]
         second_score = ranked[1][1]
@@ -72,6 +79,28 @@ class IntentAgent(Agent):
                 need_clarify=False,
                 scores=scores,
             )
+
+        # 阶段五：强意图直判 —— 对 4 个高频细分意图，若输入命中其 SPECIAL_PATTERNS
+        # 强模式、且其得分与最高分差值 <= CLARIFY_THRESHOLD，则直接选择该意图，
+        # 跳过澄清。不影响 emergency / meta（由权重与短路逻辑单独处理）。
+        _STRONG_DIRECT_INTENTS = {
+            "disease_features", "diagnosis_inquiry", "symptom_feature", "diagnostic_test",
+        }
+        strong_candidates = [
+            k for k in _STRONG_DIRECT_INTENTS
+            if scores.get(k, 0) > 0 and any(p in text for p in config.SPECIAL_PATTERNS.get(k, []))
+        ]
+        if strong_candidates:
+            best_strong = max(
+                strong_candidates,
+                key=lambda k: (scores[k], -_priority_map.get(k, 100)),
+            )
+            if top_score - scores[best_strong] <= config.CLARIFY_THRESHOLD:
+                return IntentResult(
+                    intent=Intent(best_strong),
+                    need_clarify=False,
+                    scores=scores,
+                )
 
         if top_score - second_score <= config.CLARIFY_THRESHOLD:
             candidates = [Intent(key) for key, s in ranked if s > 0][:3]

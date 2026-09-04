@@ -197,8 +197,24 @@ class GraphProvider(ABC):
         """
         raise NotImplementedError
 
+    @abstractmethod
+    def query_disease_indicators(self, entities: list[str]) -> list[ReasoningStep]:
+        """查询疾病有哪些检查指标异常，方向为疾病 → 指标（反向查询 诊断于）。
+
+        围绕给定疾病实体，返回「指标 --[诊断于]--> 该疾病」的入向边，
+        帮助回答「传腹有哪些指标异常」这类反向指标查询问题。与正向的
+        query_diagnostic_test（指标 → 疾病）方向相反。
+
+        Args:
+            entities: 用户问题中解析到的疾病实体名列表。
+
+        Returns:
+            list[ReasoningStep]: 疾病指标异常列举所需的推理关系列表。
+        """
+        raise NotImplementedError
+
     def query_multihop_path(
-        self, source: str, target: str, max_hops: int = 3
+        self, source: str, target: str, max_hops: int = 5
     ) -> list[ReasoningStep]:
         """查询 source 到 target 的多跳间接关联路径（默认空实现）。
 

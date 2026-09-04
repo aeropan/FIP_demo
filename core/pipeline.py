@@ -507,6 +507,7 @@ class Pipeline:
         )
 
         # 4. 图查询：调用对应专用查询方法
+        used_disease_indicators = False
         try:
             provider = create_provider(backend)
             if intent == Intent.DIAGNOSIS_INQUIRY:
@@ -514,7 +515,13 @@ class Pipeline:
             elif intent == Intent.SYMPTOM_FEATURE:
                 steps = provider.query_symptom_feature(entities)
             elif intent == Intent.DIAGNOSTIC_TEST:
+                # 阶段二：优先正向（具体指标 → 疾病）；仅当正向为空且实体含疾病时，
+                # 回退反向（疾病 → 指标）用于「传腹有哪些指标异常」这类泛指问法。
+                # 这样「白球比0.5是传腹吗」仍返回针对性单条结论，而非全量指标列表。
                 steps = provider.query_diagnostic_test(entities)
+                if not steps and any(("猫传染性腹膜炎" in e) or ("FIP" in e) for e in entities):
+                    steps = provider.query_disease_indicators(entities)
+                    used_disease_indicators = bool(steps)
             elif intent == Intent.RISK_FACTORS:
                 # 全局风险因素查询：不按实体过滤，返回全部影响因素
                 steps = provider.query_risk_factors([])
@@ -551,7 +558,7 @@ class Pipeline:
         # 多跳推理分流：仅 symptom_feature / diagnosis_inquiry，直接查询为空时，
         # 尝试通过多跳路径（A→B→C）间接推理（A 为症状/指标实体，C 为 FIP 实体）。
         multihop = None  # (steps, source, target) 或 None
-        if not steps and intent in (Intent.SYMPTOM_FEATURE, Intent.DIAGNOSIS_INQUIRY):
+        if not steps and intent in (Intent.SYMPTOM_FEATURE, Intent.DIAGNOSIS_INQUIRY, Intent.DIAGNOSTIC_TEST):
             multihop = self._resolve_multihop(provider, entities)
 
         trace.steps.append(
@@ -643,7 +650,10 @@ class Pipeline:
             response = self.response_agent.generate_symptom_feature_response(use_steps)
             response_action = f"生成{_INTENT_DISPLAY_NAME[intent]}回复"
         elif intent == Intent.DIAGNOSTIC_TEST:
-            response = self.response_agent.generate_diagnostic_test_response(use_steps)
+            if used_disease_indicators:
+                response = self.response_agent.generate_disease_indicators_response(use_steps, entities)
+            else:
+                response = self.response_agent.generate_diagnostic_test_response(use_steps)
             response_action = f"生成{_INTENT_DISPLAY_NAME[intent]}回复"
         elif intent == Intent.RISK_FACTORS:
             response = self.response_agent.generate_risk_factors_response(use_steps)
@@ -691,7 +701,7 @@ class Pipeline:
             return None
         for source in source_candidates:
             for target in fip_entities:
-                path = provider.query_multihop_path(source, target, max_hops=3)
+                path = provider.query_multihop_path(source, target, max_hops=5)
                 if path:
                     return path, source, target
         return None

@@ -238,8 +238,8 @@ class ResponseAgent(Agent):
         )
 
     def generate_diagnostic_test_response(self, steps: list) -> AgentResponse:
-        """指标解读：提取 诊断于→确诊FIP/疑似* 的指标与依据。"""
-        matched = [s for s in steps if s.rel == "诊断于"]
+        """指标解读：提取指标与 FIP 的关联（表现为/诊断于 均覆盖）与依据。"""
+        matched = [s for s in steps if s.rel in ("诊断于", "表现为")]
         if matched:
             best = max(matched, key=self._confidence_rank)
             summary = f"{best.source}在现有知识图谱中与{best.target}相关。\n依据：{best.evidence}"
@@ -392,6 +392,34 @@ class ResponseAgent(Agent):
             risks=[],
             entities=list(entities),
             intent=Intent.DISEASE_FEATURES,
+            boundary_reason=None,
+            boundary_hint=None,
+            clarify_options=[],
+            error_message="",
+        )
+
+    def generate_disease_indicators_response(self, steps: list, entities: list[str]) -> AgentResponse:
+        """疾病指标异常列举：从 steps 提取源节点（指标），列举该疾病的常见异常指标。
+
+        steps 为 query_disease_indicators 返回的入向边（指标 --[诊断于]--> 疾病），
+        源节点即该疾病的异常指标。空 → 提示未收录。
+        """
+        if not steps:
+            summary = "当前知识库暂未收录该疾病的异常指标信息。"
+        else:
+            indicators = self._dedup([s.source for s in steps])
+            summary = (
+                "根据知识图谱，猫传腹（FIP）常见的异常指标包括：\n"
+                + "、".join(indicators) + "。"
+            )
+        return AgentResponse(
+            status=ResponseStatus.OK,
+            summary=summary,
+            groups=[],
+            cards=self._steps_to_cards(steps),
+            risks=[],
+            entities=list(entities),
+            intent=Intent.DIAGNOSTIC_TEST,
             boundary_reason=None,
             boundary_hint=None,
             clarify_options=[],

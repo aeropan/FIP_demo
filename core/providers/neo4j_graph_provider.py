@@ -195,6 +195,14 @@ class Neo4jGraphProvider(GraphProvider):
             if s.target in entity_set and s.rel in ("表现为", "诊断于")
         ]
 
+    def query_disease_indicators(self, entities: list[str]) -> list[ReasoningStep]:
+        """疾病指标异常列举：疾病 --[诊断于]--> 指标（入向边，反向于 query_diagnostic_test）。"""
+        entity_set = set(entities)
+        return [
+            s for s in self._fetch_all_steps()
+            if s.target in entity_set and s.rel == "诊断于"
+        ]
+
     def get_full_graph(self) -> dict[str, Any]:
         """返回全量图谱数据（nodes / edges）。
 

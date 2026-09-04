@@ -397,8 +397,12 @@ class MultihopTest(unittest.TestCase):
         self.assertIn("是", resp.summary)
 
     def test_general_handles_unclassified_gracefully(self) -> None:
-        """未归类为细分意图（如「会导致传腹吗」落 GENERAL）时，走通用查询、不报错、不误判多跳。"""
-        resp, trace = self.pipeline.run_with_trace("内皮损伤会导致传腹吗？", backend="local")
+        """真正无意图匹配的通用输入（如「今天天气真好」落 GENERAL）时，走通用查询、不报错、不误判多跳。
+
+        注：含「会导致」的问法（如「内皮损伤会导致传腹吗」）按阶段三已归类为
+        diagnosis_inquiry 并触发多跳，不再归 GENERAL，故此处改用中性通用句验证 GENERAL 路径。
+        """
+        resp, trace = self.pipeline.run_with_trace("多猫环境要注意什么", backend="local")
         self.assertEqual(resp.status, ResponseStatus.OK)
         self.assertEqual(resp.intent, Intent.GENERAL)
         steps = _steps_by_name(trace)
@@ -546,6 +550,109 @@ class DiseaseFeaturesTest(unittest.TestCase):
                 resp, _ = self.pipeline.run_with_trace(text, backend="local")
                 self.assertEqual(resp.status, ResponseStatus.OK)
                 self.assertEqual(resp.intent, exp)
+
+
+@unittest.skipUnless(_local_backend_available(), "本地 NetworkX 图谱不可用，跳过（需 networkx + data/knowledge_graph.json）")
+class BatchTest(unittest.TestCase):
+    """意图与查询优化增强包（优先级1~5）批量验证。
+
+    覆盖需求文档各阶段验证样例 + 总体测试要求中的历史问题，本地后端即可运行。
+    重点验证：方向性错误修复、反向指标查询、强意图直判避免无谓澄清、
+    多跳间接关联、原有核心意图不受影响。
+    """
+
+    def setUp(self) -> None:
+        self.pipeline = Pipeline()
+
+    def _run(self, text: str):
+        return self.pipeline.run_with_trace(text, backend="local")
+
+    # —— 阶段一：口语别名解析 ——
+    def test_alias_resolution(self) -> None:
+        # 抽风 → 癫痫发作；呼吸快 → 呼吸困难；Rivalta阳性 → Rivalta试验阳性
+        resp, _ = self._run("猫抽风，是传腹症状吗？")
+        self.assertEqual(resp.status, ResponseStatus.OK)
+        self.assertEqual(resp.intent, Intent.SYMPTOM_FEATURE)
+        self.assertIn("癫痫发作", resp.summary)
+
+        resp, _ = self._run("猫呼吸快，是不是传腹？")
+        self.assertEqual(resp.status, ResponseStatus.OK)
+        self.assertNotEqual(resp.intent, Intent.GENERAL)
+        self.assertIn("呼吸困难", resp.entities)
+
+        resp, _ = self._run("Rivalta阳性代表什么？")
+        self.assertEqual(resp.status, ResponseStatus.OK)
+        self.assertEqual(resp.intent, Intent.DIAGNOSTIC_TEST)
+        self.assertIn("Rivalta试验阳性", resp.summary)
+        self.assertIn("相关", resp.summary)
+
+    # —— 阶段二：反向指标查询，修复方向性错误 ——
+    def test_reverse_indicator_query(self) -> None:
+        # 「传腹有哪些指标异常」不再走 boundary，列出异常指标
+        resp, _ = self._run("传腹有哪些指标异常？")
+        self.assertEqual(resp.status, ResponseStatus.OK)
+        self.assertEqual(resp.intent, Intent.DIAGNOSTIC_TEST)
+        self.assertIn("异常指标", resp.summary)
+        self.assertIn("白球比", resp.summary)
+
+        # 「传腹有腹水症状吗」正确回答「是」（正向 symptom_feature）
+        resp, _ = self._run("传腹有腹水症状吗？")
+        self.assertEqual(resp.status, ResponseStatus.OK)
+        self.assertEqual(resp.intent, Intent.SYMPTOM_FEATURE)
+        self.assertIn("是", resp.summary)
+
+    # —— 阶段三：关键词/特殊短语，避免落入 general ——
+    def test_keywords_avoid_general(self) -> None:
+        resp, _ = self._run("怎么确认是不是传腹？")
+        self.assertEqual(resp.status, ResponseStatus.OK)
+        self.assertIn(resp.intent, (Intent.DIAGNOSIS, Intent.DIAGNOSIS_INQUIRY))
+
+        resp, _ = self._run("GS-441524能治传腹吗？")
+        self.assertEqual(resp.status, ResponseStatus.OK)
+        self.assertIn(resp.intent, (Intent.DRUG_INFO, Intent.TREATMENT))
+
+    # —— 阶段四：多跳间接关联 ——
+    def test_multihop_indirect(self) -> None:
+        resp, _ = self._run("内皮损伤会导致传腹吗？")
+        self.assertEqual(resp.status, ResponseStatus.OK)
+        self.assertEqual(resp.intent, Intent.DIAGNOSIS_INQUIRY)
+        self.assertIn("间接关联", resp.summary)
+
+        resp, _ = self._run("免疫复合物是传腹的特征吗？")
+        self.assertEqual(resp.status, ResponseStatus.OK)
+        self.assertEqual(resp.intent, Intent.SYMPTOM_FEATURE)
+        self.assertIn("间接关联", resp.summary)
+        self.assertIn("免疫复合物", resp.summary)
+
+        resp, _ = self._run("血管炎是传腹的表现吗")
+        self.assertEqual(resp.status, ResponseStatus.OK)
+        self.assertEqual(resp.intent, Intent.SYMPTOM_FEATURE)
+        self.assertIn("间接关联", resp.summary)
+        self.assertIn("血管炎", resp.summary)
+
+    # —— 阶段五：强意图直判，避免无谓澄清 ——
+    def test_strong_direct_no_clarify(self) -> None:
+        resp, _ = self._run("猫传腹的典型表现有哪些？")
+        self.assertEqual(resp.status, ResponseStatus.OK)
+        self.assertEqual(resp.intent, Intent.DISEASE_FEATURES)
+        self.assertIn("腹水", resp.summary)
+
+        resp, _ = self._run("白球比低有什么表现？")
+        self.assertEqual(resp.status, ResponseStatus.OK)
+        self.assertIn(resp.intent, (Intent.DIAGNOSTIC_TEST, Intent.DISEASE_FEATURES))
+
+        # 真正歧义（risk vs treatment）仍澄清
+        resp, _ = self._run("441安全吗？能治好吗？")
+        self.assertEqual(resp.status, ResponseStatus.CLARIFY)
+        self.assertTrue(len(resp.clarify_options) >= 2)
+
+    # —— 总体测试要求：历史 boundary/general 问题已修复 ——
+    def test_historical_boundary_fixed(self) -> None:
+        for text in ["腹水是传腹的症状吗", "传腹有哪些指标异常？", "Rivalta阳性代表什么？"]:
+            with self.subTest(input=text):
+                resp, _ = self._run(text)
+                self.assertNotEqual(resp.status, ResponseStatus.BOUNDARY)
+                self.assertNotEqual(resp.intent, Intent.GENERAL)
 
 
 if __name__ == "__main__":
