@@ -655,5 +655,54 @@ class BatchTest(unittest.TestCase):
                 self.assertNotEqual(resp.intent, Intent.GENERAL)
 
 
+class EmptyEntityAndGuidanceTest(unittest.TestCase):
+    """边界精准处理回归：空实体意图续跑 + diagnosis_inquiry 无症状引导。
+
+    覆盖两个边界修复：
+    1) risk_factors / differential_diagnosis 允许空实体继续（不再 no_entities 边界）；
+    2) diagnosis_inquiry 仅含疾病实体、缺症状实体时返回引导性回复而非空查询边界；
+    3) 其他意图空实体（general）仍正常边界；原核心功能不受影响。
+    本地后端即可运行，不依赖 Neo4j。
+    """
+
+    def setUp(self) -> None:
+        self.pipeline = Pipeline()
+
+    def _run(self, text: str):
+        return self.pipeline.run_with_trace(text, backend="local")
+
+    def test_risk_factors_empty_entity_allowed(self) -> None:
+        # 空实体 + risk_factors → 允许继续，返回全局风险因素列表（不再 boundary）
+        resp, trace = self._run("有哪些风险因素会影响康复？")
+        self.assertEqual(resp.status, ResponseStatus.OK)
+        self.assertEqual(resp.intent, Intent.RISK_FACTORS)
+        self.assertIn("影响", resp.summary)
+        ent_step = next(s for s in trace.steps if s.step_name == "实体解析")
+        self.assertEqual(ent_step.status, "success")
+        self.assertIn("允许空实体继续", ent_step.output_summary)
+
+    def test_differential_diagnosis_empty_entity_allowed(self) -> None:
+        # 空实体 + differential_diagnosis → 允许继续，返回全量鉴别列表
+        resp, _ = self._run("需要和哪些疾病鉴别？")
+        self.assertEqual(resp.status, ResponseStatus.OK)
+        self.assertEqual(resp.intent, Intent.DIFFERENTIAL_DIAGNOSIS)
+        self.assertIn("鉴别", resp.summary)
+
+    def test_diagnosis_inquiry_guidance_when_no_symptom(self) -> None:
+        # 仅含疾病实体（传腹→FIP）、无症状实体 → 引导性回复，状态 OK（不再 boundary）
+        resp, trace = self._run("猫可能是传腹吗？")
+        self.assertEqual(resp.status, ResponseStatus.OK)
+        self.assertEqual(resp.intent, Intent.DIAGNOSIS_INQUIRY)
+        self.assertIn("你观察到", resp.summary)
+        gq = next(s for s in trace.steps if s.step_name == "图查询")
+        self.assertEqual(gq.status, "skipped")
+
+    def test_general_empty_entity_still_boundary(self) -> None:
+        # 空实体 + general（非允许集合）→ 仍边界（回归保护）
+        resp, _ = self._run("今天天气怎么样？")
+        self.assertEqual(resp.status, ResponseStatus.BOUNDARY)
+        self.assertEqual(resp.boundary_reason, BoundaryReason.NO_ENTITIES)
+
+
 if __name__ == "__main__":
     unittest.main()

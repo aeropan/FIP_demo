@@ -56,6 +56,24 @@ _INTENT_DISPLAY_NAME = {
     Intent.DISEASE_FEATURES: "疾病特征列举",
 }
 
+# 允许「实体为空」时仍继续执行的意图：其专用查询不依赖具体实体，
+# 走全量/全局检索（risk_factors 为全局风险因素；differential_diagnosis 为全量鉴别诊断）。
+# 实体为空且意图不在本集合内，才触发 no_entities 边界兜底。
+ALLOWED_EMPTY_ENTITY_INTENTS = {
+    Intent.RISK_FACTORS,
+    Intent.DIFFERENTIAL_DIAGNOSIS,
+}
+
+# 疾病实体集合：用于判断 diagnosis_inquiry 是否「仅含疾病实体、缺少症状/体征实体」。
+# 仅含疾病实体时无法定位症状源，返回引导性回复而非空查询边界。
+FIP_ENTITIES = {
+    "湿性猫传染性腹膜炎（湿性FIP）",
+    "干性猫传染性腹膜炎（干性FIP）",
+    "疑似猫传染性腹膜炎",
+    "疑似湿性猫传染性腹膜炎",
+    "疑似干性猫传染性腹膜炎",
+}
+
 
 def _parse_composite_input(user_input: str) -> tuple[Intent, list[str]] | None:
     """解析澄清按钮回传的复合输入。
@@ -286,14 +304,19 @@ class Pipeline:
         # 2. 实体解析（meta 已短路返回，以下仅非 meta 流程，保持原逻辑不变）
         entities = self.entity_agent.run(user_input)
 
-        # 3. 实体为空 → 判断是否继承上一轮上下文实体
+        # 3. 实体为空 → 继承上下文 / 允许空实体意图 / 否则标记空
+        intent = intent_result.intent
         if not entities:
-            intent = intent_result.intent
             # 继承条件：意图明确（非 general、非 None）+ 上下文实体非空
             if intent is not None and intent != Intent.GENERAL and context_entities:
                 entities = list(context_entities)
                 entity_output = f"未解析到实体，继承上一轮实体：{', '.join(entities)}"
                 entity_detail: dict = {"entities": entities, "inherited": True}
+            elif intent in ALLOWED_EMPTY_ENTITY_INTENTS:
+                # 该意图允许空实体继续（如全局风险因素 / 全量鉴别诊断查询），
+                # 不在此处触发边界，交由下游专用查询返回全量结果。
+                entity_output = "未解析到实体，但该意图允许空实体继续"
+                entity_detail = {"entities": [], "empty_allowed": True}
             else:
                 entity_output = "未解析到实体"
                 entity_detail = {"entities": []}
@@ -347,8 +370,8 @@ class Pipeline:
             )
         )
 
-        # 4. 实体仍为空（未继承）→ 边界兜底
-        if not entities:
+        # 4. 实体仍为空（未继承、且非允许空实体的意图）→ 边界兜底
+        if not entities and intent_result.intent not in ALLOWED_EMPTY_ENTITY_INTENTS:
             self._add_skipped(trace, 3, 7, "实体解析为空")
             self._add_boundary(trace, "实体解析为空", "实体缺失，返回知识边界提示", "no_entities")
             return self.boundary_agent.no_entities(), trace
@@ -511,6 +534,35 @@ class Pipeline:
         try:
             provider = create_provider(backend)
             if intent == Intent.DIAGNOSIS_INQUIRY:
+                symptom_entities = [e for e in entities if e not in FIP_ENTITIES]
+                if not symptom_entities:
+                    # 仅含疾病实体 / 无具体症状体征 → 返回引导性回复，不执行图查询
+                    trace.steps.append(
+                        TraceStep(
+                            step_id=4,
+                            step_name="图查询",
+                            agent="GraphQueryAgent",
+                            status="skipped",
+                            input_summary=f"意图：diagnosis_inquiry；实体：{', '.join(entities) if entities else '（无）'}",
+                            output_summary="",
+                            skip_reason="未提供具体症状/体征实体，返回引导性回复",
+                        )
+                    )
+                    self._add_skipped(trace, 5, 6, "该意图无需证据分组与风险标记")
+                    response = self.response_agent.generate_diagnosis_inquiry_guidance()
+                    response.entities = list(entities)
+                    trace.steps.append(
+                        TraceStep(
+                            step_id=7,
+                            step_name="响应生成",
+                            agent="ResponseAgent",
+                            status="success",
+                            input_summary="诊断可能性判断：无具体症状实体",
+                            output_summary="生成引导性回复",
+                            detail={"summary": response.summary, "cards": response.cards},
+                        )
+                    )
+                    return response, trace
                 steps = provider.query_diagnosis_inquiry(entities)
             elif intent == Intent.SYMPTOM_FEATURE:
                 steps = provider.query_symptom_feature(entities)

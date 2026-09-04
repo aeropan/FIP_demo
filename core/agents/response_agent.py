@@ -214,6 +214,31 @@ class ResponseAgent(Agent):
             error_message="",
         )
 
+    def generate_diagnosis_inquiry_guidance(self) -> AgentResponse:
+        """诊断可能性判断（无具体症状/体征实体）：返回引导性回复。
+
+        当用户只提到疾病（如「猫可能是传腹吗」）而未描述任何具体症状/体征时，
+        图谱无法定位症状源实体，无法给出针对性关联，故引导用户补充观察信息。
+        状态为 OK（非边界），因为已给出有效引导。
+        """
+        summary = (
+            "猫传腹的确诊需要结合具体症状和检查。"
+            "你观察到猫咪有哪些异常表现？比如发烧、肚子大、精神差、呼吸快等。"
+        )
+        return AgentResponse(
+            status=ResponseStatus.OK,
+            summary=summary,
+            groups=[],
+            cards=[],
+            risks=[],
+            entities=[],
+            intent=Intent.DIAGNOSIS_INQUIRY,
+            boundary_reason=None,
+            boundary_hint=None,
+            clarify_options=[],
+            error_message="",
+        )
+
     def generate_symptom_feature_response(self, steps: list) -> AgentResponse:
         """特征确认：选择置信度最高的一条 表现为/诊断于→确诊FIP/疑似*。"""
         if steps:
