@@ -23,6 +23,8 @@ Thumbs.db
 logs/
 data/*.csv
 !data/.gitkeep
+# 默认对话种子必须随仓库进 Git（否则部署后读不到）：显式放行，防止将来误加 data/*.json 被忽略
+!data/seed_conversations.json
 # literature/  # 注释掉：source/literature/ 需要进 Git，且仓库根目录没有独立的 literature/ 目录
 
 # Gradio 运行时缓存
@@ -49,3 +51,6 @@ source/design/_graph_coords.js
 source/design/_matched_coords.json
 source/design/_test_g6_local.html
 source/design/_test_mode_graph.html
+
+# 源素材（rar 压缩包 / After Effects 工程 .aep 等，体积大且不进仓库）
+source/apng/

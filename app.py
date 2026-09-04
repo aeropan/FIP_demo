@@ -87,29 +87,13 @@ HOMEPAGE_HTML = """
           <span class="section-title">最近对话</span>
           <span class="section-count">(3)</span>
         </div>
-        <ul class="chat-list">
-          <li class="chat-item">
-            <span class="chat-ico"><svg viewBox="0 0 1024 1024" width="16" height="16" aria-hidden="true"><path d="M388.266667 552.533333c0-10.666667 8.533333-19.2 19.2-19.2s19.2 8.533333 19.2 19.2c0 19.2 14.933333 36.266667 34.133333 36.266667 19.2 0 34.133333-14.933333 34.133333-36.266667v-4.266666c-4.266667-2.133333-6.4-4.266667-10.666666-6.4l-19.2-19.2c-10.666667-19.2 2.133333-44.8 25.6-44.8h34.133333c23.466667 0 38.4 25.6 27.733333 44.8l-19.2 19.2c-2.133333 2.133333-4.266667 4.266667-6.4 4.266666 0 2.133333 2.133333 4.266667 2.133334 6.4 0 19.2 14.933333 36.266667 34.133333 36.266667s34.133333-14.933333 34.133333-36.266667c0-10.666667 8.533333-19.2 19.2-19.2s19.2 8.533333 19.2 19.2c0 40.533333-32 72.533333-72.533333 72.533334-21.333333 0-40.533333-8.533333-53.333333-23.466667-12.8 14.933333-32 23.466667-53.333334 23.466667-36.266667 0-68.266667-34.133333-68.266666-72.533334z m588.8 104.533334c-8.533333 6.4-12.8 10.666667-21.333334 10.666666-4.266667 0-8.533333-2.133333-10.666666-4.266666 0 0-2.133333 0-4.266667-2.133334-23.466667-12.8-44.8-23.466667-64-29.866666C840.533333 768 708.266667 853.333333 518.4 853.333333 324.266667 853.333333 185.6 765.866667 149.333333 629.333333c-21.333333 8.533333-40.533333 19.2-64 32-2.133333 2.133333-4.266667 2.133333-4.266666 2.133334h-2.133334c-2.133333 2.133333-6.4 2.133333-8.533333 2.133333-8.533333 0-14.933333-4.266667-19.2-10.666667-4.266667-6.4-4.266667-12.8-4.266667-19.2 2.133333-6.4 6.4-10.666667 10.666667-12.8 0 0 36.266667-23.466667 83.2-40.533333 0-8.533333-2.133333-17.066667-2.133333-25.6v-21.333333c-29.866667 2.133333-57.6 6.4-72.533334 8.533333h-4.266666-2.133334c-4.266667 0-10.666667-2.133333-14.933333-4.266667-4.266667-4.266667-8.533333-8.533333-8.533333-14.933333 0-6.4 0-12.8 4.266666-19.2 4.266667-4.266667 8.533333-8.533333 14.933334-8.533333 4.266667-2.133333 42.666667-8.533333 89.6-10.666667 12.8-55.466667 38.4-110.933333 74.666666-157.866667 0-2.133333-2.133333-4.266667-2.133333-6.4 0-34.133333 4.266667-145.066667 49.066667-174.933333 61.866667-38.4 157.866667 12.8 192 34.133333 19.2-2.133333 36.266667-4.266667 55.466666-4.266666 17.066667 0 32 2.133333 49.066667 4.266666 36.266667-21.333333 130.133333-68.266667 189.866667-32 46.933333 29.866667 49.066667 149.333333 49.066666 174.933334 0 2.133333 0 4.266667-2.133333 6.4 36.266667 46.933333 59.733333 104.533333 72.533333 160 49.066667 2.133333 87.466667 8.533333 89.6 10.666666 12.8 2.133333 21.333333 14.933333 19.2 27.733334-2.133333 12.8-12.8 19.2-23.466666 19.2h-4.266667-2.133333c-27.733333-4.266667-53.333333-6.4-72.533334-8.533334v19.2c0 8.533333 0 17.066667-2.133333 25.6 49.066667 17.066667 85.333333 40.533333 85.333333 40.533334 17.066667 6.4 21.333333 19.2 14.933334 32zM194.133333 616.533333c34.133333 130.133333 179.2 189.866667 324.266667 189.866667 168.533333 0 285.866667-72.533333 313.6-189.866667-23.466667-4.266667-46.933333-4.266667-64 0-6.4 2.133333-12.8 2.133333-17.066667-2.133333-6.4-4.266667-8.533333-8.533333-10.666666-14.933333-2.133333-4.266667 0-12.8 2.133333-17.066667 4.266667-6.4 8.533333-8.533333 14.933333-10.666667 25.6-6.4 55.466667-6.4 81.066667-2.133333v-12.8c0-6.4 0-14.933333-2.133333-21.333333-25.6 2.133333-57.6 4.266667-70.4 6.4h-6.4c-10.666667 0-19.2-8.533333-21.333334-19.2-2.133333-6.4 0-12.8 2.133334-17.066667 4.266667-6.4 8.533333-8.533333 14.933333-10.666667 23.466667-6.4 49.066667-8.533333 74.666667-10.666666-29.866667-119.466667-128-232.533333-256-258.133334h-8.533334c-2.133333 0-6.4-2.133333-8.533333-4.266666-12.8-2.133333-25.6-2.133333-38.4-2.133334-17.066667 0-34.133333 2.133333-49.066667 4.266667-2.133333 0-4.266667 2.133333-6.4 2.133333h-2.133333c-51.2 10.666667-98.133333 34.133333-140.8 68.266667-59.733333 49.066667-104.533333 117.333333-121.6 187.733333 25.6 2.133333 51.2 4.266667 72.533333 10.666667 12.8 4.266667 19.2 17.066667 14.933334 27.733333-2.133333 10.666667-10.666667 19.2-21.333334 19.2h-6.4c-21.333333-6.4-44.8-8.533333-70.4-8.533333 0 8.533333-2.133333 17.066667-2.133333 23.466667v12.8c27.733333-4.266667 55.466667-6.4 81.066667 2.133333 12.8 4.266667 19.2 17.066667 14.933333 27.733333-2.133333 6.4-6.4 10.666667-12.8 14.933334-4.266667 2.133333-10.666667 2.133333-14.933333 2.133333-14.933333-2.133333-36.266667-2.133333-59.733334 2.133333zM270.933333 277.333333c6.4-4.266667 12.8-10.666667 17.066667-14.933333 34.133333-27.733333 70.4-46.933333 108.8-61.866667-34.133333-17.066667-76.8-27.733333-100.266667-12.8-10.666667 6.4-21.333333 44.8-25.6 89.6z m486.4-2.133333c-4.266667-42.666667-14.933333-78.933333-25.6-85.333333-23.466667-14.933333-61.866667-4.266667-96 10.666666 42.666667 12.8 85.333333 40.533333 121.6 74.666667z" fill="#3E3836"/></svg></span>
-            <span class="chat-title">猫咪频繁打喷嚏怎么办？</span>
-            <span class="chat-time">10:32</span>
-          </li>
-          <li class="chat-item">
-            <span class="chat-ico"><svg viewBox="0 0 1024 1024" width="16" height="16" aria-hidden="true"><path d="M388.266667 552.533333c0-10.666667 8.533333-19.2 19.2-19.2s19.2 8.533333 19.2 19.2c0 19.2 14.933333 36.266667 34.133333 36.266667 19.2 0 34.133333-14.933333 34.133333-36.266667v-4.266666c-4.266667-2.133333-6.4-4.266667-10.666666-6.4l-19.2-19.2c-10.666667-19.2 2.133333-44.8 25.6-44.8h34.133333c23.466667 0 38.4 25.6 27.733333 44.8l-19.2 19.2c-2.133333 2.133333-4.266667 4.266667-6.4 4.266666 0 2.133333 2.133333 4.266667 2.133334 6.4 0 19.2 14.933333 36.266667 34.133333 36.266667s34.133333-14.933333 34.133333-36.266667c0-10.666667 8.533333-19.2 19.2-19.2s19.2 8.533333 19.2 19.2c0 40.533333-32 72.533333-72.533333 72.533334-21.333333 0-40.533333-8.533333-53.333333-23.466667-12.8 14.933333-32 23.466667-53.333334 23.466667-36.266667 0-68.266667-34.133333-68.266666-72.533334z m588.8 104.533334c-8.533333 6.4-12.8 10.666667-21.333334 10.666666-4.266667 0-8.533333-2.133333-10.666666-4.266666 0 0-2.133333 0-4.266667-2.133334-23.466667-12.8-44.8-23.466667-64-29.866666C840.533333 768 708.266667 853.333333 518.4 853.333333 324.266667 853.333333 185.6 765.866667 149.333333 629.333333c-21.333333 8.533333-40.533333 19.2-64 32-2.133333 2.133333-4.266667 2.133333-4.266666 2.133334h-2.133334c-2.133333 2.133333-6.4 2.133333-8.533333 2.133333-8.533333 0-14.933333-4.266667-19.2-10.666667-4.266667-6.4-4.266667-12.8-4.266667-19.2 2.133333-6.4 6.4-10.666667 10.666667-12.8 0 0 36.266667-23.466667 83.2-40.533333 0-8.533333-2.133333-17.066667-2.133333-25.6v-21.333333c-29.866667 2.133333-57.6 6.4-72.533334 8.533333h-4.266666-2.133334c-4.266667 0-10.666667-2.133333-14.933333-4.266667-4.266667-4.266667-8.533333-8.533333-8.533333-14.933333 0-6.4 0-12.8 4.266666-19.2 4.266667-4.266667 8.533333-8.533333 14.933334-8.533333 4.266667-2.133333 42.666667-8.533333 89.6-10.666667 12.8-55.466667 38.4-110.933333 74.666666-157.866667 0-2.133333-2.133333-4.266667-2.133333-6.4 0-34.133333 4.266667-145.066667 49.066667-174.933333 61.866667-38.4 157.866667 12.8 192 34.133333 19.2-2.133333 36.266667-4.266667 55.466666-4.266666 17.066667 0 32 2.133333 49.066667 4.266666 36.266667-21.333333 130.133333-68.266667 189.866667-32 46.933333 29.866667 49.066667 149.333333 49.066666 174.933334 0 2.133333 0 4.266667-2.133333 6.4 36.266667 46.933333 59.733333 104.533333 72.533333 160 49.066667 2.133333 87.466667 8.533333 89.6 10.666666 12.8 2.133333 21.333333 14.933333 19.2 27.733334-2.133333 12.8-12.8 19.2-23.466666 19.2h-4.266667-2.133333c-27.733333-4.266667-53.333333-6.4-72.533334-8.533334v19.2c0 8.533333 0 17.066667-2.133333 25.6 49.066667 17.066667 85.333333 40.533333 85.333333 40.533334 17.066667 6.4 21.333333 19.2 14.933334 32zM194.133333 616.533333c34.133333 130.133333 179.2 189.866667 324.266667 189.866667 168.533333 0 285.866667-72.533333 313.6-189.866667-23.466667-4.266667-46.933333-4.266667-64 0-6.4 2.133333-12.8 2.133333-17.066667-2.133333-6.4-4.266667-8.533333-8.533333-10.666666-14.933333-2.133333-4.266667 0-12.8 2.133333-17.066667 4.266667-6.4 8.533333-8.533333 14.933333-10.666667 25.6-6.4 55.466667-6.4 81.066667-2.133333v-12.8c0-6.4 0-14.933333-2.133333-21.333333-25.6 2.133333-57.6 4.266667-70.4 6.4h-6.4c-10.666667 0-19.2-8.533333-21.333334-19.2-2.133333-6.4 0-12.8 2.133334-17.066667 4.266667-6.4 8.533333-8.533333 14.933333-10.666667 23.466667-6.4 49.066667-8.533333 74.666667-10.666666-29.866667-119.466667-128-232.533333-256-258.133334h-8.533334c-2.133333 0-6.4-2.133333-8.533333-4.266666-12.8-2.133333-25.6-2.133333-38.4-2.133334-17.066667 0-34.133333 2.133333-49.066667 4.266667-2.133333 0-4.266667 2.133333-6.4 2.133333h-2.133333c-51.2 10.666667-98.133333 34.133333-140.8 68.266667-59.733333 49.066667-104.533333 117.333333-121.6 187.733333 25.6 2.133333 51.2 4.266667 72.533333 10.666667 12.8 4.266667 19.2 17.066667 14.933334 27.733333-2.133333 10.666667-10.666667 19.2-21.333334 19.2h-6.4c-21.333333-6.4-44.8-8.533333-70.4-8.533333 0 8.533333-2.133333 17.066667-2.133333 23.466667v12.8c27.733333-4.266667 55.466667-6.4 81.066667 2.133333 12.8 4.266667 19.2 17.066667 14.933333 27.733333-2.133333 6.4-6.4 10.666667-12.8 14.933334-4.266667 2.133333-10.666667 2.133333-14.933333 2.133333-14.933333-2.133333-36.266667-2.133333-59.733334 2.133333zM270.933333 277.333333c6.4-4.266667 12.8-10.666667 17.066667-14.933333 34.133333-27.733333 70.4-46.933333 108.8-61.866667-34.133333-17.066667-76.8-27.733333-100.266667-12.8-10.666667 6.4-21.333333 44.8-25.6 89.6z m486.4-2.133333c-4.266667-42.666667-14.933333-78.933333-25.6-85.333333-23.466667-14.933333-61.866667-4.266667-96 10.666666 42.666667 12.8 85.333333 40.533333 121.6 74.666667z" fill="#3E3836"/></svg></span>
-            <span class="chat-title">幼猫呕吐拉稀是什么原因？</span>
-            <span class="chat-time">昨天</span>
-          </li>
-          <li class="chat-item">
-            <span class="chat-ico"><svg viewBox="0 0 1024 1024" width="16" height="16" aria-hidden="true"><path d="M388.266667 552.533333c0-10.666667 8.533333-19.2 19.2-19.2s19.2 8.533333 19.2 19.2c0 19.2 14.933333 36.266667 34.133333 36.266667 19.2 0 34.133333-14.933333 34.133333-36.266667v-4.266666c-4.266667-2.133333-6.4-4.266667-10.666666-6.4l-19.2-19.2c-10.666667-19.2 2.133333-44.8 25.6-44.8h34.133333c23.466667 0 38.4 25.6 27.733333 44.8l-19.2 19.2c-2.133333 2.133333-4.266667 4.266667-6.4 4.266666 0 2.133333 2.133333 4.266667 2.133334 6.4 0 19.2 14.933333 36.266667 34.133333 36.266667s34.133333-14.933333 34.133333-36.266667c0-10.666667 8.533333-19.2 19.2-19.2s19.2 8.533333 19.2 19.2c0 40.533333-32 72.533333-72.533333 72.533334-21.333333 0-40.533333-8.533333-53.333333-23.466667-12.8 14.933333-32 23.466667-53.333334 23.466667-36.266667 0-68.266667-34.133333-68.266666-72.533334z m588.8 104.533334c-8.533333 6.4-12.8 10.666667-21.333334 10.666666-4.266667 0-8.533333-2.133333-10.666666-4.266666 0 0-2.133333 0-4.266667-2.133334-23.466667-12.8-44.8-23.466667-64-29.866666C840.533333 768 708.266667 853.333333 518.4 853.333333 324.266667 853.333333 185.6 765.866667 149.333333 629.333333c-21.333333 8.533333-40.533333 19.2-64 32-2.133333 2.133333-4.266667 2.133333-4.266666 2.133334h-2.133334c-2.133333 2.133333-6.4 2.133333-8.533333 2.133333-8.533333 0-14.933333-4.266667-19.2-10.666667-4.266667-6.4-4.266667-12.8-4.266667-19.2 2.133333-6.4 6.4-10.666667 10.666667-12.8 0 0 36.266667-23.466667 83.2-40.533333 0-8.533333-2.133333-17.066667-2.133333-25.6v-21.333333c-29.866667 2.133333-57.6 6.4-72.533334 8.533333h-4.266666-2.133334c-4.266667 0-10.666667-2.133333-14.933333-4.266667-4.266667-4.266667-8.533333-8.533333-8.533333-14.933333 0-6.4 0-12.8 4.266666-19.2 4.266667-4.266667 8.533333-8.533333 14.933334-8.533333 4.266667-2.133333 42.666667-8.533333 89.6-10.666667 12.8-55.466667 38.4-110.933333 74.666666-157.866667 0-2.133333-2.133333-4.266667-2.133333-6.4 0-34.133333 4.266667-145.066667 49.066667-174.933333 61.866667-38.4 157.866667 12.8 192 34.133333 19.2-2.133333 36.266667-4.266667 55.466666-4.266666 17.066667 0 32 2.133333 49.066667 4.266666 36.266667-21.333333 130.133333-68.266667 189.866667-32 46.933333 29.866667 49.066667 149.333333 49.066666 174.933334 0 2.133333 0 4.266667-2.133333 6.4 36.266667 46.933333 59.733333 104.533333 72.533333 160 49.066667 2.133333 87.466667 8.533333 89.6 10.666666 12.8 2.133333 21.333333 14.933333 19.2 27.733334-2.133333 12.8-12.8 19.2-23.466666 19.2h-4.266667-2.133333c-27.733333-4.266667-53.333333-6.4-72.533334-8.533334v19.2c0 8.533333 0 17.066667-2.133333 25.6 49.066667 17.066667 85.333333 40.533333 85.333333 40.533334 17.066667 6.4 21.333333 19.2 14.933334 32zM194.133333 616.533333c34.133333 130.133333 179.2 189.866667 324.266667 189.866667 168.533333 0 285.866667-72.533333 313.6-189.866667-23.466667-4.266667-46.933333-4.266667-64 0-6.4 2.133333-12.8 2.133333-17.066667-2.133333-6.4-4.266667-8.533333-8.533333-10.666666-14.933333-2.133333-4.266667 0-12.8 2.133333-17.066667 4.266667-6.4 8.533333-8.533333 14.933333-10.666667 25.6-6.4 55.466667-6.4 81.066667-2.133333v-12.8c0-6.4 0-14.933333-2.133333-21.333333-25.6 2.133333-57.6 4.266667-70.4 6.4h-6.4c-10.666667 0-19.2-8.533333-21.333334-19.2-2.133333-6.4 0-12.8 2.133334-17.066667 4.266667-6.4 8.533333-8.533333 14.933333-10.666667 23.466667-6.4 49.066667-8.533333 74.666667-10.666666-29.866667-119.466667-128-232.533333-256-258.133334h-8.533334c-2.133333 0-6.4-2.133333-8.533333-4.266666-12.8-2.133333-25.6-2.133333-38.4-2.133334-17.066667 0-34.133333 2.133333-49.066667 4.266667-2.133333 0-4.266667 2.133333-6.4 2.133333h-2.133333c-51.2 10.666667-98.133333 34.133333-140.8 68.266667-59.733333 49.066667-104.533333 117.333333-121.6 187.733333 25.6 2.133333 51.2 4.266667 72.533333 10.666667 12.8 4.266667 19.2 17.066667 14.933334 27.733333-2.133333 10.666667-10.666667 19.2-21.333334 19.2h-6.4c-21.333333-6.4-44.8-8.533333-70.4-8.533333 0 8.533333-2.133333 17.066667-2.133333 23.466667v12.8c27.733333-4.266667 55.466667-6.4 81.066667 2.133333 12.8 4.266667 19.2 17.066667 14.933333 27.733333-2.133333 6.4-6.4 10.666667-12.8 14.933334-4.266667 2.133333-10.666667 2.133333-14.933333 2.133333-14.933333-2.133333-36.266667-2.133333-59.733334 2.133333zM270.933333 277.333333c6.4-4.266667 12.8-10.666667 17.066667-14.933333 34.133333-27.733333 70.4-46.933333 108.8-61.866667-34.133333-17.066667-76.8-27.733333-100.266667-12.8-10.666667 6.4-21.333333 44.8-25.6 89.6z m486.4-2.133333c-4.266667-42.666667-14.933333-78.933333-25.6-85.333333-23.466667-14.933333-61.866667-4.266667-96 10.666666 42.666667 12.8 85.333333 40.533333 121.6 74.666667z" fill="#3E3836"/></svg></span>
-            <span class="chat-title">猫咪皮肤红肿掉毛怎么处理</span>
-            <span class="chat-time">昨天</span>
-          </li>
-        </ul>
+        <ul class="chat-list"></ul>
       </div>
 
-      <!-- 底部装饰（测试：视频/图片二选一，由 JS 常量 LEFT_BOTTOM_MEDIA 控制，便于回退） -->
-      <div class="left-footer">
+      <!-- 底部装饰：静止态 left_bottom.jpg；hover 时由 JS 用 canvas 播放 APNG 队列（start→progress→end） -->
+      <div class="left-footer" data-tooltip="点击打开【设置】菜单" data-tooltip-delay="0">
         <img class="lf-img" src="file=asset/left_bottom.jpg" alt="装饰" />
-        <video class="lf-video" src="/gradio_api/file=asset/left_bottom_end.mp4" autoplay muted loop playsinline></video>
+        <canvas class="lf-canvas" width="204" height="108"></canvas>
       </div>
     </div>
 
@@ -162,7 +146,9 @@ HOMEPAGE_HTML = """
           <p class="hero-subtitle">专注于猫传腹（FIP）的 AI 咨询与知识问答</p>
         </div>
         <div class="hero-image">
-          <img src="file=asset/middle.jpg" alt="宠医助手" />
+          <img class="hero-img" src="file=asset/middle.jpg" alt="宠医助手" />
+          <video class="hero-video" muted loop playsinline preload="auto" src="/gradio_api/file=asset/middle_hello.mp4"></video>
+          <!-- APNG 备选：如需切回，取消下一行注释并注释掉上面的 <video> 即可：<canvas class="hero-canvas"></canvas> -->
         </div>
       </section>
 
@@ -339,8 +325,8 @@ HOMEPAGE_HTML = """
     <div class="st-divider"></div>
     <div class="st-group">
       <div class="st-group__label">系统操作</div>
-      <button class="st-item" data-st-action="reset">
-        <span class="st-item__label">恢复默认对话</span>
+      <button class="st-item" data-st-action="clear">
+        <span class="st-item__label">删除全部对话</span>
         <span class="st-item__arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
       </button>
       <button class="st-item" data-st-action="unwatermark">
@@ -489,7 +475,9 @@ function logPageView() {
     var el = e.target.closest && e.target.closest('[data-tooltip]');
     if (!el) return;
     clearTimeout(timer);
-    timer = setTimeout(function(){ show(el); }, 400);
+    var d = parseInt(el.getAttribute('data-tooltip-delay'), 10);
+    if (isNaN(d)) d = 400;
+    timer = setTimeout(function(){ show(el); }, d);
   });
   document.addEventListener('mouseout', function(e){
     var el = e.target.closest && e.target.closest('[data-tooltip]');
@@ -551,6 +539,11 @@ function logPageView() {
       }else{
         /* 其他导航项：回到首页 */
         appShell.classList.remove('mode-graph','mode-docs','mode-design');
+      }
+      /* 切换到非图数据库页面时，无动画重置图谱页内的搜索栏
+         （iframe 仍存活，状态需清；设置面板不改 mode 类，不受影响） */
+      if(text.indexOf('图数据库')<0){
+        try{ if(pageGraph.contentWindow && pageGraph.contentWindow.resetNodeSearch) pageGraph.contentWindow.resetNodeSearch(); }catch(e){}
       }
     });
   })();
@@ -838,19 +831,11 @@ function logPageView() {
     const sendBtn = document.querySelector('.send-btn');
     const chatList = document.querySelector('.chat-list');
     const sectionCount = document.querySelector('.section-count');
-    /* 启动时一次性捕获「最近对话」列表项的默认图标 SVG（取自静态占位项）。
-       后续 addConversationItem 不再从会被清空的 chatList 克隆图标，
-       避免「清除站点数据（Cookie）→ localStorage 清空 → 无数据分支清空占位项 → 图标丢失」的问题。 */
+    /* 「最近对话」列表项的默认图标 SVG（恒用兜底常量，不再依赖任何会被清空的 DOM）。
+       避免「清除站点数据（Cookie）→ localStorage 清空 → 图标丢失」的问题。 */
     const DEFAULT_CHAT_ICO = (chatList && chatList.querySelector('.chat-ico'))
       ? chatList.querySelector('.chat-ico').innerHTML
       : '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#8C6B5D" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.5 8.5 8.5 0 0 1-3.8-.9L3 21l1.9-5.7a8.5 8.5 0 0 1-.9-3.8A8.38 8.38 0 0 1 12.5 3 8.38 8.38 0 0 1 21 11.5z"/></svg>';
-    /* 无历史时的引导示例（单一数据源在 JS，不再依赖 HTML 静态占位项结构；
-       点击进入空态对话，不与真实历史混淆） */
-    const PLACEHOLDER_CONVOS = [
-      { id: 'c_demo_0', title: '猫咪频繁打喷嚏怎么办？', time: '10:32', msgs: [] },
-      { id: 'c_demo_1', title: '幼猫呕吐拉稀是什么原因？', time: '昨天', msgs: [] },
-      { id: 'c_demo_2', title: '猫咪皮肤红肿掉毛怎么处理', time: '昨天', msgs: [] }
-    ];
     const chatMask = document.getElementById('chatMask');
     const rightPanel = document.getElementById('rightSidebar');
     const openRightBtn = document.getElementById('openRightBtn');
@@ -904,14 +889,17 @@ function logPageView() {
     let currentConvoId = null;
 
     /* ===== 聊天历史持久化（浏览器 localStorage，刷新后仍保留） ===== */
-    const STORAGE_KEY = 'fip_chat_history';
+    /* system_default 默认对话种子：由 collect_seed.py 采集、Python 启动期以 base64 注入，避免破坏 JS_CODE 三引号字符串或特殊字符 */
+    const SEED_CONVERSATIONS = __SEED_PLACEHOLDER__;
+
+    const STORAGE_KEY = 'fip_chat_history_v2';  /* v2：time 升级为完整日期时间；旧 key 自动失效，实现上线前数据清理 */
 
     /* 保存全部会话到 localStorage（会话列表 + 当前会话 id） */
+    /* 保存全部会话到 localStorage：始终写入（含空数组）。
+       这样「清空对话」后的空状态可持久化；只有 key 缺失（清 cookie）时才重新播种默认对话。 */
     function saveHistory() {
       try {
-        if (conversations.length) {
-          localStorage.setItem(STORAGE_KEY, JSON.stringify({ conversations: conversations, currentConvoId: currentConvoId }));
-        }
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({ conversations: conversations, currentConvoId: currentConvoId }));
       } catch (e) { /* 隐私模式 / 存储不可用时静默失败 */ }
     }
 
@@ -1007,23 +995,46 @@ function logPageView() {
 
     /* 页面加载时恢复历史：读 localStorage，重建会话列表 + 渲染当前会话 */
     function loadHistory() {
-      let saved = null;
-      try {
-        saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
-      } catch (e) { saved = null; }
-      if (!saved || !Array.isArray(saved.conversations) || !saved.conversations.length) {
-        /* 无历史数据：用 JS 常量 PLACEHOLDER_CONVOS 填充「最近对话」（单一数据源，
-           不再依赖 HTML 静态占位项的 .chat-title/.chat-time 结构，避免模板变动导致文案退化）。
-           这些示例为可点击的空会话（稳定 id），点击进入空态对话。 */
-        conversations = PLACEHOLDER_CONVOS.map(function (c) {
-          return { id: c.id, title: c.title, time: c.time, msgs: [] };
-        });
+      let raw = null;
+      try { raw = localStorage.getItem(STORAGE_KEY); } catch (e) { raw = null; }
+
+      /* 分支一：key 完全缺失（首次打开 / 清 cookie）→ 播种 system_default 默认对话 */
+      if (raw === null) {
+        conversations = [];
         chatList.innerHTML = '';
-        conversations.forEach(function (c) { addConversationItem(c); });
+        (SEED_CONVERSATIONS || []).forEach(function (c) {
+          var copy = JSON.parse(JSON.stringify(c));
+          conversations.push(copy);
+          addConversationItem(copy);   /* insertBefore(firstChild)：按数组顺序 1→2→3 遍历，组1 落在最下方 */
+        });
+        if (!conversations.length) {
+          var empty0 = document.createElement('li');
+          empty0.className = 'chat-empty';
+          empty0.textContent = '（无）';
+          chatList.appendChild(empty0);
+        }
+        currentConvoId = null;
+        saveHistory();              /* 持久化默认对话，避免每次刷新重复播种 */
         updateConvoCount();
         return;
       }
 
+      /* 分支二：key 存在但为空数组（用户清空过）→ 显示「（无）」，不重新播种 */
+      let saved = null;
+      try { saved = JSON.parse(raw); } catch (e) { saved = null; }
+      if (!saved || !Array.isArray(saved.conversations) || !saved.conversations.length) {
+        /* 清空后：清空列表并展示灰色「（无）」占位 */
+        conversations = [];
+        chatList.innerHTML = '';
+        const empty = document.createElement('li');
+        empty.className = 'chat-empty';
+        empty.textContent = '（无）';
+        chatList.appendChild(empty);
+        updateConvoCount();
+        return;
+      }
+
+      /* 分支三：有数据 → 正常重建 */
       conversations = saved.conversations;
       /* 默认进入「新任务对话」空态首页，不自动恢复到最后一次会话 */
       currentConvoId = null;
@@ -1039,21 +1050,44 @@ function logPageView() {
 
     function nowTime() {
       const d = new Date();
+      const p = (n) => (n < 10 ? '0' : '') + n;
       return (
-        d.getHours().toString().padStart(2, '0') +
-        ':' +
-        d.getMinutes().toString().padStart(2, '0')
+        d.getFullYear() + '-' +
+        p(d.getMonth() + 1) + '-' +
+        p(d.getDate()) + ' ' +
+        p(d.getHours()) + ':' +
+        p(d.getMinutes())
       );
+    }
+
+    /* 相对时间格式化：今天→HH:MM；昨天→昨天；2~31天→X天前；>31天→X月前（整月近似 d/30）。
+       仅接受 YYYY-MM-DD HH:MM；格式非法（理论不会发生，因已升 STORAGE_KEY 版本）返回空串避免报错。 */
+    function formatConvoTime(raw) {
+      if (!raw) return '';
+      const m = /^([0-9]{4})-([0-9]{2})-([0-9]{2}) ([0-9]{2}):([0-9]{2})$/.exec(raw);
+      if (!m) return '';
+      const y = +m[1], mo = +m[2], d = +m[3], hh = m[4], mm = m[5];
+      const today = new Date(); today.setHours(0, 0, 0, 0);
+      const convoDate = new Date(y, mo - 1, d); convoDate.setHours(0, 0, 0, 0);
+      const diffDays = Math.round((today - convoDate) / 86400000);
+      if (diffDays <= 0) return hh + ':' + mm;   /* 今天或将来 */
+      if (diffDays === 1) return '昨天';
+      if (diffDays <= 31) return diffDays + '天前';
+      return Math.floor(diffDays / 30) + '月前';
     }
 
     function updateConvoCount() {
       if (sectionCount && chatList) {
-        sectionCount.textContent = '(' + chatList.children.length + ')';
+        const n = chatList.querySelectorAll('.chat-item').length;
+        sectionCount.textContent = '(' + n + ')';
       }
     }
 
     /* 创建「最近对话」列表条目（含点击切换绑定），插入列表最前 */
     function addConversationItem(convo) {
+      /* 生成首个对话时移除「（无）」占位符（它曾是 firstChild，会被新条目挤到后面残留） */
+      const empty = chatList.querySelector('.chat-empty');
+      if (empty) empty.remove();
       /* 图标始终使用启动捕获的默认 SVG，不再依赖可能已被清空的 DOM 克隆 */
       const iconHTML = DEFAULT_CHAT_ICO;
       const li = document.createElement('li');
@@ -1064,7 +1098,7 @@ function logPageView() {
         '<span class="chat-title"></span>' +
         '<span class="chat-time"></span>';
       li.querySelector('.chat-title').textContent = convo.title;
-      li.querySelector('.chat-time').textContent = convo.time;
+      li.querySelector('.chat-time').textContent = formatConvoTime(convo.time);
       chatList.insertBefore(li, chatList.firstChild);
       return li;
     }
@@ -1076,7 +1110,8 @@ function logPageView() {
         title: title,
         time: nowTime(),
         msgs: [],
-        contextEntities: []
+        contextEntities: [],
+        kind: 'user_creat'
       };
       conversations.unshift(convo);
       currentConvoId = convo.id;
@@ -1153,6 +1188,25 @@ function logPageView() {
       /* 清理可能残留的追问面板 */
       hideClarifyPanel();
     }
+
+    /* 「删除全部对话」真实实现：必须在 bindChat 作用域内执行，以访问内存态 conversations /
+       currentConvoId 与本地函数（updateConvoCount / resetChat / saveHistory）。
+       通过 window 暴露给设置面板（IIFE #2 的 clearAction）调用。 */
+    function clearAllConversations() {
+      conversations = [];
+      currentConvoId = null;
+      if (chatList) {
+        chatList.innerHTML = '';
+        var empty = document.createElement('li');
+        empty.className = 'chat-empty';
+        empty.textContent = '（无）';
+        chatList.appendChild(empty);
+      }
+      updateConvoCount();
+      resetChat();   /* 若正查看某条对话，复位主区到首页 */
+      saveHistory(); /* 持久化空数组，使 loadHistory 走分支二（刷新不重新播种，仅清 cookie 才恢复默认） */
+    }
+    window.__fipClearConversations = clearAllConversations;
 
     function scrollChatBottom() {
       const sc = document.querySelector('.main-scroll');
@@ -2290,11 +2344,11 @@ function logPageView() {
       '<div class="fb-modal__head">' +
         '<div class="fb-modal__titles">' +
           '<div class="fb-modal__title">意见反馈</div>' +
-          '<div class="fb-modal__sub">感谢你愿意分享你的想法，你的反馈将帮助我们持续改进。</div>' +
         '</div>' +
         '<button class="fb-modal__close" data-st-x type="button" aria-label="关闭"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>' +
       '</div>' +
       '<div class="fb-modal__body">' +
+        '<div class="fb-modal__sub">感谢你愿意分享你的想法，你的反馈将帮助我们持续改进。</div>' +
         '<div class="fb-field">' +
           '<label class="fb-label" for="fbName">如何称呼您<span class="fb-req">*</span></label>' +
           '<input class="st-input fb-input" id="fbName" type="text" placeholder="请输入您的称呼" />' +
@@ -2356,7 +2410,7 @@ function logPageView() {
       '<div class="fb-success">' +
         '<div class="fb-success__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div>' +
         '<div class="fb-success__title">感谢你的反馈</div>' +
-        '<div class="fb-success__desc">我们已经收到你的意见与建议，会认真阅读每一条反馈。</div>' +
+        '<div class="fb-success__desc">非常感谢您的意见与建议。我已经收到您的问卷，我会仔细认真阅读每一条反馈。</div>' +
         '<button class="fb-success__btn" id="fbDone" type="button">完成</button>' +
       '</div>' +
     '</div>';
@@ -2537,16 +2591,19 @@ function logPageView() {
       }
     });
   }
-  function resetAction() {
+  function clearAction() {
     closePanel(true);
     openModal({
       returnToPanel: true,
-      html: confirmHtml('恢复默认对话？', '将对话历史恢复至默认状态，此操作无法撤销。', '确认恢复'),
+      html: confirmHtml('删除全部对话？', '将删除所有对话（含默认对话），此操作无法撤销。', '确认删除'),
       onMount: function (root) {
         root.querySelector('[data-st-x]').addEventListener('click', closeModal);
         root.querySelector('[data-st-ok]').addEventListener('click', function () {
           closeModal(true);
-          showToast('已恢复默认对话', 'success');
+          /* 真实清空逻辑在 IIFE #1 的 bindChat 作用域内实现（可访问内存态 conversations / localStorage / resetChat），
+             通过 window.__fipClearConversations 暴露给设置面板（IIFE #2）调用 */
+          if (window.__fipClearConversations) window.__fipClearConversations();
+          showToast('已删除全部对话', 'success');
         });
       }
     });
@@ -2721,13 +2778,185 @@ function logPageView() {
   }
 
   /* ---------- 绑定 ---------- */
+  /* ====== 左下角 APNG 队列播放（canvas 渲染，无缝切换） ====== */
+  var CRC_TABLE = (function(){ var t=[]; for(var n=0;n<256;n++){ var c=n; for(var k=0;k<8;k++) c=(c&1)?(0xEDB88320^(c>>>1)):(c>>>1); t[n]=c>>>0; } return t; })();
+  function crc32(bytes){ var c=0xFFFFFFFF; for(var i=0;i<bytes.length;i++) c=CRC_TABLE[(c^bytes[i])&0xFF]^(c>>>8); return (c^0xFFFFFFFF)>>>0; }
+
+  /* 解析 APNG：提取 IHDR/acTL/PLTE 与各帧 fcTL+数据，逐帧重组成浏览器可解码的独立 PNG */
+  function parseAPNG(buf){
+    var SIG=[137,80,78,71,13,10,26,10];
+    for(var i=0;i<8;i++) if(buf[i]!==SIG[i]) throw new Error('not png');
+    function rd32(o){ return ((buf[o]<<24)|(buf[o+1]<<16)|(buf[o+2]<<8)|buf[o+3])>>>0; }
+    function rd16(o){ return (buf[o]<<8)|buf[o+1]; }
+    function str(o,n){ var s=''; for(var k=0;k<n;k++) s+=String.fromCharCode(buf[o+k]); return s; }
+    var p=8, ihdr=null, plte=null, trns=null, actl=null, frames=[], fctl=null;
+    /* fcTL 数据布局（含 4 字节序列号）：seq(4) w(4) h(4) xoff(4) yoff(4) delay_num(2) delay_den(2) dispose(1) blend(1) */
+    function fc(o){ var nm=rd16(o+20), dn=rd16(o+22)||100; return { w:rd32(o+4), h:rd32(o+8), x:rd32(o+12), y:rd32(o+16), delay:(dn>0?(nm/dn*1000):0)||100, dispose:buf[o+24], blend:buf[o+25] }; }
+    while(p<buf.byteLength){
+      var len=rd32(p), type=str(p+4,4), ds=p+8, de=p+8+len;
+      if(type==='IHDR') ihdr={ w:rd32(ds), h:rd32(ds+4), bd:buf[ds+8], ct:buf[ds+9] };
+      else if(type==='PLTE') plte=buf.slice(ds,de);
+      else if(type==='tRNS') trns=buf.slice(ds,de);
+      else if(type==='acTL') actl={ num:rd32(ds), plays:rd32(ds+4) };
+      else if(type==='fcTL') fctl=fc(ds);
+      else if(type==='IDAT'){ if(fctl){ frames.push({fctl:fctl, parts:[]}); fctl=null; } if(frames.length) frames[frames.length-1].parts.push(buf.slice(ds,de)); }
+      else if(type==='fdAT'){ var fd=buf.slice(ds+4,de); if(fctl){ frames.push({fctl:fctl, parts:[fd]}); fctl=null; } else if(frames.length) frames[frames.length-1].parts.push(fd); }
+      p=de+4;
+    }
+    if(!actl) throw new Error('not apng (no acTL)');
+    if(!frames.length) throw new Error('no frames');
+    var SIGU=new Uint8Array(SIG);
+    function chunk(t,d){ var out=new Uint8Array(8+d.byteLength+4); out[0]=(d.byteLength>>>24)&255; out[1]=(d.byteLength>>>16)&255; out[2]=(d.byteLength>>>8)&255; out[3]=d.byteLength&255; for(var k=0;k<4;k++) out[4+k]=t.charCodeAt(k); out.set(d,8); var c=crc32(out.subarray(4,8+d.byteLength)); out[8+d.byteLength]=(c>>>24)&255; out[8+d.byteLength+1]=(c>>>16)&255; out[8+d.byteLength+2]=(c>>>8)&255; out[8+d.byteLength+3]=c&255; return out; }
+    function framePNG(fr){ var f=fr.fctl; var ih=new Uint8Array(13); ih[0]=(f.w>>>24)&255; ih[1]=(f.w>>>16)&255; ih[2]=(f.w>>>8)&255; ih[3]=f.w&255; ih[4]=(f.h>>>24)&255; ih[5]=(f.h>>>16)&255; ih[6]=(f.h>>>8)&255; ih[7]=f.h&255; ih[8]=ihdr.bd; ih[9]=ihdr.ct; ih[10]=0; ih[11]=0; ih[12]=0; var total=0; fr.parts.forEach(function(pt){ total+=pt.byteLength; }); var idat=new Uint8Array(total); var o=0; fr.parts.forEach(function(pt){ idat.set(pt,o); o+=pt.byteLength; }); var parts=[chunk('IHDR',ih)]; if(plte) parts.push(chunk('PLTE',plte)); if(trns) parts.push(chunk('tRNS',trns)); parts.push(chunk('IDAT',idat)); parts.push(chunk('IEND',new Uint8Array(0))); var sz=SIGU.length; parts.forEach(function(c){ sz+=c.byteLength; }); var out=new Uint8Array(sz); var p2=0; out.set(SIGU,p2); p2+=SIGU.length; parts.forEach(function(c){ out.set(c,p2); p2+=c.byteLength; }); return new Blob([out],{type:'image/png'}); }
+    return Promise.all(frames.map(function(fr){ var url=URL.createObjectURL(framePNG(fr)); return new Promise(function(res,rej){ var im=new Image(); im.onload=function(){ res({img:im,w:fr.fctl.w,h:fr.fctl.h,x:fr.fctl.x,y:fr.fctl.y,delay:fr.fctl.delay,dispose:fr.fctl.dispose,blend:fr.fctl.blend}); }; im.onerror=function(){ rej(new Error('frame fail')); }; im.src=url; }); })).then(function(imgs){ return { w:ihdr.w, h:ihdr.h, imgs:imgs }; });
+  }
+
+  /* 左下角：静止 left_bottom.jpg；hover 播放 start(1次)→progress(循环)；离开等当前轮播完再播 end(1次)。APNG 读取失败兜底 left_bottom_2.jpg */
+  function installLeftFooterAnim(lfEl){
+    var ASSET='/gradio_api/file=asset/';
+    /* 素材每帧延迟被设成 400ms（start/progress），逐帧停顿式播放观感很卡。
+       这里把每帧绘制间隔钳制到一个固定上限，让 37 帧在约 1.9s 内干脆播完。 */
+    var FRAME_DELAY_CAP_MS = 50;
+    var START_URL=ASSET+'left_bottom_start.png';
+    var PROG_URL=ASSET+'left_bottom_progress.png';
+    var END_URL=ASSET+'left_bottom_end.png';
+    var FALLBACK=ASSET+'left_bottom_2.jpg';
+    var canvas=lfEl.querySelector('.lf-canvas');
+    var img=lfEl.querySelector('.lf-img');
+    if(!canvas) return;
+    var ctx=canvas.getContext('2d');
+    var cache={}, decoding={}, apngOk=true, state='idle', pendingEnd=false, runId=0, timers=[];
+    function clearTimers(){ timers.forEach(clearTimeout); timers=[]; }
+    function later(fn,ms){ var t=setTimeout(fn,ms); timers.push(t); return t; }
+    function showCanvas(){ lfEl.classList.add('is-anim'); }
+    function hideCanvas(){ lfEl.classList.remove('is-anim'); clearTimers(); ctx.clearRect(0,0,canvas.width,canvas.height); }
+    function fallback(){ lfEl.classList.remove('is-anim'); if(img && img.getAttribute('src')!==FALLBACK) img.src=FALLBACK; clearTimers(); state='idle'; }
+    function getPlayer(url){
+      if(cache[url]) return Promise.resolve(cache[url]);
+      if(decoding[url]) return decoding[url];
+      decoding[url]=fetch(url).then(function(r){ return r.arrayBuffer(); }).then(function(b){ return parseAPNG(new Uint8Array(b)); }).then(function(p){ cache[url]=p; return p; }).catch(function(e){ apngOk=false; throw e; });
+      return decoding[url];
+    }
+    /* 逐帧按 APNG 规范合成到 canvas；loop 时 stopWhen() 为 true 则在当前轮边界停止 */
+    function playPlayer(player, opts, myRun){
+      clearTimers();
+      canvas.width=player.w; canvas.height=player.h;
+      var W=player.w, H=player.h, i=0, snapPrev=null;
+      function render(){
+        if(myRun!==runId) return;
+        var fr=player.imgs[i];
+        /* 先快照“本帧绘制前”的状态（供本帧 dispose=2 时还原） */
+        var snapNow=document.createElement('canvas'); snapNow.width=W; snapNow.height=H; snapNow.getContext('2d').drawImage(canvas,0,0);
+        /* 应用上一帧的 dispose_op */
+        if(i>0){
+          var pv=player.imgs[i-1], pd=pv.dispose;
+          if(pd===1){ ctx.clearRect(pv.x,pv.y,pv.w,pv.h); }
+          else if(pd===2){ if(snapPrev) ctx.drawImage(snapPrev,0,0); }
+        } else { ctx.clearRect(0,0,W,H); }
+        /* 应用本帧 blend_op 后绘制 */
+        if(fr.blend===0){ ctx.clearRect(fr.x,fr.y,fr.w,fr.h); }
+        ctx.drawImage(fr.img, fr.x, fr.y, fr.w, fr.h);
+        snapPrev=snapNow;
+        later(function(){
+          if(myRun!==runId) return;
+          i++;
+          if(i>=player.imgs.length){ if(opts.loop && !(opts.stopWhen && opts.stopWhen())){ i=0; render(); } else { if(opts.onDone) opts.onDone(); } }
+          else { render(); }
+        }, Math.min(fr.delay, FRAME_DELAY_CAP_MS));
+      }
+      render();
+    }
+    function startSequence(){
+      if(!apngOk){ fallback(); return; }
+      var myRun=++runId; state='start';
+      getPlayer(START_URL).then(function(p){
+        if(myRun!==runId) return;
+        if(pendingEnd){ playEnd(myRun); return; }
+        showCanvas(); playPlayer(p,{loop:false,onDone:function(){ if(myRun!==runId) return; if(pendingEnd) playEnd(myRun); else playProgress(myRun); }}, myRun);
+      }).catch(function(){ if(myRun===runId) fallback(); });
+    }
+    function playProgress(myRun){
+      state='progress';
+      getPlayer(PROG_URL).then(function(p){
+        if(myRun!==runId) return;
+        showCanvas(); playPlayer(p,{loop:true, stopWhen:function(){ return pendingEnd; }, onDone:function(){ if(myRun===runId) playEnd(myRun); }}, myRun);
+      }).catch(function(){ if(myRun===runId) fallback(); });
+    }
+    function playEnd(myRun){
+      state='end';
+      getPlayer(END_URL).then(function(p){
+        if(myRun!==runId) return;
+        showCanvas(); playPlayer(p,{loop:false,onDone:function(){ if(myRun===runId){ hideCanvas(); state='idle'; } }}, myRun);
+      }).catch(function(){ if(myRun===runId) fallback(); });
+    }
+    /* 预载 start+progress：首次 hover 即时播放，避免 jpg 空窗；任一失败则 apngOk=false 走兜底 left_bottom_2.jpg */
+    getPlayer(START_URL);
+    getPlayer(PROG_URL);
+    lfEl.addEventListener('mouseenter', function(){ pendingEnd=false; if(state==='idle'||state==='end') startSequence(); });
+    lfEl.addEventListener('mouseleave', function(){ pendingEnd=true; });
+  }
+
+  /* 右侧 hero：middle.jpg 静态兜底，视频 canplay 后切换循环播放；载入失败保留图片 */
+  function installHeroVideo(){
+    var wrap=document.querySelector('.hero-image'); if(!wrap) return;
+    var video=wrap.querySelector('.hero-video'); if(!video) return;
+    function showVideo(){ wrap.classList.add('video-on'); var pr=video.play(); if(pr&&pr.catch) pr.catch(function(){}); }
+    video.addEventListener('canplay', showVideo, {once:true});
+    video.addEventListener('loadeddata', showVideo, {once:true});
+    video.addEventListener('error', function(){ wrap.classList.remove('video-on'); });
+    if(video.readyState>=3) showVideo(); else { try { video.load(); } catch(e){} }
+  }
+
+  /* ===== APNG 动画备选（已注释；切回时：取消本块注释 + 把调用处 installHeroVideo() 改为 installHeroAnim()）=====
+  function installHeroAnim(){
+    var wrap=document.querySelector('.hero-image'); if(!wrap) return;
+    var canvas=wrap.querySelector('.hero-canvas'); if(!canvas) return;
+    var ctx=canvas.getContext('2d');
+    var FRAME_DELAY_CAP_MS = 250;
+    var APNG_URL='/gradio_api/file=asset/middle_hello.png';
+    var runId=0, timers=[];
+    function clearTimers(){ timers.forEach(clearTimeout); timers=[]; }
+    function later(fn,ms){ var t=setTimeout(fn,ms); timers.push(t); return t; }
+    function showCanvas(){ if(!wrap.classList.contains('video-on')) wrap.classList.add('video-on'); }
+    function fallback(){ wrap.classList.remove('video-on'); clearTimers(); ctx.clearRect(0,0,canvas.width,canvas.height); }
+    function play(player, myRun){
+      clearTimers();
+      canvas.width=player.w; canvas.height=player.h;
+      var W=player.w, H=player.h, i=0, snapPrev=null;
+      function render(){
+        if(myRun!==runId) return;
+        var fr=player.imgs[i];
+        var snapNow=document.createElement('canvas'); snapNow.width=W; snapNow.height=H; snapNow.getContext('2d').drawImage(canvas,0,0);
+        if(i>0){
+          var pv=player.imgs[i-1], pd=pv.dispose;
+          if(pd===1){ ctx.clearRect(pv.x,pv.y,pv.w,pv.h); }
+          else if(pd===2){ if(snapPrev) ctx.drawImage(snapPrev,0,0); }
+        } else { ctx.clearRect(0,0,W,H); }
+        if(fr.blend===0){ ctx.clearRect(fr.x,fr.y,fr.w,fr.h); }
+        ctx.drawImage(fr.img, fr.x, fr.y, fr.w, fr.h);
+        snapPrev=snapNow;
+        later(function(){
+          if(myRun!==runId) return;
+          i++;
+          if(i>=player.imgs.length){ i=0; render(); } // 循环播放
+          else { render(); }
+        }, Math.min(fr.delay, FRAME_DELAY_CAP_MS));
+      }
+      render();
+    }
+    fetch(APNG_URL).then(function(r){ return r.arrayBuffer(); }).then(function(b){ return parseAPNG(new Uint8Array(b)); }).then(function(p){ showCanvas(); play(p, ++runId); }).catch(function(){ fallback(); });
+  }
+  ===== 结束 APNG 备选 ===== */
+
   function bindSettings() {
-    /* 左下角媒体：'video' 测试用（left_bottom_end.mp4）/ 'image' 回退图片（left_bottom.jpg）。改这一个常量即可切换。 */
-    var LEFT_BOTTOM_MEDIA = 'video';
+    /* 左下角媒体：静止态 left_bottom.jpg；hover 用 canvas 播放 APNG 队列（start→progress→end），失败兜底 left_bottom_2.jpg */
     var lfEl = document.querySelector('.left-footer');
-    if (lfEl) lfEl.classList.add(LEFT_BOTTOM_MEDIA === 'image' ? 'media-image' : 'media-video');
-    var trig = document.querySelector('.left-footer');
-    if (trig) trig.addEventListener('click', openPanel);
+    if (lfEl) {
+      installLeftFooterAnim(lfEl);
+      lfEl.addEventListener('click', openPanel);
+    }
+    /* 右侧 hero：middle.jpg 静态兜底，视频 canplay 后切换循环播放 */
+    installHeroVideo();
     /* 收起态左下角设置入口：点击展开设置面板（面板定位已自动锚定到收起侧栏） */
     var collapsedSettingsBtn = document.getElementById('collapsedSettingsBtn');
     if (collapsedSettingsBtn) collapsedSettingsBtn.addEventListener('click', openPanel);
@@ -2738,7 +2967,7 @@ function logPageView() {
       if (!item) return;
       var action = item.getAttribute('data-st-action');
       if (action === 'feedback') feedbackAction();
-      else if (action === 'reset') resetAction();
+      else if (action === 'clear') clearAction();
       else if (action === 'unwatermark') passwordAction('unwatermark', '此操作需要验证身份，请输入密码后继续。');
       else if (action === 'logs') passwordAction('logs', '查看运行日志需要进行身份验证。');
     });
@@ -3077,6 +3306,14 @@ div:has(> .app-shell) { padding: 0 !important; margin: 0 !important; background:
   from { opacity: 0; transform: translateY(-8px); }
   to { opacity: 1; transform: translateY(0); }
 }
+/* 无历史时的灰色占位（与 section-count 同色系，不可点击） */
+.app-shell .chat-empty {
+  list-style: none;
+  padding: 10px 12px;
+  font-size: 13px;
+  color: #A89F93 !important;
+  cursor: default;
+}
 .chat-ico { width: 16px; height: 16px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
 .chat-title {
   flex: 1;
@@ -3089,13 +3326,16 @@ div:has(> .app-shell) { padding: 0 !important; margin: 0 !important; background:
 }
 .chat-time { color: #A89F93 !important; font-size: 10px; font-weight: 500; line-height: 1.4; flex-shrink: 0; }
 
-/* 底部装饰图：完整显示 */
+/* 底部装饰图：静止态 left_bottom.jpg；hover 由 JS 用 canvas 播放 APNG 队列 */
 .left-footer {
   padding: 12px 4px 6px;
   text-align: left;
   flex-shrink: 0;
+  position: relative;            /* canvas / 气泡定位锚点 */
+  cursor: pointer !important;    /* 需求3：hover 显示可点击 */
 }
-.left-footer img {
+.left-footer img,
+.left-footer canvas {
   width: 100%;
   max-height: 108px;
   object-fit: contain;
@@ -3105,19 +3345,10 @@ div:has(> .app-shell) { padding: 0 !important; margin: 0 !important; background:
   -webkit-mask-image: linear-gradient(to top, #000 100%, transparent 100%);
           mask-image: linear-gradient(to top, #000 100%, transparent 100%);
 }
-/* 左下角媒体：测试期在 video / image 间切换（由 JS 常量 LEFT_BOTTOM_MEDIA 控制 class） */
-.left-footer .lf-img { display: none !important; }
-.left-footer.media-image .lf-img { display: block !important; }
-.left-footer.media-image .lf-video { display: none !important; }
-.left-footer video {
-  width: 100% !important;
-  max-height: 108px !important;
-  object-fit: contain !important;
-  object-position: left bottom !important;
-  display: block !important;
-  -webkit-mask-image: linear-gradient(to top, #000 100%, transparent 100%) !important;
-          mask-image: linear-gradient(to top, #000 100%, transparent 100%) !important;
-}
+/* canvas 默认隐藏（静止态显示 lf-img）；hover 序列播放时由 JS 切换 is-anim */
+.left-footer .lf-canvas { display: none !important; }
+.left-footer.is-anim .lf-img { display: none !important; }
+.left-footer.is-anim .lf-canvas { display: block !important; }
 
 /* 缩略态 */
 .collapsed-bar {
@@ -3279,6 +3510,30 @@ div:has(> .app-shell) { padding: 0 !important; margin: 0 !important; background:
   display: block;
   box-shadow: none;
 }
+.hero-image video {
+  width: 100% !important;
+  height: 108px !important;
+  object-fit: contain !important;
+  border-radius: 0;
+  display: block;
+  box-shadow: none;
+}
+.hero-image .hero-video { display: none !important; }
+.hero-image.video-on .hero-img { display: none !important; }
+.hero-image.video-on .hero-video { display: block !important; }
+
+/* APNG 备选样式（切回时取消注释即可）：
+.hero-image canvas {
+  width: 100% !important;
+  height: 108px !important;
+  object-fit: contain !important;
+  border-radius: 0;
+  display: block;
+  box-shadow: none;
+}
+.hero-image .hero-canvas { display: none !important; }
+.hero-image.video-on .hero-canvas { display: block !important; }
+*/
 
 /* 快速开始 */
 .quick-start { margin: 0; max-height: 200px; flex-shrink: 0; transition: max-height 480ms var(--ease), opacity 480ms var(--ease), transform 480ms var(--ease); }
@@ -4426,15 +4681,22 @@ _STYLE_HTML = (
     + "@keyframes stModalIn{from{opacity:0;transform:translateY(12px) scale(0.985)}to{opacity:1;transform:translateY(0) scale(1)}}\n"
     + "@keyframes stModalOut{from{opacity:1;transform:translateY(0) scale(1)}to{opacity:0;transform:translateY(8px) scale(0.99)}}\n"
     + "/* 反馈问卷 Modal */\n"
-    + "body .st-modal__box--feedback{width:560px!important;max-width:calc(100vw - 48px)!important;max-height:calc(80vh - 48px)!important;background:var(--st-modal-bg)!important;border:1px solid var(--st-border)!important;border-radius:16px!important;box-shadow:0 16px 48px rgba(107,80,69,0.12)!important;}\n"
-    + "body .fb-modal{display:flex!important;flex-direction:column!important;width:100%!important;max-height:calc(80vh - 48px)!important;}\n"
+    + "body .st-modal__box--feedback{width:560px!important;max-width:calc(100vw - 48px)!important;max-height:calc(92vh - 48px)!important;background:var(--st-modal-bg)!important;border:1px solid var(--st-border)!important;border-radius:16px!important;box-shadow:0 16px 48px rgba(107,80,69,0.12)!important;}\n"
+    + "body .fb-modal{display:flex!important;flex-direction:column!important;width:100%!important;max-height:calc(92vh - 48px)!important;}\n"
     + "body .fb-modal__head{display:flex!important;align-items:flex-start!important;justify-content:space-between!important;gap:12px!important;padding:24px 28px 20px!important;}\n"
     + "body .fb-modal__title{font-size:20px!important;font-weight:600!important;line-height:28px!important;color:var(--st-text)!important;}\n"
     + "body .fb-modal__sub{margin-top:6px!important;font-size:13px!important;font-weight:400!important;line-height:20px!important;color:var(--st-text2)!important;}\n"
     + "body .fb-modal__close{display:flex!important;align-items:center!important;justify-content:center!important;width:32px!important;height:32px!important;flex-shrink:0!important;border:none!important;background:transparent!important;color:var(--st-text2)!important;border-radius:8px!important;cursor:pointer!important;transition:background 150ms var(--ease),color 150ms var(--ease)!important;}\n"
     + "body .fb-modal__close:hover{background:var(--st-hover)!important;color:var(--st-text)!important;}\n"
     + "body .fb-modal__close svg{width:16px!important;height:16px!important;display:block!important;}\n"
-    + "body .fb-modal__body{flex:1 1 auto!important;min-height:0!important;overflow-y:auto!important;padding:4px 28px 24px!important;}\n"
+    + "body .fb-modal__body{flex:1 1 auto!important;min-height:0!important;overflow-y:auto!important;padding:4px 28px 24px!important;scrollbar-width:thin!important;scrollbar-color:rgba(111,103,99,0.2) transparent!important;transition:scrollbar-color 150ms var(--ease)!important;}\n"
+    + "body .fb-modal__body::-webkit-scrollbar{width:8px!important;}\n"
+    + "body .fb-modal__body::-webkit-scrollbar-track{background:transparent!important;}\n"
+    + "body .fb-modal__body::-webkit-scrollbar-thumb{background:rgba(111,103,99,0.2)!important;border-radius:4px!important;}\n"
+    + "body .fb-modal__body::-webkit-scrollbar-thumb:hover{background:#6F6763!important;}\n"
+    + "body .fb-modal:hover .fb-modal__body::-webkit-scrollbar-thumb{background:rgba(111,103,99,0.5)!important;}\n"
+    + "body .fb-modal:hover .fb-modal__body{scrollbar-color:rgba(111,103,99,0.5) transparent!important;}\n"
+    + "body .fb-modal__body .fb-modal__sub{margin:2px 0 16px!important;}\n"
     + "body .fb-modal__foot{display:flex!important;justify-content:flex-end!important;gap:10px!important;padding:18px 28px 20px!important;border-top:1px solid var(--st-border)!important;}\n"
     + "body .fb-field{margin-bottom:20px!important;}\n"
     + "body .fb-field:last-child{margin-bottom:0!important;}\n"
@@ -4486,8 +4748,8 @@ _STYLE_HTML = (
     + "body .fb-success__btn:hover{background:var(--st-primary-hover)!important;border-color:var(--st-primary-hover)!important;}\n"
     + "@keyframes stPanelIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}\n"
     + "@keyframes stPanelOut{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(6px)}}\n"
-    + "@keyframes stToastIn{from{opacity:0;transform:translateX(16px) translateY(4px)}to{opacity:1;transform:translateX(0) translateY(0)}}\n"
-    + "@keyframes stToastOut{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(-6px)}}\n"
+    + "@keyframes stToastIn{from{opacity:0;transform:translateX(100%)}to{opacity:1;transform:translateX(0)}}\n"
+    + "@keyframes stToastOut{from{opacity:1;transform:translateX(0)}to{opacity:0;transform:translateX(100%)}}\n"
     + "@keyframes stContentOut{from{opacity:1;transform:translateX(0)}to{opacity:0;transform:translateX(-10px)}}\n"
     + "@keyframes stContentIn{from{opacity:0;transform:translateX(10px)}to{opacity:1;transform:translateX(0)}}\n"
     + "</style>"
@@ -4675,6 +4937,24 @@ def create_demo() -> gr.Blocks:
         )
     return demo
 
+
+# 注入 system_default 默认对话种子：读取 data/seed_conversations.json，base64 包裹后替换 JS_CODE 占位符，
+# 避免破坏 JS_CODE 的三引号字符串或其中的特殊字符（如 U+2028 / 引号 / 反斜杠）。
+import base64 as _b64, json as _json
+_seed_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "seed_conversations.json")
+try:
+    with open(_seed_path, encoding="utf-8") as _f:
+        _seed_obj = _json.load(_f)
+    _seed_b64 = _b64.b64encode(_json.dumps(_seed_obj, ensure_ascii=False).encode("utf-8")).decode("ascii")
+    # JS 的 atob 返回 Latin-1 二进制串，必须先把字节还原成 Uint8Array，再用 TextDecoder 按 UTF-8 解码，
+    # 否则中文会被逐字节当 Unicode 码点解析 → JSON.parse 后标题/内容全部乱码。
+    _seed_inline = '(function(){var b=atob("%s"),u=new Uint8Array(b.length);for(var i=0;i<b.length;i++)u[i]=b.charCodeAt(i);return JSON.parse(new TextDecoder().decode(u));})()' % _seed_b64
+except Exception:
+    _seed_inline = "[]"
+# 关键：launch 使用的是 _JS_EXEC（在 JS_CODE 基础上派生并替换了 graph/docs/design/style-demo 占位符），
+# 种子占位符必须同时注入 _JS_EXEC，否则线上 __SEED_PLACEHOLDER__ 残留为裸标识符 → eval 期 ReferenceError 炸掉整段 JS。
+JS_CODE = JS_CODE.replace("__SEED_PLACEHOLDER__", _seed_inline)
+_JS_EXEC = _JS_EXEC.replace("__SEED_PLACEHOLDER__", _seed_inline)
 
 demo = create_demo()
 

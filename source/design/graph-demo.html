@@ -292,6 +292,58 @@ body{
 }
 .graph-tooltip{position:fixed;z-index:9999;background:#FFFFFF;color:#3E3836;border:1px solid #EDE5DD;border-radius:6px;padding:6px 8px;font-size:12px;line-height:18px;box-shadow:0 4px 12px rgba(62,56,54,0.10);pointer-events:none;opacity:0;transform:translateY(2px);transition:opacity 100ms ease, transform 100ms ease;white-space:nowrap;max-width:260px;overflow:hidden;text-overflow:ellipsis;}
 .graph-tooltip.graph-tooltip--show{opacity:1;transform:translateY(0);transition:opacity 150ms ease, transform 150ms ease;}
+/* ============ 搜索节点（画布左上角浮层，仅 2D） ============ */
+.node-search{position:absolute;top:16px;left:16px;z-index:50;display:flex;align-items:center;}
+.node-search__icon{
+  width:36px;height:36px;flex:none;border:none;
+  border-radius:var(--radius-md);background:transparent;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  color:var(--color-text-secondary);
+}
+.node-search__icon:hover{color:var(--color-primary-900);background:var(--color-primary-100);}
+.node-search__box{
+  position:absolute;top:0;left:0;
+  display:flex;align-items:center;overflow:hidden;
+  width:248px;height:36px;
+  opacity:0;pointer-events:none;
+  border:1px solid var(--color-border);border-radius:var(--radius-md);
+  background:var(--color-card);box-shadow:var(--shadow-sm);
+  transition:opacity .2s ease;
+}
+.node-search.is-open .node-search__box{
+  opacity:1;pointer-events:auto;
+}
+.node-search__box:focus-within{border-color:#C7A18E!important;box-shadow:0 0 0 3px rgba(140,107,93,0.10)!important;}
+.node-search__input{
+  flex:1;min-width:0;height:34px;border:none;
+  border-radius:0;padding:0 10px;font-size:13px;color:var(--color-text-main);
+  background:transparent;outline:none;
+}
+.node-search__collapse{
+  width:36px;height:34px;flex:none;border:none;
+  border-left:1px solid var(--color-border);
+  border-radius:0;background:transparent;
+  color:var(--color-text-secondary);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+}
+.node-search__collapse:hover{color:var(--color-primary-900);background:var(--color-primary-100);}
+.node-search.is-open .node-search__icon{display:none;}
+.node-search.is-instant .node-search__box{transition:none!important;}
+.node-search__results{
+  position:fixed;z-index:5000;display:none;
+  background:#FFFEFC;border:1px solid #EDE5DD;border-radius:10px;
+  box-shadow:0 8px 24px rgba(107,80,69,0.10);
+  padding:8px;max-height:240px;overflow-y:auto;
+}
+.node-search__results.is-open{display:block;}
+.node-search__item{
+  display:flex;align-items:center;gap:8px;padding:5px 6px;border-radius:6px;
+  cursor:pointer;font-size:13px;color:var(--color-text-main);
+}
+.node-search__item:hover{background:var(--color-primary-100);}
+.node-search__item .ns-dot{width:9px;height:9px;border-radius:50%;flex:none;}
+.node-search__item .ns-hl{color:var(--color-primary-900);font-weight:600;}
+.node-search__empty{padding:6px 8px;font-size:12px;color:var(--color-text-secondary);}
 </style>
 </head>
 <body>
@@ -311,6 +363,15 @@ body{
     </header>
     <div class="graph-canvas" id="graphCanvas">
       <div id="graph-container"></div>
+      <div class="node-search" id="nodeSearch">
+        <button class="node-search__icon" id="nodeSearchIcon" data-tooltip="搜索节点" aria-label="搜索节点">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </button>
+        <div class="node-search__box">
+          <input class="node-search__input" id="nodeSearchInput" type="text" placeholder="搜索节点名称…" autocomplete="off">
+          <button class="node-search__collapse" id="nodeSearchCollapse" aria-label="收起搜索">✕</button>
+        </div>
+      </div>
       <div class="path-banner" id="pathBanner">
         <span class="path-tag">推理链高亮： </span>
         <span class="path-info" id="pathInfo"></span>
@@ -820,7 +881,7 @@ graph.on('node:mouseleave', e=>{
   hoverNodeId=null;
   if(selectedNodeId){ applyFocus(selectedNodeId, true); } else { clearNodeStates(); resetEdges(); }
 });
-graph.on('node:click', e=>{ if(!pathMode) selectNode(e.item.getModel().id); });
+graph.on('node:click', e=>{ if(!pathMode) selectNode(e.item.getModel().id); if(window.closeNodeSearch) window.closeNodeSearch(); });
 graph.on('edge:mouseenter', e=>{
   if(pathMode || selectedNodeId) return;
   const eid=e.item.getModel().id;
@@ -986,6 +1047,7 @@ function init3D(){
 }
 
 function exit3D(){
+  if(window.resetNodeSearch) window.resetNodeSearch();
   if(g3d){ try{ g3d._destructor(); }catch(e){} g3d = null; }
   g3dOverlay.classList.remove('show');
   hide3dInfo();
@@ -1081,6 +1143,77 @@ readUrlPath();
       });
     }
   } catch(e) {}
+})();
+
+/* ============ 搜索节点（画布左上角浮层，仅 2D） ============ */
+(function(){
+  const wrap = document.getElementById('nodeSearch');
+  const icon = document.getElementById('nodeSearchIcon');
+  const input = document.getElementById('nodeSearchInput');
+  const collapse = document.getElementById('nodeSearchCollapse');
+  const results = document.createElement('div');
+  results.className = 'node-search__results';
+  document.body.appendChild(results);
+
+  function esc(s){ return String(s).replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+  function hl(text, kw){
+    kw = (kw||'').trim();
+    if(!kw) return esc(text);
+    const lower = text.toLowerCase(), lk = kw.toLowerCase();
+    const i = lower.indexOf(lk);
+    if(i<0) return esc(text);
+    return esc(text.slice(0,i)) + '<span class="ns-hl">' + esc(text.slice(i,i+kw.length)) + '</span>' + esc(text.slice(i+kw.length));
+  }
+  function colorOf(type){ return (TYPE_STYLES[type] || TYPE_STYLES['机制与过程']).main; }
+  function positionResults(){
+    const r = input.getBoundingClientRect();
+    results.style.left = r.left + 'px';
+    results.style.top = (r.bottom + 8) + 'px';
+    results.style.width = Math.max(r.width, 200) + 'px';
+  }
+  function render(){
+    const kw = input.value.trim();
+    if(!kw){ results.classList.remove('is-open'); return; }
+    const list = NODES.filter(n => n.label.toLowerCase().includes(kw.toLowerCase()));
+    if(!list.length){
+      results.innerHTML = '<div class="node-search__empty">无匹配节点</div>';
+    } else {
+      results.innerHTML = list.map(n =>
+        '<div class="node-search__item" data-id="'+esc(n.id)+'">'
+        + '<span class="ns-dot" style="background:'+colorOf(n.type)+'"></span>'
+        + '<span class="ns-label">'+hl(n.label,kw)+'</span></div>'
+      ).join('');
+    }
+    positionResults();
+    results.classList.add('is-open');
+  }
+  function openSearch(){ wrap.classList.add('is-open'); positionResults(); input.focus(); render(); }
+  function closeSearch(){ wrap.classList.remove('is-open'); results.classList.remove('is-open'); input.value=''; input.blur(); }
+  function resetSearch(){
+    /* 无动画直接回到默认态（切换页面 / 退出 3D 时调用，避免播放出场动画） */
+    wrap.classList.add('is-instant');
+    wrap.classList.remove('is-open');
+    results.classList.remove('is-open');
+    input.value=''; input.blur();
+    void wrap.offsetWidth;            /* 强制 reflow，使上面移除 is-open 立即生效 */
+    wrap.classList.remove('is-instant');
+  }
+  icon.addEventListener('click', ()=>{ if(!wrap.classList.contains('is-open')) openSearch(); });
+  collapse.addEventListener('click', closeSearch);
+  input.addEventListener('input', render);
+  results.addEventListener('click', e=>{
+    const item = e.target.closest('.node-search__item'); if(!item) return;
+    const id = item.getAttribute('data-id');
+    closeSearch();
+    if(nodeById[id]) selectNode(id);
+  });
+  document.addEventListener('click', e=>{
+    if(!wrap.contains(e.target) && !results.contains(e.target)) results.classList.remove('is-open');
+  });
+  window.addEventListener('resize', ()=>{ if(results.classList.contains('is-open')) positionResults(); });
+  window.addEventListener('scroll', ()=>{ if(results.classList.contains('is-open')) positionResults(); }, true);
+  window.closeNodeSearch = closeSearch;
+  window.resetNodeSearch = resetSearch;
 })();
 
 /* 全局自定义 tooltip（替代 title） */
