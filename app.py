@@ -450,6 +450,7 @@ function logPageView() {
     currentTarget = null;
     clearTimeout(timer);
     tip.classList.remove('app-tooltip--show');
+    tip.classList.remove('app-tooltip--bubble');
   }
   function position(el) {
     var rect = el.getBoundingClientRect();
@@ -464,10 +465,12 @@ function logPageView() {
     tip.style.left = left + 'px';
   }
   function show(el) {
+    if (window.__fipGuideActive) return; /* 反馈引导显示时，压掉左下角 hover 气泡避免重叠 */
     var text = el.getAttribute('data-tooltip');
     if (!text) return;
     currentTarget = el;
     tip.textContent = text;
+    tip.classList.toggle('app-tooltip--bubble', !!el.closest('.left-footer'));
     tip.classList.add('app-tooltip--show');
     position(el);
   }
@@ -2225,6 +2228,7 @@ function logPageView() {
   window.currentBackend = currentBackend;
   function openPanel() {
     if (st.panelOpen) return;
+    fbGuideHide();
     renderBridge();
     positionPanel();
     settingsEl.classList.remove('is-closing');
@@ -2258,6 +2262,7 @@ function logPageView() {
     modalEl.classList.remove('is-closing');
     modalEl.classList.add('is-open');
     modalEl.setAttribute('aria-hidden', 'false');
+    fbGuideHide();
     st.modalOpen = true;
     if (opts.onMount) opts.onMount(modalContent);
   }
@@ -2554,7 +2559,7 @@ function logPageView() {
           server.log_feedback_behavior({ user_id: VISITOR_ID }).catch(function () {});
         }
       });
-      setTimeout(function () { modal.classList.add('is-success'); }, 500);
+      setTimeout(function () { modal.classList.add('is-success'); try { localStorage.setItem('fip_fb_submitted', '1'); } catch (e) {} }, 500);
     });
     var doneBtn = root.querySelector('#fbDone');
     if (doneBtn) doneBtn.addEventListener('click', function () { closeModal(true); });
@@ -2571,6 +2576,105 @@ function logPageView() {
       onMount: bindFeedbackForm
     });
   }
+
+  /* ===== 反馈引导：累计停留 3 分钟出现，箭头气泡指向左下角设置图，可直接弹问卷 ===== */
+  var FB_GUIDE_KEY_MS = 'fip_fb_active_ms';
+  var FB_GUIDE_KEY_SUBMITTED = 'fip_fb_submitted';
+  var FB_GUIDE_KEY_PROMPTED = 'fip_fb_prompted';
+  var GUIDE_THRESHOLD_MS = 3 * 60 * 1000;
+  var GUIDE_COOLDOWN_MS = 3 * 24 * 60 * 60 * 1000;
+  var GUIDE_TICK_MS = 5000;
+  var guideShownThisSession = false;
+  var guideEl = null;
+  function fbGuideNum(key) { var v = parseInt(localStorage.getItem(key), 10); return isNaN(v) ? 0 : v; }
+  function fbGuideShouldShow() {
+    if (guideShownThisSession) return false;
+    if (localStorage.getItem(FB_GUIDE_KEY_SUBMITTED) === '1') return false;
+    var p = localStorage.getItem(FB_GUIDE_KEY_PROMPTED);
+    if (p === 'never') return false;
+    if (p && (Date.now() - parseInt(p, 10) < GUIDE_COOLDOWN_MS)) return false;
+    if (fbGuideNum(FB_GUIDE_KEY_MS) < GUIDE_THRESHOLD_MS) return false;
+    if (st.modalOpen || st.panelOpen) return false;
+    if (document.querySelector('.fb-guide')) return false;
+    return true;
+  }
+  function fbGuidePosition() {
+    if (!guideEl) return;
+    var anchor = document.querySelector('.left-footer');
+    var r = anchor ? anchor.getBoundingClientRect() : null;
+    var bubble = guideEl.querySelector('.fb-guide__bubble');
+    var bw = bubble ? bubble.offsetWidth : 240;
+    if (!r || r.width === 0) {
+      guideEl.style.left = '16px';
+      guideEl.style.bottom = '16px';
+    } else {
+      var left = r.left + 8;
+      if (left + bw > window.innerWidth - 8) left = window.innerWidth - bw - 8;
+      if (left < 8) left = 8;
+      var bottom = (window.innerHeight - r.top) + 8;
+      guideEl.style.left = left + 'px';
+      guideEl.style.bottom = bottom + 'px';
+    }
+  }
+  function fbGuideHide() {
+    window.__fipGuideActive = false;
+    if (guideEl && guideEl.parentNode) guideEl.parentNode.removeChild(guideEl);
+    guideEl = null;
+  }
+  function fbGuideShow() {
+    if (!fbGuideShouldShow()) return;
+    guideShownThisSession = true;
+    window.__fipGuideActive = true;
+    guideEl = document.createElement('div');
+    guideEl.className = 'fb-guide';
+    guideEl.innerHTML =
+      '<div class="fb-guide__arrow"></div>' +
+      '<div class="fb-guide__bubble">' +
+        '<button class="fb-guide__close" data-fbg="close" aria-label="不再提示">×</button>' +
+        '<div class="fb-guide__img"><img src="/gradio_api/file=asset/questionnaire.jpg" alt="问卷"></div>' +
+        '<div class="fb-guide__body">' +
+          '<div class="fb-guide__title">请给我一些建议反馈吧~</div>' +
+          '<div class="fb-guide__actions">' +
+            '<button class="fb-guide__btn fb-guide__btn--primary" data-fbg="go">去填写</button>' +
+            '<button class="fb-guide__link" data-fbg="later">下次再说</button>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+    document.body.appendChild(guideEl);
+    fbGuidePosition();
+    guideEl.addEventListener('click', function (e) {
+      var btn = e.target.closest('[data-fbg]');
+      if (!btn) return;
+      var act = btn.getAttribute('data-fbg');
+      if (act === 'go') { fbGuideHide(); feedbackAction(); }
+      else if (act === 'later') { try { localStorage.setItem(FB_GUIDE_KEY_PROMPTED, String(Date.now())); } catch (e) {} fbGuideHide(); }
+      else if (act === 'close') { try { localStorage.setItem(FB_GUIDE_KEY_PROMPTED, 'never'); } catch (e) {} fbGuideHide(); }
+    });
+  }
+  function initFeedbackGuide() {
+    var lastTick = Date.now();
+    function flush() {
+      var now = Date.now();
+      var delta = now - lastTick;
+      if (delta > 0) {
+        var cur = fbGuideNum(FB_GUIDE_KEY_MS) + delta;
+        try { localStorage.setItem(FB_GUIDE_KEY_MS, String(cur)); } catch (e) {}
+      }
+      lastTick = now;
+    }
+    setInterval(function () {
+      if (document.visibilityState === 'visible') flush();
+      else lastTick = Date.now();
+      if (document.visibilityState === 'visible' && fbGuideShouldShow()) fbGuideShow();
+    }, GUIDE_TICK_MS);
+    document.addEventListener('visibilitychange', function () {
+      if (document.visibilityState === 'hidden') flush();
+      else lastTick = Date.now();
+    });
+    window.addEventListener('beforeunload', flush);
+    window.addEventListener('resize', fbGuidePosition);
+  }
+
   function bridgeAction(target) {
     if (target === st.bridgeMode) return;
     var fromLabel = st.bridgeMode === 'neo4j' ? 'Neo4j·联网' : 'NetworkX·本地';
@@ -3029,6 +3133,7 @@ function logPageView() {
     window.addEventListener('resize', function () { if (st.panelOpen) positionPanel(); });
     renderBridge();
     loadPrivacy(); /* 应用持久化的隐私保护状态（水印 + 禁复制 + iframe 注入） */
+    initFeedbackGuide(); /* 反馈引导：累计停留超 3 分钟后箭头气泡提示填写问卷 */
   }
 
   bindSettings();
@@ -4536,6 +4641,8 @@ _STYLE_HTML = (
     + "/* 全局自定义 tooltip：替代 title 黑底白字 */\n"
     + ".app-tooltip{position:fixed;z-index:9999;background:#FFFFFF;color:#3E3836;border:1px solid #EDE5DD;border-radius:6px;padding:6px 8px;font-size:12px;line-height:18px;box-shadow:0 4px 12px rgba(62,56,54,0.10);pointer-events:none;opacity:0;transform:translateY(2px);transition:opacity 100ms ease, transform 100ms ease;white-space:nowrap;max-width:260px;overflow:hidden;text-overflow:ellipsis;}\n"
     + ".app-tooltip.app-tooltip--show{opacity:1;transform:translateY(0);transition:opacity 150ms ease, transform 150ms ease;}\n"
+    + ".app-tooltip.app-tooltip--bubble{border-radius:12px!important;padding:8px 12px!important;box-shadow:0 8px 24px rgba(62,56,54,0.12)!important;overflow:visible!important;}\n"
+    + ".app-tooltip.app-tooltip--bubble::after{content:'';position:absolute!important;left:50%!important;bottom:-6px!important;width:12px!important;height:12px!important;background:#FFFFFF!important;border-right:1px solid #EDE5DD!important;border-bottom:1px solid #EDE5DD!important;transform:translateX(-50%) rotate(45deg)!important;}\n"
     + "/* 视觉设计 demo 模态框（独立顶层，避免受 Gradio reset 影响） */\n"
     + ".style-demo-modal{position:fixed;inset:0;z-index:3000;display:none;background:rgba(62,56,54,.45);}\n"
     + ".style-demo-modal.is-open{display:flex;align-items:center;justify-content:center;padding:24px;animation:demoFadeIn 300ms var(--ease) both;}\n"
@@ -4746,6 +4853,25 @@ _STYLE_HTML = (
     + "body .fb-success__desc{font-size:14px!important;line-height:22px!important;color:var(--st-text2)!important;max-width:360px!important;}\n"
     + "body .fb-success__btn{margin-top:6px!important;height:40px!important;border-radius:10px!important;padding:0 20px!important;background:var(--st-primary)!important;color:#FFFFFF!important;border:1px solid var(--st-primary)!important;font-size:14px!important;cursor:pointer!important;transition:background 150ms var(--ease)!important;}\n"
     + "body .fb-success__btn:hover{background:var(--st-primary-hover)!important;border-color:var(--st-primary-hover)!important;}\n"
+    + "/* 反馈引导气泡（B方案：锚定左下角设置图，箭头向下指图；纯 DOM+CSS 绘制） */\n"
+    + "body .fb-guide{position:fixed!important;z-index:3950!important;}\n"
+    + "body .fb-guide__bubble{position:relative!important;display:flex!important;align-items:center!important;gap:12px!important;background:var(--st-surface,#FFFFFF)!important;border:2px solid var(--st-border,#EDE5DD)!important;border-radius:12px!important;box-shadow:var(--st-shadow-panel,0 8px 24px rgba(62,56,54,0.10))!important;padding:12px!important;animation:fbGuideIn 240ms var(--st-ease,cubic-bezier(0.4,0,0.2,1)) both!important;}\n"
+    + "body .fb-guide__img{flex:0 0 auto!important;width:90px!important;height:90px!important;display:flex!important;align-items:center!important;justify-content:center!important;overflow:hidden!important;border-radius:12px!important;}\n"
+    + "body .fb-guide__img img{width:78%!important;height:78%!important;object-fit:contain!important;display:block!important;animation:fbGuideImgBob 2.4s ease-in-out infinite!important;}\n"
+    + "body .fb-guide__body{flex:1 1 auto!important;min-width:0!important;}\n"
+    + "body .fb-guide__title{font-size:13px!important;line-height:20px!important;color:var(--st-text,#3E3836)!important;padding-right:18px!important;}\n"
+    + "body .fb-guide__actions{display:flex!important;align-items:center!important;gap:10px!important;margin-top:10px!important;}\n"
+    + "body .fb-guide__btn{height:32px!important;padding:0 12px!important;border-radius:8px!important;border:1px solid var(--st-border,#EDE5DD)!important;background:#FFFFFF!important;color:var(--st-text,#3E3836)!important;font-size:13px!important;cursor:pointer!important;transition:background 150ms var(--st-ease,cubic-bezier(0.4,0,0.2,1))!important;}\n"
+    + "body .fb-guide__btn:hover{background:var(--st-hover,#FAF3EC)!important;}\n"
+    + "body .fb-guide__btn--primary{background:var(--st-primary,#C7A18E)!important;color:#FFFFFF!important;border-color:var(--st-primary,#C7A18E)!important;}\n"
+    + "body .fb-guide__btn--primary:hover{background:var(--st-primary-hover,#B98F7C)!important;border-color:var(--st-primary-hover,#B98F7C)!important;}\n"
+    + "body .fb-guide__link{height:auto!important;padding:0!important;border:none!important;background:transparent!important;color:var(--st-text2,#6F6763)!important;font-size:10px!important;line-height:1!important;cursor:pointer!important;}\n"
+    + "body .fb-guide__link:hover{color:var(--st-primary,#C7A18E)!important;text-decoration:underline!important;}\n"
+    + "body .fb-guide__close{position:absolute!important;top:6px!important;right:8px!important;border:none!important;background:transparent!important;color:var(--st-text2,#6F6763)!important;font-size:18px!important;line-height:1!important;cursor:pointer!important;padding:2px!important;}\n"
+    + "body .fb-guide__arrow{position:absolute!important;left:-7px!important;top:50%!important;width:14px!important;height:14px!important;background:var(--st-surface,#FFFFFF)!important;border-left:1px solid var(--st-border,#EDE5DD)!important;border-top:1px solid var(--st-border,#EDE5DD)!important;transform:translateY(-50%) rotate(45deg)!important;animation:fbArrowBounce 1.2s ease-in-out infinite!important;}\n"
+    + "@keyframes fbGuideIn{from{opacity:0;transform:translateX(10px)}to{opacity:1;transform:translateX(0)}}\n"
+    + "@keyframes fbArrowBounce{0%,100%{transform:translateY(-50%) translateX(0) rotate(45deg)}50%{transform:translateY(-50%) translateX(-4px) rotate(45deg)}}\n"
+    + "@keyframes fbGuideImgBob{0%,100%{transform:translateY(-3px)}50%{transform:translateY(3px)}}\n"
     + "@keyframes stPanelIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}\n"
     + "@keyframes stPanelOut{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(6px)}}\n"
     + "@keyframes stToastIn{from{opacity:0;transform:translateX(100%)}to{opacity:1;transform:translateX(0)}}\n"
