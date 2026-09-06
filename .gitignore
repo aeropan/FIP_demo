@@ -1,1 +1,56 @@
-ms_deploy.json
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.env
+.venv/
+venv/
+
+# Streamlit
+.streamlit/secrets.toml
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Data / logs
+*.log
+logs/
+data/*.csv
+!data/.gitkeep
+# 默认对话种子必须随仓库进 Git（否则部署后读不到）：显式放行，防止将来误加 data/*.json 被忽略
+!data/seed_conversations.json
+# literature/  # 注释掉：source/literature/ 需要进 Git，且仓库根目录没有独立的 literature/ 目录
+
+# Gradio 运行时缓存
+.gradio/
+
+# 本地备份 / 临时调试脚本
+*.bak
+launch_test*.py
+uvicorn_test.py
+
+# Chrome headless 测试 profile（CDP 验证用）
+.workbuddy-chrome/
+
+# 字体样式排查文档（本地分析用，不入库）
+source/design/typography-audit.md
+
+# 设置功能规划文档（本地规划用，不入库）
+.plan/
+
+# 调试 / 临时文件（CDP 抓包、G6 本地副本、坐标调试、临时测试页，均不入库）
+source/design/_cdp_*
+source/design/_g6_local.min.js
+source/design/_graph_coords.js
+source/design/_matched_coords.json
+source/design/_test_g6_local.html
+source/design/_test_mode_graph.html
+
+# 源素材（rar 压缩包 / After Effects 工程 .aep 等，体积大且不进仓库）
+source/apng/
