@@ -347,6 +347,11 @@ HOMEPAGE_HTML = """
   </div>
 </div>
 <div id="stToastStack" class="st-toast-stack" aria-live="polite"></div>
+<div id="hsceScrollHint" class="hsce-scroll-hint" aria-hidden="true">
+  <span class="hsce-scroll-hint__icon">!</span>
+  <div class="hsce-scroll-hint__msg">检测到页面出现横向滚动，建议将浏览器缩放调整为 100%（Ctrl / Cmd + 0）以获得最佳浏览体验</div>
+  <button type="button" class="hsce-scroll-hint__close" aria-label="关闭">&times;</button>
+</div>
 <div id="styleDemoModal" class="style-demo-modal" aria-hidden="true">
   <div class="style-demo-modal__overlay" data-close></div>
   <div class="style-demo-modal__content">
@@ -3132,8 +3137,46 @@ function logPageView() {
 
     window.addEventListener('resize', function () { if (st.panelOpen) positionPanel(); });
     renderBridge();
+    function detectHorizontalScroll() {
+      var KEY = 'hsce_scroll_hinted';
+      try { if (sessionStorage.getItem(KEY) === '1') return; } catch (e) {}
+      var done = false;
+      function show() {
+        done = true;
+        try { sessionStorage.setItem(KEY, '1'); } catch (e) {}
+        var el = document.getElementById('hsceScrollHint');
+        if (!el) return;
+        el.setAttribute('aria-hidden', 'false');
+        el.classList.add('is-open');
+        function hide() {
+          el.classList.remove('is-open');
+          el.setAttribute('aria-hidden', 'true');
+          setTimeout(function () { if (el.parentNode) el.parentNode.removeChild(el); }, 320);
+        }
+        var closeBtn = el.querySelector('.hsce-scroll-hint__close');
+        if (closeBtn) closeBtn.addEventListener('click', hide);
+        setTimeout(hide, 5000);
+      }
+      function check() {
+        if (done) return;
+        var de = document.documentElement;
+        if (!de) return;
+        if (de.scrollWidth - de.clientWidth > 1) show();
+      }
+      /* 等布局稳定后再检测：load 后、字体就绪后、兜底延迟，仅首次命中生效 */
+      if (document.readyState === 'complete') {
+        setTimeout(check, 400);
+      } else {
+        window.addEventListener('load', function () { setTimeout(check, 400); });
+      }
+      if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(function () { setTimeout(check, 400); });
+      }
+      setTimeout(check, 1200);
+    }
     loadPrivacy(); /* 应用持久化的隐私保护状态（水印 + 禁复制 + iframe 注入） */
     initFeedbackGuide(); /* 反馈引导：累计停留超 3 分钟后箭头气泡提示填写问卷 */
+    detectHorizontalScroll(); /* 横向滚动检测：首次进入检测到横向溢出时顶部提示调整缩放 */
   }
 
   bindSettings();
@@ -4668,6 +4711,12 @@ _STYLE_HTML = (
     + "@keyframes demoFadeIn{from{opacity:0;}to{opacity:1;}}\n"
     + "@keyframes demoFadeOut{from{opacity:1;}to{opacity:0;}}\n"
     + "@keyframes demoIn{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}\n"
+    + ".hsce-scroll-hint{position:fixed!important;top:0!important;left:50%!important;transform:translateX(-50%) translateY(-120%)!important;z-index:5100!important;display:flex!important;align-items:center!important;gap:10px!important;max-width:min(520px,calc(100vw - 32px))!important;padding:12px 14px!important;background:#FFFFFF!important;border:1px solid #EDE5DD!important;border-bottom-left-radius:12px!important;border-bottom-right-radius:12px!important;box-shadow:0 8px 24px rgba(62,56,54,0.12)!important;font-size:13px!important;line-height:20px!important;color:#3E3836!important;opacity:0!important;pointer-events:none!important;transition:transform 280ms var(--ease,cubic-bezier(0.4,0,0.2,1)),opacity 280ms var(--ease,cubic-bezier(0.4,0,0.2,1))!important;}\n"
+    + ".hsce-scroll-hint.is-open{opacity:1!important;transform:translateX(-50%) translateY(0)!important;pointer-events:auto!important;}\n"
+    + ".hsce-scroll-hint__icon{flex:0 0 auto!important;width:18px!important;height:18px!important;border-radius:50%!important;background:#C7A18E!important;color:#FFFFFF!important;font-size:13px!important;font-weight:700!important;display:flex!important;align-items:center!important;justify-content:center!important;}\n"
+    + ".hsce-scroll-hint__msg{flex:1!important;}\n"
+    + ".hsce-scroll-hint__close{flex:0 0 auto!important;width:24px!important;height:24px!important;border:none!important;background:transparent!important;color:#6F6763!important;font-size:18px!important;line-height:1!important;cursor:pointer!important;border-radius:6px!important;}\n"
+    + ".hsce-scroll-hint__close:hover{background:#FAF3EC!important;color:#3E3836!important;}\n"
     + "@keyframes demoOut{from{opacity:1;transform:translateY(0);}to{opacity:0;transform:translateY(12px);}}\n"
     + "/* 打开弹窗时：侧边栏向右划出（300ms）+ 下方不可交互 */\n"
     + "body.style-demo-open #leftSidebar{position:absolute;top:0;left:0;bottom:0;transform:translateX(-100%);}\n"
