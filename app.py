@@ -1234,7 +1234,7 @@ function logPageView() {
       row.className = 'message message-user';
       row.innerHTML =
         '<div class="bubble bubble-user"><div class="bubble-body"></div></div>' +
-        '<div class="avatar avatar-user">宠</div>';
+        '<div class="avatar avatar-user">我</div>';
       row.querySelector('.bubble-body').textContent = text;
       chatArea.appendChild(row);
       /* 入场动画期间允许溢出（气泡从画面中部浮入，chat-area 尚在长高） */
