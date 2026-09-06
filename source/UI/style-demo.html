@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>宠物医疗问诊平台 · 视觉风格演示</title>
+  <style>
+    /* =====================================================
+       基础重置与变量
+       ===================================================== */
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+
+    :root {
+      /* 默认：方案 A — 青柠自然系 */
+      --color-primary-900: #134E4A;
+      --color-primary-700: #0F766E;
+      --color-primary-500: #14B8A6;
+      --color-primary-100: #CCFBF1;
+
+      --color-secondary-500: #F59E0B;
+      --color-secondary-100: #FEF3C7;
+
+      --color-success-bg: #F0FDF4;
+      --color-success-border: #BBF7D0;
+      --color-success-main: #15803D;
+      --color-success-dark: #14532D;
+
+      --color-warning-bg: #FEF3C7;
+      --color-warning-border: #FDE68A;
+      --color-warning-main: #D97706;
+      --color-warning-dark: #92400E;
+
+      --color-danger-bg: #FEF2F2;
+      --color-danger-border: #FECACA;
+      --color-danger-main: #DC2626;
+      --color-danger-dark: #991B1B;
+
+      --color-info-bg: #F0F9FF;
+      --color-info-border: #BAE6FD;
+      --color-info-main: #0284C7;
+      --color-info-dark: #0C4A6E;
+
+      --color-gradient-brand: linear-gradient(135deg, #CCFBF1 0%, #FEF3C7 100%);
+
+      --color-text-main: #1E293B;
+      --color-text-secondary: #64748B;
+      --color-border: #E2E8F0;
+      --color-surface: #F8FAFC;
+      --color-card: #FFFFFF;
+      --color-header: #FFFFFF;
+
+      /* 阴影 */
+      --shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.04);
+      --shadow-sm: 0 4px 12px rgba(15, 23, 42, 0.06);
+      --shadow-md: 0 8px 24px rgba(15, 23, 42, 0.10);
+
+      /* 字体 */
+      --font-sans: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", system-ui, sans-serif;
+      --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+      /* 默认圆润度：适中 */
+      --radius-sm: 6px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-pill: 999px;
+    }
+
+    /* 方案 B — 暖杏奶油系（V2 设计系统） */
+    [data-theme="B"] {
+      --color-primary-900: #6B5045;          /* Logo、重点标题、Hover */
+      --color-primary-700: #8C6B5D;          /* 品牌主色、Primary Button、激活态 */
+      --color-primary-500: #C7A18E;          /* 装饰、Tag、辅助强调 */
+      --color-primary-100: #FAF3EC;          /* Selected Background、浅色背景 */
+
+      --color-secondary-500: #C7A18E;        /* 与 Primary 500 呼应，用于小 accent */
+      --color-secondary-100: #FAF3EC;
+
+      --color-success-bg: #F4F7F1;
+      --color-success-border: #D6E2CF;
+      --color-success-main: #6F8A6A;
+      --color-success-dark: #53664F;
+
+      --color-warning-bg: #FFF8EC;
+      --color-warning-border: #F2DFC0;
+      --color-warning-main: #C38A35;
+      --color-warning-dark: #9A6825;
+
+      --color-danger-bg: #FCF4F1;
+      --color-danger-border: #E9CEC5;
+      --color-danger-main: #B86B5B;
+      --color-danger-dark: #8F4E43;
+
+      --color-info-bg: #F2F6F8;
+      --color-info-border: #D7E2E8;
+      --color-info-main: #6D8795;
+      --color-info-dark: #536673;
+
+      --color-gradient-brand: linear-gradient(135deg, #FAF3EC 0%, #F4F7F1 100%);
+
+      --color-text-main: #3E3836;
+      --color-text-secondary: #6F6763;
+      --color-border: #EDE5DD;
+      --color-surface: #FDFBF7;
+      --color-card: #FFFFFF;
+      --color-header: #FFF9F5;
+
+      --shadow-xs: 0 1px 2px rgba(62, 56, 54, 0.04);
+      --shadow-sm: 0 4px 12px rgba(62, 56, 54, 0.06);
+      --shadow-md: 0 8px 24px rgba(62, 56, 54, 0.10);
+    }
+
+    /* 方案 C — 粉绿糖果（粉主绿辅） */
+    [data-theme="C"] {
+      --color-primary-900: #A64D62;          /* 深玫瑰，hover/pressed/深色文字 */
+      --color-primary-700: #F28DA6;          /* Primary Button 主按钮 */
+      --color-primary-500: #F8B8C8;          /* 装饰 accent */
+      --color-primary-100: #FFF0F4;          /* 浅色底 */
+
+      --color-secondary-500: #6FE0B8;        /* 薄荷 accent，用于小装饰/成功/听诊器 */
+      --color-secondary-100: #D9FAEF;
+
+      --color-success-bg: #E6FAF0;
+      --color-success-border: #B6F2D3;
+      --color-success-main: #28C77E;
+      --color-success-dark: #1A8F59;
+
+      --color-warning-bg: #FFF6E8;
+      --color-warning-border: #FCE0B6;
+      --color-warning-main: #F6A545;
+      --color-warning-dark: #B5741E;
+
+      --color-danger-bg: #FFF0F2;
+      --color-danger-border: #FBCFD6;
+      --color-danger-main: #F26B7C;
+      --color-danger-dark: #B83B4C;
+
+      --color-info-bg: #EBF7FC;
+      --color-info-border: #C0E8F7;
+      --color-info-main: #4CB3E0;
+      --color-info-dark: #267A9F;
+
+      --color-gradient-brand: linear-gradient(135deg, #FFF0F4 0%, #D9FAEF 100%);
+
+      --color-text-main: #3E3336;
+      --color-text-secondary: #7A6E72;
+      --color-border: #F0E0E5;
+      --color-surface: #FFFAFB;
+      --color-card: #FFFFFF;
+      --color-header: rgba(255, 255, 255, 0.82);
+
+      --shadow-xs: 0 1px 2px rgba(62, 51, 54, 0.04);
+      --shadow-sm: 0 4px 12px rgba(62, 51, 54, 0.06);
+      --shadow-md: 0 8px 24px rgba(62, 51, 54, 0.10);
+    }
+
+    /* 圆润度变体 */
+    [data-radius="soft"] {
+      --radius-sm: 10px;
+      --radius-md: 18px;
+      --radius-lg: 24px;
+    }
+    [data-radius="normal"] {
+      --radius-sm: 6px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+    }
+    [data-radius="crisp"] {
+      --radius-sm: 4px;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--color-surface);
+      color: var(--color-text-main);
+      line-height: 1.6;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    /* 方案 C 使用粉绿渐变作为页面背景 */
+    [data-theme="C"] body {
+      background-image: var(--color-gradient-brand);
+      background-attachment: fixed;
+      background-size: cover;
+    }
+
+    /* 方案 C 主按钮背景较浅，使用深色文字保证可读性 */
+    [data-theme="C"] .btn-primary {
+      color: #6B2D3E;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 2px 0 rgba(166, 77, 98, 0.12);
+    }
+    [data-theme="C"] .btn-primary:hover {
+      background-color: var(--color-primary-900);
+      color: #FFFFFF;
+    }
+
+    /* =====================================================
+       页面骨架
+       ===================================================== */
+    .header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background-color: var(--color-header);
+      border-bottom: 1px solid var(--color-border);
+      padding: 16px 24px;
+      box-shadow: var(--shadow-xs);
+      transition: background-color 0.3s ease, border-color 0.3s ease;
+    }
+    .header-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 700;
+      font-size: 18px;
+      color: var(--color-text-main);
+    }
+    .brand-icon svg { width: 32px; height: 32px; display: block; }
+
+    .controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .control-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-pill);
+      padding: 4px;
+    }
+    .control-label {
+      font-size: 12px;
+      color: var(--color-text-secondary);
+      padding-left: 10px;
+    }
+    .btn-toggle {
+      border: none;
+      background: transparent;
+      color: var(--color-text-secondary);
+      font-size: 13px;
+      font-weight: 500;
+      padding: 6px 12px;
+      border-radius: var(--radius-pill);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: inherit;
+      white-space: nowrap;
+    }
+    .btn-toggle:hover { color: var(--color-text-main); }
+    .btn-toggle.active {
+      background-color: var(--color-primary-100);
+      color: var(--color-primary-900);
+      box-shadow: var(--shadow-xs);
+    }
+
+    .tabs {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 32px 24px 80px;
+    }
+
+    .section { display: none; }
+    .section.active { display: block; }
+
+    h1, h2, h3 { margin: 0 0 12px; line-height: 1.3; }
+    h1 { font-size: 28px; }
+    h2 { font-size: 22px; margin-top: 32px; }
+    h3 { font-size: 16px; color: var(--color-text-secondary); font-weight: 600; }
+    p.desc {
+      color: var(--color-text-secondary);
+      margin: 0 0 24px;
+      max-width: 720px;
+      line-height: 1.6;
+    }
+    .scheme-note {
+      background: var(--color-card);
+      border: 1px solid var(--color-border);
+      border-left: 4px solid var(--color-primary-500);
+      border-radius: var(--radius-md);
+      padding: 14px 18px;
+      margin-bottom: 32px;
+      box-shadow: var(--shadow-xs);
+    }
+    .scheme-note-title {
+      font-weight: 700;
+      color: var(--color-text-main);
+      margin-bottom: 4px;
+    }
+    .scheme-note p {
+      margin: 0;
+      color: var(--color-text-secondary);
+      font-size: 14px;
+    }
+
+    /* =====================================================
+       颜色色块
+       ===================================================== */
+    .palette-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 16px;
+      margin-bottom: 40px;
+    }
+    .swatch {
+      background: var(--color-card);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      box-shadow: var(--shadow-xs);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .swatch:hover { transform: translateY(-3px); box-shadow: var(--shadow-sm); }
+    .swatch-color { height: 80px; }
+    .swatch-info { padding: 12px; font-size: 13px; }
+    .swatch-name { font-weight: 600; color: var(--color-text-main); margin-bottom: 2px; }
+    .swatch-hex { font-family: var(--font-mono); color: var(--color-text-secondary); font-size: 11px; word-break: break-all; }
+
+    /* =====================================================
+       组件展示卡片
+       ===================================================== */
+    .card {
+      background: var(--color-card);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-xs);
+      padding: 24px;
+      transition: box-shadow 0.2s ease, border-radius 0.3s ease;
+    }
+    .card:hover { box-shadow: var(--shadow-sm); }
+    .card-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--color-text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 16px;
+    }
+
+    .components-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+    .component-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+    .component-row:last-child { margin-bottom: 0; }
+
+    /* 按钮 */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-family: inherit;
+      font-weight: 500;
+      font-size: 14px;
+      padding: 10px 16px;
+      border: none;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      user-select: none;
+    }
+    .btn-primary {
+      background-color: var(--color-primary-700);
+      color: #fff;
+    }
+    .btn-primary:hover { background-color: var(--color-primary-900); transform: translateY(-1px); box-shadow: var(--shadow-sm); }
+    .btn-secondary {
+      background-color: var(--color-card);
+      color: var(--color-primary-700);
+      border: 1px solid var(--color-primary-700);
+    }
+    .btn-secondary:hover { background-color: var(--color-primary-100); }
+    .btn-ghost {
+      background-color: transparent;
+      color: var(--color-primary-700);
+    }
+    .btn-ghost:hover { background-color: var(--color-primary-100); }
+    .btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
+
+    /* 输入框 */
+    .input {
+      width: 100%;
+      max-width: 320px;
+      font-family: inherit;
+      font-size: 14px;
+      padding: 10px 14px;
+      background-color: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-sm);
+      outline: none;
+      color: var(--color-text-main);
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .input::placeholder { color: var(--color-text-secondary); opacity: 0.7; }
+    .input:focus {
+      border-color: var(--color-primary-700);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary-700) 12%, transparent);
+    }
+
+    /* 标签 / 徽章 */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: var(--radius-pill);
+      border: 1px solid transparent;
+    }
+    .badge-neutral { background: var(--color-surface); color: var(--color-text-secondary); border-color: var(--color-border); }
+    .badge-status { background: var(--color-primary-100); color: var(--color-primary-900); }
+    .badge-success { background: var(--color-success-bg); color: var(--color-success-dark); border-color: var(--color-success-border); }
+    .badge-warn { background: var(--color-warning-bg); color: var(--color-warning-dark); border-color: var(--color-warning-border); }
+    .badge-danger { background: var(--color-danger-bg); color: var(--color-danger-dark); border-color: var(--color-danger-border); }
+    .badge-info { background: var(--color-info-bg); color: var(--color-info-dark); border-color: var(--color-info-border); }
+
+    /* 消息气泡 */
+    .bubble-row { display: flex; gap: 10px; margin-bottom: 14px; }
+    .avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      display: grid;
+      place-items: center;
+      background: var(--color-primary-100);
+      color: var(--color-primary-900);
+      font-weight: 700;
+      font-size: 13px;
+    }
+    .bubble {
+      padding: 12px 16px;
+      max-width: 80%;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    .bubble-user {
+      background: var(--color-primary-100);
+      color: var(--color-primary-900);
+      border-radius: var(--radius-lg) var(--radius-sm) var(--radius-lg) var(--radius-lg);
+      margin-left: auto;
+    }
+    .bubble-ai {
+      background: var(--color-card);
+      color: var(--color-text-main);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-sm) var(--radius-lg) var(--radius-lg) var(--radius-lg);
+    }
+
+    /* 提示条 */
+    .notice {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 12px 14px;
+      border-radius: var(--radius-md);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .notice-warn {
+      background: var(--color-warning-bg);
+      color: var(--color-warning-dark);
+      border: 1px solid var(--color-warning-border);
+    }
+    .notice-success {
+      background: var(--color-success-bg);
+      color: var(--color-success-dark);
+      border: 1px solid var(--color-success-border);
+    }
+
+    /* =====================================================
+       动物医生插画
+       ===================================================== */
+    .doctor-card {
+      background: linear-gradient(135deg, var(--color-card) 0%, var(--color-surface) 100%);
+    }
+    .doctor-illustration {
+      width: 100%;
+      max-width: 260px;
+      display: block;
+      margin: 0 auto;
+    }
+    .doctor-shape { fill: var(--color-primary-500); }
+    .doctor-coat { fill: var(--color-card); }
+    .doctor-skin { fill: #FDBA74; }
+    .doctor-line { stroke: var(--color-text-main); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; fill: none; }
+    .doctor-stethoscope { fill: var(--color-secondary-500); }
+    [data-theme="C"] .doctor-shape { fill: url(#brand-gradient-c); }
+
+    /* =====================================================
+       色彩使用比例
+       ===================================================== */
+    .usage-card {
+      grid-column: 1 / -1;
+    }
+    .usage-bars {
+      display: flex;
+      height: 32px;
+      border-radius: var(--radius-pill);
+      overflow: hidden;
+      border: 1px solid var(--color-border);
+      margin-bottom: 12px;
+    }
+    .usage-bar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      color: #fff;
+      text-shadow: 0 1px 1px rgba(0,0,0,0.15);
+    }
+    .usage-bar-neutral { width: 88%; background: var(--color-surface); color: var(--color-text-secondary); text-shadow: none; border-right: 1px solid var(--color-border); }
+    .usage-bar-primary { width: 10%; background: var(--color-primary-500); }
+    .usage-bar-semantic { width: 2%; background: var(--color-success-main); }
+
+    .usage-legend {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      font-size: 13px;
+      color: var(--color-text-secondary);
+    }
+    .usage-legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .usage-dot { width: 10px; height: 10px; border-radius: 50%; }
+
+    /* =====================================================
+       圆润度对比
+       ===================================================== */
+    .radius-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 24px;
+    }
+    .radius-box {
+      background: var(--color-card);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      padding: 24px;
+      box-shadow: var(--shadow-xs);
+    }
+    .radius-box h3 { margin-bottom: 16px; }
+    .radius-sample {
+      background: var(--color-primary-100);
+      color: var(--color-primary-900);
+      padding: 16px;
+      margin-bottom: 12px;
+      border-radius: var(--radius-lg);
+      font-weight: 500;
+    }
+    .radius-sample-2 {
+      background: var(--color-primary-700);
+      color: #fff;
+      padding: 10px 16px;
+      display: inline-block;
+      border-radius: var(--radius-sm);
+      font-weight: 500;
+      margin-right: 8px;
+    }
+    .radius-note {
+      font-size: 13px;
+      color: var(--color-text-secondary);
+    }
+  </style>
+</head>
+<body data-theme="B" data-radius="normal">
+
+  <header class="header">
+    <div class="header-inner">
+      <div class="brand">
+        <span class="brand-icon" aria-hidden="true">
+          <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="16" cy="16" r="15" fill="var(--color-primary-100)" stroke="var(--color-primary-700)" stroke-width="2"/>
+            <path d="M16 9v14M9 16h14" stroke="var(--color-primary-700)" stroke-width="3" stroke-linecap="round"/>
+          </svg>
+        </span>
+        宠医助手 · 视觉风格演示
+      </div>
+
+      <div class="controls">
+        <div class="control-group">
+          <span class="control-label">配色</span>
+          <button class="btn-toggle" data-switch-theme="A">方案 A · 青柠自然</button>
+          <button class="btn-toggle active" data-switch-theme="B">方案 B · 暖杏奶油</button>
+          <button class="btn-toggle" data-switch-theme="C">方案 C · 薄荷糖粉</button>
+        </div>
+        <div class="control-group">
+          <span class="control-label">圆润度</span>
+          <button class="btn-toggle" data-switch-radius="soft">柔和</button>
+          <button class="btn-toggle active" data-switch-radius="normal">适中</button>
+          <button class="btn-toggle" data-switch-radius="crisp">利落</button>
+        </div>
+      </div>
+
+      <nav class="tabs" aria-label="内容分类">
+        <button class="btn-toggle active" data-tab="colors">颜色</button>
+        <button class="btn-toggle" data-tab="components">组件</button>
+        <button class="btn-toggle" data-tab="radius">圆润度</button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- 颜色方案 -->
+    <section id="colors" class="section active">
+      <h1>颜色方案</h1>
+
+      <div class="scheme-note">
+        <div class="scheme-note-title" data-scheme-title>方案 B · 暖杏奶油系（V2）</div>
+        <p data-scheme-desc>
+          Natural Warm Palette：奶茶焦糖主色低饱和使用，暖色语义体系仅在真正需要时出现。页面色彩比例约为 Neutral 88% / Primary 10% / Semantic ≤ 2%。
+        </p>
+      </div>
+
+      <h2>主色阶</h2>
+      <div class="palette-grid" id="palette-primary">
+        <div class="swatch"><div class="swatch-color" style="background: var(--color-primary-900)"></div><div class="swatch-info"><div class="swatch-name">Primary 900 · Logo/Hover</div><div class="swatch-hex" data-var="--color-primary-900"></div></div></div>
+        <div class="swatch"><div class="swatch-color" style="background: var(--color-primary-700)"></div><div class="swatch-info"><div class="swatch-name">Primary 700 · 主按钮</div><div class="swatch-hex" data-var="--color-primary-700"></div></div></div>
+        <div class="swatch"><div class="swatch-color" style="background: var(--color-primary-500)"></div><div class="swatch-info"><div class="swatch-name">Primary 500 · 装饰/Tag</div><div class="swatch-hex" data-var="--color-primary-500"></div></div></div>
+        <div class="swatch"><div class="swatch-color" style="background: var(--color-primary-100)"></div><div class="swatch-info"><div class="swatch-name">Primary 100 · 浅色底</div><div class="swatch-hex" data-var="--color-primary-100"></div></div></div>
+      </div>
+
+      <h2>品牌渐变</h2>
+      <div class="palette-grid" style="max-width: 360px;">
+        <div class="swatch">
+          <div class="swatch-color" style="background: var(--color-gradient-brand)"></div>
+          <div class="swatch-info">
+            <div class="swatch-name">Brand Gradient</div>
+            <div class="swatch-hex" data-var="--color-gradient-brand"></div>
+          </div>
+        </div>
+      </div>
+
+      <h2>语义色（低饱和自然色系）</h2>
+      <div class="palette-grid" id="palette-semantic">
+        <div class="swatch"><div class="swatch-color" style="background: var(--color-success-main)"></div><div class="swatch-info"><div class="swatch-name">Success Main</div><div class="swatch-hex" data-var="--color-success-main"></div></div></div>
+        <div class="swatch"><div class="swatch-color" style="background: var(--color-success-bg); border-bottom: 1px solid var(--color-border)"></div><div class="swatch-info"><div class="swatch-name">Success Bg</div><div class="swatch-hex" data-var="--color-success-bg"></div></div></div>
+
+        <div class="swatch"><div class="swatch-color" style="background: var(--color-warning-main)"></div><div class="swatch-info"><div class="swatch-name">Warning Main</div><div class="swatch-hex" data-var="--color-warning-main"></div></div></div>
+        <div class="swatch"><div class="swatch-color" style="background: var(--color-warning-bg); border-bottom: 1px solid var(--color-border)"></div><div class="swatch-info"><div class="swatch-name">Warning Bg</div><div class="swatch-hex" data-var="--color-warning-bg"></div></div></div>
+
+        <div class="swatch"><div class="swatch-color" style="background: var(--color-danger-main)"></div><div class="swatch-info"><div class="swatch-name">Danger Main</div><div class="swatch-hex" data-var="--color-danger-main"></div></div></div>
+        <div class="swatch"><div class="swatch-color" style="background: var(--color-danger-bg); border-bottom: 1px solid var(--color-border)"></div><div class="swatch-info"><div class="swatch-name">Danger Bg</div><div class="swatch-hex" data-var="--color-danger-bg"></div></div></div>
+
+        <div class="swatch"><div class="swatch-color" style="background: var(--color-info-main)"></div><div class="swatch-info"><div class="swatch-name">Info Main</div><div class="swatch-hex" data-var="--color-info-main"></div></div></div>
+        <div class="swatch"><div class="swatch-color" style="background: var(--color-info-bg); border-bottom: 1px solid var(--color-border)"></div><div class="swatch-info"><div class="swatch-name">Info Bg</div><div class="swatch-hex" data-var="--color-info-bg"></div></div></div>
+      </div>
+
+      <h2>中性色</h2>
+      <div class="palette-grid" id="palette-neutral">
+        <div class="swatch"><div class="swatch-color" style="background: var(--color-text-main)"></div><div class="swatch-info"><div class="swatch-name">文本主色</div><div class="swatch-hex" data-var="--color-text-main"></div></div></div>
+        <div class="swatch"><div class="swatch-color" style="background: var(--color-text-secondary)"></div><div class="swatch-info"><div class="swatch-name">文本次要</div><div class="swatch-hex" data-var="--color-text-secondary"></div></div></div>
+        <div class="swatch"><div class="swatch-color" style="background: var(--color-border)"></div><div class="swatch-info"><div class="swatch-name">边框/分割线</div><div class="swatch-hex" data-var="--color-border"></div></div></div>
+        <div class="swatch"><div class="swatch-color" style="background: var(--color-surface)"></div><div class="swatch-info"><div class="swatch-name">页面背景</div><div class="swatch-hex" data-var="--color-surface"></div></div></div>
+        <div class="swatch"><div class="swatch-color" style="background: var(--color-card); border-bottom: 1px solid var(--color-border)"></div><div class="swatch-info"><div class="swatch-name">卡片背景</div><div class="swatch-hex" data-var="--color-card"></div></div></div>
+        <div class="swatch"><div class="swatch-color" style="background: var(--color-header); border-bottom: 1px solid var(--color-border)"></div><div class="swatch-info"><div class="swatch-name">标题栏背景</div><div class="swatch-hex" data-var="--color-header"></div></div></div>
+      </div>
+    </section>
+
+    <!-- 组件展示 -->
+    <section id="components" class="section">
+      <h1>组件样式</h1>
+      <p class="desc">这里只展示组件的「样貌」——配色、圆角、阴影、字体、状态。注意页面整体以中性色为主，Primary 和 Semantic 保持克制。</p>
+
+      <div class="components-grid">
+        <div class="card">
+          <div class="card-title">Buttons / 按钮</div>
+          <div class="component-row">
+            <button class="btn btn-primary">主要按钮</button>
+            <button class="btn btn-secondary">次要按钮</button>
+          </div>
+          <div class="component-row">
+            <button class="btn btn-ghost">文字按钮</button>
+            <button class="btn btn-primary" disabled>禁用状态</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Inputs / 输入框</div>
+          <div class="component-row">
+            <input class="input" type="text" placeholder="描述一下爱宠的情况…">
+          </div>
+          <div class="component-row">
+            <input class="input" type="text" value="金毛豆豆，2岁，最近呕吐">
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Badges / 标签</div>
+          <div class="component-row">
+            <span class="badge badge-neutral">普通标签</span>
+            <span class="badge badge-status">观察中</span>
+            <span class="badge badge-warn">建议注意</span>
+          </div>
+          <div class="component-row">
+            <span class="badge badge-success">已完成</span>
+            <span class="badge badge-danger">建议就医</span>
+            <span class="badge badge-info">信息</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Notices / 提示条</div>
+          <div class="component-row">
+            <div class="notice notice-warn">
+              <span>💡</span>
+              <div>如果 24 小时内症状没有缓解，建议带它去线下医院检查。</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Chat Bubbles / 对话气泡</div>
+          <div class="bubble-row" style="justify-content: flex-end;">
+            <div class="bubble bubble-user">医生你好，我家猫今天突然吐了两次。</div>
+          </div>
+          <div class="bubble-row">
+            <div class="avatar">AI</div>
+            <div class="bubble bubble-ai">别担心，我先帮你排查一下。请问呕吐物是食物状还是黄色液体？</div>
+          </div>
+        </div>
+
+        <div class="card doctor-card">
+          <div class="card-title">Illustration / 动物医生插画</div>
+          <svg class="doctor-illustration" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="brand-gradient-c" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#FFF0F4"/>
+                <stop offset="100%" stop-color="#D9FAEF"/>
+              </linearGradient>
+            </defs>
+            <path class="doctor-coat" d="M70 95 C60 110 55 150 55 180 H145 C145 150 140 110 130 95" stroke="var(--color-border)" stroke-width="1.5"/>
+            <path class="doctor-line" d="M85 105 V160 M115 105 V160"/>
+            <path class="doctor-line" d="M100 120 V150 M90 150 H110 M95 160 A5 5 0 1 0 105 160"/>
+            <circle class="doctor-stethoscope" cx="100" cy="158" r="5"/>
+            <ellipse class="doctor-skin" cx="100" cy="70" rx="35" ry="32"/>
+            <path class="doctor-shape" d="M68 52 L60 25 L85 45 Z"/>
+            <path class="doctor-shape" d="M132 52 L140 25 L115 45 Z"/>
+            <circle cx="88" cy="65" r="3" fill="var(--color-text-main)"/>
+            <circle cx="112" cy="65" r="3" fill="var(--color-text-main)"/>
+            <ellipse cx="100" cy="75" rx="6" ry="4" fill="var(--color-text-main)"/>
+            <path class="doctor-line" d="M92 82 Q100 88 108 82"/>
+            <path class="doctor-shape" d="M75 43 L80 20 H120 L125 43 Z"/>
+            <rect x="97" y="12" width="6" height="8" rx="1" fill="var(--color-card)"/>
+            <rect x="93" y="16" width="14" height="6" rx="1" fill="var(--color-card)"/>
+          </svg>
+          <p class="desc" style="text-align: center; margin-bottom: 0;">可爱扁平的动物医生插画示意。方案 C 使用薄荷→粉红渐变填充。</p>
+        </div>
+
+        <div class="card usage-card">
+          <div class="card-title">Color Usage / 页面色彩比例</div>
+          <div class="usage-bars">
+            <div class="usage-bar usage-bar-neutral">88%</div>
+            <div class="usage-bar usage-bar-primary">10%</div>
+            <div class="usage-bar usage-bar-semantic">2%</div>
+          </div>
+          <div class="usage-legend">
+            <div class="usage-legend-item"><span class="usage-dot" style="background: var(--color-surface); border: 1px solid var(--color-border)"></span> Neutral 中性色（背景、文字、边框）</div>
+            <div class="usage-legend-item"><span class="usage-dot" style="background: var(--color-primary-500)"></span> Primary 品牌色（Logo、按钮、当前选中）</div>
+            <div class="usage-legend-item"><span class="usage-dot" style="background: var(--color-success-main)"></span> Semantic 语义色（成功/警告/危险/信息）</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 圆润度对比 -->
+    <section id="radius" class="section">
+      <h1>圆润程度</h1>
+      <p class="desc">同样的卡片和按钮，分别用「柔和 / 适中 / 利落」三种圆角尺寸呈现。当前页面圆角由顶部「圆润度」按钮控制。</p>
+
+      <div class="radius-grid">
+        <div class="radius-box">
+          <h3>柔和 · Soft</h3>
+          <div class="radius-sample" style="border-radius: 24px;">大号气泡 / 卡片</div>
+          <div class="radius-sample-2" style="border-radius: 10px;">按钮</div>
+          <div class="radius-sample-2" style="border-radius: 999px;">标签</div>
+          <p class="radius-note">圆角大、边界柔和，气质更亲近、轻松，但医疗专业感会稍弱。</p>
+        </div>
+        <div class="radius-box">
+          <h3>适中 · Normal（推荐）</h3>
+          <div class="radius-sample" style="border-radius: 16px;">大号气泡 / 卡片</div>
+          <div class="radius-sample-2" style="border-radius: 6px;">按钮</div>
+          <div class="radius-sample-2" style="border-radius: 999px;">标签</div>
+          <p class="radius-note">兼顾亲和与专业，适合「温暖家庭健康助手」的定位。</p>
+        </div>
+        <div class="radius-box">
+          <h3>利落 · Crisp</h3>
+          <div class="radius-sample" style="border-radius: 12px;">大号气泡 / 卡片</div>
+          <div class="radius-sample-2" style="border-radius: 4px;">按钮</div>
+          <div class="radius-sample-2" style="border-radius: 999px;">标签</div>
+          <p class="radius-note">更现代、高效，但和「可爱插画」「温暖」的调性略有冲突。</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const schemeInfo = {
+      A: {
+        title: '方案 A · 青柠自然系',
+        desc: '青绿色主色 + 琥珀暖 accent，整体清新、自然、专业。三个方案中和谐度与扩展性最好。'
+      },
+      B: {
+        title: '方案 B · 暖杏奶油系（V2 设计系统）',
+        desc: 'Natural Warm Palette：奶茶焦糖色低饱和使用，暖色语义体系仅在真正需要时出现。页面色彩比例约为 Neutral 88% / Primary 10% / Semantic ≤ 2%。'
+      },
+      C: {
+        title: '方案 C · 粉绿糖果系（粉主绿辅）',
+        desc: '暖调柔粉 #F28DA6 作为品牌主色，薄荷绿 #6FE0B8 退为辅助 accent。背景使用粉→绿渐变，整体甜美、活泼、敢用色彩，同时保留小清新的呼吸感。'
+      }
+    };
+
+    // 配色切换
+    document.querySelectorAll('[data-switch-theme]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const theme = btn.dataset.switchTheme;
+        document.body.dataset.theme = theme;
+        document.querySelectorAll('[data-switch-theme]').forEach(b => b.classList.toggle('active', b === btn));
+        updateSchemeInfo(theme);
+        updateHexLabels();
+      });
+    });
+
+    // 圆润度切换
+    document.querySelectorAll('[data-switch-radius]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const radius = btn.dataset.switchRadius;
+        document.body.dataset.radius = radius;
+        document.querySelectorAll('[data-switch-radius]').forEach(b => b.classList.toggle('active', b === btn));
+      });
+    });
+
+    // Tab 切换
+    document.querySelectorAll('[data-tab]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const tab = btn.dataset.tab;
+        document.querySelectorAll('.section').forEach(s => s.classList.toggle('active', s.id === tab));
+        document.querySelectorAll('[data-tab]').forEach(b => b.classList.toggle('active', b === btn));
+      });
+    });
+
+    function updateSchemeInfo(theme) {
+      const info = schemeInfo[theme] || schemeInfo.B;
+      const titleEl = document.querySelector('[data-scheme-title]');
+      const descEl = document.querySelector('[data-scheme-desc]');
+      if (titleEl) titleEl.textContent = info.title;
+      if (descEl) descEl.textContent = info.desc;
+    }
+
+    function updateHexLabels() {
+      const style = getComputedStyle(document.body);
+      document.querySelectorAll('[data-var]').forEach(span => {
+        const variable = span.dataset.var;
+        const raw = style.getPropertyValue(variable).trim();
+        span.textContent = raw.toUpperCase();
+      });
+    }
+
+    updateSchemeInfo('B');
+    updateHexLabels();
+  </script>
+</body>
+</html>

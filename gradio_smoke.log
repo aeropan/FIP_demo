@@ -1,0 +1,21 @@
+D:\Works\Medical\fip-causal-reasoning\app_gradio.py:176: UserWarning: The parameters have been moved from the Blocks constructor to the launch() method in Gradio 6.0: css. Please pass these parameters to launch() instead.
+  with gr.Blocks(
+Traceback (most recent call last):
+  File "D:\Works\Medical\fip-causal-reasoning\app_gradio.py", line 219, in <module>
+    main()
+    ~~~~^^
+  File "D:\Works\Medical\fip-causal-reasoning\app_gradio.py", line 196, in main
+    ) = build_main_content()
+        ~~~~~~~~~~~~~~~~~~^^
+  File "D:\Works\Medical\fip-causal-reasoning\app_gradio.py", line 117, in build_main_content
+    chat_col, chatbot, input_box = build_chat_column()
+                                   ~~~~~~~~~~~~~~~~~^^
+  File "D:\Works\Medical\fip-causal-reasoning\app_gradio.py", line 71, in build_chat_column
+    chatbot = gr.Chatbot(
+        label="对话历史",
+        height=500,
+        bubble_full_width=False,
+    )
+  File "C:\Users\PC\.workbuddy\binaries\python\envs\default\Lib\site-packages\gradio\component_meta.py", line 194, in wrapper
+    return fn(self, **kwargs)
+TypeError: Chatbot.__init__() got an unexpected keyword argument 'bubble_full_width'

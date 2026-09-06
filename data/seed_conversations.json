@@ -1,0 +1,3546 @@
+[
+  {
+    "id": "seed_1",
+    "kind": "system_default",
+    "title": "我的猫肚子大，可能是传腹吗？",
+    "time": "2026-09-04 23:36",
+    "msgs": [
+      {
+        "role": "user",
+        "text": "我的猫肚子大，可能是传腹吗？"
+      },
+      {
+        "role": "bot",
+        "text": "你提到的腹围增大，在现有知识图谱中与猫传腹（尤其是疑似湿性猫传染性腹膜炎）有关联。\n其中，腹围增大表现为疑似湿性猫传染性腹膜炎。\n建议进一步结合白球比、Rivalta试验等指标确诊。",
+        "intent": "diagnosis_inquiry",
+        "trace": {
+          "user_input": "我的猫肚子大，可能是传腹吗？",
+          "input_type": "普通文本",
+          "steps": [
+            {
+              "step_id": 1,
+              "step_name": "实体解析",
+              "agent": "EntityAgent",
+              "status": "success",
+              "input_summary": "用户输入：我的猫肚子大，可能是传腹吗？",
+              "output_summary": "解析到实体：腹围增大, 湿性猫传染性腹膜炎（湿性FIP）, 干性猫传染性腹膜炎（干性FIP）",
+              "detail": {
+                "entities": [
+                  "腹围增大",
+                  "湿性猫传染性腹膜炎（湿性FIP）",
+                  "干性猫传染性腹膜炎（干性FIP）"
+                ]
+              },
+              "skip_reason": ""
+            },
+            {
+              "step_id": 2,
+              "step_name": "意图识别",
+              "agent": "IntentAgent",
+              "status": "success",
+              "input_summary": "用户输入：我的猫肚子大，可能是传腹吗？",
+              "output_summary": "识别为诊断可能性判断（diagnosis_inquiry）",
+              "detail": {
+                "scores": {
+                  "diagnosis": 0,
+                  "treatment": 0,
+                  "risk": 0,
+                  "concept": 0,
+                  "meta": 0,
+                  "emergency": 0,
+                  "diagnosis_inquiry": 15,
+                  "symptom_feature": 0,
+                  "diagnostic_test": 0,
+                  "risk_factors": 0,
+                  "differential_diagnosis": 0,
+                  "drug_info": 0,
+                  "disease_features": 0
+                },
+                "candidates": []
+              },
+              "skip_reason": ""
+            },
+            {
+              "step_id": 3,
+              "step_name": "任务分配",
+              "agent": "Orchestrator",
+              "status": "success",
+              "input_summary": "意图：diagnosis_inquiry；实体：腹围增大, 湿性猫传染性腹膜炎（湿性FIP）, 干性猫传染性腹膜炎（干性FIP）",
+              "output_summary": "选择查询方法：query_diagnosis_inquiry",
+              "detail": {
+                "intent": "diagnosis_inquiry",
+                "entities": [
+                  "腹围增大",
+                  "湿性猫传染性腹膜炎（湿性FIP）",
+                  "干性猫传染性腹膜炎（干性FIP）"
+                ],
+                "mode": "specialized"
+              },
+              "skip_reason": ""
+            },
+            {
+              "step_id": 4,
+              "step_name": "图查询",
+              "agent": "GraphQueryAgent",
+              "status": "success",
+              "input_summary": "执行专用查询（实体：腹围增大, 湿性猫传染性腹膜炎（湿性FIP）, 干性猫传染性腹膜炎（干性FIP））",
+              "output_summary": "命中 1 条关系",
+              "detail": {
+                "steps": [
+                  {
+                    "source": "腹围增大",
+                    "rel": "表现为",
+                    "target": "疑似湿性猫传染性腹膜炎",
+                    "polarity": "Positive",
+                    "confidence": "High",
+                    "evidence": "腹围增大是湿性FIP典型体征"
+                  }
+                ]
+              },
+              "skip_reason": ""
+            },
+            {
+              "step_id": 5,
+              "step_name": "证据加工",
+              "agent": "EvidenceAgent",
+              "status": "skipped",
+              "input_summary": "",
+              "output_summary": "",
+              "detail": null,
+              "skip_reason": "该意图无需证据分组"
+            },
+            {
+              "step_id": 6,
+              "step_name": "风险标记",
+              "agent": "RiskAgent",
+              "status": "skipped",
+              "input_summary": "1 条关系",
+              "output_summary": "",
+              "detail": null,
+              "skip_reason": "无风险标记"
+            },
+            {
+              "step_id": 7,
+              "step_name": "响应生成",
+              "agent": "ResponseAgent",
+              "status": "success",
+              "input_summary": "1 条关系",
+              "output_summary": "生成诊断可能性判断回复",
+              "detail": {
+                "summary": "你提到的腹围增大，在现有知识图谱中与猫传腹（尤其是疑似湿性猫传染性腹膜炎）有关联。\n其中，腹围增大表现为疑似湿性猫传染性腹膜炎。\n建议进一步结合白球比、Rivalta试验等指标确诊。",
+                "cards": [
+                  {
+                    "key": "reasoning",
+                    "label": "推理链路",
+                    "steps": [
+                      {
+                        "source": "腹围增大",
+                        "rel": "表现为",
+                        "target": "疑似湿性猫传染性腹膜炎",
+                        "polarity": "Positive",
+                        "polarity_color": "green",
+                        "confidence": "High",
+                        "confidence_color": "green",
+                        "evidence": "腹围增大是湿性FIP典型体征",
+                        "flagged": false
+                      }
+                    ]
+                  }
+                ]
+              },
+              "skip_reason": ""
+            }
+          ]
+        }
+      },
+      {
+        "role": "user",
+        "text": "猫发热怎么办？"
+      },
+      {
+        "role": "bot",
+        "text": "关于持续性发热，知识图谱显示其与疑似猫传染性腹膜炎等存在关联。详情见卡片。",
+        "intent": "general",
+        "trace": {
+          "user_input": "猫发热怎么办？",
+          "input_type": "普通文本",
+          "steps": [
+            {
+              "step_id": 1,
+              "step_name": "实体解析",
+              "agent": "EntityAgent",
+              "status": "success",
+              "input_summary": "用户输入：猫发热怎么办？",
+              "output_summary": "解析到实体：持续性发热",
+              "detail": {
+                "entities": [
+                  "持续性发热"
+                ]
+              },
+              "skip_reason": ""
+            },
+            {
+              "step_id": 2,
+              "step_name": "意图识别",
+              "agent": "IntentAgent",
+              "status": "success",
+              "input_summary": "用户输入：猫发热怎么办？",
+              "output_summary": "识别意图：general",
+              "detail": {
+                "scores": {
+                  "diagnosis": 0,
+                  "treatment": 0,
+                  "risk": 0,
+                  "concept": 0,
+                  "meta": 0,
+                  "emergency": 0,
+                  "diagnosis_inquiry": 0,
+                  "symptom_feature": 0,
+                  "diagnostic_test": 0,
+                  "risk_factors": 0,
+                  "differential_diagnosis": 0,
+                  "drug_info": 0,
+                  "disease_features": 0
+                },
+                "candidates": []
+              },
+              "skip_reason": ""
+            },
+            {
+              "step_id": 3,
+              "step_name": "任务分配",
+              "agent": "Orchestrator",
+              "status": "success",
+              "input_summary": "意图：general；实体：持续性发热",
+              "output_summary": "选定查询模板：GENERAL_QUERY",
+              "detail": {
+                "intent": "general",
+                "entities": [
+                  "持续性发热"
+                ],
+                "template": "// 通用综合查询（意图：general）\n// 业务逻辑：围绕指定实体查询一跳内所有入向和出向关系（全量返回）。\nMATCH (a:Entity)-[r:RELATES]->(b:Entity)\nWHERE a.name IN $entities OR b.name IN $entities\nRETURN a.name AS source, r.关系 AS rel, b.name AS target,\n       r.极性 AS polarity, r.置信度 AS confidence, r.支撑依据 AS evidence"
+              },
+              "skip_reason": ""
+            },
+            {
+              "step_id": 4,
+              "step_name": "图查询",
+              "agent": "GraphQueryAgent",
+              "status": "success",
+              "input_summary": "执行图查询（实体：持续性发热）",
+              "output_summary": "命中 1 条关系",
+              "detail": {
+                "steps": [
+                  {
+                    "source": "持续性发热",
+                    "rel": "表现为",
+                    "target": "疑似猫传染性腹膜炎",
+                    "polarity": "Positive",
+                    "confidence": "High",
+                    "evidence": "发热是FIP最常见的全身性症状"
+                  }
+                ]
+              },
+              "skip_reason": ""
+            },
+            {
+              "step_id": 5,
+              "step_name": "证据加工",
+              "agent": "EvidenceAgent",
+              "status": "success",
+              "input_summary": "1 条关系",
+              "output_summary": "分组：关联关系 1 条",
+              "detail": {
+                "groups": [
+                  {
+                    "key": "relations",
+                    "label": "关联关系",
+                    "count": 1
+                  }
+                ]
+              },
+              "skip_reason": ""
+            },
+            {
+              "step_id": 6,
+              "step_name": "风险标记",
+              "agent": "RiskAgent",
+              "status": "success",
+              "input_summary": "1 组证据",
+              "output_summary": "未发现低置信度关系",
+              "detail": {
+                "risks": []
+              },
+              "skip_reason": ""
+            },
+            {
+              "step_id": 7,
+              "step_name": "响应生成",
+              "agent": "ResponseAgent",
+              "status": "success",
+              "input_summary": "1 组证据，0 个风险",
+              "output_summary": "关于持续性发热，知识图谱显示其与疑似猫传染性腹膜炎等存在关联。详情见卡片。",
+              "detail": {
+                "summary": "关于持续性发热，知识图谱显示其与疑似猫传染性腹膜炎等存在关联。详情见卡片。",
+                "cards": [
+                  {
+                    "key": "relations",
+                    "label": "关联关系",
+                    "steps": [
+                      {
+                        "source": "持续性发热",
+                        "rel": "表现为",
+                        "target": "疑似猫传染性腹膜炎",
+                        "polarity": "Positive",
+                        "polarity_color": "green",
+                        "confidence": "High",
+                        "confidence_color": "green",
+                        "evidence": "发热是FIP最常见的全身性症状",
+                        "flagged": false
+                      }
+                    ]
+                  }
+                ]
+              },
+              "skip_reason": ""
+            }
+          ]
+        }
+      },
+      {
+        "role": "user",
+        "text": "猫快不行了怎么办？"
+      },
+      {
+        "role": "bot",
+        "text": "请立即联系附近的兽医或前往最近的宠物医院。\n如果猫咪正在抽搐、呼吸困难、无法站立或已经失去意识，请不要等待。",
+        "intent": "emergency",
+        "trace": {
+          "user_input": "猫快不行了怎么办？",
+          "input_type": "普通文本",
+          "steps": [
+            {
+              "step_id": 2,
+              "step_name": "意图识别",
+              "agent": "IntentAgent",
+              "status": "success",
+              "input_summary": "用户输入：猫快不行了怎么办？",
+              "output_summary": "识别为紧急求助",
+              "detail": {
+                "scores": {
+                  "diagnosis": 0,
+                  "treatment": 0,
+                  "risk": 0,
+                  "concept": 0,
+                  "meta": 0,
+                  "emergency": 20,
+                  "diagnosis_inquiry": 0,
+                  "symptom_feature": 0,
+                  "diagnostic_test": 0,
+                  "risk_factors": 0,
+                  "differential_diagnosis": 0,
+                  "drug_info": 0,
+                  "disease_features": 0
+                }
+              },
+              "skip_reason": ""
+            },
+            {
+              "step_id": 1,
+              "step_name": "实体解析",
+              "agent": "EntityAgent",
+              "status": "skipped",
+              "input_summary": "用户输入：猫快不行了怎么办？",
+              "output_summary": "",
+              "detail": null,
+              "skip_reason": "紧急场景，直接返回就医提示"
+            },
+            {
+              "step_id": 4,
+              "step_name": "图查询",
+              "agent": "GraphQueryAgent",
+              "status": "skipped",
+              "input_summary": "",
+              "output_summary": "",
+              "detail": null,
+              "skip_reason": "紧急场景，直接返回就医提示"
+            },
+            {
+              "step_id": 7,
+              "step_name": "响应生成",
+              "agent": "ResponseAgent",
+              "status": "success",
+              "input_summary": "紧急求助",
+              "output_summary": "返回立即就医提示",
+              "detail": {
+                "summary": "请立即联系附近的兽医或前往最近的宠物医院。\n如果猫咪正在抽搐、呼吸困难、无法站立或已经失去意识，请不要等待。"
+              },
+              "skip_reason": ""
+            }
+          ]
+        }
+      }
+    ],
+    "contextEntities": [],
+    "lastTrace": {
+      "user_input": "猫快不行了怎么办？",
+      "input_type": "普通文本",
+      "steps": [
+        {
+          "step_id": 2,
+          "step_name": "意图识别",
+          "agent": "IntentAgent",
+          "status": "success",
+          "input_summary": "用户输入：猫快不行了怎么办？",
+          "output_summary": "识别为紧急求助",
+          "detail": {
+            "scores": {
+              "diagnosis": 0,
+              "treatment": 0,
+              "risk": 0,
+              "concept": 0,
+              "meta": 0,
+              "emergency": 20,
+              "diagnosis_inquiry": 0,
+              "symptom_feature": 0,
+              "diagnostic_test": 0,
+              "risk_factors": 0,
+              "differential_diagnosis": 0,
+              "drug_info": 0,
+              "disease_features": 0
+            }
+          },
+          "skip_reason": ""
+        },
+        {
+          "step_id": 1,
+          "step_name": "实体解析",
+          "agent": "EntityAgent",
+          "status": "skipped",
+          "input_summary": "用户输入：猫快不行了怎么办？",
+          "output_summary": "",
+          "detail": null,
+          "skip_reason": "紧急场景，直接返回就医提示"
+        },
+        {
+          "step_id": 4,
+          "step_name": "图查询",
+          "agent": "GraphQueryAgent",
+          "status": "skipped",
+          "input_summary": "",
+          "output_summary": "",
+          "detail": null,
+          "skip_reason": "紧急场景，直接返回就医提示"
+        },
+        {
+          "step_id": 7,
+          "step_name": "响应生成",
+          "agent": "ResponseAgent",
+          "status": "success",
+          "input_summary": "紧急求助",
+          "output_summary": "返回立即就医提示",
+          "detail": {
+            "summary": "请立即联系附近的兽医或前往最近的宠物医院。\n如果猫咪正在抽搐、呼吸困难、无法站立或已经失去意识，请不要等待。"
+          },
+          "skip_reason": ""
+        }
+      ]
+    }
+  },
+  {
+    "id": "seed_2",
+    "kind": "system_default",
+    "title": "猫传腹怎么诊断？",
+    "time": "2026-09-04 23:36",
+    "msgs": [
+      {
+        "role": "user",
+        "text": "猫传腹怎么诊断？"
+      },
+      {
+        "role": "bot",
+        "text": "猫传腹的诊断需结合症状、实验室检查和确诊金标准。常见症状包括共济失调、呼吸困难、持续性发热、淋巴细胞减少；筛查时关注α-1酸性糖蛋白（AGP）、白球比（A:G比值）低于0.6、血清淀粉样蛋白A（SAA）显著升高；最终确诊依赖Rivalta试验、Rivalta试验阳性、免疫组化（IHC）。同时需与淋巴瘤、细菌性腹膜炎等疾病鉴别。完整诊断决策链见卡片。",
+        "intent": "diagnosis",
+        "trace": {
+          "user_input": "猫传腹怎么诊断？",
+          "input_type": "普通文本",
+          "steps": [
+            {
+              "step_id": 1,
+              "step_name": "实体解析",
+              "agent": "EntityAgent",
+              "status": "success",
+              "input_summary": "用户输入：猫传腹怎么诊断？",
+              "output_summary": "解析到实体：湿性猫传染性腹膜炎（湿性FIP）, 干性猫传染性腹膜炎（干性FIP）",
+              "detail": {
+                "entities": [
+                  "湿性猫传染性腹膜炎（湿性FIP）",
+                  "干性猫传染性腹膜炎（干性FIP）"
+                ]
+              },
+              "skip_reason": ""
+            },
+            {
+              "step_id": 2,
+              "step_name": "意图识别",
+              "agent": "IntentAgent",
+              "status": "success",
+              "input_summary": "用户输入：猫传腹怎么诊断？",
+              "output_summary": "识别意图：diagnosis",
+              "detail": {
+                "scores": {
+                  "diagnosis": 10,
+                  "treatment": 0,
+                  "risk": 0,
+                  "concept": 0,
+                  "meta": 0,
+                  "emergency": 0,
+                  "diagnosis_inquiry": 0,
+                  "symptom_feature": 0,
+                  "diagnostic_test": 0,
+                  "risk_factors": 0,
+                  "differential_diagnosis": 0,
+                  "drug_info": 0,
+                  "disease_features": 0
+                },
+                "candidates": []
+              },
+              "skip_reason": ""
+            },
+            {
+              "step_id": 3,
+              "step_name": "任务分配",
+              "agent": "Orchestrator",
+              "status": "success",
+              "input_summary": "意图：diagnosis；实体：湿性猫传染性腹膜炎（湿性FIP）, 干性猫传染性腹膜炎（干性FIP）",
+              "output_summary": "选定查询模板：DIAGNOSIS_QUERY",
+              "detail": {
+                "intent": "diagnosis",
+                "entities": [
+                  "湿性猫传染性腹膜炎（湿性FIP）",
+                  "干性猫传染性腹膜炎（干性FIP）"
+                ],
+                "template": "// 诊断查询（意图：diagnosis）\n// 业务逻辑：查询四类诊断关系（全量返回，前端分组展示）：\n//   1) 症状表现：表现为 → 疑似 FIP\n//   2) 筛查指标：诊断于 → 疑似 FIP\n//   3) 确诊金标准：诊断于 / 表现为 → 确诊 FIP（湿性 / 干性）\n//   4) 鉴别诊断：疑似 FIP → 排除 淋巴瘤 / 细菌性腹膜炎 / 充血性心力衰竭 等\n// 说明：本模板全量返回，不依赖 $entities 参数。\nMATCH (a:Entity)-[r:RELATES]->(b:Entity)\nWHERE\n  // 1) 症状表现：表现为 → 疑似 FIP\n  (r.关系 = \"表现为\" AND b.name STARTS WITH \"疑似\")\n  OR\n  // 2) 筛查指标：诊断于 → 疑似 FIP\n  (r.关系 = \"诊断于\" AND b.name STARTS WITH \"疑似\")\n  OR\n  // 3) 确诊金标准：诊断于 / 表现为 → 确诊 FIP（湿性 / 干性）\n  (r.关系 IN [\"诊断于\", \"表现为\"]\n     AND b.name IN [\"湿性猫传染性腹膜炎（湿性FIP）\", \"干性猫传染性腹膜炎（干性FIP）\"])\n  OR\n  // 4) 鉴别诊断：疑似 FIP → 排除 其他疾病\n  (a.name STARTS WITH \"疑似\" AND b.name STARTS WITH \"排除\")\nRETURN a.name AS source,\n       r.关系 AS rel,\n       b.name AS target,\n       r.极性 AS polarity,\n       r.置信度 AS confidence,\n       r.支撑依据 AS evidence"
+              },
+              "skip_reason": ""
+            },
+            {
+              "step_id": 4,
+              "step_name": "图查询",
+              "agent": "GraphQueryAgent",
+              "status": "success",
+              "input_summary": "执行图查询（实体：湿性猫传染性腹膜炎（湿性FIP）, 干性猫传染性腹膜炎（干性FIP））",
+              "output_summary": "命中 25 条关系",
+              "detail": {
+                "steps": [
+                  {
+                    "source": "Rivalta试验",
+                    "rel": "表现为",
+                    "target": "湿性猫传染性腹膜炎（湿性FIP）",
+                    "polarity": "Positive",
+                    "confidence": "High",
+                    "evidence": "李氏试验阳性是湿性传腹胸腹水生化检查的典型特征"
+                  },
+                  {
+                    "source": "Rivalta试验阳性",
+                    "rel": "表现为",
+                    "target": "湿性猫传染性腹膜炎（湿性FIP）",
+                    "polarity": "Positive",
+                    "confidence": "High",
+                    "evidence": "积液特征性生化反应"
+                  },
+                  {
+                    "source": "α-1酸性糖蛋白（AGP）",
+                    "rel": "诊断于",
+                    "target": "疑似猫传染性腹膜炎",
+                    "polarity": "Positive",
+                    "confidence": "Medium",
+                    "evidence": "急性期蛋白在FIP中显著升高"
+                  },
+                  {
+                    "source": "疑似猫传染性腹膜炎",
+                    "rel": "影响",
+                    "target": "排除充血性心力衰竭",
+                    "polarity": "Positive",
+                    "confidence": "Medium",
+                    "evidence": "胸腔积液需排除心源性"
+                  },
+                  {
+                    "source": "疑似猫传染性腹膜炎",
+                    "rel": "影响",
+                    "target": "排除淋巴瘤",
+                    "polarity": "Positive",
+                    "confidence": "Medium",
+                    "evidence": "临床表现重叠需活检区分"
+                  },
+                  {
+                    "source": "疑似猫传染性腹膜炎",
+                    "rel": "影响",
+                    "target": "排除细菌性腹膜炎",
+                    "polarity": "Positive",
+                    "confidence": "Medium",
+                    "evidence": "腹水需排除感染性病因"
+                  },
+                  {
+                    "source": "免疫组化（IHC）",
+                    "rel": "诊断于",
+                    "target": "干性猫传染性腹膜炎（干性FIP）",
+                    "polarity": "Positive",
+                    "confidence": "High",
+                    "evidence": "组织活检检出病毒抗原为金标准"
+                  },
+                  {
+                    "source": "免疫细胞化学（ICC）",
+                    "rel": "诊断于",
+                    "target": "湿性猫传染性腹膜炎（湿性FIP）",
+                    "polarity": "Positive",
+                    "confidence": "High",
+                    "evidence": "积液中检出感染巨噬细胞"
+                  },
+                  {
+                    "source": "共济失调",
+                    "rel": "表现为",
+                    "target": "疑似干性猫传染性腹膜炎",
+                    "polarity": "Positive",
+                    "confidence": "High",
+                    "evidence": "神经症状提示中枢神经系统受累"
+                  },
+                  {
+                    "source": "呼吸困难",
+                    "rel": "表现为",
+                    "target": "疑似湿性猫传染性腹膜炎",
+                    "polarity": "Positive",
+                    "confidence": "High",
+                    "evidence": "胸腔积液可导致呼吸窘迫"
+                  },
+                  {
+                    "source": "肉芽肿",
+                    "rel": "表现为",
+                    "target": "干性猫传染性腹膜炎（干性FIP）",
+                    "polarity": "Positive",
+                    "confidence": "High",
+                    "evidence": "出现多器官实质性肉芽肿损害定义为非渗出型猫传腹"
+                  },
+                  {
+                    "source": "持续性发热",
+                    "rel": "表现为",
+                    "target": "疑似猫传染性腹膜炎",
+                    "polarity": "Positive",
+                    "confidence": "High",
+                    "evidence": "发热是FIP最常见的全身性症状"
+                  },
+                  {
+                    "source": "淋巴细胞减少",
+                    "rel": "表现为",
+                    "target": "疑似猫传染性腹膜炎",
+                    "polarity": "Positive",
+                    "confidence": "Medium",
+                    "evidence": "FIP相关免疫抑制表现"
+                  },
+                  {
+                    "source": "渗出液高蛋白（>35g/L）",
+                    "rel": "表现为",
+                    "target": "湿性猫传染性腹膜炎（湿性FIP）",
+                    "polarity": "Positive",
+                    "confidence": "High",
+                    "evidence": "高蛋白是渗出液特征"
+                  },
+                  {
+                    "source": "癫痫发作",
+                    "rel": "表现为",
+                    "target": "疑似干性猫传染性腹膜炎",
+                    "polarity": "Positive",
+                    "confidence": "High",
+                    "evidence": "颅内肉芽肿可引发癫痫"
+                  },
+                  {
+                    "source": "白球比（A:G比值）",
+                    "rel": "诊断于",
+                    "target": "湿性猫传染性腹膜炎（湿性FIP）",
+                    "polarity": "Positive",
+                    "confidence": "High",
+                    "evidence": "白球比低于0.4是渗出液分析中诊断湿性传腹的核心指标"
+                  },
+                  {
+                    "source": "白球比（A:G比值）低于0.6",
+                    "rel": "诊断于",
+                    "target": "疑似猫传染性腹膜炎",
+                    "polarity": "Positive",
+                    "confidence": "High",
+                    "evidence": "低白球比是重要筛查指标"
+                  },
+                  {
+                    "source": "积液中猫冠状病毒RT-PCR阳性",
+                    "rel": "诊断于",
+                    "target": "湿性猫传染性腹膜炎（湿性FIP）",
+                    "polarity": "Positive",
+                    "confidence": "High",
+                    "evidence": "直接检出病毒核酸"
+                  },
+                  {
+                    "source": "粘稠草黄色积液",
+                    "rel": "表现为",
+                    "target": "湿性猫传染性腹膜炎（湿性FIP）",
+                    "polarity": "Positive",
+                    "confidence": "High",
+                    "evidence": "典型渗出液外观"
+                  },
+                  {
+                    "source": "组织病理学（肉芽肿）",
+                    "rel": "诊断于",
+                    "target": "干性猫传染性腹膜炎（干性FIP）",
+                    "polarity": "Positive",
+                    "confidence": "High",
+                    "evidence": "组织学发现特征性病变"
+                  },
+                  {
+                    "source": "腹围增大",
+                    "rel": "表现为",
+                    "target": "疑似湿性猫传染性腹膜炎",
+                    "polarity": "Positive",
+                    "confidence": "High",
+                    "evidence": "腹围增大是湿性FIP典型体征"
+                  },
+                  {
+                    "source": "腹水",
+                    "rel": "表现为",
+                    "target": "湿性猫传染性腹膜炎（湿性FIP）",
+                    "polarity": "Positive",
+                    "confidence": "High",
+                    "evidence": "出现胸腹腔积液是渗出型猫传腹的典型临床定义"
+                  },
+                  {
+                    "source": "葡萄膜炎",
+                    "rel": "表现为",
+                    "target": "疑似干性猫传染性腹膜炎",
+                    "polarity": "Positive",
+                    "confidence": "High",
+                    "evidence": "眼部肉芽肿是干性FIP典型表现"
+                  },
+                  {
+                    "source": "血清淀粉样蛋白A（SAA）",
+                    "rel": "表现为",
+                    "target": "湿性猫传染性腹膜炎（湿性FIP）",
+                    "polarity": "Positive",
+                    "confidence": "High",
+                    "evidence": "湿性传腹患猫血清和积液中的血清淀粉样蛋白A水平通常极度升高"
+                  },
+                  {
+                    "source": "血清淀粉样蛋白A（SAA）显著升高",
+                    "rel": "诊断于",
+                    "target": "疑似猫传染性腹膜炎",
+                    "polarity": "Positive",
+                    "confidence": "High",
+                    "evidence": "SAA反映系统性炎症"
+                  }
+                ]
+              },
+              "skip_reason": ""
+            },
+            {
+              "step_id": 5,
+              "step_name": "证据加工",
+              "agent": "EvidenceAgent",
+              "status": "success",
+              "input_summary": "25 条关系",
+              "output_summary": "分组：症状表现 7 条、筛查指标 3 条、确诊金标准 12 条、鉴别诊断 3 条",
+              "detail": {
+                "groups": [
+                  {
+                    "key": "symptoms",
+                    "label": "症状表现",
+                    "count": 7
+                  },
+                  {
+                    "key": "screening",
+                    "label": "筛查指标",
+                    "count": 3
+                  },
+                  {
+                    "key": "gold_standard",
+                    "label": "确诊金标准",
+                    "count": 12
+                  },
+                  {
+                    "key": "differential",
+                    "label": "鉴别诊断",
+                    "count": 3
+                  }
+                ]
+              },
+              "skip_reason": ""
+            },
+            {
+              "step_id": 6,
+              "step_name": "风险标记",
+              "agent": "RiskAgent",
+              "status": "success",
+              "input_summary": "4 组证据",
+              "output_summary": "未发现低置信度关系",
+              "detail": {
+                "risks": []
+              },
+              "skip_reason": ""
+            },
+            {
+              "step_id": 7,
+              "step_name": "响应生成",
+              "agent": "ResponseAgent",
+              "status": "success",
+              "input_summary": "4 组证据，0 个风险",
+              "output_summary": "猫传腹的诊断需结合症状、实验室检查和确诊金标准。常见症状包括共济失调、呼吸困难、持续性发热、淋巴细胞减少；筛查时关注α-1酸性糖蛋白（AGP）、白球比（A:G比值）低于0.6、血清淀粉样蛋白A（SAA）显著升高；最终确诊依赖Rivalta试验、Rivalta试验阳性、免疫组化（IHC）。同时需与淋巴瘤、细菌性腹膜炎等疾病鉴别。完整诊断决策链见卡片。",
+              "detail": {
+                "summary": "猫传腹的诊断需结合症状、实验室检查和确诊金标准。常见症状包括共济失调、呼吸困难、持续性发热、淋巴细胞减少；筛查时关注α-1酸性糖蛋白（AGP）、白球比（A:G比值）低于0.6、血清淀粉样蛋白A（SAA）显著升高；最终确诊依赖Rivalta试验、Rivalta试验阳性、免疫组化（IHC）。同时需与淋巴瘤、细菌性腹膜炎等疾病鉴别。完整诊断决策链见卡片。",
+                "cards": [
+                  {
+                    "key": "symptoms",
+                    "label": "症状表现",
+                    "steps": [
+                      {
+                        "source": "共济失调",
+                        "rel": "表现为",
+                        "target": "疑似干性猫传染性腹膜炎",
+                        "polarity": "Positive",
+                        "polarity_color": "green",
+                        "confidence": "High",
+                        "confidence_color": "green",
+                        "evidence": "神经症状提示中枢神经系统受累",
+                        "flagged": false
+                      },
+                      {
+                        "source": "呼吸困难",
+                        "rel": "表现为",
+                        "target": "疑似湿性猫传染性腹膜炎",
+                        "polarity": "Positive",
+                        "polarity_color": "green",
+                        "confidence": "High",
+                        "confidence_color": "green",
+                        "evidence": "胸腔积液可导致呼吸窘迫",
+                        "flagged": false
+                      },
+                      {
+                        "source": "持续性发热",
+                        "rel": "表现为",
+                        "target": "疑似猫传染性腹膜炎",
+                        "polarity": "Positive",
+                        "polarity_color": "green",
+                        "confidence": "High",
+                        "confidence_color": "green",
+                        "evidence": "发热是FIP最常见的全身性症状",
+                        "flagged": false
+                      },
+                      {
+                        "source": "淋巴细胞减少",
+                        "rel": "表现为",
+                        "target": "疑似猫传染性腹膜炎",
+                        "polarity": "Positive",
+                        "polarity_color": "green",
+                        "confidence": "Medium",
+                        "confidence_color": "amber",
+                        "evidence": "FIP相关免疫抑制表现",
+                        "flagged": false
+                      },
+                      {
+                        "source": "癫痫发作",
+                        "rel": "表现为",
+                        "target": "疑似干性猫传染性腹膜炎",
+                        "polarity": "Positive",
+                        "polarity_color": "green",
+                        "confidence": "High",
+                        "confidence_color": "green",
+                        "evidence": "颅内肉芽肿可引发癫痫",
+                        "flagged": false
+                      },
+                      {
+                        "source": "腹围增大",
+                        "rel": "表现为",
+                        "target": "疑似湿性猫传染性腹膜炎",
+                        "polarity": "Positive",
+                        "polarity_color": "green",
+                        "confidence": "High",
+                        "confidence_color": "green",
+                        "evidence": "腹围增大是湿性FIP典型体征",
+                        "flagged": false
+                      },
+                      {
+                        "source": "葡萄膜炎",
+                        "rel": "表现为",
+                        "target": "疑似干性猫传染性腹膜炎",
+                        "polarity": "Positive",
+                        "polarity_color": "green",
+                        "confidence": "High",
+                        "confidence_color": "green",
+                        "evidence": "眼部肉芽肿是干性FIP典型表现",
+                        "flagged": false
+                      }
+                    ]
+                  },
+                  {
+                    "key": "screening",
+                    "label": "筛查指标",
+                    "steps": [
+                      {
+                        "source": "α-1酸性糖蛋白（AGP）",
+                        "rel": "诊断于",
+                        "target": "疑似猫传染性腹膜炎",
+                        "polarity": "Positive",
+                        "polarity_color": "green",
+                        "confidence": "Medium",
+                        "confidence_color": "amber",
+                        "evidence": "急性期蛋白在FIP中显著升高",
+                        "flagged": false
+                      },
+                      {
+                        "source": "白球比（A:G比值）低于0.6",
+                        "rel": "诊断于",
+                        "target": "疑似猫传染性腹膜炎",
+                        "polarity": "Positive",
+                        "polarity_color": "green",
+                        "confidence": "High",
+                        "confidence_color": "green",
+                        "evidence": "低白球比是重要筛查指标",
+                        "flagged": false
+                      },
+                      {
+                        "source": "血清淀粉样蛋白A（SAA）显著升高",
+                        "rel": "诊断于",
+                        "target": "疑似猫传染性腹膜炎",
+                        "polarity": "Positive",
+                        "polarity_color": "green",
+                        "confidence": "High",
+                        "confidence_color": "green",
+                        "evidence": "SAA反映系统性炎症",
+                        "flagged": false
+                      }
+                    ]
+                  },
+                  {
+                    "key": "gold_standard",
+                    "label": "确诊金标准",
+                    "steps": [
+                      {
+                        "source": "Rivalta试验",
+                        "rel": "表现为",
+                        "target": "湿性猫传染性腹膜炎（湿性FIP）",
+                        "polarity": "Positive",
+                        "polarity_color": "green",
+                        "confidence": "High",
+                        "confidence_color": "green",
+                        "evidence": "李氏试验阳性是湿性传腹胸腹水生化检查的典型特征",
+                        "flagged": false
+                      },
+                      {
+                        "source": "Rivalta试验阳性",
+                        "rel": "表现为",
+                        "target": "湿性猫传染性腹膜炎（湿性FIP）",
+                        "polarity": "Positive",
+                        "polarity_color": "green",
+                        "confidence": "High",
+                        "confidence_color": "green",
+                        "evidence": "积液特征性生化反应",
+                        "flagged": false
+                      },
+                      {
+                        "source": "免疫组化（IHC）",
+                        "rel": "诊断于",
+                        "target": "干性猫传染性腹膜炎（干性FIP）",
+                        "polarity": "Positive",
+                        "polarity_color": "green",
+                        "confidence": "High",
+                        "confidence_color": "green",
+                        "evidence": "组织活检检出病毒抗原为金标准",
+                        "flagged": false
+                      },
+                      {
+                        "source": "免疫细胞化学（ICC）",
+                        "rel": "诊断于",
+                        "target": "湿性猫传染性腹膜炎（湿性FIP）",
+                        "polarity": "Positive",
+                        "polarity_color": "green",
+                        "confidence": "High",
+                        "confidence_color": "green",
+                        "evidence": "积液中检出感染巨噬细胞",
+                        "flagged": false
+                      },
+                      {
+                        "source": "肉芽肿",
+                        "rel": "表现为",
+                        "target": "干性猫传染性腹膜炎（干性FIP）",
+                        "polarity": "Positive",
+                        "polarity_color": "green",
+                        "confidence": "High",
+                        "confidence_color": "green",
+                        "evidence": "出现多器官实质性肉芽肿损害定义为非渗出型猫传腹",
+                        "flagged": false
+                      },
+                      {
+                        "source": "渗出液高蛋白（>35g/L）",
+                        "rel": "表现为",
+                        "target": "湿性猫传染性腹膜炎（湿性FIP）",
+                        "polarity": "Positive",
+                        "polarity_color": "green",
+                        "confidence": "High",
+                        "confidence_color": "green",
+                        "evidence": "高蛋白是渗出液特征",
+                        "flagged": false
+                      },
+                      {
+                        "source": "白球比（A:G比值）",
+                        "rel": "诊断于",
+                        "target": "湿性猫传染性腹膜炎（湿性FIP）",
+                        "polarity": "Positive",
+                        "polarity_color": "green",
+                        "confidence": "High",
+                        "confidence_color": "green",
+                        "evidence": "白球比低于0.4是渗出液分析中诊断湿性传腹的核心指标",
+                        "flagged": false
+                      },
+                      {
+                        "source": "积液中猫冠状病毒RT-PCR阳性",
+                        "rel": "诊断于",
+                        "target": "湿性猫传染性腹膜炎（湿性FIP）",
+                        "polarity": "Positive",
+                        "polarity_color": "green",
+                        "confidence": "High",
+                        "confidence_color": "green",
+                        "evidence": "直接检出病毒核酸",
+                        "flagged": false
+                      },
+                      {
+                        "source": "粘稠草黄色积液",
+                        "rel": "表现为",
+                        "target": "湿性猫传染性腹膜炎（湿性FIP）",
+                        "polarity": "Positive",
+                        "polarity_color": "green",
+                        "confidence": "High",
+                        "confidence_color": "green",
+                        "evidence": "典型渗出液外观",
+                        "flagged": false
+                      },
+                      {
+                        "source": "组织病理学（肉芽肿）",
+                        "rel": "诊断于",
+                        "target": "干性猫传染性腹膜炎（干性FIP）",
+                        "polarity": "Positive",
+                        "polarity_color": "green",
+                        "confidence": "High",
+                        "confidence_color": "green",
+                        "evidence": "组织学发现特征性病变",
+                        "flagged": false
+                      },
+                      {
+                        "source": "腹水",
+                        "rel": "表现为",
+                        "target": "湿性猫传染性腹膜炎（湿性FIP）",
+                        "polarity": "Positive",
+                        "polarity_color": "green",
+                        "confidence": "High",
+                        "confidence_color": "green",
+                        "evidence": "出现胸腹腔积液是渗出型猫传腹的典型临床定义",
+                        "flagged": false
+                      },
+                      {
+                        "source": "血清淀粉样蛋白A（SAA）",
+                        "rel": "表现为",
+                        "target": "湿性猫传染性腹膜炎（湿性FIP）",
+                        "polarity": "Positive",
+                        "polarity_color": "green",
+                        "confidence": "High",
+                        "confidence_color": "green",
+                        "evidence": "湿性传腹患猫血清和积液中的血清淀粉样蛋白A水平通常极度升高",
+                        "flagged": false
+                      }
+                    ]
+                  },
+                  {
+                    "key": "differential",
+                    "label": "鉴别诊断",
+                    "steps": [
+                      {
+                        "source": "疑似猫传染性腹膜炎",
+                        "rel": "影响",
+                        "target": "排除充血性心力衰竭",
+                        "polarity": "Positive",
+                        "polarity_color": "green",
+                        "confidence": "Medium",
+                        "confidence_color": "amber",
+                        "evidence": "胸腔积液需排除心源性",
+                        "flagged": false
+                      },
+                      {
+                        "source": "疑似猫传染性腹膜炎",
+                        "rel": "影响",
+                        "target": "排除淋巴瘤",
+                        "polarity": "Positive",
+                        "polarity_color": "green",
+                        "confidence": "Medium",
+                        "confidence_color": "amber",
+                        "evidence": "临床表现重叠需活检区分",
+                        "flagged": false
+                      },
+                      {
+                        "source": "疑似猫传染性腹膜炎",
+                        "rel": "影响",
+                        "target": "排除细菌性腹膜炎",
+                        "polarity": "Positive",
+                        "polarity_color": "green",
+                        "confidence": "Medium",
+                        "confidence_color": "amber",
+                        "evidence": "腹水需排除感染性病因",
+                        "flagged": false
+                      }
+                    ]
+                  }
+                ]
+              },
+              "skip_reason": ""
+            }
+          ]
+        }
+      },
+      {
+        "role": "user",
+        "text": "湿性FIP怎么治？"
+      },
+      {
+        "role": "bot",
+        "text": "猫传腹的治疗以抗病毒药物为主，常用药物包括GC376、GS-441524、瑞德西韦、莫努匹拉韦。通常建议完成42天短疗程或84天标准疗程或对症支持治疗，规范治疗下多数患猫可以康复（康复率可达80-100%），但若不治疗死亡率接近100%。治疗期间需特别注意病毒载量影响康复、体重增加影响血药浓度。具体药物、疗程与预后关系详见推理链卡片。",
+        "intent": "treatment",
+        "trace": {
+          "user_input": "湿性FIP怎么治？",
+          "input_type": "普通文本",
+          "steps": [
+            {
+              "step_id": 1,
+              "step_name": "实体解析",
+              "agent": "EntityAgent",
+              "status": "success",
+              "input_summary": "用户输入：湿性FIP怎么治？",
+              "output_summary": "解析到实体：湿性猫传染性腹膜炎（湿性FIP）",
+              "detail": {
+                "entities": [
+                  "湿性猫传染性腹膜炎（湿性FIP）"
+                ]
+              },
+              "skip_reason": ""
+            },
+            {
+              "step_id": 2,
+              "step_name": "意图识别",
+              "agent": "IntentAgent",
+              "status": "success",
+              "input_summary": "用户输入：湿性FIP怎么治？",
+              "output_summary": "识别意图：treatment",
+              "detail": {
+                "scores": {
+                  "diagnosis": 0,
+                  "treatment": 10,
+                  "risk": 0,
+                  "concept": 0,
+                  "meta": 0,
+                  "emergency": 0,
+                  "diagnosis_inquiry": 0,
+                  "symptom_feature": 0,
+                  "diagnostic_test": 0,
+                  "risk_factors": 0,
+                  "differential_diagnosis": 0,
+                  "drug_info": 0,
+                  "disease_features": 0
+                },
+                "candidates": []
+              },
+              "skip_reason": ""
+            },
+            {
+              "step_id": 3,
+              "step_name": "任务分配",
+              "agent": "Orchestrator",
+              "status": "success",
+              "input_summary": "意图：treatment；实体：湿性猫传染性腹膜炎（湿性FIP）",
+              "output_summary": "选定查询模板：TREATMENT_QUERY",
+              "detail": {
+                "intent": "treatment",
+                "entities": [
+                  "湿性猫传染性腹膜炎（湿性FIP）"
+                ],
+                "template": "// 治疗查询（意图：treatment）\n// 业务逻辑：查询四类治疗关系（全量返回，前端分组展示）：\n//   1) 药物治疗：药物 → 疾病（治疗于）\n//   2) 疾病预后：疾病 / 因素 → 康复 / 死亡 / 复发 / 复发风险（排除疗程与风险因素）\n//   3) 疗程支持：疗程 → 康复\n//   4) 治疗风险因素：体重增加 → 血药浓度；血脑屏障 → 药物渗透；\n//                   病毒清除不全 → 复发；长期免疫抑制 → 复发；\n//                   耐药性变异 → 死亡；病毒载量 → 康复\n// 说明：本模板全量返回，不依赖 $entities 参数。\n// 1) 药物治疗：药物 → 疾病\nMATCH (drug:Entity)-[r:RELATES]->(disease:Entity)\nWHERE r.关系 = \"治疗于\"\nRETURN drug.name AS source, r.关系 AS rel, disease.name AS target,\n       r.极性 AS polarity, r.置信度 AS confidence, r.支撑依据 AS evidence\n\nUNION\n\n// 2) 疾病预后：指向 康复 / 死亡 / 复发 / 复发风险 的结局关系\n//    排除疗程/支持治疗节点，并排除风险因素节点，避免与第4部分重叠\nMATCH (a:Entity)-[r:RELATES]->(b:Entity)\nWHERE b.name IN [\"康复\", \"死亡\", \"复发\", \"复发风险\"]\n  AND NOT (a.name CONTAINS \"疗程\" OR a.name = \"对症支持治疗\")\n  AND NOT (a.name IN [\"病毒清除不全\", \"长期免疫抑制\", \"耐药性变异\", \"病毒载量\"])\nRETURN a.name AS source, r.关系 AS rel, b.name AS target,\n       r.极性 AS polarity, r.置信度 AS confidence, r.支撑依据 AS evidence\n\nUNION\n\n// 3) 疗程支持：疗程 / 对症支持治疗 → 康复\nMATCH (regimen:Entity)-[r:RELATES]->(outcome:Entity)\nWHERE outcome.name = \"康复\"\n  AND (regimen.name CONTAINS \"疗程\" OR regimen.name = \"对症支持治疗\")\nRETURN regimen.name AS source, r.关系 AS rel, outcome.name AS target,\n       r.极性 AS polarity, r.置信度 AS confidence, r.支撑依据 AS evidence\n\nUNION\n\n// 4) 治疗风险因素：体重增加 → 血药浓度；血脑屏障 → 药物渗透；\n//                   病毒清除不全 → 复发；长期免疫抑制 → 复发；\n//                   耐药性变异 → 死亡；病毒载量 → 康复\nMATCH (factor:Entity)-[r:RELATES]->(effect:Entity)\nWHERE (factor.name = \"体重增加\" AND effect.name = \"血药浓度\")\n   OR (factor.name = \"血脑屏障\" AND effect.name = \"药物渗透\")\n   OR (factor.name = \"病毒清除不全\" AND effect.name = \"复发\")\n   OR (factor.name = \"长期免疫抑制\" AND effect.name = \"复发\")\n   OR (factor.name = \"耐药性变异\" AND effect.name = \"死亡\")\n   OR (factor.name = \"病毒载量\" AND effect.name = \"康复\")\nRETURN factor.name AS source, r.关系 AS rel, effect.name AS target,\n       r.极性 AS polarity, r.置信度 AS confidence, r.支撑依据 AS evidence"
+              },
+              "skip_reason": ""
+            },
+            {
+              "step_id": 4,
+              "step_name": "图查询",
+              "agent": "GraphQueryAgent",
+              "status": "success",
+              "input_summary": "执行图查询（实体：湿性猫传染性腹膜炎（湿性FIP））",
+              "output_summary": "命中 21 条关系",
+              "detail": {
+                "steps": [
+                  {
+                    "source": "42天短疗程",
+                    "rel": "影响",
+                    "target": "康复",
+                    "polarity": "Positive",
+                    "confidence": "High",
+                    "evidence": "多项前瞻性随机对照研究证实短疗程对渗出型FIP疗效不亚于长疗程"
+                  },
+                  {
+                    "source": "康复",
+                    "rel": "导致",
+                    "target": "复发风险",
+                    "polarity": "Negative",
+                    "confidence": "Low",
+                    "evidence": "少数康复猫在停药后数月内可能出现病毒复发"
+                  },
+                  {
+                    "source": "84天标准疗程",
+                    "rel": "影响",
+                    "target": "康复",
+                    "polarity": "Positive",
+                    "confidence": "High",
+                    "evidence": "完整疗程是确保病毒彻底清除并防止复发的公认金标准"
+                  },
+                  {
+                    "source": "GC376",
+                    "rel": "治疗于",
+                    "target": "湿性猫传染性腹膜炎（湿性FIP）",
+                    "polarity": "Positive",
+                    "confidence": "Medium",
+                    "evidence": "3C样蛋白酶抑制剂在早期实验及临床中展现出缓解症状的能力"
+                  },
+                  {
+                    "source": "湿性猫传染性腹膜炎（湿性FIP）",
+                    "rel": "导致",
+                    "target": "死亡",
+                    "polarity": "Negative",
+                    "confidence": "High",
+                    "evidence": "传统文献及临床共识均认为湿性FIP若不治疗致死率接近100%"
+                  },
+                  {
+                    "source": "湿性猫传染性腹膜炎（湿性FIP）",
+                    "rel": "影响",
+                    "target": "康复",
+                    "polarity": "Positive",
+                    "confidence": "High",
+                    "evidence": "经GS-441524治疗后，湿性FIP的康复率可达80-100%"
+                  },
+                  {
+                    "source": "GS-441524",
+                    "rel": "治疗于",
+                    "target": "干性猫传染性腹膜炎（干性FIP）",
+                    "polarity": "Positive",
+                    "confidence": "High",
+                    "evidence": "对于包含肉芽肿性病变的干性传腹同样具有高治愈率"
+                  },
+                  {
+                    "source": "GS-441524",
+                    "rel": "治疗于",
+                    "target": "湿性猫传染性腹膜炎（湿性FIP）",
+                    "polarity": "Positive",
+                    "confidence": "High",
+                    "evidence": "临床研究证实其清除积液效果显著并能提高生存率至80-100%"
+                  },
+                  {
+                    "source": "干性猫传染性腹膜炎（干性FIP）",
+                    "rel": "导致",
+                    "target": "死亡",
+                    "polarity": "Negative",
+                    "confidence": "High",
+                    "evidence": "传统文献及临床共识均认为干性FIP若不治疗致死率接近100%"
+                  },
+                  {
+                    "source": "干性猫传染性腹膜炎（干性FIP）",
+                    "rel": "影响",
+                    "target": "康复",
+                    "polarity": "Positive",
+                    "confidence": "High",
+                    "evidence": "经GS-441524治疗后，干性FIP同样具有高康复率"
+                  },
+                  {
+                    "source": "病毒载量",
+                    "rel": "影响",
+                    "target": "康复",
+                    "polarity": "Negative",
+                    "confidence": "High",
+                    "evidence": "高病毒载量与较低的康复率和较高的死亡率显著相关"
+                  },
+                  {
+                    "source": "体重增加",
+                    "rel": "影响",
+                    "target": "血药浓度",
+                    "polarity": "Negative",
+                    "confidence": "High",
+                    "evidence": "康复期体重快速增长导致血药浓度降至有效阈值以下，需及时调整剂量"
+                  },
+                  {
+                    "source": "复发性猫传染性腹膜炎",
+                    "rel": "导致",
+                    "target": "死亡",
+                    "polarity": "Negative",
+                    "confidence": "Medium",
+                    "evidence": "复发性FIP的治疗难度显著增加，预后较差"
+                  },
+                  {
+                    "source": "对症支持治疗",
+                    "rel": "影响",
+                    "target": "康复",
+                    "polarity": "Positive",
+                    "confidence": "High",
+                    "evidence": "早期补液、营养支持与并发症管理显著提升了危重猫进入药物起效期的概率"
+                  },
+                  {
+                    "source": "瑞德西韦",
+                    "rel": "治疗于",
+                    "target": "干性猫传染性腹膜炎（干性FIP）",
+                    "polarity": "Positive",
+                    "confidence": "High",
+                    "evidence": "前药同样适用于治疗非渗出型猫传腹"
+                  },
+                  {
+                    "source": "瑞德西韦",
+                    "rel": "治疗于",
+                    "target": "湿性猫传染性腹膜炎（湿性FIP）",
+                    "polarity": "Positive",
+                    "confidence": "High",
+                    "evidence": "作为GS-441524的前药在体内转化后具有同等抗病毒效力"
+                  },
+                  {
+                    "source": "病毒清除不全",
+                    "rel": "导致",
+                    "target": "复发",
+                    "polarity": "Negative",
+                    "confidence": "Medium",
+                    "evidence": "停药时体内残留的病毒在免疫力波动时可能再次大量复制"
+                  },
+                  {
+                    "source": "耐药性变异",
+                    "rel": "导致",
+                    "target": "死亡",
+                    "polarity": "Negative",
+                    "confidence": "Low",
+                    "evidence": "长期低剂量用药可能诱发病毒产生针对蛋白酶抑制剂或核苷类药物的抗性"
+                  },
+                  {
+                    "source": "莫努匹拉韦",
+                    "rel": "治疗于",
+                    "target": "复发性猫传染性腹膜炎",
+                    "polarity": "Positive",
+                    "confidence": "Medium",
+                    "evidence": "在GS-441524疗法失败或耐药后作为挽救方案效果良好"
+                  },
+                  {
+                    "source": "血脑屏障",
+                    "rel": "影响",
+                    "target": "药物渗透",
+                    "polarity": "Negative",
+                    "confidence": "Medium",
+                    "evidence": "标准剂量可能无法清除神经系统内的病毒残余"
+                  },
+                  {
+                    "source": "长期免疫抑制",
+                    "rel": "影响",
+                    "target": "复发",
+                    "polarity": "Positive",
+                    "confidence": "Medium",
+                    "evidence": "FIP造成的T细胞耗竭及免疫系统崩溃增加远期复发或继发感染风险"
+                  }
+                ]
+              },
+              "skip_reason": ""
+            },
+            {
+              "step_id": 5,
+              "step_name": "证据加工",
+              "agent": "EvidenceAgent",
+              "status": "success",
+              "input_summary": "21 条关系",
+              "output_summary": "分组：药物治疗 6 条、疾病预后 6 条、疗程支持 3 条、治疗风险因素 6 条",
+              "detail": {
+                "groups": [
+                  {
+                    "key": "drug_treatment",
+                    "label": "药物治疗",
+                    "count": 6
+                  },
+                  {
+                    "key": "prognosis",
+                    "label": "疾病预后",
+                    "count": 6
+                  },
+                  {
+                    "key": "regimen",
+                    "label": "疗程支持",
+                    "count": 3
+                  },
+                  {
+                    "key": "risk_factor",
+                    "label": "治疗风险因素",
+                    "count": 6
+                  }
+                ]
+              },
+              "skip_reason": ""
+            },
+            {
+              "step_id": 6,
+              "step_name": "风险标记",
+              "agent": "RiskAgent",
+              "status": "success",
+              "input_summary": "4 组证据",
+              "output_summary": "识别到 2 个低置信度风险",
+              "detail": {
+                "risks": [
+                  {
+                    "kind": "low_confidence",
+                    "group_key": "prognosis",
+                    "step_index": 0,
+                    "note": "证据有限，仅供参考。"
+                  },
+                  {
+                    "kind": "low_confidence",
+                    "group_key": "risk_factor",
+                    "step_index": 3,
+                    "note": "证据有限，仅供参考。"
+                  }
+                ]
+              },
+              "skip_reason": ""
+            },
+            {
+              "step_id": 7,
+              "step_name": "响应生成",
+              "agent": "ResponseAgent",
+              "status": "success",
+              "input_summary": "4 组证据，2 个风险",
+              "output_summary": "猫传腹的治疗以抗病毒药物为主，常用药物包括GC376、GS-441524、瑞德西韦、莫努匹拉韦。通常建议完成42天短疗程或84天标准疗程或对症支持治疗，规范治疗下多数患猫可以康复（康复率可达80-100%），但若不治疗死亡率接近100%。治疗期间需特别注意病毒载量影响康复、体重增加影响血药浓度。具体药物、疗程与预后关系详见推理链卡片。",
+              "detail": {
+                "summary": "猫传腹的治疗以抗病毒药物为主，常用药物包括GC376、GS-441524、瑞德西韦、莫努匹拉韦。通常建议完成42天短疗程或84天标准疗程或对症支持治疗，规范治疗下多数患猫可以康复（康复率可达80-100%），但若不治疗死亡率接近100%。治疗期间需特别注意病毒载量影响康复、体重增加影响血药浓度。具体药物、疗程与预后关系详见推理链卡片。",
+                "cards": [
+                  {
+                    "key": "drug_treatment",
+                    "label": "药物治疗",
+                    "steps": [
+                      {
+                        "source": "GC376",
+                        "rel": "治疗于",
+                        "target": "湿性猫传染性腹膜炎（湿性FIP）",
+                        "polarity": "Positive",
+                        "polarity_color": "green",
+                        "confidence": "Medium",
+                        "confidence_color": "amber",
+                        "evidence": "3C样蛋白酶抑制剂在早期实验及临床中展现出缓解症状的能力",
+                        "flagged": false
+                      },
+                      {
+                        "source": "GS-441524",
+                        "rel": "治疗于",
+                        "target": "干性猫传染性腹膜炎（干性FIP）",
+                        "polarity": "Positive",
+                        "polarity_color": "green",
+                        "confidence": "High",
+                        "confidence_color": "green",
+                        "evidence": "对于包含肉芽肿性病变的干性传腹同样具有高治愈率",
+                        "flagged": false
+                      },
+                      {
+                        "source": "GS-441524",
+                        "rel": "治疗于",
+                        "target": "湿性猫传染性腹膜炎（湿性FIP）",
+                        "polarity": "Positive",
+                        "polarity_color": "green",
+                        "confidence": "High",
+                        "confidence_color": "green",
+                        "evidence": "临床研究证实其清除积液效果显著并能提高生存率至80-100%",
+                        "flagged": false
+                      },
+                      {
+                        "source": "瑞德西韦",
+                        "rel": "治疗于",
+                        "target": "干性猫传染性腹膜炎（干性FIP）",
+                        "polarity": "Positive",
+                        "polarity_color": "green",
+                        "confidence": "High",
+                        "confidence_color": "green",
+                        "evidence": "前药同样适用于治疗非渗出型猫传腹",
+                        "flagged": false
+                      },
+                      {
+                        "source": "瑞德西韦",
+                        "rel": "治疗于",
+                        "target": "湿性猫传染性腹膜炎（湿性FIP）",
+                        "polarity": "Positive",
+                        "polarity_color": "green",
+                        "confidence": "High",
+                        "confidence_color": "green",
+                        "evidence": "作为GS-441524的前药在体内转化后具有同等抗病毒效力",
+                        "flagged": false
+                      },
+                      {
+                        "source": "莫努匹拉韦",
+                        "rel": "治疗于",
+                        "target": "复发性猫传染性腹膜炎",
+                        "polarity": "Positive",
+                        "polarity_color": "green",
+                        "confidence": "Medium",
+                        "confidence_color": "amber",
+                        "evidence": "在GS-441524疗法失败或耐药后作为挽救方案效果良好",
+                        "flagged": false
+                      }
+                    ]
+                  },
+                  {
+                    "key": "prognosis",
+                    "label": "疾病预后",
+                    "steps": [
+                      {
+                        "source": "康复",
+                        "rel": "导致",
+                        "target": "复发风险",
+                        "polarity": "Negative",
+                        "polarity_color": "red",
+                        "confidence": "Low",
+                        "confidence_color": "red",
+                        "evidence": "少数康复猫在停药后数月内可能出现病毒复发",
+                        "flagged": true
+                      },
+                      {
+                        "source": "湿性猫传染性腹膜炎（湿性FIP）",
+                        "rel": "导致",
+                        "target": "死亡",
+                        "polarity": "Negative",
+                        "polarity_color": "red",
+                        "confidence": "High",
+                        "confidence_color": "green",
+                        "evidence": "传统文献及临床共识均认为湿性FIP若不治疗致死率接近100%",
+                        "flagged": false
+                      },
+                      {
+                        "source": "湿性猫传染性腹膜炎（湿性FIP）",
+                        "rel": "影响",
+                        "target": "康复",
+                        "polarity": "Positive",
+                        "polarity_color": "green",
+                        "confidence": "High",
+                        "confidence_color": "green",
+                        "evidence": "经GS-441524治疗后，湿性FIP的康复率可达80-100%",
+                        "flagged": false
+                      },
+                      {
+                        "source": "干性猫传染性腹膜炎（干性FIP）",
+                        "rel": "导致",
+                        "target": "死亡",
+                        "polarity": "Negative",
+                        "polarity_color": "red",
+                        "confidence": "High",
+                        "confidence_color": "green",
+                        "evidence": "传统文献及临床共识均认为干性FIP若不治疗致死率接近100%",
+                        "flagged": false
+                      },
+                      {
+                        "source": "干性猫传染性腹膜炎（干性FIP）",
+                        "rel": "影响",
+                        "target": "康复",
+                        "polarity": "Positive",
+                        "polarity_color": "green",
+                        "confidence": "High",
+                        "confidence_color": "green",
+                        "evidence": "经GS-441524治疗后，干性FIP同样具有高康复率",
+                        "flagged": false
+                      },
+                      {
+                        "source": "复发性猫传染性腹膜炎",
+                        "rel": "导致",
+                        "target": "死亡",
+                        "polarity": "Negative",
+                        "polarity_color": "red",
+                        "confidence": "Medium",
+                        "confidence_color": "amber",
+                        "evidence": "复发性FIP的治疗难度显著增加，预后较差",
+                        "flagged": false
+                      }
+                    ]
+                  },
+                  {
+                    "key": "regimen",
+                    "label": "疗程支持",
+                    "steps": [
+                      {
+                        "source": "42天短疗程",
+                        "rel": "影响",
+                        "target": "康复",
+                        "polarity": "Positive",
+                        "polarity_color": "green",
+                        "confidence": "High",
+                        "confidence_color": "green",
+                        "evidence": "多项前瞻性随机对照研究证实短疗程对渗出型FIP疗效不亚于长疗程",
+                        "flagged": false
+                      },
+                      {
+                        "source": "84天标准疗程",
+                        "rel": "影响",
+                        "target": "康复",
+                        "polarity": "Positive",
+                        "polarity_color": "green",
+                        "confidence": "High",
+                        "confidence_color": "green",
+                        "evidence": "完整疗程是确保病毒彻底清除并防止复发的公认金标准",
+                        "flagged": false
+                      },
+                      {
+                        "source": "对症支持治疗",
+                        "rel": "影响",
+                        "target": "康复",
+                        "polarity": "Positive",
+                        "polarity_color": "green",
+                        "confidence": "High",
+                        "confidence_color": "green",
+                        "evidence": "早期补液、营养支持与并发症管理显著提升了危重猫进入药物起效期的概率",
+                        "flagged": false
+                      }
+                    ]
+                  },
+                  {
+                    "key": "risk_factor",
+                    "label": "治疗风险因素",
+                    "steps": [
+                      {
+                        "source": "病毒载量",
+                        "rel": "影响",
+                        "target": "康复",
+                        "polarity": "Negative",
+                        "polarity_color": "red",
+                        "confidence": "High",
+                        "confidence_color": "green",
+                        "evidence": "高病毒载量与较低的康复率和较高的死亡率显著相关",
+                        "flagged": false
+                      },
+                      {
+                        "source": "体重增加",
+                        "rel": "影响",
+                        "target": "血药浓度",
+                        "polarity": "Negative",
+                        "polarity_color": "red",
+                        "confidence": "High",
+                        "confidence_color": "green",
+                        "evidence": "康复期体重快速增长导致血药浓度降至有效阈值以下，需及时调整剂量",
+                        "flagged": false
+                      },
+                      {
+                        "source": "病毒清除不全",
+                        "rel": "导致",
+                        "target": "复发",
+                        "polarity": "Negative",
+                        "polarity_color": "red",
+                        "confidence": "Medium",
+                        "confidence_color": "amber",
+                        "evidence": "停药时体内残留的病毒在免疫力波动时可能再次大量复制",
+                        "flagged": false
+                      },
+                      {
+                        "source": "耐药性变异",
+                        "rel": "导致",
+                        "target": "死亡",
+                        "polarity": "Negative",
+                        "polarity_color": "red",
+                        "confidence": "Low",
+                        "confidence_color": "red",
+                        "evidence": "长期低剂量用药可能诱发病毒产生针对蛋白酶抑制剂或核苷类药物的抗性",
+                        "flagged": true
+                      },
+                      {
+                        "source": "血脑屏障",
+                        "rel": "影响",
+                        "target": "药物渗透",
+                        "polarity": "Negative",
+                        "polarity_color": "red",
+                        "confidence": "Medium",
+                        "confidence_color": "amber",
+                        "evidence": "标准剂量可能无法清除神经系统内的病毒残余",
+                        "flagged": false
+                      },
+                      {
+                        "source": "长期免疫抑制",
+                        "rel": "影响",
+                        "target": "复发",
+                        "polarity": "Positive",
+                        "polarity_color": "green",
+                        "confidence": "Medium",
+                        "confidence_color": "amber",
+                        "evidence": "FIP造成的T细胞耗竭及免疫系统崩溃增加远期复发或继发感染风险",
+                        "flagged": false
+                      }
+                    ]
+                  }
+                ]
+              },
+              "skip_reason": ""
+            }
+          ]
+        }
+      },
+      {
+        "role": "user",
+        "text": "有什么药能治传腹？"
+      },
+      {
+        "role": "bot",
+        "text": "根据知识图谱，以下药物可用于治疗猫传腹：\n· GC376：治疗湿性猫传染性腹膜炎（湿性FIP）\n· GS-441524：治疗湿性猫传染性腹膜炎（湿性FIP）、干性猫传染性腹膜炎（干性FIP）\n· 瑞德西韦：治疗湿性猫传染性腹膜炎（湿性FIP）、干性猫传染性腹膜炎（干性FIP）",
+        "intent": "drug_info",
+        "trace": {
+          "user_input": "有什么药能治传腹？",
+          "input_type": "普通文本",
+          "steps": [
+            {
+              "step_id": 1,
+              "step_name": "实体解析",
+              "agent": "EntityAgent",
+              "status": "success",
+              "input_summary": "用户输入：有什么药能治传腹？",
+              "output_summary": "解析到实体：湿性猫传染性腹膜炎（湿性FIP）, 干性猫传染性腹膜炎（干性FIP）",
+              "detail": {
+                "entities": [
+                  "湿性猫传染性腹膜炎（湿性FIP）",
+                  "干性猫传染性腹膜炎（干性FIP）"
+                ]
+              },
+              "skip_reason": ""
+            },
+            {
+              "step_id": 2,
+              "step_name": "意图识别",
+              "agent": "IntentAgent",
+              "status": "success",
+              "input_summary": "用户输入：有什么药能治传腹？",
+              "output_summary": "识别为药物关联查询（drug_info）",
+              "detail": {
+                "scores": {
+                  "diagnosis": 0,
+                  "treatment": 0,
+                  "risk": 0,
+                  "concept": 0,
+                  "meta": 0,
+                  "emergency": 0,
+                  "diagnosis_inquiry": 0,
+                  "symptom_feature": 0,
+                  "diagnostic_test": 0,
+                  "risk_factors": 0,
+                  "differential_diagnosis": 0,
+                  "drug_info": 25,
+                  "disease_features": 0
+                },
+                "candidates": []
+              },
+              "skip_reason": ""
+            },
+            {
+              "step_id": 3,
+              "step_name": "任务分配",
+              "agent": "Orchestrator",
+              "status": "success",
+              "input_summary": "意图：drug_info；实体：湿性猫传染性腹膜炎（湿性FIP）, 干性猫传染性腹膜炎（干性FIP）",
+              "output_summary": "选择查询方法：query_drug_info",
+              "detail": {
+                "intent": "drug_info",
+                "entities": [
+                  "湿性猫传染性腹膜炎（湿性FIP）",
+                  "干性猫传染性腹膜炎（干性FIP）"
+                ],
+                "mode": "specialized"
+              },
+              "skip_reason": ""
+            },
+            {
+              "step_id": 4,
+              "step_name": "图查询",
+              "agent": "GraphQueryAgent",
+              "status": "success",
+              "input_summary": "执行专用查询（实体：湿性猫传染性腹膜炎（湿性FIP）, 干性猫传染性腹膜炎（干性FIP））",
+              "output_summary": "命中 5 条关系",
+              "detail": {
+                "steps": [
+                  {
+                    "source": "GC376",
+                    "rel": "治疗于",
+                    "target": "湿性猫传染性腹膜炎（湿性FIP）",
+                    "polarity": "Positive",
+                    "confidence": "Medium",
+                    "evidence": "3C样蛋白酶抑制剂在早期实验及临床中展现出缓解症状的能力"
+                  },
+                  {
+                    "source": "GS-441524",
+                    "rel": "治疗于",
+                    "target": "湿性猫传染性腹膜炎（湿性FIP）",
+                    "polarity": "Positive",
+                    "confidence": "High",
+                    "evidence": "临床研究证实其清除积液效果显著并能提高生存率至80-100%"
+                  },
+                  {
+                    "source": "瑞德西韦",
+                    "rel": "治疗于",
+                    "target": "湿性猫传染性腹膜炎（湿性FIP）",
+                    "polarity": "Positive",
+                    "confidence": "High",
+                    "evidence": "作为GS-441524的前药在体内转化后具有同等抗病毒效力"
+                  },
+                  {
+                    "source": "GS-441524",
+                    "rel": "治疗于",
+                    "target": "干性猫传染性腹膜炎（干性FIP）",
+                    "polarity": "Positive",
+                    "confidence": "High",
+                    "evidence": "对于包含肉芽肿性病变的干性传腹同样具有高治愈率"
+                  },
+                  {
+                    "source": "瑞德西韦",
+                    "rel": "治疗于",
+                    "target": "干性猫传染性腹膜炎（干性FIP）",
+                    "polarity": "Positive",
+                    "confidence": "High",
+                    "evidence": "前药同样适用于治疗非渗出型猫传腹"
+                  }
+                ]
+              },
+              "skip_reason": ""
+            },
+            {
+              "step_id": 5,
+              "step_name": "证据加工",
+              "agent": "EvidenceAgent",
+              "status": "skipped",
+              "input_summary": "",
+              "output_summary": "",
+              "detail": null,
+              "skip_reason": "该意图无需证据分组"
+            },
+            {
+              "step_id": 6,
+              "step_name": "风险标记",
+              "agent": "RiskAgent",
+              "status": "skipped",
+              "input_summary": "5 条关系",
+              "output_summary": "",
+              "detail": null,
+              "skip_reason": "无风险标记"
+            },
+            {
+              "step_id": 7,
+              "step_name": "响应生成",
+              "agent": "ResponseAgent",
+              "status": "success",
+              "input_summary": "5 条关系",
+              "output_summary": "生成药物关联查询回复",
+              "detail": {
+                "summary": "根据知识图谱，以下药物可用于治疗猫传腹：\n· GC376：治疗湿性猫传染性腹膜炎（湿性FIP）\n· GS-441524：治疗湿性猫传染性腹膜炎（湿性FIP）、干性猫传染性腹膜炎（干性FIP）\n· 瑞德西韦：治疗湿性猫传染性腹膜炎（湿性FIP）、干性猫传染性腹膜炎（干性FIP）",
+                "cards": [
+                  {
+                    "key": "reasoning",
+                    "label": "推理链路",
+                    "steps": [
+                      {
+                        "source": "GC376",
+                        "rel": "治疗于",
+                        "target": "湿性猫传染性腹膜炎（湿性FIP）",
+                        "polarity": "Positive",
+                        "polarity_color": "green",
+                        "confidence": "Medium",
+                        "confidence_color": "amber",
+                        "evidence": "3C样蛋白酶抑制剂在早期实验及临床中展现出缓解症状的能力",
+                        "flagged": false
+                      },
+                      {
+                        "source": "GS-441524",
+                        "rel": "治疗于",
+                        "target": "湿性猫传染性腹膜炎（湿性FIP）",
+                        "polarity": "Positive",
+                        "polarity_color": "green",
+                        "confidence": "High",
+                        "confidence_color": "green",
+                        "evidence": "临床研究证实其清除积液效果显著并能提高生存率至80-100%",
+                        "flagged": false
+                      },
+                      {
+                        "source": "瑞德西韦",
+                        "rel": "治疗于",
+                        "target": "湿性猫传染性腹膜炎（湿性FIP）",
+                        "polarity": "Positive",
+                        "polarity_color": "green",
+                        "confidence": "High",
+                        "confidence_color": "green",
+                        "evidence": "作为GS-441524的前药在体内转化后具有同等抗病毒效力",
+                        "flagged": false
+                      },
+                      {
+                        "source": "GS-441524",
+                        "rel": "治疗于",
+                        "target": "干性猫传染性腹膜炎（干性FIP）",
+                        "polarity": "Positive",
+                        "polarity_color": "green",
+                        "confidence": "High",
+                        "confidence_color": "green",
+                        "evidence": "对于包含肉芽肿性病变的干性传腹同样具有高治愈率",
+                        "flagged": false
+                      },
+                      {
+                        "source": "瑞德西韦",
+                        "rel": "治疗于",
+                        "target": "干性猫传染性腹膜炎（干性FIP）",
+                        "polarity": "Positive",
+                        "polarity_color": "green",
+                        "confidence": "High",
+                        "confidence_color": "green",
+                        "evidence": "前药同样适用于治疗非渗出型猫传腹",
+                        "flagged": false
+                      }
+                    ]
+                  }
+                ]
+              },
+              "skip_reason": ""
+            }
+          ]
+        }
+      },
+      {
+        "role": "user",
+        "text": "GS-441524有副作用吗？"
+      },
+      {
+        "role": "bot",
+        "text": "GS-441524对干性猫传染性腹膜炎（干性FIP）、湿性猫传染性腹膜炎（湿性FIP）有显著疗效，是当前的核心治疗药物。但需注意，极少数病例报告了大细胞淋巴瘤、尿结石等风险（证据有限）。总体而言，其治疗获益远大于风险，但需在兽医指导下权衡。疗效与风险对比见卡片。",
+        "intent": "risk",
+        "trace": {
+          "user_input": "GS-441524有副作用吗？",
+          "input_type": "普通文本",
+          "steps": [
+            {
+              "step_id": 1,
+              "step_name": "实体解析",
+              "agent": "EntityAgent",
+              "status": "success",
+              "input_summary": "用户输入：GS-441524有副作用吗？",
+              "output_summary": "解析到实体：GS-441524",
+              "detail": {
+                "entities": [
+                  "GS-441524"
+                ]
+              },
+              "skip_reason": ""
+            },
+            {
+              "step_id": 2,
+              "step_name": "意图识别",
+              "agent": "IntentAgent",
+              "status": "success",
+              "input_summary": "用户输入：GS-441524有副作用吗？",
+              "output_summary": "识别意图：risk",
+              "detail": {
+                "scores": {
+                  "diagnosis": 0,
+                  "treatment": 0,
+                  "risk": 10,
+                  "concept": 0,
+                  "meta": 0,
+                  "emergency": 0,
+                  "diagnosis_inquiry": 0,
+                  "symptom_feature": 0,
+                  "diagnostic_test": 0,
+                  "risk_factors": 0,
+                  "differential_diagnosis": 0,
+                  "drug_info": 0,
+                  "disease_features": 0
+                },
+                "candidates": []
+              },
+              "skip_reason": ""
+            },
+            {
+              "step_id": 3,
+              "step_name": "任务分配",
+              "agent": "Orchestrator",
+              "status": "success",
+              "input_summary": "意图：risk；实体：GS-441524",
+              "output_summary": "选定查询模板：RISK_QUERY",
+              "detail": {
+                "intent": "risk",
+                "entities": [
+                  "GS-441524"
+                ],
+                "template": "// 药物风险查询（意图：risk）\n// 业务逻辑：查询指定药物的两类证据（全量返回）：\n//   1) 疗效证据：药物 → 疾病，极性 Positive 且置信度 High\n//   2) 风险证据：药物 → 风险事件，置信度 Low 或极性 Negative\n// 默认药物为 GS-441524（由调用方通过 $entities 传入，为空时兜底为 [\"GS-441524\"]）。\nMATCH (drug:Entity)-[r:RELATES]->(target:Entity)\nWHERE drug.name IN $entities\n  AND (\n    // 疗效证据：极性 Positive 且置信度 High\n    (r.极性 = \"Positive\" AND r.置信度 = \"High\")\n    OR\n    // 风险证据：置信度 Low 或极性 Negative\n    (r.置信度 = \"Low\" OR r.极性 = \"Negative\")\n  )\nRETURN drug.name AS source, r.关系 AS rel, target.name AS target,\n       r.极性 AS polarity, r.置信度 AS confidence, r.支撑依据 AS evidence"
+              },
+              "skip_reason": ""
+            },
+            {
+              "step_id": 4,
+              "step_name": "图查询",
+              "agent": "GraphQueryAgent",
+              "status": "success",
+              "input_summary": "执行图查询（实体：GS-441524）",
+              "output_summary": "命中 4 条关系",
+              "detail": {
+                "steps": [
+                  {
+                    "source": "GS-441524",
+                    "rel": "影响",
+                    "target": "大细胞淋巴瘤",
+                    "polarity": "Positive",
+                    "confidence": "Low",
+                    "evidence": "个别病例在FIP治愈后出现淋巴瘤，推测与炎症长期刺激或治疗干预有关"
+                  },
+                  {
+                    "source": "GS-441524",
+                    "rel": "影响",
+                    "target": "尿结石",
+                    "polarity": "Positive",
+                    "confidence": "Low",
+                    "evidence": "罕见报告显示使用非正规制剂治疗期间猫出现由GS-441524成分组成的结石"
+                  },
+                  {
+                    "source": "GS-441524",
+                    "rel": "治疗于",
+                    "target": "干性猫传染性腹膜炎（干性FIP）",
+                    "polarity": "Positive",
+                    "confidence": "High",
+                    "evidence": "对于包含肉芽肿性病变的干性传腹同样具有高治愈率"
+                  },
+                  {
+                    "source": "GS-441524",
+                    "rel": "治疗于",
+                    "target": "湿性猫传染性腹膜炎（湿性FIP）",
+                    "polarity": "Positive",
+                    "confidence": "High",
+                    "evidence": "临床研究证实其清除积液效果显著并能提高生存率至80-100%"
+                  }
+                ]
+              },
+              "skip_reason": ""
+            },
+            {
+              "step_id": 5,
+              "step_name": "证据加工",
+              "agent": "EvidenceAgent",
+              "status": "success",
+              "input_summary": "4 条关系",
+              "output_summary": "分组：疗效证据 2 条、风险证据 2 条",
+              "detail": {
+                "groups": [
+                  {
+                    "key": "efficacy",
+                    "label": "疗效证据",
+                    "count": 2
+                  },
+                  {
+                    "key": "risk_evidence",
+                    "label": "风险证据",
+                    "count": 2
+                  }
+                ]
+              },
+              "skip_reason": ""
+            },
+            {
+              "step_id": 6,
+              "step_name": "风险标记",
+              "agent": "RiskAgent",
+              "status": "success",
+              "input_summary": "2 组证据",
+              "output_summary": "识别到 2 个低置信度风险",
+              "detail": {
+                "risks": [
+                  {
+                    "kind": "low_confidence",
+                    "group_key": "risk_evidence",
+                    "step_index": 0,
+                    "note": "证据有限，仅供参考。"
+                  },
+                  {
+                    "kind": "low_confidence",
+                    "group_key": "risk_evidence",
+                    "step_index": 1,
+                    "note": "证据有限，仅供参考。"
+                  }
+                ]
+              },
+              "skip_reason": ""
+            },
+            {
+              "step_id": 7,
+              "step_name": "响应生成",
+              "agent": "ResponseAgent",
+              "status": "success",
+              "input_summary": "2 组证据，2 个风险",
+              "output_summary": "GS-441524对干性猫传染性腹膜炎（干性FIP）、湿性猫传染性腹膜炎（湿性FIP）有显著疗效，是当前的核心治疗药物。但需注意，极少数病例报告了大细胞淋巴瘤、尿结石等风险（证据有限）。总体而言，其治疗获益远大于风险，但需在兽医指导下权衡。疗效与风险对比见卡片。",
+              "detail": {
+                "summary": "GS-441524对干性猫传染性腹膜炎（干性FIP）、湿性猫传染性腹膜炎（湿性FIP）有显著疗效，是当前的核心治疗药物。但需注意，极少数病例报告了大细胞淋巴瘤、尿结石等风险（证据有限）。总体而言，其治疗获益远大于风险，但需在兽医指导下权衡。疗效与风险对比见卡片。",
+                "cards": [
+                  {
+                    "key": "efficacy",
+                    "label": "疗效证据",
+                    "steps": [
+                      {
+                        "source": "GS-441524",
+                        "rel": "治疗于",
+                        "target": "干性猫传染性腹膜炎（干性FIP）",
+                        "polarity": "Positive",
+                        "polarity_color": "green",
+                        "confidence": "High",
+                        "confidence_color": "green",
+                        "evidence": "对于包含肉芽肿性病变的干性传腹同样具有高治愈率",
+                        "flagged": false
+                      },
+                      {
+                        "source": "GS-441524",
+                        "rel": "治疗于",
+                        "target": "湿性猫传染性腹膜炎（湿性FIP）",
+                        "polarity": "Positive",
+                        "polarity_color": "green",
+                        "confidence": "High",
+                        "confidence_color": "green",
+                        "evidence": "临床研究证实其清除积液效果显著并能提高生存率至80-100%",
+                        "flagged": false
+                      }
+                    ]
+                  },
+                  {
+                    "key": "risk_evidence",
+                    "label": "风险证据",
+                    "steps": [
+                      {
+                        "source": "GS-441524",
+                        "rel": "影响",
+                        "target": "大细胞淋巴瘤",
+                        "polarity": "Positive",
+                        "polarity_color": "green",
+                        "confidence": "Low",
+                        "confidence_color": "red",
+                        "evidence": "个别病例在FIP治愈后出现淋巴瘤，推测与炎症长期刺激或治疗干预有关",
+                        "flagged": true
+                      },
+                      {
+                        "source": "GS-441524",
+                        "rel": "影响",
+                        "target": "尿结石",
+                        "polarity": "Positive",
+                        "polarity_color": "green",
+                        "confidence": "Low",
+                        "confidence_color": "red",
+                        "evidence": "罕见报告显示使用非正规制剂治疗期间猫出现由GS-441524成分组成的结石",
+                        "flagged": true
+                      }
+                    ]
+                  }
+                ]
+              },
+              "skip_reason": ""
+            }
+          ]
+        }
+      },
+      {
+        "role": "user",
+        "text": "传腹要和哪些病区分？"
+      },
+      {
+        "role": "bot",
+        "text": "猫传腹在诊断时需要与其他疾病进行鉴别，包括：充血性心力衰竭、淋巴瘤、细菌性腹膜炎。",
+        "intent": "differential_diagnosis",
+        "trace": {
+          "user_input": "传腹要和哪些病区分？",
+          "input_type": "普通文本",
+          "steps": [
+            {
+              "step_id": 1,
+              "step_name": "实体解析",
+              "agent": "EntityAgent",
+              "status": "success",
+              "input_summary": "用户输入：传腹要和哪些病区分？",
+              "output_summary": "解析到实体：湿性猫传染性腹膜炎（湿性FIP）, 干性猫传染性腹膜炎（干性FIP）",
+              "detail": {
+                "entities": [
+                  "湿性猫传染性腹膜炎（湿性FIP）",
+                  "干性猫传染性腹膜炎（干性FIP）"
+                ]
+              },
+              "skip_reason": ""
+            },
+            {
+              "step_id": 2,
+              "step_name": "意图识别",
+              "agent": "IntentAgent",
+              "status": "success",
+              "input_summary": "用户输入：传腹要和哪些病区分？",
+              "output_summary": "识别为鉴别诊断（differential_diagnosis）",
+              "detail": {
+                "scores": {
+                  "diagnosis": 0,
+                  "treatment": 0,
+                  "risk": 0,
+                  "concept": 0,
+                  "meta": 0,
+                  "emergency": 0,
+                  "diagnosis_inquiry": 0,
+                  "symptom_feature": 0,
+                  "diagnostic_test": 0,
+                  "risk_factors": 0,
+                  "differential_diagnosis": 15,
+                  "drug_info": 0,
+                  "disease_features": 0
+                },
+                "candidates": []
+              },
+              "skip_reason": ""
+            },
+            {
+              "step_id": 3,
+              "step_name": "任务分配",
+              "agent": "Orchestrator",
+              "status": "success",
+              "input_summary": "意图：differential_diagnosis；实体：湿性猫传染性腹膜炎（湿性FIP）, 干性猫传染性腹膜炎（干性FIP）",
+              "output_summary": "选择查询方法：query_differential_diagnosis",
+              "detail": {
+                "intent": "differential_diagnosis",
+                "entities": [
+                  "湿性猫传染性腹膜炎（湿性FIP）",
+                  "干性猫传染性腹膜炎（干性FIP）"
+                ],
+                "mode": "specialized"
+              },
+              "skip_reason": ""
+            },
+            {
+              "step_id": 4,
+              "step_name": "图查询",
+              "agent": "GraphQueryAgent",
+              "status": "success",
+              "input_summary": "执行专用查询（实体：湿性猫传染性腹膜炎（湿性FIP）, 干性猫传染性腹膜炎（干性FIP））",
+              "output_summary": "命中 3 条关系",
+              "detail": {
+                "steps": [
+                  {
+                    "source": "疑似猫传染性腹膜炎",
+                    "rel": "影响",
+                    "target": "排除充血性心力衰竭",
+                    "polarity": "Positive",
+                    "confidence": "Medium",
+                    "evidence": "胸腔积液需排除心源性"
+                  },
+                  {
+                    "source": "疑似猫传染性腹膜炎",
+                    "rel": "影响",
+                    "target": "排除淋巴瘤",
+                    "polarity": "Positive",
+                    "confidence": "Medium",
+                    "evidence": "临床表现重叠需活检区分"
+                  },
+                  {
+                    "source": "疑似猫传染性腹膜炎",
+                    "rel": "影响",
+                    "target": "排除细菌性腹膜炎",
+                    "polarity": "Positive",
+                    "confidence": "Medium",
+                    "evidence": "腹水需排除感染性病因"
+                  }
+                ]
+              },
+              "skip_reason": ""
+            },
+            {
+              "step_id": 5,
+              "step_name": "证据加工",
+              "agent": "EvidenceAgent",
+              "status": "skipped",
+              "input_summary": "",
+              "output_summary": "",
+              "detail": null,
+              "skip_reason": "该意图无需证据分组"
+            },
+            {
+              "step_id": 6,
+              "step_name": "风险标记",
+              "agent": "RiskAgent",
+              "status": "skipped",
+              "input_summary": "3 条关系",
+              "output_summary": "",
+              "detail": null,
+              "skip_reason": "无风险标记"
+            },
+            {
+              "step_id": 7,
+              "step_name": "响应生成",
+              "agent": "ResponseAgent",
+              "status": "success",
+              "input_summary": "3 条关系",
+              "output_summary": "生成鉴别诊断回复",
+              "detail": {
+                "summary": "猫传腹在诊断时需要与其他疾病进行鉴别，包括：充血性心力衰竭、淋巴瘤、细菌性腹膜炎。",
+                "cards": [
+                  {
+                    "key": "reasoning",
+                    "label": "推理链路",
+                    "steps": [
+                      {
+                        "source": "疑似猫传染性腹膜炎",
+                        "rel": "影响",
+                        "target": "排除充血性心力衰竭",
+                        "polarity": "Positive",
+                        "polarity_color": "green",
+                        "confidence": "Medium",
+                        "confidence_color": "amber",
+                        "evidence": "胸腔积液需排除心源性",
+                        "flagged": false
+                      },
+                      {
+                        "source": "疑似猫传染性腹膜炎",
+                        "rel": "影响",
+                        "target": "排除淋巴瘤",
+                        "polarity": "Positive",
+                        "polarity_color": "green",
+                        "confidence": "Medium",
+                        "confidence_color": "amber",
+                        "evidence": "临床表现重叠需活检区分",
+                        "flagged": false
+                      },
+                      {
+                        "source": "疑似猫传染性腹膜炎",
+                        "rel": "影响",
+                        "target": "排除细菌性腹膜炎",
+                        "polarity": "Positive",
+                        "polarity_color": "green",
+                        "confidence": "Medium",
+                        "confidence_color": "amber",
+                        "evidence": "腹水需排除感染性病因",
+                        "flagged": false
+                      }
+                    ]
+                  }
+                ]
+              },
+              "skip_reason": ""
+            }
+          ]
+        }
+      }
+    ],
+    "contextEntities": [],
+    "lastTrace": {
+      "user_input": "传腹要和哪些病区分？",
+      "input_type": "普通文本",
+      "steps": [
+        {
+          "step_id": 1,
+          "step_name": "实体解析",
+          "agent": "EntityAgent",
+          "status": "success",
+          "input_summary": "用户输入：传腹要和哪些病区分？",
+          "output_summary": "解析到实体：湿性猫传染性腹膜炎（湿性FIP）, 干性猫传染性腹膜炎（干性FIP）",
+          "detail": {
+            "entities": [
+              "湿性猫传染性腹膜炎（湿性FIP）",
+              "干性猫传染性腹膜炎（干性FIP）"
+            ]
+          },
+          "skip_reason": ""
+        },
+        {
+          "step_id": 2,
+          "step_name": "意图识别",
+          "agent": "IntentAgent",
+          "status": "success",
+          "input_summary": "用户输入：传腹要和哪些病区分？",
+          "output_summary": "识别为鉴别诊断（differential_diagnosis）",
+          "detail": {
+            "scores": {
+              "diagnosis": 0,
+              "treatment": 0,
+              "risk": 0,
+              "concept": 0,
+              "meta": 0,
+              "emergency": 0,
+              "diagnosis_inquiry": 0,
+              "symptom_feature": 0,
+              "diagnostic_test": 0,
+              "risk_factors": 0,
+              "differential_diagnosis": 15,
+              "drug_info": 0,
+              "disease_features": 0
+            },
+            "candidates": []
+          },
+          "skip_reason": ""
+        },
+        {
+          "step_id": 3,
+          "step_name": "任务分配",
+          "agent": "Orchestrator",
+          "status": "success",
+          "input_summary": "意图：differential_diagnosis；实体：湿性猫传染性腹膜炎（湿性FIP）, 干性猫传染性腹膜炎（干性FIP）",
+          "output_summary": "选择查询方法：query_differential_diagnosis",
+          "detail": {
+            "intent": "differential_diagnosis",
+            "entities": [
+              "湿性猫传染性腹膜炎（湿性FIP）",
+              "干性猫传染性腹膜炎（干性FIP）"
+            ],
+            "mode": "specialized"
+          },
+          "skip_reason": ""
+        },
+        {
+          "step_id": 4,
+          "step_name": "图查询",
+          "agent": "GraphQueryAgent",
+          "status": "success",
+          "input_summary": "执行专用查询（实体：湿性猫传染性腹膜炎（湿性FIP）, 干性猫传染性腹膜炎（干性FIP））",
+          "output_summary": "命中 3 条关系",
+          "detail": {
+            "steps": [
+              {
+                "source": "疑似猫传染性腹膜炎",
+                "rel": "影响",
+                "target": "排除充血性心力衰竭",
+                "polarity": "Positive",
+                "confidence": "Medium",
+                "evidence": "胸腔积液需排除心源性"
+              },
+              {
+                "source": "疑似猫传染性腹膜炎",
+                "rel": "影响",
+                "target": "排除淋巴瘤",
+                "polarity": "Positive",
+                "confidence": "Medium",
+                "evidence": "临床表现重叠需活检区分"
+              },
+              {
+                "source": "疑似猫传染性腹膜炎",
+                "rel": "影响",
+                "target": "排除细菌性腹膜炎",
+                "polarity": "Positive",
+                "confidence": "Medium",
+                "evidence": "腹水需排除感染性病因"
+              }
+            ]
+          },
+          "skip_reason": ""
+        },
+        {
+          "step_id": 5,
+          "step_name": "证据加工",
+          "agent": "EvidenceAgent",
+          "status": "skipped",
+          "input_summary": "",
+          "output_summary": "",
+          "detail": null,
+          "skip_reason": "该意图无需证据分组"
+        },
+        {
+          "step_id": 6,
+          "step_name": "风险标记",
+          "agent": "RiskAgent",
+          "status": "skipped",
+          "input_summary": "3 条关系",
+          "output_summary": "",
+          "detail": null,
+          "skip_reason": "无风险标记"
+        },
+        {
+          "step_id": 7,
+          "step_name": "响应生成",
+          "agent": "ResponseAgent",
+          "status": "success",
+          "input_summary": "3 条关系",
+          "output_summary": "生成鉴别诊断回复",
+          "detail": {
+            "summary": "猫传腹在诊断时需要与其他疾病进行鉴别，包括：充血性心力衰竭、淋巴瘤、细菌性腹膜炎。",
+            "cards": [
+              {
+                "key": "reasoning",
+                "label": "推理链路",
+                "steps": [
+                  {
+                    "source": "疑似猫传染性腹膜炎",
+                    "rel": "影响",
+                    "target": "排除充血性心力衰竭",
+                    "polarity": "Positive",
+                    "polarity_color": "green",
+                    "confidence": "Medium",
+                    "confidence_color": "amber",
+                    "evidence": "胸腔积液需排除心源性",
+                    "flagged": false
+                  },
+                  {
+                    "source": "疑似猫传染性腹膜炎",
+                    "rel": "影响",
+                    "target": "排除淋巴瘤",
+                    "polarity": "Positive",
+                    "polarity_color": "green",
+                    "confidence": "Medium",
+                    "confidence_color": "amber",
+                    "evidence": "临床表现重叠需活检区分",
+                    "flagged": false
+                  },
+                  {
+                    "source": "疑似猫传染性腹膜炎",
+                    "rel": "影响",
+                    "target": "排除细菌性腹膜炎",
+                    "polarity": "Positive",
+                    "polarity_color": "green",
+                    "confidence": "Medium",
+                    "confidence_color": "amber",
+                    "evidence": "腹水需排除感染性病因",
+                    "flagged": false
+                  }
+                ]
+              }
+            ]
+          },
+          "skip_reason": ""
+        }
+      ]
+    }
+  },
+  {
+    "id": "seed_3",
+    "kind": "system_default",
+    "title": "腹水是传腹的特征吗？",
+    "time": "2026-09-04 23:36",
+    "msgs": [
+      {
+        "role": "user",
+        "text": "腹水是传腹的特征吗？"
+      },
+      {
+        "role": "bot",
+        "text": "是的，腹水是湿性猫传染性腹膜炎（湿性FIP）的典型表现为。\n依据：出现胸腹腔积液是渗出型猫传腹的典型临床定义",
+        "intent": "symptom_feature",
+        "trace": {
+          "user_input": "腹水是传腹的特征吗？",
+          "input_type": "普通文本",
+          "steps": [
+            {
+              "step_id": 1,
+              "step_name": "实体解析",
+              "agent": "EntityAgent",
+              "status": "success",
+              "input_summary": "用户输入：腹水是传腹的特征吗？",
+              "output_summary": "解析到实体：湿性猫传染性腹膜炎（湿性FIP）, 干性猫传染性腹膜炎（干性FIP）, 腹水, 腹腔积液, 肚子有水, 腹部积液",
+              "detail": {
+                "entities": [
+                  "湿性猫传染性腹膜炎（湿性FIP）",
+                  "干性猫传染性腹膜炎（干性FIP）",
+                  "腹水",
+                  "腹腔积液",
+                  "肚子有水",
+                  "腹部积液"
+                ]
+              },
+              "skip_reason": ""
+            },
+            {
+              "step_id": 2,
+              "step_name": "意图识别",
+              "agent": "IntentAgent",
+              "status": "success",
+              "input_summary": "用户输入：腹水是传腹的特征吗？",
+              "output_summary": "识别为特征确认（symptom_feature）",
+              "detail": {
+                "scores": {
+                  "diagnosis": 0,
+                  "treatment": 0,
+                  "risk": 0,
+                  "concept": 0,
+                  "meta": 0,
+                  "emergency": 0,
+                  "diagnosis_inquiry": 0,
+                  "symptom_feature": 10,
+                  "diagnostic_test": 0,
+                  "risk_factors": 0,
+                  "differential_diagnosis": 0,
+                  "drug_info": 0,
+                  "disease_features": 0
+                },
+                "candidates": []
+              },
+              "skip_reason": ""
+            },
+            {
+              "step_id": 3,
+              "step_name": "任务分配",
+              "agent": "Orchestrator",
+              "status": "success",
+              "input_summary": "意图：symptom_feature；实体：湿性猫传染性腹膜炎（湿性FIP）, 干性猫传染性腹膜炎（干性FIP）, 腹水, 腹腔积液, 肚子有水, 腹部积液",
+              "output_summary": "选择查询方法：query_symptom_feature",
+              "detail": {
+                "intent": "symptom_feature",
+                "entities": [
+                  "湿性猫传染性腹膜炎（湿性FIP）",
+                  "干性猫传染性腹膜炎（干性FIP）",
+                  "腹水",
+                  "腹腔积液",
+                  "肚子有水",
+                  "腹部积液"
+                ],
+                "mode": "specialized"
+              },
+              "skip_reason": ""
+            },
+            {
+              "step_id": 4,
+              "step_name": "图查询",
+              "agent": "GraphQueryAgent",
+              "status": "success",
+              "input_summary": "执行专用查询（实体：湿性猫传染性腹膜炎（湿性FIP）, 干性猫传染性腹膜炎（干性FIP）, 腹水, 腹腔积液, 肚子有水, 腹部积液）",
+              "output_summary": "命中 1 条关系",
+              "detail": {
+                "steps": [
+                  {
+                    "source": "腹水",
+                    "rel": "表现为",
+                    "target": "湿性猫传染性腹膜炎（湿性FIP）",
+                    "polarity": "Positive",
+                    "confidence": "High",
+                    "evidence": "出现胸腹腔积液是渗出型猫传腹的典型临床定义"
+                  }
+                ]
+              },
+              "skip_reason": ""
+            },
+            {
+              "step_id": 5,
+              "step_name": "证据加工",
+              "agent": "EvidenceAgent",
+              "status": "skipped",
+              "input_summary": "",
+              "output_summary": "",
+              "detail": null,
+              "skip_reason": "该意图无需证据分组"
+            },
+            {
+              "step_id": 6,
+              "step_name": "风险标记",
+              "agent": "RiskAgent",
+              "status": "skipped",
+              "input_summary": "1 条关系",
+              "output_summary": "",
+              "detail": null,
+              "skip_reason": "无风险标记"
+            },
+            {
+              "step_id": 7,
+              "step_name": "响应生成",
+              "agent": "ResponseAgent",
+              "status": "success",
+              "input_summary": "1 条关系",
+              "output_summary": "生成特征确认回复",
+              "detail": {
+                "summary": "是的，腹水是湿性猫传染性腹膜炎（湿性FIP）的典型表现为。\n依据：出现胸腹腔积液是渗出型猫传腹的典型临床定义",
+                "cards": [
+                  {
+                    "key": "reasoning",
+                    "label": "推理链路",
+                    "steps": [
+                      {
+                        "source": "腹水",
+                        "rel": "表现为",
+                        "target": "湿性猫传染性腹膜炎（湿性FIP）",
+                        "polarity": "Positive",
+                        "polarity_color": "green",
+                        "confidence": "High",
+                        "confidence_color": "green",
+                        "evidence": "出现胸腹腔积液是渗出型猫传腹的典型临床定义",
+                        "flagged": false
+                      }
+                    ]
+                  }
+                ]
+              },
+              "skip_reason": ""
+            }
+          ]
+        }
+      },
+      {
+        "role": "user",
+        "text": "血管通透性增加是传腹的特征吗？"
+      },
+      {
+        "role": "bot",
+        "text": "血管通透性与湿性猫传染性腹膜炎（湿性FIP）存在间接关联。\n推理链：血管通透性 → 腹水 → 湿性猫传染性腹膜炎（湿性FIP）\n依据：血管通透性导致腹水；腹水表现为湿性猫传染性腹膜炎（湿性FIP）。",
+        "intent": "symptom_feature",
+        "trace": {
+          "user_input": "血管通透性增加是传腹的特征吗？",
+          "input_type": "普通文本",
+          "steps": [
+            {
+              "step_id": 1,
+              "step_name": "实体解析",
+              "agent": "EntityAgent",
+              "status": "success",
+              "input_summary": "用户输入：血管通透性增加是传腹的特征吗？",
+              "output_summary": "解析到实体：血管通透性, 湿性猫传染性腹膜炎（湿性FIP）, 干性猫传染性腹膜炎（干性FIP）",
+              "detail": {
+                "entities": [
+                  "血管通透性",
+                  "湿性猫传染性腹膜炎（湿性FIP）",
+                  "干性猫传染性腹膜炎（干性FIP）"
+                ]
+              },
+              "skip_reason": ""
+            },
+            {
+              "step_id": 2,
+              "step_name": "意图识别",
+              "agent": "IntentAgent",
+              "status": "success",
+              "input_summary": "用户输入：血管通透性增加是传腹的特征吗？",
+              "output_summary": "识别为特征确认（symptom_feature）",
+              "detail": {
+                "scores": {
+                  "diagnosis": 0,
+                  "treatment": 0,
+                  "risk": 0,
+                  "concept": 0,
+                  "meta": 0,
+                  "emergency": 0,
+                  "diagnosis_inquiry": 0,
+                  "symptom_feature": 10,
+                  "diagnostic_test": 0,
+                  "risk_factors": 0,
+                  "differential_diagnosis": 0,
+                  "drug_info": 0,
+                  "disease_features": 0
+                },
+                "candidates": []
+              },
+              "skip_reason": ""
+            },
+            {
+              "step_id": 3,
+              "step_name": "任务分配",
+              "agent": "Orchestrator",
+              "status": "success",
+              "input_summary": "意图：symptom_feature；实体：血管通透性, 湿性猫传染性腹膜炎（湿性FIP）, 干性猫传染性腹膜炎（干性FIP）",
+              "output_summary": "选择查询方法：query_symptom_feature",
+              "detail": {
+                "intent": "symptom_feature",
+                "entities": [
+                  "血管通透性",
+                  "湿性猫传染性腹膜炎（湿性FIP）",
+                  "干性猫传染性腹膜炎（干性FIP）"
+                ],
+                "mode": "specialized"
+              },
+              "skip_reason": ""
+            },
+            {
+              "step_id": 4,
+              "step_name": "图查询",
+              "agent": "GraphQueryAgent",
+              "status": "success",
+              "input_summary": "执行专用查询（实体：血管通透性, 湿性猫传染性腹膜炎（湿性FIP）, 干性猫传染性腹膜炎（干性FIP））",
+              "output_summary": "直接查询无结果，尝试多跳路径，命中 2 条",
+              "detail": {
+                "steps": [
+                  {
+                    "source": "血管通透性",
+                    "rel": "导致",
+                    "target": "腹水",
+                    "polarity": "Positive",
+                    "confidence": "High",
+                    "evidence": "液体和蛋白质在腹腔内高度积聚形成特征性渗出液"
+                  },
+                  {
+                    "source": "腹水",
+                    "rel": "表现为",
+                    "target": "湿性猫传染性腹膜炎（湿性FIP）",
+                    "polarity": "Positive",
+                    "confidence": "High",
+                    "evidence": "出现胸腹腔积液是渗出型猫传腹的典型临床定义"
+                  }
+                ]
+              },
+              "skip_reason": ""
+            },
+            {
+              "step_id": 5,
+              "step_name": "证据加工",
+              "agent": "EvidenceAgent",
+              "status": "skipped",
+              "input_summary": "",
+              "output_summary": "",
+              "detail": null,
+              "skip_reason": "该意图无需证据分组"
+            },
+            {
+              "step_id": 6,
+              "step_name": "风险标记",
+              "agent": "RiskAgent",
+              "status": "skipped",
+              "input_summary": "2 条关系",
+              "output_summary": "",
+              "detail": null,
+              "skip_reason": "无风险标记"
+            },
+            {
+              "step_id": 7,
+              "step_name": "响应生成",
+              "agent": "ResponseAgent",
+              "status": "success",
+              "input_summary": "2 条关系",
+              "output_summary": "生成间接关联回复",
+              "detail": {
+                "summary": "血管通透性与湿性猫传染性腹膜炎（湿性FIP）存在间接关联。\n推理链：血管通透性 → 腹水 → 湿性猫传染性腹膜炎（湿性FIP）\n依据：血管通透性导致腹水；腹水表现为湿性猫传染性腹膜炎（湿性FIP）。",
+                "cards": [
+                  {
+                    "key": "reasoning",
+                    "label": "推理链路",
+                    "steps": [
+                      {
+                        "source": "血管通透性",
+                        "rel": "导致",
+                        "target": "腹水",
+                        "polarity": "Positive",
+                        "polarity_color": "green",
+                        "confidence": "High",
+                        "confidence_color": "green",
+                        "evidence": "液体和蛋白质在腹腔内高度积聚形成特征性渗出液",
+                        "flagged": false
+                      },
+                      {
+                        "source": "腹水",
+                        "rel": "表现为",
+                        "target": "湿性猫传染性腹膜炎（湿性FIP）",
+                        "polarity": "Positive",
+                        "polarity_color": "green",
+                        "confidence": "High",
+                        "confidence_color": "green",
+                        "evidence": "出现胸腹腔积液是渗出型猫传腹的典型临床定义",
+                        "flagged": false
+                      }
+                    ]
+                  }
+                ]
+              },
+              "skip_reason": ""
+            }
+          ]
+        }
+      },
+      {
+        "role": "user",
+        "text": "白球比0.5是传腹吗"
+      },
+      {
+        "role": "bot",
+        "text": "白球比（A:G比值）在现有知识图谱中与湿性猫传染性腹膜炎（湿性FIP）相关。\n依据：白球比低于0.4是渗出液分析中诊断湿性传腹的核心指标",
+        "intent": "diagnostic_test",
+        "trace": {
+          "user_input": "白球比0.5是传腹吗",
+          "input_type": "普通文本",
+          "steps": [
+            {
+              "step_id": 1,
+              "step_name": "实体解析",
+              "agent": "EntityAgent",
+              "status": "success",
+              "input_summary": "用户输入：白球比0.5是传腹吗",
+              "output_summary": "解析到实体：白球比（A:G比值）, 湿性猫传染性腹膜炎（湿性FIP）, 干性猫传染性腹膜炎（干性FIP）",
+              "detail": {
+                "entities": [
+                  "白球比（A:G比值）",
+                  "湿性猫传染性腹膜炎（湿性FIP）",
+                  "干性猫传染性腹膜炎（干性FIP）"
+                ]
+              },
+              "skip_reason": ""
+            },
+            {
+              "step_id": 2,
+              "step_name": "意图识别",
+              "agent": "IntentAgent",
+              "status": "success",
+              "input_summary": "用户输入：白球比0.5是传腹吗",
+              "output_summary": "识别为指标解读（diagnostic_test）",
+              "detail": {
+                "scores": {
+                  "diagnosis": 0,
+                  "treatment": 0,
+                  "risk": 0,
+                  "concept": 0,
+                  "meta": 0,
+                  "emergency": 0,
+                  "diagnosis_inquiry": 0,
+                  "symptom_feature": 0,
+                  "diagnostic_test": 10,
+                  "risk_factors": 0,
+                  "differential_diagnosis": 0,
+                  "drug_info": 0,
+                  "disease_features": 0
+                },
+                "candidates": []
+              },
+              "skip_reason": ""
+            },
+            {
+              "step_id": 3,
+              "step_name": "任务分配",
+              "agent": "Orchestrator",
+              "status": "success",
+              "input_summary": "意图：diagnostic_test；实体：白球比（A:G比值）, 湿性猫传染性腹膜炎（湿性FIP）, 干性猫传染性腹膜炎（干性FIP）",
+              "output_summary": "选择查询方法：query_diagnostic_test",
+              "detail": {
+                "intent": "diagnostic_test",
+                "entities": [
+                  "白球比（A:G比值）",
+                  "湿性猫传染性腹膜炎（湿性FIP）",
+                  "干性猫传染性腹膜炎（干性FIP）"
+                ],
+                "mode": "specialized"
+              },
+              "skip_reason": ""
+            },
+            {
+              "step_id": 4,
+              "step_name": "图查询",
+              "agent": "GraphQueryAgent",
+              "status": "success",
+              "input_summary": "执行专用查询（实体：白球比（A:G比值）, 湿性猫传染性腹膜炎（湿性FIP）, 干性猫传染性腹膜炎（干性FIP））",
+              "output_summary": "命中 1 条关系",
+              "detail": {
+                "steps": [
+                  {
+                    "source": "白球比（A:G比值）",
+                    "rel": "诊断于",
+                    "target": "湿性猫传染性腹膜炎（湿性FIP）",
+                    "polarity": "Positive",
+                    "confidence": "High",
+                    "evidence": "白球比低于0.4是渗出液分析中诊断湿性传腹的核心指标"
+                  }
+                ]
+              },
+              "skip_reason": ""
+            },
+            {
+              "step_id": 5,
+              "step_name": "证据加工",
+              "agent": "EvidenceAgent",
+              "status": "skipped",
+              "input_summary": "",
+              "output_summary": "",
+              "detail": null,
+              "skip_reason": "该意图无需证据分组"
+            },
+            {
+              "step_id": 6,
+              "step_name": "风险标记",
+              "agent": "RiskAgent",
+              "status": "skipped",
+              "input_summary": "1 条关系",
+              "output_summary": "",
+              "detail": null,
+              "skip_reason": "无风险标记"
+            },
+            {
+              "step_id": 7,
+              "step_name": "响应生成",
+              "agent": "ResponseAgent",
+              "status": "success",
+              "input_summary": "1 条关系",
+              "output_summary": "生成指标解读回复",
+              "detail": {
+                "summary": "白球比（A:G比值）在现有知识图谱中与湿性猫传染性腹膜炎（湿性FIP）相关。\n依据：白球比低于0.4是渗出液分析中诊断湿性传腹的核心指标",
+                "cards": [
+                  {
+                    "key": "reasoning",
+                    "label": "推理链路",
+                    "steps": [
+                      {
+                        "source": "白球比（A:G比值）",
+                        "rel": "诊断于",
+                        "target": "湿性猫传染性腹膜炎（湿性FIP）",
+                        "polarity": "Positive",
+                        "polarity_color": "green",
+                        "confidence": "High",
+                        "confidence_color": "green",
+                        "evidence": "白球比低于0.4是渗出液分析中诊断湿性传腹的核心指标",
+                        "flagged": false
+                      }
+                    ]
+                  }
+                ]
+              },
+              "skip_reason": ""
+            }
+          ]
+        }
+      },
+      {
+        "role": "user",
+        "text": "什么会影响传腹康复？"
+      },
+      {
+        "role": "bot",
+        "text": "根据知识图谱，以下因素可能影响猫传腹的康复或复发：\n· 康复 → 导致复发风险（证据：少数康复猫在停药后数月内可能出现病毒复发）\n· 病毒清除不全 → 导致复发（证据：停药时体内残留的病毒在免疫力波动时可能再次大量复制）\n· 长期免疫抑制 → 影响复发（证据：FIP造成的T细胞耗竭及免疫系统崩溃增加远期复发或继发感染风险）\n· 耐药性变异 → 导致死亡（证据：长期低剂量用药可能诱发病毒产生针对蛋白酶抑制剂或核苷类药物的抗性）\n· 体重增加 → 影响血药浓度（证据：康复期体重快速增长导致血药浓度降至有效阈值以下，需及时调整剂量）\n· 血脑屏障 → 影响药物渗透（证据：标准剂量可能无法清除神经系统内的病毒残余）\n· 42天短疗程 → 影响康复（证据：多项前瞻性随机对照研究证实短疗程对渗出型FIP疗效不亚于长疗程）\n· 84天标准疗程 → 影响康复（证据：完整疗程是确保病毒彻底清除并防止复发的公认金标准）\n· 病毒载量 → 影响康复（证据：高病毒载量与较低的康复率和较高的死亡率显著相关）\n· 对症支持治疗 → 影响康复（证据：早期补液、营养支持与并发症管理显著提升了危重猫进入药物起效期的概率）",
+        "intent": "risk_factors",
+        "trace": {
+          "user_input": "什么会影响传腹康复？",
+          "input_type": "普通文本",
+          "steps": [
+            {
+              "step_id": 1,
+              "step_name": "实体解析",
+              "agent": "EntityAgent",
+              "status": "success",
+              "input_summary": "用户输入：什么会影响传腹康复？",
+              "output_summary": "解析到实体：湿性猫传染性腹膜炎（湿性FIP）, 干性猫传染性腹膜炎（干性FIP）",
+              "detail": {
+                "entities": [
+                  "湿性猫传染性腹膜炎（湿性FIP）",
+                  "干性猫传染性腹膜炎（干性FIP）"
+                ]
+              },
+              "skip_reason": ""
+            },
+            {
+              "step_id": 2,
+              "step_name": "意图识别",
+              "agent": "IntentAgent",
+              "status": "success",
+              "input_summary": "用户输入：什么会影响传腹康复？",
+              "output_summary": "识别为风险因素查询（risk_factors）",
+              "detail": {
+                "scores": {
+                  "diagnosis": 0,
+                  "treatment": 10,
+                  "risk": 0,
+                  "concept": 0,
+                  "meta": 0,
+                  "emergency": 0,
+                  "diagnosis_inquiry": 0,
+                  "symptom_feature": 0,
+                  "diagnostic_test": 0,
+                  "risk_factors": 13,
+                  "differential_diagnosis": 0,
+                  "drug_info": 0,
+                  "disease_features": 0
+                },
+                "candidates": []
+              },
+              "skip_reason": ""
+            },
+            {
+              "step_id": 3,
+              "step_name": "任务分配",
+              "agent": "Orchestrator",
+              "status": "success",
+              "input_summary": "意图：risk_factors；实体：湿性猫传染性腹膜炎（湿性FIP）, 干性猫传染性腹膜炎（干性FIP）",
+              "output_summary": "选择查询方法：query_risk_factors",
+              "detail": {
+                "intent": "risk_factors",
+                "entities": [
+                  "湿性猫传染性腹膜炎（湿性FIP）",
+                  "干性猫传染性腹膜炎（干性FIP）"
+                ],
+                "mode": "specialized"
+              },
+              "skip_reason": ""
+            },
+            {
+              "step_id": 4,
+              "step_name": "图查询",
+              "agent": "GraphQueryAgent",
+              "status": "success",
+              "input_summary": "执行专用查询（实体：湿性猫传染性腹膜炎（湿性FIP）, 干性猫传染性腹膜炎（干性FIP））",
+              "output_summary": "命中 15 条关系",
+              "detail": {
+                "steps": [
+                  {
+                    "source": "42天短疗程",
+                    "rel": "影响",
+                    "target": "康复",
+                    "polarity": "Positive",
+                    "confidence": "High",
+                    "evidence": "多项前瞻性随机对照研究证实短疗程对渗出型FIP疗效不亚于长疗程"
+                  },
+                  {
+                    "source": "康复",
+                    "rel": "导致",
+                    "target": "复发风险",
+                    "polarity": "Negative",
+                    "confidence": "Low",
+                    "evidence": "少数康复猫在停药后数月内可能出现病毒复发"
+                  },
+                  {
+                    "source": "84天标准疗程",
+                    "rel": "影响",
+                    "target": "康复",
+                    "polarity": "Positive",
+                    "confidence": "High",
+                    "evidence": "完整疗程是确保病毒彻底清除并防止复发的公认金标准"
+                  },
+                  {
+                    "source": "湿性猫传染性腹膜炎（湿性FIP）",
+                    "rel": "导致",
+                    "target": "死亡",
+                    "polarity": "Negative",
+                    "confidence": "High",
+                    "evidence": "传统文献及临床共识均认为湿性FIP若不治疗致死率接近100%"
+                  },
+                  {
+                    "source": "湿性猫传染性腹膜炎（湿性FIP）",
+                    "rel": "影响",
+                    "target": "康复",
+                    "polarity": "Positive",
+                    "confidence": "High",
+                    "evidence": "经GS-441524治疗后，湿性FIP的康复率可达80-100%"
+                  },
+                  {
+                    "source": "干性猫传染性腹膜炎（干性FIP）",
+                    "rel": "导致",
+                    "target": "死亡",
+                    "polarity": "Negative",
+                    "confidence": "High",
+                    "evidence": "传统文献及临床共识均认为干性FIP若不治疗致死率接近100%"
+                  },
+                  {
+                    "source": "干性猫传染性腹膜炎（干性FIP）",
+                    "rel": "影响",
+                    "target": "康复",
+                    "polarity": "Positive",
+                    "confidence": "High",
+                    "evidence": "经GS-441524治疗后，干性FIP同样具有高康复率"
+                  },
+                  {
+                    "source": "病毒载量",
+                    "rel": "影响",
+                    "target": "康复",
+                    "polarity": "Negative",
+                    "confidence": "High",
+                    "evidence": "高病毒载量与较低的康复率和较高的死亡率显著相关"
+                  },
+                  {
+                    "source": "体重增加",
+                    "rel": "影响",
+                    "target": "血药浓度",
+                    "polarity": "Negative",
+                    "confidence": "High",
+                    "evidence": "康复期体重快速增长导致血药浓度降至有效阈值以下，需及时调整剂量"
+                  },
+                  {
+                    "source": "复发性猫传染性腹膜炎",
+                    "rel": "导致",
+                    "target": "死亡",
+                    "polarity": "Negative",
+                    "confidence": "Medium",
+                    "evidence": "复发性FIP的治疗难度显著增加，预后较差"
+                  },
+                  {
+                    "source": "对症支持治疗",
+                    "rel": "影响",
+                    "target": "康复",
+                    "polarity": "Positive",
+                    "confidence": "High",
+                    "evidence": "早期补液、营养支持与并发症管理显著提升了危重猫进入药物起效期的概率"
+                  },
+                  {
+                    "source": "病毒清除不全",
+                    "rel": "导致",
+                    "target": "复发",
+                    "polarity": "Negative",
+                    "confidence": "Medium",
+                    "evidence": "停药时体内残留的病毒在免疫力波动时可能再次大量复制"
+                  },
+                  {
+                    "source": "耐药性变异",
+                    "rel": "导致",
+                    "target": "死亡",
+                    "polarity": "Negative",
+                    "confidence": "Low",
+                    "evidence": "长期低剂量用药可能诱发病毒产生针对蛋白酶抑制剂或核苷类药物的抗性"
+                  },
+                  {
+                    "source": "血脑屏障",
+                    "rel": "影响",
+                    "target": "药物渗透",
+                    "polarity": "Negative",
+                    "confidence": "Medium",
+                    "evidence": "标准剂量可能无法清除神经系统内的病毒残余"
+                  },
+                  {
+                    "source": "长期免疫抑制",
+                    "rel": "影响",
+                    "target": "复发",
+                    "polarity": "Positive",
+                    "confidence": "Medium",
+                    "evidence": "FIP造成的T细胞耗竭及免疫系统崩溃增加远期复发或继发感染风险"
+                  }
+                ]
+              },
+              "skip_reason": ""
+            },
+            {
+              "step_id": 5,
+              "step_name": "证据加工",
+              "agent": "EvidenceAgent",
+              "status": "skipped",
+              "input_summary": "",
+              "output_summary": "",
+              "detail": null,
+              "skip_reason": "该意图无需证据分组"
+            },
+            {
+              "step_id": 6,
+              "step_name": "风险标记",
+              "agent": "RiskAgent",
+              "status": "success",
+              "input_summary": "15 条关系",
+              "output_summary": "识别到 2 个风险标记",
+              "detail": {
+                "risks": [
+                  {
+                    "kind": "low_confidence",
+                    "group_key": "specialized",
+                    "step_index": 1,
+                    "note": "证据有限，仅供参考。"
+                  },
+                  {
+                    "kind": "low_confidence",
+                    "group_key": "specialized",
+                    "step_index": 12,
+                    "note": "证据有限，仅供参考。"
+                  }
+                ]
+              },
+              "skip_reason": ""
+            },
+            {
+              "step_id": 7,
+              "step_name": "响应生成",
+              "agent": "ResponseAgent",
+              "status": "success",
+              "input_summary": "15 条关系",
+              "output_summary": "生成风险因素查询回复",
+              "detail": {
+                "summary": "根据知识图谱，以下因素可能影响猫传腹的康复或复发：\n· 康复 → 导致复发风险（证据：少数康复猫在停药后数月内可能出现病毒复发）\n· 病毒清除不全 → 导致复发（证据：停药时体内残留的病毒在免疫力波动时可能再次大量复制）\n· 长期免疫抑制 → 影响复发（证据：FIP造成的T细胞耗竭及免疫系统崩溃增加远期复发或继发感染风险）\n· 耐药性变异 → 导致死亡（证据：长期低剂量用药可能诱发病毒产生针对蛋白酶抑制剂或核苷类药物的抗性）\n· 体重增加 → 影响血药浓度（证据：康复期体重快速增长导致血药浓度降至有效阈值以下，需及时调整剂量）\n· 血脑屏障 → 影响药物渗透（证据：标准剂量可能无法清除神经系统内的病毒残余）\n· 42天短疗程 → 影响康复（证据：多项前瞻性随机对照研究证实短疗程对渗出型FIP疗效不亚于长疗程）\n· 84天标准疗程 → 影响康复（证据：完整疗程是确保病毒彻底清除并防止复发的公认金标准）\n· 病毒载量 → 影响康复（证据：高病毒载量与较低的康复率和较高的死亡率显著相关）\n· 对症支持治疗 → 影响康复（证据：早期补液、营养支持与并发症管理显著提升了危重猫进入药物起效期的概率）",
+                "cards": [
+                  {
+                    "key": "reasoning",
+                    "label": "推理链路",
+                    "steps": [
+                      {
+                        "source": "42天短疗程",
+                        "rel": "影响",
+                        "target": "康复",
+                        "polarity": "Positive",
+                        "polarity_color": "green",
+                        "confidence": "High",
+                        "confidence_color": "green",
+                        "evidence": "多项前瞻性随机对照研究证实短疗程对渗出型FIP疗效不亚于长疗程",
+                        "flagged": false
+                      },
+                      {
+                        "source": "康复",
+                        "rel": "导致",
+                        "target": "复发风险",
+                        "polarity": "Negative",
+                        "polarity_color": "red",
+                        "confidence": "Low",
+                        "confidence_color": "red",
+                        "evidence": "少数康复猫在停药后数月内可能出现病毒复发",
+                        "flagged": false
+                      },
+                      {
+                        "source": "84天标准疗程",
+                        "rel": "影响",
+                        "target": "康复",
+                        "polarity": "Positive",
+                        "polarity_color": "green",
+                        "confidence": "High",
+                        "confidence_color": "green",
+                        "evidence": "完整疗程是确保病毒彻底清除并防止复发的公认金标准",
+                        "flagged": false
+                      },
+                      {
+                        "source": "湿性猫传染性腹膜炎（湿性FIP）",
+                        "rel": "导致",
+                        "target": "死亡",
+                        "polarity": "Negative",
+                        "polarity_color": "red",
+                        "confidence": "High",
+                        "confidence_color": "green",
+                        "evidence": "传统文献及临床共识均认为湿性FIP若不治疗致死率接近100%",
+                        "flagged": false
+                      },
+                      {
+                        "source": "湿性猫传染性腹膜炎（湿性FIP）",
+                        "rel": "影响",
+                        "target": "康复",
+                        "polarity": "Positive",
+                        "polarity_color": "green",
+                        "confidence": "High",
+                        "confidence_color": "green",
+                        "evidence": "经GS-441524治疗后，湿性FIP的康复率可达80-100%",
+                        "flagged": false
+                      },
+                      {
+                        "source": "干性猫传染性腹膜炎（干性FIP）",
+                        "rel": "导致",
+                        "target": "死亡",
+                        "polarity": "Negative",
+                        "polarity_color": "red",
+                        "confidence": "High",
+                        "confidence_color": "green",
+                        "evidence": "传统文献及临床共识均认为干性FIP若不治疗致死率接近100%",
+                        "flagged": false
+                      },
+                      {
+                        "source": "干性猫传染性腹膜炎（干性FIP）",
+                        "rel": "影响",
+                        "target": "康复",
+                        "polarity": "Positive",
+                        "polarity_color": "green",
+                        "confidence": "High",
+                        "confidence_color": "green",
+                        "evidence": "经GS-441524治疗后，干性FIP同样具有高康复率",
+                        "flagged": false
+                      },
+                      {
+                        "source": "病毒载量",
+                        "rel": "影响",
+                        "target": "康复",
+                        "polarity": "Negative",
+                        "polarity_color": "red",
+                        "confidence": "High",
+                        "confidence_color": "green",
+                        "evidence": "高病毒载量与较低的康复率和较高的死亡率显著相关",
+                        "flagged": false
+                      },
+                      {
+                        "source": "体重增加",
+                        "rel": "影响",
+                        "target": "血药浓度",
+                        "polarity": "Negative",
+                        "polarity_color": "red",
+                        "confidence": "High",
+                        "confidence_color": "green",
+                        "evidence": "康复期体重快速增长导致血药浓度降至有效阈值以下，需及时调整剂量",
+                        "flagged": false
+                      },
+                      {
+                        "source": "复发性猫传染性腹膜炎",
+                        "rel": "导致",
+                        "target": "死亡",
+                        "polarity": "Negative",
+                        "polarity_color": "red",
+                        "confidence": "Medium",
+                        "confidence_color": "amber",
+                        "evidence": "复发性FIP的治疗难度显著增加，预后较差",
+                        "flagged": false
+                      },
+                      {
+                        "source": "对症支持治疗",
+                        "rel": "影响",
+                        "target": "康复",
+                        "polarity": "Positive",
+                        "polarity_color": "green",
+                        "confidence": "High",
+                        "confidence_color": "green",
+                        "evidence": "早期补液、营养支持与并发症管理显著提升了危重猫进入药物起效期的概率",
+                        "flagged": false
+                      },
+                      {
+                        "source": "病毒清除不全",
+                        "rel": "导致",
+                        "target": "复发",
+                        "polarity": "Negative",
+                        "polarity_color": "red",
+                        "confidence": "Medium",
+                        "confidence_color": "amber",
+                        "evidence": "停药时体内残留的病毒在免疫力波动时可能再次大量复制",
+                        "flagged": false
+                      },
+                      {
+                        "source": "耐药性变异",
+                        "rel": "导致",
+                        "target": "死亡",
+                        "polarity": "Negative",
+                        "polarity_color": "red",
+                        "confidence": "Low",
+                        "confidence_color": "red",
+                        "evidence": "长期低剂量用药可能诱发病毒产生针对蛋白酶抑制剂或核苷类药物的抗性",
+                        "flagged": false
+                      },
+                      {
+                        "source": "血脑屏障",
+                        "rel": "影响",
+                        "target": "药物渗透",
+                        "polarity": "Negative",
+                        "polarity_color": "red",
+                        "confidence": "Medium",
+                        "confidence_color": "amber",
+                        "evidence": "标准剂量可能无法清除神经系统内的病毒残余",
+                        "flagged": false
+                      },
+                      {
+                        "source": "长期免疫抑制",
+                        "rel": "影响",
+                        "target": "复发",
+                        "polarity": "Positive",
+                        "polarity_color": "green",
+                        "confidence": "Medium",
+                        "confidence_color": "amber",
+                        "evidence": "FIP造成的T细胞耗竭及免疫系统崩溃增加远期复发或继发感染风险",
+                        "flagged": false
+                      }
+                    ]
+                  }
+                ]
+              },
+              "skip_reason": ""
+            }
+          ]
+        }
+      },
+      {
+        "role": "user",
+        "text": "谢谢"
+      },
+      {
+        "role": "bot",
+        "text": "不客气，祝你和猫咪健康。如果还有其他问题，随时可以问我。",
+        "intent": "meta",
+        "trace": {
+          "user_input": "谢谢",
+          "input_type": "普通文本",
+          "steps": [
+            {
+              "step_id": 2,
+              "step_name": "意图识别",
+              "agent": "IntentAgent",
+              "status": "success",
+              "input_summary": "用户输入：谢谢",
+              "output_summary": "识别为 meta 意图",
+              "detail": {
+                "scores": {
+                  "diagnosis": 0,
+                  "treatment": 0,
+                  "risk": 0,
+                  "concept": 0,
+                  "meta": 5,
+                  "emergency": 0,
+                  "diagnosis_inquiry": 0,
+                  "symptom_feature": 0,
+                  "diagnostic_test": 0,
+                  "risk_factors": 0,
+                  "differential_diagnosis": 0,
+                  "drug_info": 0,
+                  "disease_features": 0
+                },
+                "meta_subtype": "farewell"
+              },
+              "skip_reason": ""
+            },
+            {
+              "step_id": 1,
+              "step_name": "实体解析",
+              "agent": "EntityAgent",
+              "status": "skipped",
+              "input_summary": "用户输入：谢谢",
+              "output_summary": "",
+              "detail": null,
+              "skip_reason": "meta 意图无需实体解析"
+            },
+            {
+              "step_id": 4,
+              "step_name": "图查询",
+              "agent": "GraphQueryAgent",
+              "status": "skipped",
+              "input_summary": "",
+              "output_summary": "",
+              "detail": null,
+              "skip_reason": "meta 意图无需图查询"
+            },
+            {
+              "step_id": 7,
+              "step_name": "响应生成",
+              "agent": "ResponseAgent",
+              "status": "success",
+              "input_summary": "meta 子场景：farewell",
+              "output_summary": "返回问候引导",
+              "detail": {
+                "summary": "不客气，祝你和猫咪健康。如果还有其他问题，随时可以问我。",
+                "meta_subtype": "farewell"
+              },
+              "skip_reason": ""
+            }
+          ]
+        }
+      }
+    ],
+    "contextEntities": [],
+    "lastTrace": {
+      "user_input": "谢谢",
+      "input_type": "普通文本",
+      "steps": [
+        {
+          "step_id": 2,
+          "step_name": "意图识别",
+          "agent": "IntentAgent",
+          "status": "success",
+          "input_summary": "用户输入：谢谢",
+          "output_summary": "识别为 meta 意图",
+          "detail": {
+            "scores": {
+              "diagnosis": 0,
+              "treatment": 0,
+              "risk": 0,
+              "concept": 0,
+              "meta": 5,
+              "emergency": 0,
+              "diagnosis_inquiry": 0,
+              "symptom_feature": 0,
+              "diagnostic_test": 0,
+              "risk_factors": 0,
+              "differential_diagnosis": 0,
+              "drug_info": 0,
+              "disease_features": 0
+            },
+            "meta_subtype": "farewell"
+          },
+          "skip_reason": ""
+        },
+        {
+          "step_id": 1,
+          "step_name": "实体解析",
+          "agent": "EntityAgent",
+          "status": "skipped",
+          "input_summary": "用户输入：谢谢",
+          "output_summary": "",
+          "detail": null,
+          "skip_reason": "meta 意图无需实体解析"
+        },
+        {
+          "step_id": 4,
+          "step_name": "图查询",
+          "agent": "GraphQueryAgent",
+          "status": "skipped",
+          "input_summary": "",
+          "output_summary": "",
+          "detail": null,
+          "skip_reason": "meta 意图无需图查询"
+        },
+        {
+          "step_id": 7,
+          "step_name": "响应生成",
+          "agent": "ResponseAgent",
+          "status": "success",
+          "input_summary": "meta 子场景：farewell",
+          "output_summary": "返回问候引导",
+          "detail": {
+            "summary": "不客气，祝你和猫咪健康。如果还有其他问题，随时可以问我。",
+            "meta_subtype": "farewell"
+          },
+          "skip_reason": ""
+        }
+      ]
+    }
+  }
+]

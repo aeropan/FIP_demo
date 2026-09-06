@@ -1,0 +1,546 @@
+[
+  {
+    "source": "3c基因",
+    "rel": "影响",
+    "target": "猫传染性腹膜炎病毒（FIPV）",
+    "polarity": "Neutral",
+    "confidence": "High",
+    "evidence": "3c基因的功能丧失或缺失与FIPV的致病性切换密切相关"
+  },
+  {
+    "source": "42天短疗程",
+    "rel": "影响",
+    "target": "康复",
+    "polarity": "Positive",
+    "confidence": "High",
+    "evidence": "多项前瞻性随机对照研究证实短疗程对渗出型FIP疗效不亚于长疗程"
+  },
+  {
+    "source": "84天标准疗程",
+    "rel": "影响",
+    "target": "康复",
+    "polarity": "Positive",
+    "confidence": "High",
+    "evidence": "完整疗程是确保病毒彻底清除并防止复发的公认金标准"
+  },
+  {
+    "source": "GC376",
+    "rel": "治疗于",
+    "target": "湿性猫传染性腹膜炎（湿性FIP）",
+    "polarity": "Positive",
+    "confidence": "Medium",
+    "evidence": "3C样蛋白酶抑制剂在早期实验及临床中展现出缓解症状的能力"
+  },
+  {
+    "source": "GS-441524",
+    "rel": "影响",
+    "target": "大细胞淋巴瘤",
+    "polarity": "Positive",
+    "confidence": "Low",
+    "evidence": "个别病例在FIP治愈后出现淋巴瘤，推测与炎症长期刺激或治疗干预有关"
+  },
+  {
+    "source": "GS-441524",
+    "rel": "影响",
+    "target": "尿结石",
+    "polarity": "Positive",
+    "confidence": "Low",
+    "evidence": "罕见报告显示使用非正规制剂治疗期间猫出现由GS-441524成分组成的结石"
+  },
+  {
+    "source": "GS-441524",
+    "rel": "治疗于",
+    "target": "干性猫传染性腹膜炎（干性FIP）",
+    "polarity": "Positive",
+    "confidence": "High",
+    "evidence": "学术界认可抗病毒药物对非渗出型猫传腹同样具有显著疗效"
+  },
+  {
+    "source": "GS-441524",
+    "rel": "治疗于",
+    "target": "干性猫传染性腹膜炎（干性FIP）",
+    "polarity": "Positive",
+    "confidence": "High",
+    "evidence": "对于包含肉芽肿性病变的干性传腹同样具有高治愈率"
+  },
+  {
+    "source": "GS-441524",
+    "rel": "治疗于",
+    "target": "湿性猫传染性腹膜炎（湿性FIP）",
+    "polarity": "Positive",
+    "confidence": "High",
+    "evidence": "临床研究证实核苷类似物能有效消除积液并治愈湿性传腹"
+  },
+  {
+    "source": "GS-441524",
+    "rel": "治疗于",
+    "target": "湿性猫传染性腹膜炎（湿性FIP）",
+    "polarity": "Positive",
+    "confidence": "High",
+    "evidence": "临床研究证实其清除积液效果显著并能提高生存率至80-100%"
+  },
+  {
+    "source": "II型猫冠状病毒",
+    "rel": "导致",
+    "target": "湿性猫传染性腹膜炎（湿性FIP）",
+    "polarity": "Positive",
+    "confidence": "High",
+    "evidence": "II型病毒虽然流行率较低但同样可引发严重的渗出型病变"
+  },
+  {
+    "source": "I型猫冠状病毒",
+    "rel": "导致",
+    "target": "湿性猫传染性腹膜炎（湿性FIP）",
+    "polarity": "Positive",
+    "confidence": "High",
+    "evidence": "临床数据显示I型猫冠状病毒是导致绝大多数湿性病例的病原"
+  },
+  {
+    "source": "Rivalta试验",
+    "rel": "表现为",
+    "target": "湿性猫传染性腹膜炎（湿性FIP）",
+    "polarity": "Positive",
+    "confidence": "High",
+    "evidence": "李氏试验阳性是湿性传腹胸腹水生化检查的典型特征"
+  },
+  {
+    "source": "Rivalta试验阳性",
+    "rel": "表现为",
+    "target": "湿性猫传染性腹膜炎（湿性FIP）",
+    "polarity": "Positive",
+    "confidence": "High",
+    "evidence": "积液特征性生化反应"
+  },
+  {
+    "source": "S基因突变",
+    "rel": "导致",
+    "target": "猫传染性腹膜炎病毒（FIPV）",
+    "polarity": "Neutral",
+    "confidence": "High",
+    "evidence": "关键位点突变导致病毒生物型从肠道型向致病型转变"
+  },
+  {
+    "source": "α-1酸性糖蛋白（AGP）",
+    "rel": "诊断于",
+    "target": "疑似猫传染性腹膜炎",
+    "polarity": "Positive",
+    "confidence": "Medium",
+    "evidence": "急性期蛋白在FIP中显著升高"
+  },
+  {
+    "source": "伊曲康唑",
+    "rel": "影响",
+    "target": "病毒载量",
+    "polarity": "Negative",
+    "confidence": "Medium",
+    "evidence": "体外实验证实其与GS-441524具有抗病毒协同作用，可降低给药浓度"
+  },
+  {
+    "source": "体重增加",
+    "rel": "影响",
+    "target": "血药浓度",
+    "polarity": "Negative",
+    "confidence": "High",
+    "evidence": "康复期体重快速增长导致血药浓度降至有效阈值以下，需及时调整剂量"
+  },
+  {
+    "source": "免疫复合物",
+    "rel": "导致",
+    "target": "血管炎",
+    "polarity": "Positive",
+    "confidence": "High",
+    "evidence": "沉积在血管壁的免疫复合物激活补体系统导致多发性脉管炎"
+  },
+  {
+    "source": "免疫组化（IHC）",
+    "rel": "诊断于",
+    "target": "干性猫传染性腹膜炎（干性FIP）",
+    "polarity": "Positive",
+    "confidence": "High",
+    "evidence": "在受损器官肉芽肿病灶中检出病毒抗原是干性传腹确诊的金标准"
+  },
+  {
+    "source": "免疫组化（IHC）",
+    "rel": "诊断于",
+    "target": "干性猫传染性腹膜炎（干性FIP）",
+    "polarity": "Positive",
+    "confidence": "High",
+    "evidence": "组织活检检出病毒抗原为金标准"
+  },
+  {
+    "source": "免疫细胞化学（ICC）",
+    "rel": "诊断于",
+    "target": "湿性猫传染性腹膜炎（湿性FIP）",
+    "polarity": "Positive",
+    "confidence": "High",
+    "evidence": "积液中检出感染巨噬细胞"
+  },
+  {
+    "source": "全身性扩散",
+    "rel": "导致",
+    "target": "免疫复合物",
+    "polarity": "Positive",
+    "confidence": "High",
+    "evidence": "病毒全身播散诱发强烈的体液免疫并产生抗原-抗体复合物"
+  },
+  {
+    "source": "全身性扩散",
+    "rel": "导致",
+    "target": "慢性炎症",
+    "polarity": "Positive",
+    "confidence": "High",
+    "evidence": "病毒在缺乏强力细胞免疫的个体中诱导多器官持续性炎症"
+  },
+  {
+    "source": "共济失调",
+    "rel": "表现为",
+    "target": "疑似干性猫传染性腹膜炎",
+    "polarity": "Positive",
+    "confidence": "High",
+    "evidence": "神经症状提示中枢神经系统受累"
+  },
+  {
+    "source": "内皮损伤",
+    "rel": "导致",
+    "target": "血管通透性",
+    "polarity": "Positive",
+    "confidence": "High",
+    "evidence": "血管内皮屏障受损导致血浆成分及蛋白向管外大量渗漏"
+  },
+  {
+    "source": "呼吸困难",
+    "rel": "表现为",
+    "target": "疑似湿性猫传染性腹膜炎",
+    "polarity": "Positive",
+    "confidence": "High",
+    "evidence": "胸腔积液可导致呼吸窘迫"
+  },
+  {
+    "source": "复发性猫传染性腹膜炎",
+    "rel": "导致",
+    "target": "死亡",
+    "polarity": "Negative",
+    "confidence": "Medium",
+    "evidence": "复发性FIP的治疗难度显著增加，预后较差"
+  },
+  {
+    "source": "多猫环境",
+    "rel": "导致",
+    "target": "猫冠状病毒（FCoV）感染",
+    "polarity": "Positive",
+    "confidence": "High",
+    "evidence": "密集饲养环境显著提高了猫群中冠状病毒的载量和交叉感染率"
+  },
+  {
+    "source": "对症支持治疗",
+    "rel": "影响",
+    "target": "康复",
+    "polarity": "Positive",
+    "confidence": "High",
+    "evidence": "早期补液、营养支持与并发症管理显著提升了危重猫进入药物起效期的概率"
+  },
+  {
+    "source": "巨噬细胞",
+    "rel": "导致",
+    "target": "全身性扩散",
+    "polarity": "Positive",
+    "confidence": "High",
+    "evidence": "感染的巨噬细胞作为病毒载体通过血液向全身组织散播"
+  },
+  {
+    "source": "干性猫传染性腹膜炎（干性FIP）",
+    "rel": "导致",
+    "target": "死亡",
+    "polarity": "Negative",
+    "confidence": "High",
+    "evidence": "传统文献及临床共识均认为干性FIP若不治疗致死率接近100%"
+  },
+  {
+    "source": "干性猫传染性腹膜炎（干性FIP）",
+    "rel": "影响",
+    "target": "康复",
+    "polarity": "Positive",
+    "confidence": "High",
+    "evidence": "经GS-441524治疗后，干性FIP同样具有高康复率"
+  },
+  {
+    "source": "应激",
+    "rel": "影响",
+    "target": "病毒复制",
+    "polarity": "Positive",
+    "confidence": "High",
+    "evidence": "环境变化或手术应激通过削弱免疫力促进病毒复制及变异"
+  },
+  {
+    "source": "康复",
+    "rel": "导致",
+    "target": "复发风险",
+    "polarity": "Negative",
+    "confidence": "Low",
+    "evidence": "少数康复猫在停药后数月内可能出现病毒复发"
+  },
+  {
+    "source": "慢性炎症",
+    "rel": "导致",
+    "target": "肉芽肿",
+    "polarity": "Positive",
+    "confidence": "High",
+    "evidence": "局部组织的慢性炎症反应导致特征性的脓性肉芽肿结节形成"
+  },
+  {
+    "source": "持续性发热",
+    "rel": "表现为",
+    "target": "疑似猫传染性腹膜炎",
+    "polarity": "Positive",
+    "confidence": "High",
+    "evidence": "发热是FIP最常见的全身性症状"
+  },
+  {
+    "source": "淋巴细胞减少",
+    "rel": "表现为",
+    "target": "疑似猫传染性腹膜炎",
+    "polarity": "Positive",
+    "confidence": "Medium",
+    "evidence": "FIP相关免疫抑制表现"
+  },
+  {
+    "source": "渗出液高蛋白（>35g/L）",
+    "rel": "表现为",
+    "target": "湿性猫传染性腹膜炎（湿性FIP）",
+    "polarity": "Positive",
+    "confidence": "High",
+    "evidence": "高蛋白是渗出液特征"
+  },
+  {
+    "source": "湿性猫传染性腹膜炎（湿性FIP）",
+    "rel": "导致",
+    "target": "死亡",
+    "polarity": "Negative",
+    "confidence": "High",
+    "evidence": "传统文献及临床共识均认为湿性FIP若不治疗致死率接近100%"
+  },
+  {
+    "source": "湿性猫传染性腹膜炎（湿性FIP）",
+    "rel": "影响",
+    "target": "康复",
+    "polarity": "Positive",
+    "confidence": "High",
+    "evidence": "经GS-441524治疗后，湿性FIP的康复率可达80-100%"
+  },
+  {
+    "source": "猫传染性腹膜炎病毒（FIPV）",
+    "rel": "影响",
+    "target": "巨噬细胞",
+    "polarity": "Positive",
+    "confidence": "High",
+    "evidence": "FIPV获得在单核/巨噬细胞中高效复制的能力是致病前提"
+  },
+  {
+    "source": "猫肠道冠状病毒（FECV）",
+    "rel": "导致",
+    "target": "S基因突变",
+    "polarity": "Neutral",
+    "confidence": "High",
+    "evidence": "共识指出FECV在猫体内发生S基因等关键突变产生FIPV"
+  },
+  {
+    "source": "瑞德西韦",
+    "rel": "治疗于",
+    "target": "干性猫传染性腹膜炎（干性FIP）",
+    "polarity": "Positive",
+    "confidence": "High",
+    "evidence": "前药同样适用于治疗非渗出型猫传腹"
+  },
+  {
+    "source": "瑞德西韦",
+    "rel": "治疗于",
+    "target": "湿性猫传染性腹膜炎（湿性FIP）",
+    "polarity": "Positive",
+    "confidence": "High",
+    "evidence": "作为GS-441524的前药在体内转化后具有同等抗病毒效力"
+  },
+  {
+    "source": "疑似猫传染性腹膜炎",
+    "rel": "影响",
+    "target": "排除充血性心力衰竭",
+    "polarity": "Positive",
+    "confidence": "Medium",
+    "evidence": "胸腔积液需排除心源性"
+  },
+  {
+    "source": "疑似猫传染性腹膜炎",
+    "rel": "影响",
+    "target": "排除淋巴瘤",
+    "polarity": "Positive",
+    "confidence": "Medium",
+    "evidence": "临床表现重叠需活检区分"
+  },
+  {
+    "source": "疑似猫传染性腹膜炎",
+    "rel": "影响",
+    "target": "排除细菌性腹膜炎",
+    "polarity": "Positive",
+    "confidence": "Medium",
+    "evidence": "腹水需排除感染性病因"
+  },
+  {
+    "source": "病毒清除不全",
+    "rel": "导致",
+    "target": "复发",
+    "polarity": "Negative",
+    "confidence": "Medium",
+    "evidence": "停药时体内残留的病毒在免疫力波动时可能再次大量复制"
+  },
+  {
+    "source": "病毒载量",
+    "rel": "影响",
+    "target": "康复",
+    "polarity": "Negative",
+    "confidence": "High",
+    "evidence": "高病毒载量与较低的康复率和较高的死亡率显著相关"
+  },
+  {
+    "source": "癫痫发作",
+    "rel": "表现为",
+    "target": "疑似干性猫传染性腹膜炎",
+    "polarity": "Positive",
+    "confidence": "High",
+    "evidence": "颅内肉芽肿可引发癫痫"
+  },
+  {
+    "source": "白球比（A:G比值）",
+    "rel": "诊断于",
+    "target": "湿性猫传染性腹膜炎（湿性FIP）",
+    "polarity": "Positive",
+    "confidence": "High",
+    "evidence": "白球比低于0.4是渗出液分析中诊断湿性传腹的核心指标"
+  },
+  {
+    "source": "白球比（A:G比值）低于0.6",
+    "rel": "诊断于",
+    "target": "疑似猫传染性腹膜炎",
+    "polarity": "Positive",
+    "confidence": "High",
+    "evidence": "低白球比是重要筛查指标"
+  },
+  {
+    "source": "积液中猫冠状病毒RT-PCR阳性",
+    "rel": "诊断于",
+    "target": "湿性猫传染性腹膜炎（湿性FIP）",
+    "polarity": "Positive",
+    "confidence": "High",
+    "evidence": "直接检出病毒核酸"
+  },
+  {
+    "source": "粘稠草黄色积液",
+    "rel": "表现为",
+    "target": "湿性猫传染性腹膜炎（湿性FIP）",
+    "polarity": "Positive",
+    "confidence": "High",
+    "evidence": "典型渗出液外观"
+  },
+  {
+    "source": "组织病理学（肉芽肿）",
+    "rel": "诊断于",
+    "target": "干性猫传染性腹膜炎（干性FIP）",
+    "polarity": "Positive",
+    "confidence": "High",
+    "evidence": "组织学发现特征性病变"
+  },
+  {
+    "source": "耐药性变异",
+    "rel": "导致",
+    "target": "死亡",
+    "polarity": "Negative",
+    "confidence": "Low",
+    "evidence": "长期低剂量用药可能诱发病毒产生针对蛋白酶抑制剂或核苷类药物的抗性"
+  },
+  {
+    "source": "肉芽肿",
+    "rel": "表现为",
+    "target": "干性猫传染性腹膜炎（干性FIP）",
+    "polarity": "Positive",
+    "confidence": "High",
+    "evidence": "出现多器官实质性肉芽肿损害定义为非渗出型猫传腹"
+  },
+  {
+    "source": "腹围增大",
+    "rel": "表现为",
+    "target": "疑似湿性猫传染性腹膜炎",
+    "polarity": "Positive",
+    "confidence": "High",
+    "evidence": "腹围增大是湿性FIP典型体征"
+  },
+  {
+    "source": "腹水",
+    "rel": "表现为",
+    "target": "湿性猫传染性腹膜炎（湿性FIP）",
+    "polarity": "Positive",
+    "confidence": "High",
+    "evidence": "出现胸腹腔积液是渗出型猫传腹的典型临床定义"
+  },
+  {
+    "source": "莫努匹拉韦",
+    "rel": "治疗于",
+    "target": "复发性猫传染性腹膜炎",
+    "polarity": "Positive",
+    "confidence": "Medium",
+    "evidence": "在GS-441524疗法失败或耐药后作为挽救方案效果良好"
+  },
+  {
+    "source": "葡萄膜炎",
+    "rel": "表现为",
+    "target": "疑似干性猫传染性腹膜炎",
+    "polarity": "Positive",
+    "confidence": "High",
+    "evidence": "眼部肉芽肿是干性FIP典型表现"
+  },
+  {
+    "source": "血清淀粉样蛋白A（SAA）",
+    "rel": "表现为",
+    "target": "湿性猫传染性腹膜炎（湿性FIP）",
+    "polarity": "Positive",
+    "confidence": "High",
+    "evidence": "湿性传腹患猫血清和积液中的血清淀粉样蛋白A水平通常极度升高"
+  },
+  {
+    "source": "血清淀粉样蛋白A（SAA）显著升高",
+    "rel": "诊断于",
+    "target": "疑似猫传染性腹膜炎",
+    "polarity": "Positive",
+    "confidence": "High",
+    "evidence": "SAA反映系统性炎症"
+  },
+  {
+    "source": "血管炎",
+    "rel": "导致",
+    "target": "内皮损伤",
+    "polarity": "Positive",
+    "confidence": "High",
+    "evidence": "免疫介导的血管炎症破坏血管内皮的完整性"
+  },
+  {
+    "source": "血管通透性",
+    "rel": "导致",
+    "target": "腹水",
+    "polarity": "Positive",
+    "confidence": "High",
+    "evidence": "液体和蛋白质在腹腔内高度积聚形成特征性渗出液"
+  },
+  {
+    "source": "血脑屏障",
+    "rel": "影响",
+    "target": "药物渗透",
+    "polarity": "Negative",
+    "confidence": "Medium",
+    "evidence": "标准剂量可能无法清除神经系统内的病毒残余"
+  },
+  {
+    "source": "长期免疫抑制",
+    "rel": "影响",
+    "target": "复发",
+    "polarity": "Positive",
+    "confidence": "Medium",
+    "evidence": "FIP造成的T细胞耗竭及免疫系统崩溃增加远期复发或继发感染风险"
+  }
+]
