@@ -8,7 +8,7 @@
 - 小屏默认左侧缩略，优先保证常规 PC 端效果
 - 静态文案与配色严格参考 design-system-spec.md 方案 B
 
-Hugging Face Spaces 默认入口：本文件 app.py
+ModelScope 部署默认入口：本文件 app.py
 """
 
 from __future__ import annotations

@@ -1,14 +1,3 @@
----
-title: 猫传染性腹膜炎（FIP）知识推理系统
-emoji: 🐱
-colorFrom: warmGray
-colorTo: amber
-sdk: gradio
-sdk_version: 6.22.0
-app_file: app.py
-pinned: false
----
-
 # 猫传染性腹膜炎（FIP）知识推理演示
 
 > 一个面向猫主人的 FIP（猫传腹）科普问答自演示产品：基于知识图谱的**确定性、可解释**因果推理，全程不依赖大语言模型。
