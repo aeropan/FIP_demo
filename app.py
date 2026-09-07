@@ -3278,7 +3278,7 @@ div:has(> .app-shell) { padding: 0 !important; margin: 0 !important; background:
   height: 100vh;
   overflow: hidden;
   font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", -apple-system, BlinkMacSystemFont, sans-serif;
-  color: #3E3836;
+  color: #3E3836 !important;
   background: #FDFCFA;
   position: fixed;
   inset: 0;
@@ -3290,7 +3290,7 @@ div:has(> .app-shell) { padding: 0 !important; margin: 0 !important; background:
 /* Safari/WebKit 兜底：强制文字填充色跟随其 color，避免 -webkit-text-fill-color 被 Gradio 注入样式或
    Safari 表单/可编辑区默认行为覆盖后，文字显示为灰/白（与设定色不符）。对 input/textarea/select 豁免，
    以保留其占位符与自有填充色。 */
-.app-shell, .app-shell *:not(input):not(textarea):not(select) { -webkit-text-fill-color: currentColor; }
+.app-shell, .app-shell *:not(input):not(textarea):not(select) { -webkit-text-fill-color: currentColor !important; }
 
 /* 按钮重置 + 对抗 Gradio 主题（高优先级 + !important） */
 .app-shell button {
@@ -3309,14 +3309,14 @@ div:has(> .app-shell) { padding: 0 !important; margin: 0 !important; background:
   align-items: center;
   justify-content: center;
   border-radius: 8px;
-  color: #6F6763;
+  color: #6F6763 !important;
   background: transparent !important;
   padding: 0 !important;
   transition: background 150ms var(--ease), color 150ms var(--ease);
   flex-shrink: 0;
 }
 .icon-btn svg, .collapsed-tool svg, .refresh-btn svg, .send-btn svg { display: inline-block !important; }
-.icon-btn:hover { background: #F9F1E9 !important; color: #6B5045; }
+.icon-btn:hover { background: #F9F1E9 !important; color: #6B5045 !important; }
 
 /* ============================================================
    左侧边栏（暖杏 #F9F1E9，贴边全高）
@@ -3402,6 +3402,9 @@ div:has(> .app-shell) { padding: 0 !important; margin: 0 !important; background:
 }
 .app-shell .nav-item:hover { background: #FAF3EC; color: #6B5045 !important; -webkit-text-fill-color: #6B5045 !important; }
 .app-shell .nav-item.active { color: #3E3836 !important; -webkit-text-fill-color: #3E3836 !important; font-weight: 600; background: #FAF3EC; box-shadow: none; }
+/* Safari 兜底：nav-item 文字在子 <span> 内，强制子元素继承父级已修正的填充色，
+   覆盖 Gradio 对 .gradio-container * 显式设置的灰色 -webkit-text-fill-color（子元素自有值会盖过继承）。 */
+.app-shell .nav-item *, .app-shell .nav-item:hover *, .app-shell .nav-item.active * { color: inherit !important; -webkit-text-fill-color: inherit !important; }
 /* 选中态与 hover 态完全一致，不再单独加深 */
 .nav-icon { width: 18px; height: 18px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
 
@@ -3452,7 +3455,7 @@ div:has(> .app-shell) { padding: 0 !important; margin: 0 !important; background:
   transition: background 150ms var(--ease);
 }
 .chat-item:hover { background: #FAF3EC; }
-.chat-item.active { color: #3E3836; font-weight: 600; background: #FAF3EC; }
+.chat-item.active { color: #3E3836 !important; font-weight: 600; background: #FAF3EC; }
 /* 选中态与 hover 一致，字体颜色沿用默认（hover 不改变字体色） */
 /* 新会话条目淡入 */
 .chat-item-new { animation: chatItemIn 240ms var(--ease); }
@@ -3548,7 +3551,7 @@ div:has(> .app-shell) { padding: 0 !important; margin: 0 !important; background:
   justify-content: center;
   border-radius: 999px;
   background: rgba(250, 243, 236, 0.92);
-  color: #6B5045;
+  color: #6B5045 !important;
   opacity: 0;
   transform: scale(0.85);
   transition: opacity 150ms var(--ease), transform 150ms var(--ease);
@@ -3564,13 +3567,13 @@ div:has(> .app-shell) { padding: 0 !important; margin: 0 !important; background:
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #6F6763;
+  color: #6F6763 !important;
   background: transparent !important;
   border: 1px solid #F1E4D5;
   padding: 0 !important;
   transition: background 150ms var(--ease), color 150ms var(--ease);
 }
-.collapsed-tool:hover { background: #FFFFFF !important; color: #6B5045; }
+.collapsed-tool:hover { background: #FFFFFF !important; color: #6B5045 !important; }
 .collapsed-plus { font-size: 18px; line-height: 1; }
 /* 收起态左下角设置入口：推到底部并与 logo 左对齐，形成「左下角」固定入口 */
 #collapsedSettingsBtn {
@@ -3654,8 +3657,8 @@ div:has(> .app-shell) { padding: 0 !important; margin: 0 !important; background:
   margin: 0 0 6px 0;
   line-height: 1.3;
 }
-.paw-emoji { color: #C7A18E; margin-left: 4px; font-size: 20px; }
-.hero-subtitle { margin: 0; font-size: 13px; color: #6F6763; line-height: 1.5; }
+.paw-emoji { color: #C7A18E !important; margin-left: 4px; font-size: 20px; }
+.hero-subtitle { margin: 0; font-size: 13px; color: #6F6763 !important; -webkit-text-fill-color: #6F6763 !important; line-height: 1.5; }
 .hero-image { width: 176px; flex-shrink: 0; }
 .hero-image img {
   width: 100%;
@@ -3752,7 +3755,7 @@ div:has(> .app-shell) { padding: 0 !important; margin: 0 !important; background:
   gap: 6px;
   font-size: 14px;
   font-weight: 600;
-  color: #3E3836;
+  color: #3E3836 !important;
   line-height: 1.4;
   margin-bottom: 8px;
 }
@@ -3763,12 +3766,12 @@ div:has(> .app-shell) { padding: 0 !important; margin: 0 !important; background:
   align-items: center;
   justify-content: center;
   border-radius: 6px;
-  color: #8C6B5D;
+  color: #8C6B5D !important;
   background: transparent !important;
   padding: 0 !important;
   transition: background 150ms var(--ease);
 }
-.refresh-btn:hover { background: #F9F1E9 !important; color: #6B5045; }
+.refresh-btn:hover { background: #F9F1E9 !important; color: #6B5045 !important; }
 .example-pills { display: flex; flex-wrap: wrap; gap: 8px; }
 .example-pill {
   display: inline-flex;
@@ -3778,13 +3781,13 @@ div:has(> .app-shell) { padding: 0 !important; margin: 0 !important; background:
   border-radius: 999px;
   background: #FDF8F4 !important;
   border: 1.5px solid #F8F1EB !important;
-  color: #6F6763;
+  color: #6F6763 !important;
   font-size: 13px !important;
   font-weight: 400 !important;
   line-height: 1.3;
   transition: background 150ms var(--ease), border-color 150ms var(--ease), color 150ms var(--ease);
 }
-.example-pill:hover { border-color: #E8D9C8 !important; background: #FAF0E6 !important; color: #6B5045; }
+.example-pill:hover { border-color: #E8D9C8 !important; background: #FAF0E6 !important; color: #6B5045 !important; }
 .pill-paw { display: inline-flex; align-items: center; flex-shrink: 0; }
 
 /* 聊天记录 */
@@ -3800,7 +3803,7 @@ div:has(> .app-shell) { padding: 0 !important; margin: 0 !important; background:
 .avatar { width: 36px; height: 36px; border-radius: 999px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; }
 .avatar-bot { background: #F9F1E9; overflow: hidden; }
 .avatar-bot img { width: 100%; height: 100%; object-fit: cover; }
-.avatar-user { background: #C7A18E; color: #FFFFFF; }
+.avatar-user { background: #C7A18E; color: #FFFFFF !important; }
 .bubble {
   max-width: 72%;
   border-radius: 2px 18px 18px 18px;
@@ -3864,7 +3867,7 @@ div:has(> .app-shell) { padding: 0 !important; margin: 0 !important; background:
   line-height: 1.6;
   border: 1px solid #EDE5DD;
   background: #FAF3EC;
-  color: #8C6B5D;
+  color: #8C6B5D !important;
 }
 .app-shell .bubble-intent.intent-meta { background: #F3EDE6; color: #8C6B5D; border-color: #E3D8CD; }
 .app-shell .bubble-intent.intent-emergency { background: #F6E4DC; color: #B37560; border-color: #E8C7B8; }
@@ -4055,7 +4058,7 @@ div:has(> .app-shell) { padding: 0 !important; margin: 0 !important; background:
   align-items: center;
   gap: 4px;
   border-radius: 8px;
-  color: #6F6763;
+  color: #6F6763 !important;
   font-size: 12px !important;
   font-weight: 400 !important;
   line-height: 1.3;
@@ -4063,12 +4066,12 @@ div:has(> .app-shell) { padding: 0 !important; margin: 0 !important; background:
   transition: background 150ms var(--ease), color 150ms var(--ease);
   flex-shrink: 0;
 }
-.input-tool:hover { background: #F9F1E9 !important; color: #6B5045; }
-.plus-btn { font-size: 20px; font-weight: 400; padding: 0 8px; color: #8C6B5D; }
+.input-tool:hover { background: #F9F1E9 !important; color: #6B5045 !important; }
+.plus-btn { font-size: 20px; font-weight: 400; padding: 0 8px; color: #8C6B5D !important; }
 .template-btn, .model-btn { border: 1.5px solid #F8F1EB !important; background: #FDF8F4 !important; }
 .template-btn:hover, .model-btn:hover { background: #FAF0E6 !important; }
 .template-paw, .model-paw { display: inline-flex; align-items: center; }
-.caret { color: #A99A90; transition: transform 180ms var(--ease); }
+.caret { color: #A99A90 !important; transition: transform 180ms var(--ease); }
 .model-btn.open .caret { transform: rotate(180deg); }
 .mic-btn { display: none !important; }
 /* 模型选择下拉 */
@@ -4103,6 +4106,9 @@ div:has(> .app-shell) { padding: 0 !important; margin: 0 !important; background:
 .app-shell .model-option:hover:not(.disabled) { background: #FAF3EC; }
 .app-shell .model-option.active { background: #FAF3EC; color: #6B5045 !important; -webkit-text-fill-color: #6B5045 !important; font-weight: 500; }
 .app-shell .model-option.disabled { color: #A99A90 !important; -webkit-text-fill-color: #A99A90 !important; cursor: not-allowed; }
+/* Safari 兜底：模型触发器标签（中间"宠医助手 · Pro"）此前无填充色规则，被 Gradio 灰色覆盖。 */
+.app-shell .model-btn { color: #3E3836 !important; -webkit-text-fill-color: #3E3836 !important; }
+.app-shell .model-label { color: #3E3836 !important; -webkit-text-fill-color: #3E3836 !important; }
 .send-btn {
   width: 34px;
   height: 34px;
@@ -4188,7 +4194,8 @@ div:has(> .app-shell) { padding: 0 !important; margin: 0 !important; background:
   justify-content: space-between;
 }
 .app-shell .right-title { display: flex; align-items: center; gap: 7px; font-size: 16px; font-weight: 600; color: #3E3836 !important; -webkit-text-fill-color: #3E3836 !important; line-height: 1.4; }
-.title-star { color: #C7A18E; font-size: 14px; line-height: 1; }
+.app-shell .right-title > span:not(.title-star) { color: #3E3836 !important; -webkit-text-fill-color: #3E3836 !important; }
+.title-star { color: #C7A18E !important; font-size: 14px; line-height: 1; }
 .right-actions { display: flex; gap: 2px; }
 
 .right-timeline { flex: 1 1 0; min-height: 0; overflow-y: auto; padding: 12px 12px 4px; scrollbar-width: thin; scrollbar-color: rgba(111, 103, 99, 0.2) transparent; transition: scrollbar-color 150ms var(--ease); }
@@ -4240,7 +4247,7 @@ div:has(> .app-shell) { padding: 0 !important; margin: 0 !important; background:
 }
 .right-group-title:hover { background: #F9F1E9; }
 .right-group-title::-webkit-details-marker { display: none; }
-.chevron { color: #A99A90; transition: transform 180ms var(--ease); }
+.chevron { color: #A99A90 !important; transition: transform 180ms var(--ease); }
 details[open] .chevron { transform: rotate(180deg); }
 .right-group-content { padding: 2px 0 6px 4px; }
 .app-shell .empty-hint { font-size: 13px; font-weight: 400; color: #6F6763 !important; -webkit-text-fill-color: #6F6763 !important; line-height: 1.3; padding: 6px 4px; }
@@ -4366,7 +4373,7 @@ details[open] .chevron { transform: rotate(180deg); }
   align-items: center;
   justify-content: center;
   font-size: 10px;
-  color: #FFFFFF;
+  color: #FFFFFF !important;
   line-height: 1;
 }
 .step-rail::after {
@@ -4382,7 +4389,7 @@ details[open] .chevron { transform: rotate(180deg); }
 /* 节点五态 */
 .step-node.node-pending { border: 1.5px solid #CFC7C2; background: transparent; }
 .step-node.node-running { background: #907063; animation: nodePulse 1.8s ease-in-out infinite; }
-.step-node.node-completed { background: #FFFFFF; border: 1.5px solid #6F8A6A; color: #6F8A6A; }
+.step-node.node-completed { background: #FFFFFF; border: 1.5px solid #6F8A6A; color: #6F8A6A !important; }
 .step-node.node-error { background: #B86B5B; }
 .step-node.node-skipped { border: 1.5px dashed #CFC7C2; background: transparent; }
 
@@ -4413,7 +4420,7 @@ details[open] .chevron { transform: rotate(180deg); }
   border: none !important;
   box-shadow: none !important;
   border-radius: 6px;
-  color: #4a3a2d;
+  color: #4a3a2d !important;
   cursor: pointer;
   transition: background 150ms;
 }
@@ -4425,9 +4432,13 @@ details[open] .chevron { transform: rotate(180deg); }
 .detail-head-title { font-size: 15px; font-weight: 600; color: #3E3836; line-height: 1.4; }
 .detail-head-subtitle { margin-top: 2px; font-size: 12px; color: #6F6763; line-height: 1.5; }
 .detail-content { margin-top: 12px; }
+/* Safari 兜底：右侧详情文字（响应生成等）此前无填充色规则，被 Gradio 灰色覆盖，此处显式修正。 */
+.app-shell .detail-head-title, .app-shell .detail-head-title * { color: #3E3836 !important; -webkit-text-fill-color: #3E3836 !important; }
+.app-shell .detail-head-subtitle, .app-shell .detail-head-subtitle * { color: #6F6763 !important; -webkit-text-fill-color: #6F6763 !important; }
+.app-shell .detail-content, .app-shell .detail-content * { color: #3E3836 !important; -webkit-text-fill-color: #3E3836 !important; }
 .detail-section { margin-bottom: 14px; }
 .detail-section:last-child { margin-bottom: 0; }
-.detail-label { font-size: 12px; font-weight: 600; color: #6B5045; margin-bottom: 6px; }
+.detail-label { font-size: 12px; font-weight: 600; color: #6B5045 !important; margin-bottom: 6px; }
 .detail-text { font-size: 13px; color: #3E3836; line-height: 1.7; word-break: break-word; white-space: pre-wrap; }
 .detail-kv { display: flex; gap: 6px; font-size: 13px; line-height: 1.6; margin-bottom: 4px; }
 .detail-kv .dk-label { color: #6F6763; flex-shrink: 0; }
