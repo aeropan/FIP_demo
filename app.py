@@ -843,7 +843,7 @@ function logPageView() {
        避免「清除站点数据（Cookie）→ localStorage 清空 → 图标丢失」的问题。 */
     const DEFAULT_CHAT_ICO = (chatList && chatList.querySelector('.chat-ico'))
       ? chatList.querySelector('.chat-ico').innerHTML
-      : '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#8C6B5D" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.5 8.5 8.5 0 0 1-3.8-.9L3 21l1.9-5.7a8.5 8.5 0 0 1-.9-3.8A8.38 8.38 0 0 1 12.5 3 8.38 8.38 0 0 1 21 11.5z"/></svg>';
+      : '<svg viewBox="0 0 1024 1024" width="16" height="16" aria-hidden="true"><path d="M388.266667 552.533333c0-10.666667 8.533333-19.2 19.2-19.2s19.2 8.533333 19.2 19.2c0 19.2 14.933333 36.266667 34.133333 36.266667 19.2 0 34.133333-14.933333 34.133333-36.266667v-4.266666c-4.266667-2.133333-6.4-4.266667-10.666666-6.4l-19.2-19.2c-10.666667-19.2 2.133333-44.8 25.6-44.8h34.133333c23.466667 0 38.4 25.6 27.733333 44.8l-19.2 19.2c-2.133333 2.133333-4.266667 4.266667-6.4 4.266666 0 2.133333 2.133333 4.266667 2.133334 6.4 0 19.2 14.933333 36.266667 34.133333 36.266667s34.133333-14.933333 34.133333-36.266667c0-10.666667 8.533333-19.2 19.2-19.2s19.2 8.533333 19.2 19.2c0 40.533333-32 72.533333-72.533333 72.533334-21.333333 0-40.533333-8.533333-53.333333-23.466667-12.8 14.933333-32 23.466667-53.333334 23.466667-36.266667 0-68.266667-34.133333-68.266666-72.533334z m588.8 104.533334c-8.533333 6.4-12.8 10.666667-21.333334 10.666666-4.266667 0-8.533333-2.133333-10.666666-4.266666 0 0-2.133333 0-4.266667-2.133334-23.466667-12.8-44.8-23.466667-64-29.866666C840.533333 768 708.266667 853.333333 518.4 853.333333 324.266667 853.333333 185.6 765.866667 149.333333 629.333333c-21.333333 8.533333-40.533333 19.2-64 32-2.133333 2.133333-4.266667 2.133333-4.266666 2.133334h-2.133334c-2.133333 2.133333-6.4 2.133333-8.533333 2.133333-8.533333 0-14.933333-4.266667-19.2-10.666667-4.266667-6.4-4.266667-12.8-4.266667-19.2 2.133333-6.4 6.4-10.666667 10.666667-12.8 0 0 36.266667-23.466667 83.2-40.533333 0-8.533333-2.133333-17.066667-2.133333-25.6v-21.333333c-29.866667 2.133333-57.6 6.4-72.533334 8.533333h-4.266666-2.133334c-4.266667 0-10.666667-2.133333-14.933333-4.266667-4.266667-4.266667-8.533333-8.533333-8.533333-14.933333 0-6.4 0-12.8 4.266666-19.2 4.266667-4.266667 8.533333-8.533333 14.933334-8.533333 4.266667-2.133333 42.666667-8.533333 89.6-10.666667 12.8-55.466667 38.4-110.933333 74.666666-157.866667 0-2.133333-2.133333-4.266667-2.133333-6.4 0-34.133333 4.266667-145.066667 49.066667-174.933333 61.866667-38.4 157.866667 12.8 192 34.133333 19.2-2.133333 36.266667-4.266667 55.466666-4.266666 17.066667 0 32 2.133333 49.066667 4.266666 36.266667-21.333333 130.133333-68.266667 189.866667-32 46.933333 29.866667 49.066667 149.333333 49.066666 174.933334 0 2.133333 0 4.266667-2.133333 6.4 36.266667 46.933333 59.733333 104.533333 72.533333 160 49.066667 2.133333 87.466667 8.533333 89.6 10.666666 12.8 2.133333 21.333333 14.933333 19.2 27.733334-2.133333 12.8-12.8 19.2-23.466666 19.2h-4.266667-2.133333c-27.733333-4.266667-53.333333-6.4-72.533334-8.533334v19.2c0 8.533333 0 17.066667-2.133333 25.6 49.066667 17.066667 85.333333 40.533333 85.333333 40.533334 17.066667 6.4 21.333333 19.2 14.933334 32zM194.133333 616.533333c34.133333 130.133333 179.2 189.866667 324.266667 189.866667 168.533333 0 285.866667-72.533333 313.6-189.866667-23.466667-4.266667-46.933333-4.266667-64 0-6.4 2.133333-12.8 2.133333-17.066667-2.133333-6.4-4.266667-8.533333-8.533333-10.666666-14.933333-2.133333-4.266667 0-12.8 2.133333-17.066667 4.266667-6.4 8.533333-8.533333 14.933333-10.666667 25.6-6.4 55.466667-6.4 81.066667-2.133333v-12.8c0-6.4 0-14.933333-2.133333-21.333333-25.6 2.133333-57.6 4.266667-70.4 6.4h-6.4c-10.666667 0-19.2-8.533333-21.333334-19.2-2.133333-6.4 0-12.8 2.133334-17.066667 4.266667-6.4 8.533333-8.533333 14.933333-10.666667 23.466667-6.4 49.066667-8.533333 74.666667-10.666666-29.866667-119.466667-128-232.533333-256-258.133334h-8.533334c-2.133333 0-6.4-2.133333-8.533333-4.266666-12.8-2.133333-25.6-2.133333-38.4-2.133334-17.066667 0-34.133333 2.133333-49.066667 4.266667-2.133333 0-4.266667 2.133333-6.4 2.133333h-2.133333c-51.2 10.666667-98.133333 34.133333-140.8 68.266667-59.733333 49.066667-104.533333 117.333333-121.6 187.733333 25.6 2.133333 51.2 4.266667 72.533333 10.666667 12.8 4.266667 19.2 17.066667 14.933334 27.733333-2.133333 10.666667-10.666667 19.2-21.333334 19.2h-6.4c-21.333333-6.4-44.8-8.533333-70.4-8.533333 0 8.533333-2.133333 17.066667-2.133333 23.466667v12.8c27.733333-4.266667 55.466667-6.4 81.066667 2.133333 12.8 4.266667 19.2 17.066667 14.933333 27.733333-2.133333 6.4-6.4 10.666667-12.8 14.933334-4.266667 2.133333-10.666667 2.133333-14.933333 2.133333-14.933333-2.133333-36.266667-2.133333-59.733334 2.133333zM270.933333 277.333333c6.4-4.266667 12.8-10.666667 17.066667-14.933333 34.133333-27.733333 70.4-46.933333 108.8-61.866667-34.133333-17.066667-76.8-27.733333-100.266667-12.8-10.666667 6.4-21.333333 44.8-25.6 89.6z m486.4-2.133333c-4.266667-42.666667-14.933333-78.933333-25.6-85.333333-23.466667-14.933333-61.866667-4.266667-96 10.666666 42.666667 12.8 85.333333 40.533333 121.6 74.666667z" fill="#3E3836"/></svg>';
     const chatMask = document.getElementById('chatMask');
     const rightPanel = document.getElementById('rightSidebar');
     const openRightBtn = document.getElementById('openRightBtn');
@@ -3287,6 +3287,11 @@ div:has(> .app-shell) { padding: 0 !important; margin: 0 !important; background:
 
 .app-shell *, .app-shell *::before, .app-shell *::after { box-sizing: border-box; }
 
+/* Safari/WebKit 兜底：强制文字填充色跟随其 color，避免 -webkit-text-fill-color 被 Gradio 注入样式或
+   Safari 表单/可编辑区默认行为覆盖后，文字显示为灰/白（与设定色不符）。对 input/textarea/select 豁免，
+   以保留其占位符与自有填充色。 */
+.app-shell, .app-shell *:not(input):not(textarea):not(select) { -webkit-text-fill-color: currentColor; }
+
 /* 按钮重置 + 对抗 Gradio 主题（高优先级 + !important） */
 .app-shell button {
   border: none;
@@ -3348,8 +3353,8 @@ div:has(> .app-shell) { padding: 0 !important; margin: 0 !important; background:
 /* 文本块固定 40px 高并垂直居中，使 .brand 总高 = logo 高(40px)，
    logo 在 align-items:center 下精确位于 padding-top 16px 处，与收起态一致 */
 .brand-text { display: flex; flex-direction: column; justify-content: center; flex-shrink: 0; height: 40px; min-width: 0; }
-.brand-title { font-size: 16px; font-weight: 600; color: #6B5045; line-height: 1.4; white-space: nowrap; }
-.brand-subtitle { font-size: 12px; font-weight: 500; color: #6F6763; line-height: 1.4; margin-top: 2px; white-space: nowrap; }
+.app-shell .brand-title { font-size: 16px; font-weight: 600; color: #6B5045 !important; -webkit-text-fill-color: #6B5045 !important; line-height: 1.4; white-space: nowrap; }
+.app-shell .brand-subtitle { font-size: 12px; font-weight: 500; color: #6F6763 !important; -webkit-text-fill-color: #6F6763 !important; line-height: 1.4; margin-top: 2px; white-space: nowrap; }
 
 /* 新建任务按钮（用户色 #B37560） */
 .app-shell .primary-btn.new-task-btn {
@@ -3380,13 +3385,14 @@ div:has(> .app-shell) { padding: 0 !important; margin: 0 !important; background:
   padding-bottom: 14px;
   border-bottom: 1px solid #F1E4D5;
 }
-.nav-item {
+.app-shell .nav-item {
   display: flex;
   align-items: center;
   gap: 9px;
   padding: 8px 0;
   border-radius: 10px;
-  color: #3E3836;
+  color: #3E3836 !important;
+  -webkit-text-fill-color: #3E3836 !important;
   font-size: 14px;
   font-weight: 500;
   line-height: 1.3;
@@ -3394,8 +3400,8 @@ div:has(> .app-shell) { padding: 0 !important; margin: 0 !important; background:
   text-decoration: none !important;
   transition: background 150ms var(--ease);
 }
-.nav-item:hover { background: #FAF3EC; color: #6B5045; }
-.nav-item.active { color: #3E3836; font-weight: 600; background: #FAF3EC; box-shadow: none; }
+.app-shell .nav-item:hover { background: #FAF3EC; color: #6B5045 !important; -webkit-text-fill-color: #6B5045 !important; }
+.app-shell .nav-item.active { color: #3E3836 !important; -webkit-text-fill-color: #3E3836 !important; font-weight: 600; background: #FAF3EC; box-shadow: none; }
 /* 选中态与 hover 态完全一致，不再单独加深 */
 .nav-icon { width: 18px; height: 18px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
 
@@ -3462,17 +3468,18 @@ div:has(> .app-shell) { padding: 0 !important; margin: 0 !important; background:
   color: #A89F93 !important;
   cursor: default;
 }
-.chat-ico { width: 16px; height: 16px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
-.chat-title {
+.chat-ico { width: 16px; height: 16px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; transform: translateY(1px); }
+.app-shell .chat-title {
   flex: 1;
   font-size: 13px;
   line-height: 1.3;
-  color: #3E3836;
+  color: #3E3836 !important;
+  -webkit-text-fill-color: #3E3836 !important;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.chat-time { color: #A89F93 !important; font-size: 10px; font-weight: 500; line-height: 1.4; flex-shrink: 0; }
+.app-shell .chat-time { color: #A89F93 !important; -webkit-text-fill-color: #A89F93 !important; font-size: 10px; font-weight: 500; line-height: 1.4; flex-shrink: 0; }
 
 /* 底部装饰图：静止态 left_bottom.jpg；hover 由 JS 用 canvas 播放 APNG 队列 */
 .left-footer {
@@ -3803,16 +3810,17 @@ div:has(> .app-shell) { padding: 0 !important; margin: 0 !important; background:
   overflow: hidden;
   position: relative;
 }
-.bubble-bot { background: #FFFFFF; border: 1.5px solid #F8F1EB; }
-.bubble-user {
+.app-shell .bubble-bot { background: #FFFFFF; border: 1.5px solid #F8F1EB; color: #3E3836 !important; -webkit-text-fill-color: #3E3836 !important; }
+.app-shell .bubble-user {
   background: #FAF3EC !important;
   color: #6B5045 !important;
+  -webkit-text-fill-color: #6B5045 !important;
   border-radius: 18px 2px 18px 18px;
 }
 .bubble-header { display: flex; align-items: center; gap: 4px; margin-bottom: 3px; }
-.bubble-name { font-size: 13px; font-weight: 400; color: #6B5045; line-height: 1.3; }
+.app-shell .bubble-name { font-size: 13px; font-weight: 400; color: #6B5045 !important; -webkit-text-fill-color: #6B5045 !important; line-height: 1.3; }
 .bubble-paw { font-size: 12px; }
-.bubble-body { white-space: pre-wrap; word-break: break-word; min-width: 0; }
+.app-shell .bubble-body { white-space: pre-wrap; word-break: break-word; min-width: 0; color: inherit !important; -webkit-text-fill-color: inherit !important; }
 /* 历史回答「查看执行轨迹」图标：气泡右上角，轻量暖杏风，独立按钮不挡文本选择/点击 */
 .app-shell .trace-view-btn {
   position: absolute !important;
@@ -4018,18 +4026,19 @@ div:has(> .app-shell) { padding: 0 !important; margin: 0 !important; background:
   display: flex;
   align-items: flex-start;
 }
-.input-textarea {
+.app-shell .input-textarea {
   flex: 1;
   width: 100%;
   min-height: 24px;
   outline: none;
   font-size: 14px;
   line-height: 1.6;
-  color: #3E3836;
+  color: #3E3836 !important;
+  -webkit-text-fill-color: #3E3836 !important;
   padding: 6px 2px;
   word-break: break-word;
 }
-.input-textarea:empty::before { content: "描述你的问题，或直接开始提问…"; color: rgba(168, 159, 147, 0.85); }
+.app-shell .input-textarea:empty::before { content: "描述你的问题，或直接开始提问…"; color: rgba(168, 159, 147, 0.85) !important; -webkit-text-fill-color: rgba(168, 159, 147, 0.85) !important; }
 .input-toolbar {
   display: flex;
   align-items: center;
@@ -4080,19 +4089,20 @@ div:has(> .app-shell) { padding: 0 !important; margin: 0 !important; background:
   transition: opacity 150ms var(--ease), transform 150ms var(--ease);
 }
 .model-popover.hidden { display: none; }
-.model-option {
+.app-shell .model-option {
   padding: 9px 12px;
   border-radius: 7px;
   font-size: 13px;
   line-height: 1.4;
-  color: #3E3836;
+  color: #3E3836 !important;
+  -webkit-text-fill-color: #3E3836 !important;
   cursor: pointer;
   transition: background 150ms var(--ease);
   white-space: nowrap;
 }
-.model-option:hover:not(.disabled) { background: #FAF3EC; }
-.model-option.active { background: #FAF3EC; color: #6B5045; font-weight: 500; }
-.model-option.disabled { color: #A99A90; cursor: not-allowed; }
+.app-shell .model-option:hover:not(.disabled) { background: #FAF3EC; }
+.app-shell .model-option.active { background: #FAF3EC; color: #6B5045 !important; -webkit-text-fill-color: #6B5045 !important; font-weight: 500; }
+.app-shell .model-option.disabled { color: #A99A90 !important; -webkit-text-fill-color: #A99A90 !important; cursor: not-allowed; }
 .send-btn {
   width: 34px;
   height: 34px;
@@ -4177,7 +4187,7 @@ div:has(> .app-shell) { padding: 0 !important; margin: 0 !important; background:
   align-items: center;
   justify-content: space-between;
 }
-.right-title { display: flex; align-items: center; gap: 7px; font-size: 16px; font-weight: 600; color: #3E3836; line-height: 1.4; }
+.app-shell .right-title { display: flex; align-items: center; gap: 7px; font-size: 16px; font-weight: 600; color: #3E3836 !important; -webkit-text-fill-color: #3E3836 !important; line-height: 1.4; }
 .title-star { color: #C7A18E; font-size: 14px; line-height: 1; }
 .right-actions { display: flex; gap: 2px; }
 
@@ -4213,7 +4223,7 @@ div:has(> .app-shell) { padding: 0 !important; margin: 0 !important; background:
 .right-sidebar.detail-expanded .right-timeline { display: none; }
 .right-sidebar.detail-expanded .right-detail { border-top: none; }
 .right-group { margin-bottom: 6px; }
-.right-group-title {
+.app-shell .right-group-title {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -4221,7 +4231,8 @@ div:has(> .app-shell) { padding: 0 !important; margin: 0 !important; background:
   border-radius: 8px;
   font-size: 16px;
   font-weight: 600;
-  color: #3E3836;
+  color: #3E3836 !important;
+  -webkit-text-fill-color: #3E3836 !important;
   line-height: 1.4;
   cursor: pointer;
   list-style: none;
@@ -4232,10 +4243,10 @@ div:has(> .app-shell) { padding: 0 !important; margin: 0 !important; background:
 .chevron { color: #A99A90; transition: transform 180ms var(--ease); }
 details[open] .chevron { transform: rotate(180deg); }
 .right-group-content { padding: 2px 0 6px 4px; }
-.empty-hint { font-size: 13px; font-weight: 400; color: #6F6763; line-height: 1.3; padding: 6px 4px; }
+.app-shell .empty-hint { font-size: 13px; font-weight: 400; color: #6F6763 !important; -webkit-text-fill-color: #6F6763 !important; line-height: 1.3; padding: 6px 4px; }
 
 .file-tree { display: flex; flex-direction: column; gap: 1px; }
-.file-node {
+.app-shell .file-node {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -4243,11 +4254,12 @@ details[open] .chevron { transform: rotate(180deg); }
   border-radius: 8px;
   font-size: 13px;
   line-height: 1.3;
-  color: #3E3836;
+  color: #3E3836 !important;
+  -webkit-text-fill-color: #3E3836 !important;
   cursor: pointer;
   transition: background 150ms var(--ease), color 150ms var(--ease);
 }
-.file-node:hover { background: #F9F1E9; color: #6B5045; }
+.app-shell .file-node:hover { background: #F9F1E9; color: #6B5045 !important; -webkit-text-fill-color: #6B5045 !important; }
 .file-dot { width: 9px; height: 9px; border-radius: 3px; flex-shrink: 0; }
 .dot-py { background: #4B8BBE; }
 .dot-env { background: #C4A35A; }
@@ -4259,25 +4271,27 @@ details[open] .chevron { transform: rotate(180deg); }
   padding: 6px;
   border: none;
   background: transparent !important;
-  color: #8C6B5D;
+  color: #8C6B5D !important;
+  -webkit-text-fill-color: #8C6B5D !important;
   font-size: 13px;
   font-weight: 400;
   line-height: 1.3;
   transition: color 150ms var(--ease);
 }
-.right-more:hover { background: transparent !important; color: #6B5045; }
+.right-more:hover { background: transparent !important; color: #6B5045 !important; -webkit-text-fill-color: #6B5045 !important; }
 
 /* ============================================================
    右侧栏 AI 分析过程（三段式：Header + Timeline + Detail）
    配色遵循 design-system-spec.md 方案 B
    ============================================================ */
-.trace-empty { font-size: 13px; color: #6F6763; line-height: 1.6; padding: 16px 8px; text-align: center; }
+.app-shell .trace-empty { font-size: 13px; color: #6F6763 !important; -webkit-text-fill-color: #6F6763 !important; line-height: 1.6; padding: 16px 8px; text-align: center; }
 
 /* Header 状态行 + 输入摘要 */
-.analysis-status {
+.app-shell .analysis-status {
   margin-top: 8px;
   font-size: 12px;
-  color: #6F6763;
+  color: #6F6763 !important;
+  -webkit-text-fill-color: #6F6763 !important;
   line-height: 1.4;
 }
 .analysis-status .status-dot {
@@ -4293,10 +4307,11 @@ details[open] .chevron { transform: rotate(180deg); }
 .analysis-status.is-completed .status-dot { background: #6F8A6A; }
 .analysis-status.is-error .status-dot { background: #B86B5B; }
 
-.analysis-input {
+.app-shell .analysis-input {
   margin-top: 6px;
   font-size: 12px;
-  color: #A99A90;
+  color: #A99A90 !important;
+  -webkit-text-fill-color: #A99A90 !important;
   line-height: 1.5;
   word-break: break-all;
   display: -webkit-box;
@@ -4313,8 +4328,8 @@ details[open] .chevron { transform: rotate(180deg); }
   line-height: 1.7;
   vertical-align: 1px;
 }
-.input-type-tag.type-normal { background: #FDFBF7; border: 1px solid #EDE5DD; color: #6F6763; }
-.input-type-tag.type-composite { background: #FAF3EC; border: 1px solid #E7D8CC; color: #6B5045; }
+.input-type-tag.type-normal { background: #FDFBF7; border: 1px solid #EDE5DD; color: #6F6763 !important; -webkit-text-fill-color: #6F6763 !important; }
+.input-type-tag.type-composite { background: #FAF3EC; border: 1px solid #E7D8CC; color: #6B5045 !important; -webkit-text-fill-color: #6B5045 !important; }
 
 /* Timeline 步骤 */
 .analysis-step {
@@ -4372,10 +4387,10 @@ details[open] .chevron { transform: rotate(180deg); }
 .step-node.node-skipped { border: 1.5px dashed #CFC7C2; background: transparent; }
 
 .step-info { flex: 1; min-width: 0; padding-bottom: 2px; }
-.step-title { font-size: 14px; font-weight: 600; color: #3E3836; line-height: 1.4; }
-.step-summary { margin-top: 2px; font-size: 12px; color: #6F6763; line-height: 1.5; word-break: break-all; }
-.analysis-step.is-skipped .step-title { color: #6F6763; font-weight: 400; text-decoration: line-through; }
-.analysis-step.is-skipped .step-summary { color: #A99A90; }
+.app-shell .step-title { font-size: 14px; font-weight: 600; color: #3E3836 !important; -webkit-text-fill-color: #3E3836 !important; line-height: 1.4; }
+.app-shell .step-summary { margin-top: 2px; font-size: 12px; color: #6F6763 !important; -webkit-text-fill-color: #6F6763 !important; line-height: 1.5; word-break: break-all; }
+.app-shell .analysis-step.is-skipped .step-title { color: #6F6763 !important; -webkit-text-fill-color: #6F6763 !important; font-weight: 400; text-decoration: line-through; }
+.app-shell .analysis-step.is-skipped .step-summary { color: #A99A90 !important; -webkit-text-fill-color: #A99A90 !important; }
 
 @keyframes nodePulse {
   0%, 100% { opacity: 1; }
@@ -4383,7 +4398,7 @@ details[open] .chevron { transform: rotate(180deg); }
 }
 
 /* Detail Panel */
-.detail-empty { font-size: 13px; color: #A99A90; line-height: 1.6; padding: 16px 8px; text-align: center; }
+.app-shell .detail-empty { font-size: 13px; color: #A99A90 !important; -webkit-text-fill-color: #A99A90 !important; line-height: 1.6; padding: 16px 8px; text-align: center; }
 .detail-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
 .detail-head-text { flex: 1; min-width: 0; }
 .detail-expand-btn {
